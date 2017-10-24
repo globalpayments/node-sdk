@@ -1,0 +1,22 @@
+version: "2.1"
+services:
+  node:
+    image: node:${NODE_VERSION}-alpine
+    volumes:
+      - .:/src
+    working_dir: /src
+
+  setup:
+    extends:
+      service: node
+    command: >
+      sh -c "node --version &&
+             npm --version &&
+             npm install"
+
+  test:
+    extends:
+      service: node
+    command: npm test
+
+

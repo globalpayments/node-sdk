@@ -1,0 +1,8 @@
+.vscode/
+lib/
+!lib/src
+src/
+test/
+tsconfig.json
+tslint.json
+yarn.lock
