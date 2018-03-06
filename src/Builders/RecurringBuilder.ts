@@ -1,16 +1,13 @@
-import {
-  IRecurringEntity,
-  ServicesContainer,
-  TransactionType,
-} from "../";
+import { IRecurringEntity, ServicesContainer, TransactionType } from "../";
 import { TransactionBuilder } from "./TransactionBuilder";
 
 export interface IDictionary<T> {
   [key: string]: T;
 }
 
-export class RecurringBuilder<T extends IRecurringEntity>
-  extends TransactionBuilder<T> {
+export class RecurringBuilder<
+  T extends IRecurringEntity
+> extends TransactionBuilder<T> {
   public key: string;
   public orderId: string;
   public entity: IRecurringEntity;

@@ -14,15 +14,23 @@ function parseMethod(method) {
 }
 
 export function request(requestBody, options) {
-  const requestOptions = {
+  var requestOptions = {
     body: requestBody,
     headers: options.headers,
     method: parseMethod(options.method),
     url: "https://" + options.host + ":" + options.port + options.path,
   };
-  return new Promise(function (resolve, reject) {
+  return new Promise(function(resolve, reject) {
     try {
-      resolve(https.request(requestOptions));
+      var response = https.request(requestOptions);
+
+      if (response.code !== 200) {
+        reject(
+          new Error("Unexpected HTTP status code [" + response.code + "]")
+        );
+      }
+
+      resolve(response.body);
     } catch (e) {
       reject(e);
     }

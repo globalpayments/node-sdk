@@ -20,8 +20,7 @@ import {
 } from "../";
 import { TransactionBuilder } from "./TransactionBuilder";
 
-export class AuthorizationBuilder
-  extends TransactionBuilder<Transaction> {
+export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public alias: string;
   public aliasAction: AliasAction;
   public allowDuplicates: boolean;
@@ -94,67 +93,99 @@ export class AuthorizationBuilder
       return client.serializeRequest(this);
     }
 
-    throw new UnsupportedTransactionError("Your current gateway does not support hosted payments");
+    throw new UnsupportedTransactionError(
+      "Your current gateway does not support hosted payments",
+    );
   }
 
   protected setupValidations(): void {
-    this.validations.of(
-      "transactionType",
-      /* tslint:disable:trailing-comma */
-      TransactionType.Auth |
-      TransactionType.Sale |
-      TransactionType.Refund |
-      TransactionType.AddValue
-      /* tslint:enable:trailing-comma */
-    )
+    this.validations
+      .of(
+        "transactionType",
+        /* tslint:disable:trailing-comma */
+        TransactionType.Auth |
+          TransactionType.Sale |
+          TransactionType.Refund |
+          TransactionType.AddValue,
+        /* tslint:enable:trailing-comma */
+      )
       .with("transactionModifier", TransactionModifier.None)
-      .check("amount").isNotNull()
-      .check("currency").isNotNull()
-      .check("paymentMethod").isNotNull();
+      .check("amount")
+      .isNotNull()
+      .check("currency")
+      .isNotNull()
+      .check("paymentMethod")
+      .isNotNull();
 
-    this.validations.of(
-      "transactionType",
-      /* tslint:disable:trailing-comma */
-      TransactionType.Auth |
-      TransactionType.Sale |
-      TransactionType.Verify
-      /* tslint:enable:trailing-comma */
-    )
+    this.validations
+      .of(
+        "transactionType",
+        /* tslint:disable:trailing-comma */
+        TransactionType.Auth | TransactionType.Sale | TransactionType.Verify,
+        /* tslint:enable:trailing-comma */
+      )
       .with("transactionModifier", TransactionModifier.HostedRequest)
-      .check("amount").isNotNull()
-      .check("currency").isNotNull();
+      .check("amount")
+      .isNotNull()
+      .check("currency")
+      .isNotNull();
 
-    this.validations.of(
-      "transactionType",
-      /* tslint:disable:trailing-comma */
-      TransactionType.Auth |
-      TransactionType.Sale
-      /* tslint:enable:trailing-comma */
-    )
+    this.validations
+      .of(
+        "transactionType",
+        /* tslint:disable:trailing-comma */
+        TransactionType.Auth | TransactionType.Sale,
+        /* tslint:enable:trailing-comma */
+      )
       .with("transactionModifier", TransactionModifier.Offline)
-      .check("amount").isNotNull()
-      .check("currency").isNotNull()
-      .check("offlineAuthCode").isNotNull()
-      .check("offlineAuthCode").isNotEmpty();
+      .check("amount")
+      .isNotNull()
+      .check("currency")
+      .isNotNull()
+      .check("offlineAuthCode")
+      .isNotNull()
+      .check("offlineAuthCode")
+      .isNotEmpty();
 
-    this.validations.of("transactionType", TransactionType.BenefitWithDrawal)
+    this.validations
+      .of("transactionType", TransactionType.Auth | TransactionType.Sale)
+      .with("transactionModifier", TransactionModifier.EncryptedMobile)
+      .check("paymentMethod")
+      .isNotNull()
+      .check("paymentMethod")
+      .isNotEmpty();
+
+    this.validations
+      .of("transactionType", TransactionType.BenefitWithDrawal)
       .with("transactionModifier", TransactionModifier.CashBack)
-      .check("amount").isNotNull()
-      .check("currency").isNotNull()
-      .check("paymentMethod").isNotNull();
+      .check("amount")
+      .isNotNull()
+      .check("currency")
+      .isNotNull()
+      .check("paymentMethod")
+      .isNotNull();
 
-    this.validations.of("transactionType", TransactionType.Balance)
-      .check("paymentMethod").isNotNull();
+    this.validations
+      .of("transactionType", TransactionType.Balance)
+      .check("paymentMethod")
+      .isNotNull();
 
-    this.validations.of("transactionType", TransactionType.Alias)
-      .check("aliasAction").isNotNull()
-      .check("alias").isNotNull();
+    this.validations
+      .of("transactionType", TransactionType.Alias)
+      .check("aliasAction")
+      .isNotNull()
+      .check("alias")
+      .isNotNull();
 
-    this.validations.of("transactionType", TransactionType.Replace)
-      .check("replacementCard").isNotNull();
+    this.validations
+      .of("transactionType", TransactionType.Replace)
+      .check("replacementCard")
+      .isNotNull();
 
-    this.validations.of("paymentMethodType", PaymentMethodType.ACH)
-      .check("billingAddress").isNotNull();
+    this.validations
+      .of("paymentMethodType", PaymentMethodType.ACH)
+      .check("billingAddress")
+      .isNotNull();
   }
 
   /**
@@ -288,7 +319,8 @@ export class AuthorizationBuilder
       return this;
     }
 
-    if (this.transactionType !== TransactionType.Reversal &&
+    if (
+      this.transactionType !== TransactionType.Reversal &&
       this.transactionType !== TransactionType.Refund
     ) {
       this.clientTransactionId = clientTransactionId;
@@ -299,7 +331,8 @@ export class AuthorizationBuilder
       this.paymentMethod = (new TransactionReference() as IPaymentMethod) as PaymentMethod;
     }
 
-    ((this.paymentMethod as IPaymentMethod) as TransactionReference).clientTransactionId = clientTransactionId;
+    ((this
+      .paymentMethod as IPaymentMethod) as TransactionReference).clientTransactionId = clientTransactionId;
     return this;
   }
 
@@ -464,7 +497,9 @@ export class AuthorizationBuilder
     const client = ServicesContainer.instance().getClient();
 
     if (!client.supportsHostedPayments) {
-      throw new UnsupportedTransactionError("Your current gateway does not support hosted payments.");
+      throw new UnsupportedTransactionError(
+        "Your current gateway does not support hosted payments.",
+      );
     }
 
     if (hostedPaymentData !== undefined) {

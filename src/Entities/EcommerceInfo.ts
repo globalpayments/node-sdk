@@ -1,4 +1,4 @@
-import {EcommerceChannel} from "../Entities";
+import { EcommerceChannel } from "../Entities";
 export class EcommerceInfo {
   public cavv: string;
   public channel: EcommerceChannel;
@@ -11,8 +11,8 @@ export class EcommerceInfo {
 
   public constructor() {
     this.channel = EcommerceChannel.Ecom;
-    this.shipDay = (new Date()).getUTCDate().toString();
-    this.shipMonth = ((new Date()).getUTCMonth() + 1).toString();
+    this.shipDay = new Date().getUTCDate().toString();
+    this.shipMonth = (new Date().getUTCMonth() + 1).toString();
     this.paymentDataType = "3DSecure";
   }
 }

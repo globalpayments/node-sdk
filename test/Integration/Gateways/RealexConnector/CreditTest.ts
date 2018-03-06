@@ -29,7 +29,8 @@ test.before((_t) => {
 test("credit authorization", async (t) => {
   t.plan(4);
 
-  const authorization = await card.authorize("14")
+  const authorization = await card
+    .authorize("14")
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute();
@@ -37,7 +38,8 @@ test("credit authorization", async (t) => {
   t.truthy(authorization);
   t.is(authorization.responseCode, "00", authorization.responseMessage);
 
-  const capture = await authorization.capture("16")
+  const capture = await authorization
+    .capture("16")
     .withGratuity("2")
     .execute();
 
@@ -48,7 +50,8 @@ test("credit authorization", async (t) => {
 test("credit sale", async (t) => {
   t.plan(2);
 
-  const response = await card.charge(15)
+  const response = await card
+    .charge(15)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute();
@@ -60,7 +63,8 @@ test("credit sale", async (t) => {
 test("credit sale with recurring", async (t) => {
   t.plan(2);
 
-  const response = await card.charge(15)
+  const response = await card
+    .charge(15)
     .withCurrency("USD")
     .withRecurringInfo(RecurringType.Fixed, RecurringSequence.First)
     .withAllowDuplicates(true)
@@ -73,7 +77,8 @@ test("credit sale with recurring", async (t) => {
 test("credit refund", async (t) => {
   t.plan(2);
 
-  const response = await card.refund(16)
+  const response = await card
+    .refund(16)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute();
@@ -85,7 +90,8 @@ test("credit refund", async (t) => {
 test("credit rebate", async (t) => {
   t.plan(4);
 
-  const response = await card.charge(17)
+  const response = await card
+    .charge(17)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute();
@@ -93,7 +99,8 @@ test("credit rebate", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00", response.responseMessage);
 
-  const rebate = await response.refund(17)
+  const rebate = await response
+    .refund(17)
     .withCurrency("USD")
     .execute();
 
@@ -104,7 +111,8 @@ test("credit rebate", async (t) => {
 test("credit void", async (t) => {
   t.plan(4);
 
-  const response = await card.charge(15)
+  const response = await card
+    .charge(15)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute();
@@ -121,7 +129,8 @@ test("credit void", async (t) => {
 test("credit verify", async (t) => {
   t.plan(2);
 
-  const response = await card.verify()
+  const response = await card
+    .verify()
     .withAllowDuplicates(true)
     .execute();
 

@@ -29,8 +29,7 @@ test("credit auth no amount", (t) => {
   t.plan(3);
 
   const error = t.throws(() => {
-    return card.authorize()
-      .execute();
+    return card.authorize().execute();
   }, ArgumentError);
 
   t.is(error.name, "ArgumentError");
@@ -41,8 +40,7 @@ test("credit auth no currency", (t) => {
   t.plan(3);
 
   const error = t.throws(() => {
-    return card.authorize(14)
-      .execute();
+    return card.authorize(14).execute();
   }, ArgumentError);
 
   t.is(error.name, "ArgumentError");
@@ -53,8 +51,7 @@ test("credit sale no amount", (t) => {
   t.plan(3);
 
   const error = t.throws(() => {
-    return card.charge()
-      .execute();
+    return card.charge().execute();
   }, ArgumentError);
 
   t.is(error.name, "ArgumentError");
@@ -65,8 +62,7 @@ test("credit sale no currency", (t) => {
   t.plan(3);
 
   const error = t.throws(() => {
-    return card.charge(14)
-      .execute();
+    return card.charge(14).execute();
   }, ArgumentError);
 
   t.is(error.name, "ArgumentError");
@@ -77,7 +73,8 @@ test("credit sale no payment method", (t) => {
   t.plan(3);
 
   const error = t.throws(() => {
-    return card.charge(14)
+    return card
+      .charge(14)
       .withCurrency("USD")
       .withPaymentMethod({} as PaymentMethod)
       .execute();
@@ -91,7 +88,8 @@ test("credit offline no amount", (t) => {
   t.plan(3);
 
   const error = t.throws(() => {
-    return card.charge()
+    return card
+      .charge()
       .withOfflineAuthCode("123456")
       .execute();
   }, ArgumentError);
@@ -104,7 +102,8 @@ test("credit offline no currency", (t) => {
   t.plan(3);
 
   const error = t.throws(() => {
-    return card.charge(14)
+    return card
+      .charge(14)
       .withOfflineAuthCode("123456")
       .execute();
   }, ArgumentError);
@@ -117,7 +116,8 @@ test("credit offline no auth code", (t) => {
   t.plan(3);
 
   const error = t.throws(() => {
-    return card.charge(14)
+    return card
+      .charge(14)
       .withCurrency("USD")
       .withOfflineAuthCode("")
       .execute();
@@ -133,8 +133,7 @@ test("gift replace no replacement card", (t) => {
   const error = t.throws(() => {
     const gift = new GiftCard();
     gift.alias = "1234567890";
-    return gift.replaceWith(undefined)
-      .execute();
+    return gift.replaceWith(undefined).execute();
   }, ArgumentError);
 
   t.is(error.name, "ArgumentError");
@@ -146,7 +145,8 @@ test("check sale no address", (t) => {
 
   const error = t.throws(() => {
     const check = new ECheck();
-    return check.charge(14)
+    return check
+      .charge(14)
       .withCurrency("USD")
       .execute();
   }, ArgumentError);

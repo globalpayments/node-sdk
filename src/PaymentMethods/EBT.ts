@@ -15,13 +15,13 @@ import {
 } from "./Interfaces";
 import { PaymentMethod } from "./PaymentMethod";
 
-export abstract class EBT extends PaymentMethod implements
-  IBalanceable,
-  IChargable,
-  IRefundable,
-  IReversable,
-  IPrePayable,
-  IPinProtected {
+export abstract class EBT extends PaymentMethod
+  implements IBalanceable,
+    IChargable,
+    IRefundable,
+    IReversable,
+    IPrePayable,
+    IPinProtected {
   public paymentMethodType: PaymentMethodType = PaymentMethodType.EBT;
   public pinBlock: string;
 
@@ -33,8 +33,9 @@ export abstract class EBT extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public charge(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.Sale, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Sale, this).withAmount(
+      amount,
+    );
   }
 
   /**
@@ -45,8 +46,9 @@ export abstract class EBT extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public addValue(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.AddValue, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.AddValue, this).withAmount(
+      amount,
+    );
   }
 
   /**
@@ -57,13 +59,13 @@ export abstract class EBT extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public balanceInquiry(inquiry = InquiryType.Foodstamp) {
-    return (new AuthorizationBuilder(TransactionType.Balance, this))
+    return new AuthorizationBuilder(TransactionType.Balance, this)
       .withBalanceInquiryType(inquiry)
       .withAmount(0);
   }
 
   public benefitWithdrawal(amount?: number | string) {
-    return (new AuthorizationBuilder(TransactionType.BenefitWithDrawal, this))
+    return new AuthorizationBuilder(TransactionType.BenefitWithDrawal, this)
       .withAmount(amount)
       .withCashBack(0);
   }
@@ -76,8 +78,9 @@ export abstract class EBT extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public refund(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.Refund, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Refund, this).withAmount(
+      amount,
+    );
   }
 
   /**

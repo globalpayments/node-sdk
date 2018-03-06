@@ -20,15 +20,15 @@ export class HostedService {
   }
 
   public authorize(amount?: number | string) {
-    return (new AuthorizationBuilder(TransactionType.Auth)).withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Auth).withAmount(amount);
   }
 
   public charge(amount?: number | string) {
-    return (new AuthorizationBuilder(TransactionType.Sale)).withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Sale).withAmount(amount);
   }
 
   public verify(amount?: number | string) {
-    return (new AuthorizationBuilder(TransactionType.Verify)).withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Verify).withAmount(amount);
   }
 
   public parseResponse(json: string, encoded = true) {
@@ -44,18 +44,23 @@ export class HostedService {
     const authCode = decoder(response.AUTHCODE);
 
     const sha1Hash = decoder(response.SHA1HASH);
-    const hash = GenerationUtils.generateHash([
-      timestamp,
-      merchantId,
-      orderId,
-      result,
-      message,
-      transactionId,
-      authCode,
-    ].join("."), this.config.sharedSecret);
+    const hash = GenerationUtils.generateHash(
+      [
+        timestamp,
+        merchantId,
+        orderId,
+        result,
+        message,
+        transactionId,
+        authCode,
+      ].join("."),
+      this.config.sharedSecret,
+    );
 
     if (hash !== sha1Hash) {
-      throw new ApiError("Incorrect hash. Please check your code and the Developers Documentation.");
+      throw new ApiError(
+        "Incorrect hash. Please check your code and the Developers Documentation.",
+      );
     }
 
     const transaction = new Transaction();
@@ -67,7 +72,8 @@ export class HostedService {
     transaction.transactionReference = new TransactionReference();
     transaction.transactionReference.authCode = authCode;
     transaction.transactionReference.orderId = orderId;
-    transaction.transactionReference.paymentMethodType = PaymentMethodType.Credit;
+    transaction.transactionReference.paymentMethodType =
+      PaymentMethodType.Credit;
     transaction.transactionReference.transactionId = transactionId;
     return transaction;
   }

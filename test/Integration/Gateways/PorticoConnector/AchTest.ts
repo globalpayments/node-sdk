@@ -45,7 +45,8 @@ ava.before((_t) => {
 test("check sale", async (t) => {
   t.plan(2);
 
-  const response = await check.charge(11)
+  const response = await check
+    .charge(11)
     .withCurrency("USD")
     .withAddress(address)
     .execute();
@@ -57,7 +58,8 @@ test("check sale", async (t) => {
 test("check void from transaction id", async (t) => {
   t.plan(4);
 
-  const response = await check.charge(10)
+  const response = await check
+    .charge(10)
     .withCurrency("USD")
     .withAddress(address)
     .withAllowDuplicates(true)
@@ -66,7 +68,10 @@ test("check void from transaction id", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00", response.responseMessage);
 
-  const voidResponse = await Transaction.fromId(response.transactionId, PaymentMethodType.ACH)
+  const voidResponse = await Transaction.fromId(
+    response.transactionId,
+    PaymentMethodType.ACH,
+  )
     .void()
     .execute();
 

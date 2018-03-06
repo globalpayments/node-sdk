@@ -1,11 +1,6 @@
 import ava from "ava";
-import {
-  EBTService,
-  ServicesConfig,
-} from "../../../src/";
-import {
-  TestCards,
-} from "../../Data";
+import { EBTService, ServicesConfig } from "../../../src/";
+import { TestCards } from "../../Data";
 
 const config = new ServicesConfig();
 config.secretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw";
@@ -14,12 +9,16 @@ const service = new EBTService(config);
 const runSerially = false;
 const test = runSerially ? ava.serial : ava;
 
-const card = TestCards.asEBTTrack(TestCards.visaSwipe(), "32539F50C245A6A93D123412324000AA");
+const card = TestCards.asEBTTrack(
+  TestCards.visaSwipe(),
+  "32539F50C245A6A93D123412324000AA",
+);
 
 test("balance inquiry", async (t) => {
   t.plan(2);
 
-  const response = await service.balanceInquiry()
+  const response = await service
+    .balanceInquiry()
     .withPaymentMethod(card)
     .execute();
 
@@ -30,7 +29,8 @@ test("balance inquiry", async (t) => {
 test("benefits withdrawal", async (t) => {
   t.plan(2);
 
-  const response = await service.benefitWithdrawal(10)
+  const response = await service
+    .benefitWithdrawal(10)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .withAllowDuplicates(true)
@@ -43,7 +43,8 @@ test("benefits withdrawal", async (t) => {
 test("sale", async (t) => {
   t.plan(2);
 
-  const response = await service.charge(11)
+  const response = await service
+    .charge(11)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .withAllowDuplicates(true)
@@ -56,7 +57,8 @@ test("sale", async (t) => {
 test("refund by card", async (t) => {
   t.plan(4);
 
-  const response = await service.charge(12)
+  const response = await service
+    .charge(12)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .withAllowDuplicates(true)
@@ -65,7 +67,8 @@ test("refund by card", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00", response.responseMessage);
 
-  const refund = await service.refund(12)
+  const refund = await service
+    .refund(12)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .execute();

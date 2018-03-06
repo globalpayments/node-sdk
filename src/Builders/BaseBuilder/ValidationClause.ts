@@ -9,7 +9,11 @@ export class ValidationClause {
   public message: string;
   public precondition: boolean;
 
-  public constructor(parent: Validations, target: ValidationTarget, precondition = false) {
+  public constructor(
+    parent: Validations,
+    target: ValidationTarget,
+    precondition = false,
+  ) {
     this.parent = parent;
     this.target = target;
     this.precondition = precondition;

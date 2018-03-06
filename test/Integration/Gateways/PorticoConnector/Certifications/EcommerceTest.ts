@@ -10,16 +10,16 @@ import {
   TaxType,
   TransactionModifier,
 } from "../../../../../src/";
-import {
-  TestCards,
-} from "../../../../Data/";
+import { TestCards } from "../../../../Data/";
 
 const config = new ServicesConfig();
 config.secretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A";
 config.serviceUrl = "https://cert.api2.heartlandportico.com";
 
-const BATCH_NOT_OPEN = "Transaction was rejected because it requires a batch to be open.";
-const BATCH_EMPTY = "Batch close was rejected because no transactions are associated with the currently open batch";
+const BATCH_NOT_OPEN =
+  "Transaction was rejected because it requires a batch to be open.";
+const BATCH_EMPTY =
+  "Batch close was rejected because no transactions are associated with the currently open batch";
 const useTokens = false;
 const usePrepaid = false;
 const test = useTokens ? ava.serial : ava;
@@ -43,8 +43,9 @@ test.before("000 - close batch", (t) => {
         resolve();
       })
       .catch((e: Error) => {
-        if (e.message.indexOf(BATCH_NOT_OPEN) !== -1
-          || e.message.indexOf(BATCH_EMPTY) !== -1
+        if (
+          e.message.indexOf(BATCH_NOT_OPEN) !== -1 ||
+          e.message.indexOf(BATCH_EMPTY) !== -1
         ) {
           t.pass();
           resolve();
@@ -65,7 +66,8 @@ test("001 - verify visa", (t) => {
   const card = TestCards.visaManual();
 
   return new Promise((resolve, reject) => {
-    card.verify()
+    card
+      .verify()
       .withRequestMultiUseToken(useTokens)
       .withAllowDuplicates(true)
       .execute()
@@ -84,7 +86,8 @@ test("002 - verify mastercard", (t) => {
   const card = TestCards.masterCardManual();
 
   return new Promise((resolve, reject) => {
-    card.verify()
+    card
+      .verify()
       .withRequestMultiUseToken(useTokens)
       .withAllowDuplicates(true)
       .execute()
@@ -105,7 +108,8 @@ test("003 - verify discover", (t) => {
   address.postalCode = "75024";
 
   return new Promise((resolve, reject) => {
-    card.verify()
+    card
+      .verify()
       .withAddress(address)
       .withRequestMultiUseToken(useTokens)
       .withAllowDuplicates(true)
@@ -129,7 +133,8 @@ test("004 - verify amex", (t) => {
   address.postalCode = "75024";
 
   return new Promise((resolve, reject) => {
-    card.verify()
+    card
+      .verify()
       .withAddress(address)
       .withRequestMultiUseToken(useTokens)
       .withAllowDuplicates(true)
@@ -151,7 +156,8 @@ test("005 - balance inquiry visa", (t) => {
   const card = TestCards.visaSwipe();
 
   return new Promise((resolve, reject) => {
-    card.balanceInquiry()
+    card
+      .balanceInquiry()
       .execute()
       .then((response) => {
         t.truthy(response);
@@ -173,7 +179,8 @@ test("006 - charge visa token", (t) => {
   address.postalCode = "75024";
 
   return new Promise((resolve, reject) => {
-    card.charge()
+    card
+      .charge()
       .withCurrency("USD")
       .withAmount("13.01")
       .withAddress(address)
@@ -200,7 +207,8 @@ test("007 - charge mastercard token", (t) => {
   address.postalCode = "75024";
 
   return new Promise((resolve, reject) => {
-    card.charge()
+    card
+      .charge()
       .withCurrency("USD")
       .withAmount("13.02")
       .withAddress(address)
@@ -227,7 +235,8 @@ test("008 - charge discover token", (t) => {
   address.postalCode = "75024";
 
   return new Promise((resolve, reject) => {
-    card.charge()
+    card
+      .charge()
       .withCurrency("USD")
       .withAmount("13.03")
       .withAddress(address)
@@ -254,7 +263,8 @@ test("009 - charge amex token", (t) => {
   address.postalCode = "75024";
 
   return new Promise((resolve, reject) => {
-    card.charge()
+    card
+      .charge()
       .withCurrency("USD")
       .withAmount("13.04")
       .withAddress(address)
@@ -288,7 +298,8 @@ test("010 - charge visa", (t) => {
   }
 
   return new Promise((resolve, reject) => {
-    card.charge()
+    card
+      .charge()
       .withCurrency("USD")
       .withAmount("17.01")
       .withAddress(address)
@@ -301,7 +312,8 @@ test("010 - charge visa", (t) => {
         return response;
       })
       .then((response) => {
-        response.void()
+        response
+          .void()
           .execute()
           .then((voidResponse) => {
             t.truthy(voidResponse);
@@ -328,7 +340,8 @@ test("011 - charge mastercard", (t) => {
   }
 
   return new Promise((resolve, reject) => {
-    card.charge()
+    card
+      .charge()
       .withCurrency("USD")
       .withAmount("17.02")
       .withAddress(address)
@@ -358,7 +371,8 @@ test("012 - charge discover", (t) => {
   }
 
   return new Promise((resolve, reject) => {
-    card.charge()
+    card
+      .charge()
       .withCurrency("USD")
       .withAmount("17.03")
       .withAddress(address)
@@ -388,7 +402,8 @@ test("013 - charge amex", (t) => {
   }
 
   return new Promise((resolve, reject) => {
-    card.charge()
+    card
+      .charge()
       .withCurrency("USD")
       .withAmount("17.04")
       .withAddress(address)
@@ -413,7 +428,8 @@ test("014 - charge jcb", (t) => {
   address.postalCode = "75024";
 
   return new Promise((resolve, reject) => {
-    card.charge()
+    card
+      .charge()
       .withCurrency("USD")
       .withAmount("17.04")
       .withAddress(address)
@@ -441,7 +457,8 @@ test("015 - authorization visa", (t) => {
   address.postalCode = "75024";
 
   return new Promise((resolve, reject) => {
-    card.authorize("17.06")
+    card
+      .authorize("17.06")
       .withCurrency("USD")
       .withAddress(address)
       .withInvoiceNumber("123456")
@@ -454,7 +471,8 @@ test("015 - authorization visa", (t) => {
       })
       .then((response) => {
         // test 015b Capture/AddToBatch
-        response.capture()
+        response
+          .capture()
           .execute()
           .then((capture) => {
             t.truthy(capture);
@@ -477,7 +495,8 @@ test("016 - authorization mastercard", (t) => {
   address.postalCode = "750241234";
 
   return new Promise((resolve, reject) => {
-    card.authorize("17.07")
+    card
+      .authorize("17.07")
       .withCurrency("USD")
       .withAddress(address)
       .withInvoiceNumber("123456")
@@ -490,7 +509,8 @@ test("016 - authorization mastercard", (t) => {
       })
       .then((response) => {
         // test 016b Capture/AddToBatch
-        response.capture()
+        response
+          .capture()
           .execute()
           .then((capture) => {
             t.truthy(capture);
@@ -513,7 +533,8 @@ test("017 - authorization discover", (t) => {
   address.postalCode = "75024";
 
   return new Promise((resolve, reject) => {
-    card.authorize("17.08")
+    card
+      .authorize("17.08")
       .withCurrency("USD")
       .withAddress(address)
       .withInvoiceNumber("123456")
@@ -545,7 +566,8 @@ test("018 - partial approval visa", (t) => {
   const card = TestCards.visaManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(130)
+    card
+      .charge(130)
       .withCurrency("USD")
       .withAddress(address)
       .withInvoiceNumber("123456")
@@ -573,7 +595,8 @@ test("019 - partial approval discover", (t) => {
   const card = TestCards.discoverManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(145)
+    card
+      .charge(145)
       .withCurrency("USD")
       .withAddress(address)
       .withInvoiceNumber("123456")
@@ -601,7 +624,8 @@ test("020 - partial approval mastercard", (t) => {
   const card = TestCards.masterCardManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(155)
+    card
+      .charge(155)
       .withCurrency("USD")
       .withAddress(address)
       .withInvoiceNumber("123456")
@@ -631,7 +655,8 @@ test("021 - level ii response b", (t) => {
   const card = TestCards.visaManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(112.34)
+    card
+      .charge(112.34)
       .withCurrency("USD")
       .withAddress(address)
       .withCommercialRequest(true)
@@ -644,7 +669,8 @@ test("021 - level ii response b", (t) => {
         return response;
       })
       .then((response) => {
-        response.edit()
+        response
+          .edit()
           .withPoNumber("9876543210")
           .withTaxType(TaxType.NotUsed)
           .execute()
@@ -669,7 +695,8 @@ test("022 - level ii response b", (t) => {
   const card = TestCards.visaManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(112.34)
+    card
+      .charge(112.34)
       .withCurrency("USD")
       .withAddress(address)
       .withCommercialRequest(true)
@@ -682,9 +709,10 @@ test("022 - level ii response b", (t) => {
         return response;
       })
       .then((response) => {
-        response.edit()
+        response
+          .edit()
           .withTaxType(TaxType.SalesTax)
-          .withTaxAmount(1.00)
+          .withTaxAmount(1.0)
           .execute()
           .then((cpcResponse) => {
             t.truthy(cpcResponse);
@@ -707,7 +735,8 @@ test("023 - level ii response r", (t) => {
   const card = TestCards.visaManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(123.45)
+    card
+      .charge(123.45)
       .withCurrency("USD")
       .withAddress(address)
       .withCommercialRequest(true)
@@ -720,7 +749,8 @@ test("023 - level ii response r", (t) => {
         return response;
       })
       .then((response) => {
-        response.edit()
+        response
+          .edit()
           .withTaxType(TaxType.TaxExempt)
           .execute()
           .then((cpcResponse) => {
@@ -744,7 +774,8 @@ test("024 - level ii response s", (t) => {
   const card = TestCards.visaManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(134.56)
+    card
+      .charge(134.56)
       .withCurrency("USD")
       .withAddress(address)
       .withCommercialRequest(true)
@@ -757,10 +788,11 @@ test("024 - level ii response s", (t) => {
         return response;
       })
       .then((response) => {
-        response.edit()
+        response
+          .edit()
           .withPoNumber("9876543210")
           .withTaxType(TaxType.SalesTax)
-          .withTaxAmount(1.00)
+          .withTaxAmount(1.0)
           .execute()
           .then((cpcResponse) => {
             t.truthy(cpcResponse);
@@ -783,7 +815,8 @@ test("025 - level ii response s", (t) => {
   const card = TestCards.masterCardManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(111.06)
+    card
+      .charge(111.06)
       .withCurrency("USD")
       .withAddress(address)
       .withCommercialRequest(true)
@@ -796,7 +829,8 @@ test("025 - level ii response s", (t) => {
         return response;
       })
       .then((response) => {
-        response.edit()
+        response
+          .edit()
           .withPoNumber("9876543210")
           .withTaxType(TaxType.NotUsed)
           .execute()
@@ -821,7 +855,8 @@ test("026 - level ii response s", (t) => {
   const card = TestCards.masterCardManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(111.07)
+    card
+      .charge(111.07)
       .withCurrency("USD")
       .withAddress(address)
       .withCommercialRequest(true)
@@ -834,9 +869,10 @@ test("026 - level ii response s", (t) => {
         return response;
       })
       .then((response) => {
-        response.edit()
+        response
+          .edit()
           .withTaxType(TaxType.SalesTax)
-          .withTaxAmount(1.00)
+          .withTaxAmount(1.0)
           .execute()
           .then((cpcResponse) => {
             t.truthy(cpcResponse);
@@ -859,7 +895,8 @@ test("027 - level ii response s", (t) => {
   const card = TestCards.masterCardManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(111.08)
+    card
+      .charge(111.08)
       .withCurrency("USD")
       .withAddress(address)
       .withCommercialRequest(true)
@@ -872,10 +909,11 @@ test("027 - level ii response s", (t) => {
         return response;
       })
       .then((response) => {
-        response.edit()
+        response
+          .edit()
           .withPoNumber("9876543210")
           .withTaxType(TaxType.SalesTax)
-          .withTaxAmount(1.00)
+          .withTaxAmount(1.0)
           .execute()
           .then((cpcResponse) => {
             t.truthy(cpcResponse);
@@ -898,7 +936,8 @@ test("028 - level ii response s", (t) => {
   const card = TestCards.masterCardManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(111.09)
+    card
+      .charge(111.09)
       .withCurrency("USD")
       .withAddress(address)
       .withCommercialRequest(true)
@@ -911,7 +950,8 @@ test("028 - level ii response s", (t) => {
         return response;
       })
       .then((response) => {
-        response.edit()
+        response
+          .edit()
           .withPoNumber("9876543210")
           .withTaxType(TaxType.TaxExempt)
           .execute()
@@ -936,7 +976,8 @@ test("029 - level ii no response", (t) => {
   const card = TestCards.amexManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(111.10)
+    card
+      .charge(111.1)
       .withCurrency("USD")
       .withAddress(address)
       .withCommercialRequest(true)
@@ -949,7 +990,8 @@ test("029 - level ii no response", (t) => {
         return response;
       })
       .then((response) => {
-        response.edit()
+        response
+          .edit()
           .withPoNumber("9876543210")
           .withTaxType(TaxType.NotUsed)
           .execute()
@@ -974,7 +1016,8 @@ test("030 - level ii no response", (t) => {
   const card = TestCards.amexManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(111.11)
+    card
+      .charge(111.11)
       .withCurrency("USD")
       .withAddress(address)
       .withCommercialRequest(true)
@@ -987,9 +1030,10 @@ test("030 - level ii no response", (t) => {
         return response;
       })
       .then((response) => {
-        response.edit()
+        response
+          .edit()
           .withTaxType(TaxType.SalesTax)
-          .withTaxAmount(1.00)
+          .withTaxAmount(1.0)
           .execute()
           .then((cpcResponse) => {
             t.truthy(cpcResponse);
@@ -1012,7 +1056,8 @@ test("031 - level ii no response", (t) => {
   const card = TestCards.amexManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(111.12)
+    card
+      .charge(111.12)
       .withCurrency("USD")
       .withAddress(address)
       .withCommercialRequest(true)
@@ -1025,10 +1070,11 @@ test("031 - level ii no response", (t) => {
         return response;
       })
       .then((response) => {
-        response.edit()
+        response
+          .edit()
           .withPoNumber("9876543210")
           .withTaxType(TaxType.SalesTax)
-          .withTaxAmount(1.00)
+          .withTaxAmount(1.0)
           .execute()
           .then((cpcResponse) => {
             t.truthy(cpcResponse);
@@ -1051,7 +1097,8 @@ test("032 - level ii no response", (t) => {
   const card = TestCards.amexManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(111.13)
+    card
+      .charge(111.13)
       .withCurrency("USD")
       .withAddress(address)
       .withCommercialRequest(true)
@@ -1064,7 +1111,8 @@ test("032 - level ii no response", (t) => {
         return response;
       })
       .then((response) => {
-        response.edit()
+        response
+          .edit()
           .withPoNumber("9876543210")
           .withTaxType(TaxType.TaxExempt)
           .execute()
@@ -1087,7 +1135,8 @@ test("033 - offline sale", (t) => {
   const card = TestCards.visaManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(17.01)
+    card
+      .charge(17.01)
       .withCurrency("USD")
       .withModifier(TransactionModifier.Offline)
       .withOfflineAuthCode("654321")
@@ -1109,7 +1158,8 @@ test("033 - offline authorization", (t) => {
   const card = TestCards.visaManual();
 
   return new Promise((resolve, reject) => {
-    card.authorize(17.10)
+    card
+      .authorize(17.1)
       .withCurrency("USD")
       .withModifier(TransactionModifier.Offline)
       .withOfflineAuthCode("654321")
@@ -1133,7 +1183,8 @@ test("034 - offline return", (t) => {
   const card = TestCards.visaManual();
 
   return new Promise((resolve, reject) => {
-    card.refund(15.15)
+    card
+      .refund(15.15)
       .withCurrency("USD")
       .withInvoiceNumber("123456")
       .withAllowDuplicates(true)
@@ -1161,7 +1212,8 @@ test.failing("037 - fraud prevention sale", (t) => {
   const card = TestCards.visaManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(15000)
+    card
+      .charge(15000)
       .withCurrency("USD")
       .withAllowDuplicates(true)
       .execute()
@@ -1180,7 +1232,8 @@ test.failing("038 - fraud prevention return", (t) => {
   const card = TestCards.visaManual();
 
   return new Promise((resolve, reject) => {
-    card.refund(15000)
+    card
+      .refund(15000)
       .withCurrency("USD")
       .withAllowDuplicates(true)
       .execute()
@@ -1207,7 +1260,8 @@ test.failing("038 - fraud prevention return", (t) => {
   const card = TestCards.gsbManual();
 
   return new Promise((resolve, reject) => {
-    card.balanceInquiry()
+    card
+      .balanceInquiry()
       .withAddress(address)
       .execute()
       .then((response) => {
@@ -1229,10 +1283,12 @@ test.failing("038 - fraud prevention return", (t) => {
   address.postalCode = "75024";
 
   const card = new CreditTrackData();
-  card.value = "%B6277220572999800^   /                         ^49121010557010000016000000?F;6277220572999800=49121010557010000016?";
+  card.value =
+    "%B6277220572999800^   /                         ^49121010557010000016000000?F;6277220572999800=49121010557010000016?";
 
   return new Promise((resolve, reject) => {
-    card.addValue(15.00)
+    card
+      .addValue(15.0)
       .withCurrency("USD")
       .withAllowDuplicates(true)
       .execute()
@@ -1257,7 +1313,8 @@ test.failing("038 - fraud prevention return", (t) => {
   const card = TestCards.gsbManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(2.05)
+    card
+      .charge(2.05)
       .withCurrency("USD")
       .withAddress(address)
       .withInvoiceNumber("123456")
@@ -1269,7 +1326,8 @@ test.failing("038 - fraud prevention return", (t) => {
         return response;
       })
       .then((response) => {
-        response.void()
+        response
+          .void()
           .execute()
           .then((voidResponse) => {
             t.truthy(voidResponse);
@@ -1292,7 +1350,8 @@ test.failing("038 - fraud prevention return", (t) => {
   const card = TestCards.gsbManual();
 
   return new Promise((resolve, reject) => {
-    card.charge(2.10)
+    card
+      .charge(2.1)
       .withCurrency("USD")
       .withAddress(address)
       .withInvoiceNumber("123456")
@@ -1321,7 +1380,8 @@ test("042 - activate gift 1", (t) => {
   const card = TestCards.giftCard1Swipe();
 
   return new Promise((resolve, reject) => {
-    card.activate(6.00)
+    card
+      .activate(6.0)
       .withCurrency("USD")
       .execute()
       .then((response) => {
@@ -1339,7 +1399,8 @@ test("043 - activate gift 2", (t) => {
   const card = TestCards.giftCard2Manual();
 
   return new Promise((resolve, reject) => {
-    card.activate(7.00)
+    card
+      .activate(7.0)
       .withCurrency("USD")
       .execute()
       .then((response) => {
@@ -1359,7 +1420,8 @@ test("044 - add value gift 1", (t) => {
   const card = TestCards.giftCard1Swipe();
 
   return new Promise((resolve, reject) => {
-    card.addValue(8.00)
+    card
+      .addValue(8.0)
       .withCurrency("USD")
       .execute()
       .then((response) => {
@@ -1377,7 +1439,8 @@ test("045 - add value gift 2", (t) => {
   const card = TestCards.giftCard2Manual();
 
   return new Promise((resolve, reject) => {
-    card.addValue(9.00)
+    card
+      .addValue(9.0)
       .withCurrency("USD")
       .execute()
       .then((response) => {
@@ -1397,7 +1460,8 @@ test("046 - balance inquiry gift 1", (t) => {
   const card = TestCards.giftCard1Swipe();
 
   return new Promise((resolve, reject) => {
-    card.balanceInquiry()
+    card
+      .balanceInquiry()
       .execute()
       .then((response) => {
         t.truthy(response);
@@ -1415,7 +1479,8 @@ test("047 - balance inquiry gift 2", (t) => {
   const card = TestCards.giftCard2Manual();
 
   return new Promise((resolve, reject) => {
-    card.balanceInquiry()
+    card
+      .balanceInquiry()
       .execute()
       .then((response) => {
         t.truthy(response);
@@ -1435,7 +1500,8 @@ test("048 - replace gift 1", (t) => {
   const card = TestCards.giftCard1Swipe();
 
   return new Promise((resolve, reject) => {
-    card.replaceWith(TestCards.giftCard2Manual())
+    card
+      .replaceWith(TestCards.giftCard2Manual())
       .execute()
       .then((response) => {
         t.truthy(response);
@@ -1452,7 +1518,8 @@ test("049 - replace gift 2", (t) => {
   const card = TestCards.giftCard2Manual();
 
   return new Promise((resolve, reject) => {
-    card.replaceWith(TestCards.giftCard1Swipe())
+    card
+      .replaceWith(TestCards.giftCard1Swipe())
       .execute()
       .then((response) => {
         t.truthy(response);
@@ -1471,7 +1538,8 @@ test("050 - sale gift 1", (t) => {
   const card = TestCards.giftCard1Swipe();
 
   return new Promise((resolve, reject) => {
-    card.charge(1.00)
+    card
+      .charge(1.0)
       .withCurrency("USD")
       .execute()
       .then((response) => {
@@ -1489,7 +1557,8 @@ test("051 - sale gift 2", (t) => {
   const card = TestCards.giftCard2Manual();
 
   return new Promise((resolve, reject) => {
-    card.charge(2.00)
+    card
+      .charge(2.0)
       .withCurrency("USD")
       .execute()
       .then((response) => {
@@ -1507,7 +1576,8 @@ test("052 - sale gift 1 void", (t) => {
   const card = TestCards.giftCard1Swipe();
 
   return new Promise((resolve, reject) => {
-    card.charge(3.00)
+    card
+      .charge(3.0)
       .withCurrency("USD")
       .execute()
       .then((response) => {
@@ -1516,7 +1586,8 @@ test("052 - sale gift 1 void", (t) => {
         return response;
       })
       .then((response) => {
-        response.void()
+        response
+          .void()
           .execute()
           .then((voidResponse) => {
             t.truthy(voidResponse);
@@ -1535,7 +1606,8 @@ test("053 - sale gift 2 void", (t) => {
   const card = TestCards.giftCard2Manual();
 
   return new Promise((resolve, reject) => {
-    card.charge(4.00)
+    card
+      .charge(4.0)
       .withCurrency("USD")
       .execute()
       .then((response) => {
@@ -1544,7 +1616,8 @@ test("053 - sale gift 2 void", (t) => {
         return response;
       })
       .then((response) => {
-        response.reverse(4.00)
+        response
+          .reverse(4.0)
           .execute()
           .then((reversalResponse) => {
             t.truthy(reversalResponse);
@@ -1572,7 +1645,8 @@ test("056 - reversal gift 2", (t) => {
 
   return new Promise((resolve, reject) => {
     // setup
-    card.charge(2.00)
+    card
+      .charge(2.0)
       .withCurrency("USD")
       .execute()
       .then((response) => {
@@ -1581,7 +1655,8 @@ test("056 - reversal gift 2", (t) => {
       })
       .then(() => {
         // reverse based on card, not transaction id
-        card.reverse(2.00)
+        card
+          .reverse(2.0)
           .execute()
           .then((response) => {
             t.truthy(response);
@@ -1602,7 +1677,8 @@ test("057 - deactivate gift 1", (t) => {
   const card = TestCards.giftCard1Swipe();
 
   return new Promise((resolve, reject) => {
-    card.deactivate()
+    card
+      .deactivate()
       .execute()
       .then((response) => {
         t.truthy(response);
@@ -1627,7 +1703,8 @@ test("059 - balance inquiry rewards 1", (t) => {
   const card = TestCards.giftCard1Swipe();
 
   return new Promise((resolve, reject) => {
-    card.balanceInquiry()
+    card
+      .balanceInquiry()
       .execute()
       .then((response) => {
         t.truthy(response);
@@ -1645,7 +1722,8 @@ test("060 - balance inquiry rewards 2", (t) => {
   const card = TestCards.giftCard2Manual();
 
   return new Promise((resolve, reject) => {
-    card.balanceInquiry()
+    card
+      .balanceInquiry()
       .execute()
       .then((response) => {
         t.truthy(response);
@@ -1691,7 +1769,8 @@ test("063 - add alias gift 1", (t) => {
   const card = TestCards.giftCard1Swipe();
 
   return new Promise((resolve, reject) => {
-    card.addAlias("9725550100")
+    card
+      .addAlias("9725550100")
       .execute()
       .then((response) => {
         t.truthy(response);
@@ -1708,7 +1787,8 @@ test("064 - add alias gift 2", (t) => {
   const card = TestCards.giftCard2Manual();
 
   return new Promise((resolve, reject) => {
-    card.addAlias("9725550100")
+    card
+      .addAlias("9725550100")
       .execute()
       .then((response) => {
         t.truthy(response);
@@ -1725,7 +1805,8 @@ test("065 - delete alias gift 1", (t) => {
   const card = TestCards.giftCard1Swipe();
 
   return new Promise((resolve, reject) => {
-    card.removeAlias("9725550100")
+    card
+      .removeAlias("9725550100")
       .execute()
       .then((response) => {
         t.truthy(response);
@@ -1744,7 +1825,8 @@ test("066 - redeem points gift 1", (t) => {
   const card = TestCards.giftCard1Swipe();
 
   return new Promise((resolve, reject) => {
-    card.charge(100)
+    card
+      .charge(100)
       .withCurrency("points")
       .execute()
       .then((response) => {
@@ -1762,7 +1844,8 @@ test("067 - redeem points gift 2", (t) => {
   const card = TestCards.giftCard2Manual();
 
   return new Promise((resolve, reject) => {
-    card.charge(200)
+    card
+      .charge(200)
       .withCurrency("points")
       .execute()
       .then((response) => {
@@ -1781,7 +1864,8 @@ test("068 - redeem points gift 2", (t) => {
   card.alias = "9725550100";
 
   return new Promise((resolve, reject) => {
-    card.charge(300)
+    card
+      .charge(300)
       .withCurrency("points")
       .execute()
       .then((response) => {
@@ -1801,7 +1885,8 @@ test("069 - rewards gift 1", (t) => {
   const card = TestCards.giftCard1Swipe();
 
   return new Promise((resolve, reject) => {
-    card.rewards(10)
+    card
+      .rewards(10)
       .execute()
       .then((response) => {
         t.truthy(response);
@@ -1818,7 +1903,8 @@ test("070 - rewards gift 2", (t) => {
   const card = TestCards.giftCard2Manual();
 
   return new Promise((resolve, reject) => {
-    card.rewards(11)
+    card
+      .rewards(11)
       .execute()
       .then((response) => {
         t.truthy(response);
@@ -1837,7 +1923,8 @@ test("071 - replace rewards 1", (t) => {
   const card = TestCards.giftCard1Swipe();
 
   return new Promise((resolve, reject) => {
-    card.replaceWith(TestCards.giftCard2Manual())
+    card
+      .replaceWith(TestCards.giftCard2Manual())
       .execute()
       .then((response) => {
         t.truthy(response);
@@ -1854,7 +1941,8 @@ test("072 - replace rewards 2", (t) => {
   const card = TestCards.giftCard2Manual();
 
   return new Promise((resolve, reject) => {
-    card.replaceWith(TestCards.giftCard1Swipe())
+    card
+      .replaceWith(TestCards.giftCard1Swipe())
       .execute()
       .then((response) => {
         t.truthy(response);
@@ -1873,7 +1961,8 @@ test("073 - deactivate rewards 1", (t) => {
   const card = TestCards.giftCard1Swipe();
 
   return new Promise((resolve, reject) => {
-    card.deactivate()
+    card
+      .deactivate()
       .execute()
       .then((response) => {
         t.truthy(response);
@@ -1890,7 +1979,8 @@ test("074 - deactivate rewards 2", (t) => {
   const card = TestCards.giftCard2Manual();
 
   return new Promise((resolve, reject) => {
-    card.deactivate()
+    card
+      .deactivate()
       .execute()
       .then((response) => {
         t.truthy(response);
@@ -1915,8 +2005,9 @@ test.after("999 - close batch", (t) => {
         resolve();
       })
       .catch((e: Error) => {
-        if (e.message.indexOf(BATCH_NOT_OPEN) !== -1
-          || e.message.indexOf(BATCH_EMPTY) !== -1
+        if (
+          e.message.indexOf(BATCH_NOT_OPEN) !== -1 ||
+          e.message.indexOf(BATCH_EMPTY) !== -1
         ) {
           t.pass();
           resolve();

@@ -27,7 +27,8 @@ card.expYear = "2019";
 card.cardHolderName = "James Mason";
 
 const customerId = `${GenerationUtils.generateTimestamp()}-Realex`;
-const paymentId = (t: string) => `${GenerationUtils.generateTimestamp()}-Realex-${t}`;
+const paymentId = (t: string) =>
+  `${GenerationUtils.generateTimestamp()}-Realex-${t}`;
 
 const customer = new Customer();
 customer.key = customerId;
@@ -72,7 +73,10 @@ test("001b - create payment method", async (t) => {
   t.plan(1);
 
   try {
-    const paymentMethod = await customer.addPaymentMethod(paymentId("Credit"), card);
+    const paymentMethod = await customer.addPaymentMethod(
+      paymentId("Credit"),
+      card,
+    );
     t.truthy(paymentMethod);
   } catch (e) {
     if (e.responseCode !== "520") {
@@ -94,7 +98,10 @@ test("002b - edit payment method from id", async (_t) => {
   newCard.expYear = "2020";
   newCard.cardHolderName = "Philip Marlowe";
 
-  const paymentMethod = new RecurringPaymentMethod(customerId, paymentId("Credit"));
+  const paymentMethod = new RecurringPaymentMethod(
+    customerId,
+    paymentId("Credit"),
+  );
   paymentMethod.paymentMethod = newCard;
   await paymentMethod.saveChanges();
 });
@@ -106,8 +113,12 @@ test("003 - find", async (_t) => {
 test("004a - charge stored card", async (t) => {
   t.plan(2);
 
-  const paymentMethod = new RecurringPaymentMethod(customerId, paymentId("Credit"));
-  const response = await paymentMethod.charge(10)
+  const paymentMethod = new RecurringPaymentMethod(
+    customerId,
+    paymentId("Credit"),
+  );
+  const response = await paymentMethod
+    .charge(10)
     .withCurrency("USD")
     .withCvn("123")
     .execute();
@@ -119,8 +130,12 @@ test("004a - charge stored card", async (t) => {
 test("004b - verify stored card", async (t) => {
   t.plan(2);
 
-  const paymentMethod = new RecurringPaymentMethod(customerId, paymentId("Credit"));
-  const response = await paymentMethod.verify()
+  const paymentMethod = new RecurringPaymentMethod(
+    customerId,
+    paymentId("Credit"),
+  );
+  const response = await paymentMethod
+    .verify()
     .withCvn("123")
     .execute();
 
@@ -131,8 +146,12 @@ test("004b - verify stored card", async (t) => {
 test("004c - refund stored card", async (t) => {
   t.plan(2);
 
-  const paymentMethod = new RecurringPaymentMethod(customerId, paymentId("Credit"));
-  const response = await paymentMethod.refund(10.01)
+  const paymentMethod = new RecurringPaymentMethod(
+    customerId,
+    paymentId("Credit"),
+  );
+  const response = await paymentMethod
+    .refund(10.01)
     .withCurrency("USD")
     .execute();
 
@@ -141,15 +160,22 @@ test("004c - refund stored card", async (t) => {
 });
 
 test("005 - delete payment method", async (_t) => {
-  const paymentMethod = new RecurringPaymentMethod(customerId, paymentId("Credit"));
+  const paymentMethod = new RecurringPaymentMethod(
+    customerId,
+    paymentId("Credit"),
+  );
   await paymentMethod.delete();
 });
 
 test("006 - recurring payment", async (t) => {
   t.plan(2);
 
-  const paymentMethod = new RecurringPaymentMethod(customerId, paymentId("Credit"));
-  const response = await paymentMethod.charge(12)
+  const paymentMethod = new RecurringPaymentMethod(
+    customerId,
+    paymentId("Credit"),
+  );
+  const response = await paymentMethod
+    .charge(12)
     .withRecurringInfo(RecurringType.Fixed, RecurringSequence.First)
     .withCurrency("USD")
     .execute();

@@ -11,11 +11,7 @@ export class ValidationTarget {
   public enumName: string;
   public precondition: ValidationClause;
 
-  public constructor(
-    parent: Validations,
-    enumName: string,
-    type: number,
-  ) {
+  public constructor(parent: Validations, enumName: string, type: number) {
     this.parent = parent;
     this.type = type;
     this.enumName = enumName;

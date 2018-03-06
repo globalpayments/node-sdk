@@ -6,8 +6,7 @@ import {
 } from "../";
 import { BaseBuilder } from "./BaseBuilder";
 
-export abstract class TransactionBuilder<T>
-  extends BaseBuilder<T> {
+export abstract class TransactionBuilder<T> extends BaseBuilder<T> {
   public paymentMethod: PaymentMethod;
   public transactionType: TransactionType;
   public transactionModifier = TransactionModifier.None;

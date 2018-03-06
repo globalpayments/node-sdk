@@ -25,11 +25,17 @@ test.before((_t) => {
 
 test("credit reverse", (t) => {
   const error = t.throws(() => {
-    return card.reverse(15)
+    return card
+      .reverse(15)
       .withAllowDuplicates(true)
       .execute();
   }, UnsupportedTransactionError);
 
   t.is(error.name, "UnsupportedTransactionError");
-  t.true(-1 !== error.message.indexOf("selected gateway does not support this transaction type"));
+  t.true(
+    -1 !==
+      error.message.indexOf(
+        "selected gateway does not support this transaction type",
+      ),
+  );
 });

@@ -35,12 +35,20 @@ export class Transaction {
     return this.transactionReference.transactionId;
   }
 
-  public static fromId(transactionId: string, orderId?: string | PaymentMethodType, paymentMethodType = PaymentMethodType.Credit) {
+  public static fromId(
+    transactionId: string,
+    orderId?: string | PaymentMethodType,
+    paymentMethodType = PaymentMethodType.Credit,
+  ) {
     const transaction = new Transaction();
     transaction.transactionReference = new TransactionReference();
     transaction.transactionReference.transactionId = transactionId;
 
-    if (orderId && (typeof orderId === "string" || Object.prototype.toString.call(orderId) === "[object String]")) {
+    if (
+      orderId &&
+      (typeof orderId === "string" ||
+        Object.prototype.toString.call(orderId) === "[object String]")
+    ) {
       transaction.transactionReference.orderId = orderId as string;
     } else if (orderId) {
       paymentMethodType = orderId as PaymentMethodType;
@@ -58,7 +66,7 @@ export class Transaction {
    * @return AuthorizationBuilder
    */
   public additionalAuth(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.Auth))
+    return new AuthorizationBuilder(TransactionType.Auth)
       .withPaymentMethod(this.transactionReference)
       .withAmount(amount);
   }
@@ -71,7 +79,7 @@ export class Transaction {
    * @return ManagementBuilder
    */
   public capture(amount?: string | number) {
-    return (new ManagementBuilder(TransactionType.Capture))
+    return new ManagementBuilder(TransactionType.Capture)
       .withPaymentMethod(this.transactionReference)
       .withAmount(amount);
   }
@@ -82,14 +90,21 @@ export class Transaction {
    * @return ManagementBuilder
    */
   public edit() {
-    let builder = (new ManagementBuilder(TransactionType.Edit))
-      .withPaymentMethod(this.transactionReference);
+    let builder = new ManagementBuilder(TransactionType.Edit).withPaymentMethod(
+      this.transactionReference,
+    );
 
     if (this.commercialIndicator) {
       builder = builder.withModifier(TransactionModifier.LevelII);
     }
 
     return builder;
+  }
+
+  public hold() {
+    return new ManagementBuilder(TransactionType.Hold).withPaymentMethod(
+      this.transactionReference,
+    );
   }
 
   /**
@@ -100,9 +115,15 @@ export class Transaction {
    * @return ManagementBuilder
    */
   public refund(amount?: string | number) {
-    return (new ManagementBuilder(TransactionType.Refund))
+    return new ManagementBuilder(TransactionType.Refund)
       .withPaymentMethod(this.transactionReference)
       .withAmount(amount);
+  }
+
+  public release() {
+    return new ManagementBuilder(TransactionType.Release).withPaymentMethod(
+      this.transactionReference,
+    );
   }
 
   /**
@@ -113,7 +134,7 @@ export class Transaction {
    * @return ManagementBuilder
    */
   public reverse(amount?: string | number) {
-    return (new ManagementBuilder(TransactionType.Reversal))
+    return new ManagementBuilder(TransactionType.Reversal)
       .withPaymentMethod(this.transactionReference)
       .withAmount(amount);
   }
@@ -124,7 +145,8 @@ export class Transaction {
    * @return ManagementBuilder
    */
   public void() {
-    return (new ManagementBuilder(TransactionType.Void))
-      .withPaymentMethod(this.transactionReference);
+    return new ManagementBuilder(TransactionType.Void).withPaymentMethod(
+      this.transactionReference,
+    );
   }
 }

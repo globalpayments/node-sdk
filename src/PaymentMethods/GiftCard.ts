@@ -14,22 +14,14 @@ import {
 } from "./Interfaces";
 import { PaymentMethod } from "./PaymentMethod";
 
-export class GiftCard extends PaymentMethod implements
-  IPrePayable,
-  IBalanceable,
-  IReversable,
-  IChargable {
+export class GiftCard extends PaymentMethod
+  implements IPrePayable, IBalanceable, IReversable, IChargable {
   /**
    * Payment method value types
    *
    * @var string[]
    */
-  protected static valueTypes = [
-    "alias",
-    "number",
-    "token",
-    "trackData",
-  ];
+  protected static valueTypes = ["alias", "number", "token", "trackData"];
 
   /**
    * Payment method type
@@ -71,7 +63,7 @@ export class GiftCard extends PaymentMethod implements
   public static create(alias?: string) {
     const card = new GiftCard();
 
-    return (new AuthorizationBuilder(TransactionType.Alias, card))
+    return new AuthorizationBuilder(TransactionType.Alias, card)
       .withAlias(AliasAction.Create, alias)
       .execute()
       .then((response) => {
@@ -94,8 +86,10 @@ export class GiftCard extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public addAlias(alias?: string) {
-    return (new AuthorizationBuilder(TransactionType.Alias, this))
-      .withAlias(AliasAction.Add, alias);
+    return new AuthorizationBuilder(TransactionType.Alias, this).withAlias(
+      AliasAction.Add,
+      alias,
+    );
   }
 
   /**
@@ -106,8 +100,9 @@ export class GiftCard extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public activate(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.Activate, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Activate, this).withAmount(
+      amount,
+    );
   }
 
   /**
@@ -118,8 +113,9 @@ export class GiftCard extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public addValue(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.AddValue, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.AddValue, this).withAmount(
+      amount,
+    );
   }
 
   /**
@@ -130,8 +126,10 @@ export class GiftCard extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public balanceInquiry(inquiry?: InquiryType) {
-    return (new AuthorizationBuilder(TransactionType.Balance, this))
-      .withBalanceInquiryType(inquiry);
+    return new AuthorizationBuilder(
+      TransactionType.Balance,
+      this,
+    ).withBalanceInquiryType(inquiry);
   }
 
   /**
@@ -142,8 +140,9 @@ export class GiftCard extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public charge(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.Sale, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Sale, this).withAmount(
+      amount,
+    );
   }
 
   /**
@@ -163,8 +162,10 @@ export class GiftCard extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public removeAlias(alias?: string) {
-    return (new AuthorizationBuilder(TransactionType.Alias, this))
-      .withAlias(AliasAction.Delete, alias);
+    return new AuthorizationBuilder(TransactionType.Alias, this).withAlias(
+      AliasAction.Delete,
+      alias,
+    );
   }
 
   /**
@@ -175,8 +176,10 @@ export class GiftCard extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public replaceWith(newCard?: GiftCard) {
-    return (new AuthorizationBuilder(TransactionType.Replace, this))
-      .withReplacementCard(newCard);
+    return new AuthorizationBuilder(
+      TransactionType.Replace,
+      this,
+    ).withReplacementCard(newCard);
   }
 
   /**
@@ -187,8 +190,9 @@ export class GiftCard extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public reverse(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.Reversal, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Reversal, this).withAmount(
+      amount,
+    );
   }
 
   /**
@@ -199,8 +203,9 @@ export class GiftCard extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public rewards(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.Reward, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Reward, this).withAmount(
+      amount,
+    );
   }
 
   get alias(): string {

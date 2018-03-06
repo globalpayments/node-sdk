@@ -7,7 +7,11 @@ export abstract class RestGateway extends Gateway {
     super("application/json");
   }
 
-  public doTransaction(verb: string, endpoint: string, requestData?: string): Promise<string> {
+  public doTransaction(
+    verb: string,
+    endpoint: string,
+    requestData?: string,
+  ): Promise<string> {
     return this.sendRequest(verb, endpoint, requestData);
   }
 }

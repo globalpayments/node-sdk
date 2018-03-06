@@ -1,8 +1,4 @@
-import {
-  IRecurringEntity,
-  RecurringBuilder,
-  TransactionType,
-} from "../";
+import { IRecurringEntity, RecurringBuilder, TransactionType } from "../";
 
 export class RecurringService {
   public static create<T extends IRecurringEntity>(entity: T) {
@@ -21,7 +17,10 @@ export class RecurringService {
     const entity = {
       key,
     };
-    return new RecurringBuilder<T>(TransactionType.Fetch, (entity as any) as T).execute();
+    return new RecurringBuilder<T>(
+      TransactionType.Fetch,
+      (entity as any) as T,
+    ).execute();
   }
 
   public static search<T extends IRecurringEntity>() {

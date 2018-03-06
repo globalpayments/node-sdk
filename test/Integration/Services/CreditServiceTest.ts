@@ -1,12 +1,6 @@
 import ava from "ava";
-import {
-  CreditService,
-  ServicesConfig,
-  TaxType,
-} from "../../../src/";
-import {
-  TestCards,
-} from "../../Data";
+import { CreditService, ServicesConfig, TaxType } from "../../../src/";
+import { TestCards } from "../../Data";
 
 const config = new ServicesConfig();
 config.secretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A";
@@ -20,7 +14,8 @@ const card = TestCards.visaManual();
 test("auth capture", async (t) => {
   t.plan(4);
 
-  const response = await service.authorize(10)
+  const response = await service
+    .authorize(10)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .withAllowDuplicates(true)
@@ -29,8 +24,7 @@ test("auth capture", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00");
 
-  const capture = await service.capture(response.transactionId)
-    .execute();
+  const capture = await service.capture(response.transactionId).execute();
 
   t.truthy(capture);
   t.is(capture.responseCode, "00");
@@ -39,7 +33,8 @@ test("auth capture", async (t) => {
 test("sale", async (t) => {
   t.plan(2);
 
-  const response = await service.charge(11.01)
+  const response = await service
+    .charge(11.01)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .withAllowDuplicates(true)
@@ -52,7 +47,8 @@ test("sale", async (t) => {
 test("edit", async (t) => {
   t.plan(4);
 
-  const response = await service.charge(12)
+  const response = await service
+    .charge(12)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .withAllowDuplicates(true)
@@ -61,7 +57,8 @@ test("edit", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00");
 
-  const edit = await service.edit(response.transactionId)
+  const edit = await service
+    .edit(response.transactionId)
     .withAmount(14)
     .withGratuity(2)
     .execute();
@@ -73,7 +70,8 @@ test("edit", async (t) => {
 test("commercial edit", async (t) => {
   t.plan(4);
 
-  const response = await service.charge(13)
+  const response = await service
+    .charge(13)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .withCommercialRequest(true)
@@ -83,7 +81,8 @@ test("commercial edit", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00");
 
-  const edit = await service.edit(response.transactionId)
+  const edit = await service
+    .edit(response.transactionId)
     .withTaxType(TaxType.SalesTax)
     .withTaxAmount(1)
     .execute();
@@ -95,7 +94,8 @@ test("commercial edit", async (t) => {
 test("refund by card", async (t) => {
   t.plan(4);
 
-  const response = await service.charge(14)
+  const response = await service
+    .charge(14)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .withAllowDuplicates(true)
@@ -104,7 +104,8 @@ test("refund by card", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00");
 
-  const refund = await service.refund(14)
+  const refund = await service
+    .refund(14)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .execute();
@@ -116,7 +117,8 @@ test("refund by card", async (t) => {
 test("refund by transaction ID", async (t) => {
   t.plan(4);
 
-  const response = await service.charge(15)
+  const response = await service
+    .charge(15)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .withAllowDuplicates(true)
@@ -125,7 +127,8 @@ test("refund by transaction ID", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00");
 
-  const refund = await service.refund(15)
+  const refund = await service
+    .refund(15)
     .withCurrency("USD")
     .withTransactionId(response.transactionId)
     .execute();
@@ -137,7 +140,8 @@ test("refund by transaction ID", async (t) => {
 test("reverse by card", async (t) => {
   t.plan(4);
 
-  const response = await service.charge(16)
+  const response = await service
+    .charge(16)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .withAllowDuplicates(true)
@@ -146,7 +150,8 @@ test("reverse by card", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00");
 
-  const reverse = await service.reverse(16)
+  const reverse = await service
+    .reverse(16)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .execute();
@@ -158,7 +163,8 @@ test("reverse by card", async (t) => {
 test("reverse by transaction ID", async (t) => {
   t.plan(4);
 
-  const response = await service.charge(17)
+  const response = await service
+    .charge(17)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .withAllowDuplicates(true)
@@ -167,7 +173,8 @@ test("reverse by transaction ID", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00");
 
-  const reverse = await service.reverse(17)
+  const reverse = await service
+    .reverse(17)
     .withCurrency("USD")
     .withTransactionId(response.transactionId)
     .execute();
@@ -179,7 +186,8 @@ test("reverse by transaction ID", async (t) => {
 test("verify", async (t) => {
   t.plan(2);
 
-  const response = await service.verify()
+  const response = await service
+    .verify()
     .withCurrency("USD")
     .withPaymentMethod(card)
     .execute();
@@ -191,7 +199,8 @@ test("verify", async (t) => {
 test("reverse by client transaction ID", async (t) => {
   t.plan(4);
 
-  const response = await service.charge(19)
+  const response = await service
+    .charge(19)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .withClientTransactionId("123456789")

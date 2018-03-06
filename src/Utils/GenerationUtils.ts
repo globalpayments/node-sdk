@@ -14,12 +14,14 @@ export class GenerationUtils {
 
   public static generateTimestamp(): string {
     const date = new Date();
-    return date.getUTCFullYear().toString()
-      + StringUtils.leftPad((date.getUTCMonth() + 1).toString(), 2, "0")
-      + StringUtils.leftPad(date.getUTCDate().toString(), 2, "0")
-      + StringUtils.leftPad(date.getUTCHours().toString(), 2, "0")
-      + StringUtils.leftPad(date.getUTCMinutes().toString(), 2, "0")
-      + StringUtils.leftPad(date.getUTCSeconds().toString(), 2, "0");
+    return (
+      date.getUTCFullYear().toString() +
+      StringUtils.leftPad((date.getUTCMonth() + 1).toString(), 2, "0") +
+      StringUtils.leftPad(date.getUTCDate().toString(), 2, "0") +
+      StringUtils.leftPad(date.getUTCHours().toString(), 2, "0") +
+      StringUtils.leftPad(date.getUTCMinutes().toString(), 2, "0") +
+      StringUtils.leftPad(date.getUTCSeconds().toString(), 2, "0")
+    );
   }
 
   public static generateOrderId(): string {

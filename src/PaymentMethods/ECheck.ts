@@ -39,7 +39,8 @@ export class ECheck extends PaymentMethod implements IChargable {
    * @return AuthorizationBuilder
    */
   public charge(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.Sale, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Sale, this).withAmount(
+      amount,
+    );
   }
 }

@@ -18,19 +18,32 @@ import {
 } from "./Interfaces";
 import { PaymentMethod } from "./PaymentMethod";
 
-export abstract class Credit extends PaymentMethod implements
-  IEncryptable,
-  ITokenizable,
-  IChargable,
-  IAuthable,
-  IRefundable,
-  IReversable,
-  IVerifyable,
-  IPrePayable,
-  IBalanceable {
+export abstract class Credit extends PaymentMethod
+  implements IEncryptable,
+    ITokenizable,
+    IChargable,
+    IAuthable,
+    IRefundable,
+    IReversable,
+    IVerifyable,
+    IPrePayable,
+    IBalanceable {
   public encryptionData: EncryptionData;
   public paymentMethodType = PaymentMethodType.Credit;
+
+  /**
+   * The token value representing the card.
+   *
+   * For `TransactionModifier.EncryptedMobile` transactions, this value is the
+   * encrypted payload from the mobile payment scheme.
+   */
   public token: string;
+
+  /**
+   * The type of mobile device used in `Transaction.Modifier.EncryptedMobile`
+   * transactions.
+   */
+  public mobileType: string;
 
   /**
    * Authorizes the payment method
@@ -40,8 +53,9 @@ export abstract class Credit extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public authorize(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.Auth, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Auth, this).withAmount(
+      amount,
+    );
   }
 
   /**
@@ -52,8 +66,9 @@ export abstract class Credit extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public charge(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.Sale, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Sale, this).withAmount(
+      amount,
+    );
   }
 
   /**
@@ -64,8 +79,9 @@ export abstract class Credit extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public addValue(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.AddValue, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.AddValue, this).withAmount(
+      amount,
+    );
   }
 
   /**
@@ -76,8 +92,10 @@ export abstract class Credit extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public balanceInquiry(inquiry?: InquiryType) {
-    return (new AuthorizationBuilder(TransactionType.Balance, this))
-      .withBalanceInquiryType(inquiry);
+    return new AuthorizationBuilder(
+      TransactionType.Balance,
+      this,
+    ).withBalanceInquiryType(inquiry);
   }
 
   /**
@@ -88,8 +106,9 @@ export abstract class Credit extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public refund(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.Refund, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Refund, this).withAmount(
+      amount,
+    );
   }
 
   /**
@@ -100,8 +119,9 @@ export abstract class Credit extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public reverse(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.Reversal, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Reversal, this).withAmount(
+      amount,
+    );
   }
 
   /**
@@ -119,7 +139,6 @@ export abstract class Credit extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public tokenize() {
-    return this.verify()
-      .withRequestMultiUseToken(true);
+    return this.verify().withRequestMultiUseToken(true);
   }
 }

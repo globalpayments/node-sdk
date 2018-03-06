@@ -1,8 +1,4 @@
-import {
-  BaseBuilder,
-  BuilderError,
-  TransactionBuilder,
-} from "../../";
+import { BaseBuilder, BuilderError, TransactionBuilder } from "../../";
 import { ValidationTarget } from "./ValidationTarget";
 
 export interface IRuleSet {
@@ -35,9 +31,10 @@ export class Validations {
       this.rules[enumName].forEach((rules, iKey) => {
         let value: number = builder[enumName];
 
-        if ((value === undefined || value === null)
-          && builder instanceof TransactionBuilder
-          && builder.paymentMethod
+        if (
+          (value === undefined || value === null) &&
+          builder instanceof TransactionBuilder &&
+          builder.paymentMethod
         ) {
           value = builder.paymentMethod[enumName];
           if (value === undefined || value === null) {
@@ -54,9 +51,10 @@ export class Validations {
             continue;
           }
 
-          if (validation.constraint !== undefined
-            && validation.constraint !== null
-            && validation.constraint !== builder[validation.constraintProperty]
+          if (
+            validation.constraint !== undefined &&
+            validation.constraint !== null &&
+            validation.constraint !== builder[validation.constraintProperty]
           ) {
             continue;
           }

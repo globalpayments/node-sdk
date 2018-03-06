@@ -30,9 +30,7 @@ export class CreditCardData extends Credit implements ICardData {
   }
 
   public getCardType(): string {
-    const number = this.number
-      .replace(" ", "")
-      .replace("-", "");
+    const number = this.number.replace(" ", "").replace("-", "");
 
     for (const type of CreditCardData.cardTypes) {
       if (type.regex.test(number)) {

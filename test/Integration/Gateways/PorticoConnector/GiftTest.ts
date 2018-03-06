@@ -17,7 +17,8 @@ const card = new GiftCard();
 card.number = "5022440000000000007";
 
 const track = new GiftCard();
-track.trackData = "%B5022440000000000098^^391200081613?;5022440000000000098=391200081613?";
+track.trackData =
+  "%B5022440000000000098^^391200081613?;5022440000000000098=391200081613?";
 
 ava.before((_t) => {
   ServicesContainer.configure(config);
@@ -46,7 +47,8 @@ test("gift add alias", async (t) => {
 test("gift add value", async (t) => {
   t.plan(2);
 
-  const response = await card.addValue(10)
+  const response = await card
+    .addValue(10)
     .withCurrency("USD")
     .execute();
 
@@ -66,7 +68,8 @@ test("gift balance inquiry", async (t) => {
 test("gift sale", async (t) => {
   t.plan(2);
 
-  const response = await card.charge(10)
+  const response = await card
+    .charge(10)
     .withCurrency("USD")
     .execute();
 
@@ -131,7 +134,8 @@ test("gift track add alias", async (t) => {
 test("gift track add value", async (t) => {
   t.plan(2);
 
-  const response = await track.addValue(10)
+  const response = await track
+    .addValue(10)
     .withCurrency("USD")
     .execute();
 
@@ -151,7 +155,8 @@ test("gift track balance inquiry", async (t) => {
 test("gift track sale", async (t) => {
   t.plan(2);
 
-  const response = await track.charge(10)
+  const response = await track
+    .charge(10)
     .withCurrency("USD")
     .execute();
 
@@ -207,14 +212,18 @@ test("gift track rewards", async (t) => {
 test("gift reverse with transaction id", async (t) => {
   t.plan(4);
 
-  const response = await card.charge(10)
+  const response = await card
+    .charge(10)
     .withCurrency("USD")
     .execute();
 
   t.truthy(response);
   t.is(response.responseCode, "00", response.responseMessage);
 
-  const reverseResponse = await Transaction.fromId(response.transactionId, PaymentMethodType.Gift)
+  const reverseResponse = await Transaction.fromId(
+    response.transactionId,
+    PaymentMethodType.Gift,
+  )
     .reverse(10)
     .execute();
 

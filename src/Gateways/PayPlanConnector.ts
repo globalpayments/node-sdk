@@ -40,20 +40,33 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     this.headers[RestGateway.AUTHORIZATION_HEADER] = auth;
   }
 
-  public processRecurring<T extends IRecurringEntity>(builder: RecurringBuilder<T>): Promise<T> {
+  public processRecurring<T extends IRecurringEntity>(
+    builder: RecurringBuilder<T>,
+  ): Promise<T> {
     let request = new Object();
     // todo
-    if (builder.transactionType === TransactionType.Create || builder.transactionType === TransactionType.Edit) {
+    if (
+      builder.transactionType === TransactionType.Create ||
+      builder.transactionType === TransactionType.Edit
+    ) {
       if (builder.entity instanceof Customer) {
         request = this.buildCustomer(request, builder.entity);
       }
 
       if (builder.entity instanceof RecurringPaymentMethod) {
-        request = this.buildPaymentMethod(request, builder.entity, builder.transactionType);
+        request = this.buildPaymentMethod(
+          request,
+          builder.entity,
+          builder.transactionType,
+        );
       }
 
       if (builder.entity instanceof Schedule) {
-        request = this.buildSchedule(request, builder.entity, builder.transactionType);
+        request = this.buildSchedule(
+          request,
+          builder.entity,
+          builder.transactionType,
+        );
       }
     } else if (builder.transactionType === TransactionType.Search) {
       for (const entry in builder.searchCriteria) {
@@ -64,14 +77,16 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     }
 
     return this.doTransaction(
-        this.mapMethod(builder.transactionType),
-        this.mapUrl(builder),
-        JSON.stringify(request),
-      )
-      .then((response) => this.mapResponse<T>(builder, response));
+      this.mapMethod(builder.transactionType),
+      this.mapUrl(builder),
+      JSON.stringify(request),
+    ).then((response) => this.mapResponse<T>(builder, response));
   }
 
-  protected mapResponse<T extends IRecurringEntity>(builder: RecurringBuilder<T>, rawResponse: string): T {
+  protected mapResponse<T extends IRecurringEntity>(
+    builder: RecurringBuilder<T>,
+    rawResponse: string,
+  ): T {
     if (!rawResponse) {
       return new Object() as T;
     }
@@ -79,20 +94,35 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     const response = JSON.parse(rawResponse);
     let result: any;
 
-    if (builder.entity instanceof Customer && builder.transactionType === TransactionType.Search) {
-      result = response.results.map((customer: object) => this.hydrateCustomer(customer));
+    if (
+      builder.entity instanceof Customer &&
+      builder.transactionType === TransactionType.Search
+    ) {
+      result = response.results.map((customer: object) =>
+        this.hydrateCustomer(customer),
+      );
     } else if (builder.entity instanceof Customer) {
       result = this.hydrateCustomer(response);
     }
 
-    if (builder.entity instanceof RecurringPaymentMethod && builder.transactionType === TransactionType.Search) {
-      result = response.results.map((paymentMethod: object) => this.hydrateRecurringPaymentMethod(paymentMethod));
+    if (
+      builder.entity instanceof RecurringPaymentMethod &&
+      builder.transactionType === TransactionType.Search
+    ) {
+      result = response.results.map((paymentMethod: object) =>
+        this.hydrateRecurringPaymentMethod(paymentMethod),
+      );
     } else if (builder.entity instanceof RecurringPaymentMethod) {
       result = this.hydrateRecurringPaymentMethod(response);
     }
 
-    if (builder.entity instanceof Schedule && builder.transactionType === TransactionType.Search) {
-      result = response.results.map((schedule: object) => this.hydrateSchedule(schedule));
+    if (
+      builder.entity instanceof Schedule &&
+      builder.transactionType === TransactionType.Search
+    ) {
+      result = response.results.map((schedule: object) =>
+        this.hydrateSchedule(schedule),
+      );
     } else if (builder.entity instanceof Schedule) {
       result = this.hydrateSchedule(response);
     }
@@ -120,7 +150,11 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     return request;
   }
 
-  protected buildPaymentMethod(request: any, entity: RecurringPaymentMethod, transactionType: TransactionType) {
+  protected buildPaymentMethod(
+    request: any,
+    entity: RecurringPaymentMethod,
+    transactionType: TransactionType,
+  ) {
     if (entity) {
       request.preferredPayment = entity.preferredPayment;
       request.paymentMethodIdentifier = entity.id;
@@ -129,12 +163,14 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
       request = this.buildAddress(request, entity.address);
 
       if (transactionType === TransactionType.Create) {
-        const {hasToken, tokenValue} = this.hasToken(entity.paymentMethod);
+        const { hasToken, tokenValue } = this.hasToken(entity.paymentMethod);
         const paymentInfo: any = {};
         if ((entity.paymentMethod as PaymentMethod).isCardData) {
           const method = (entity.paymentMethod as any) as ICardData;
           paymentInfo.type = hasToken ? "SINGLEUSETOKEN" : null;
-          paymentInfo[hasToken ? "token" : "number"] = hasToken ? tokenValue : method.number;
+          paymentInfo[hasToken ? "token" : "number"] = hasToken
+            ? tokenValue
+            : method.number;
           paymentInfo.expMon = method.expMonth;
           paymentInfo.expYear = method.expYear;
           request.cardVerificationValue = method.cvn;
@@ -142,13 +178,18 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
         } else if ((entity.paymentMethod as PaymentMethod).isTrackData) {
           const method = (entity.paymentMethod as any) as ITrackData;
           paymentInfo.data = method.value;
-          paymentInfo.dataEntryMode = method.entryMethod.toString().toUpperCase();
+          paymentInfo.dataEntryMode = method.entryMethod
+            .toString()
+            .toUpperCase();
           request.track = paymentInfo;
         } else if (entity.paymentMethod instanceof ECheck) {
           const check = entity.paymentMethod;
           request.achType = this.prepareAccountType(check.accountType);
           request.accountType = this.prepareCheckType(check.checkType);
-          request.telephoneIndicator = (check.secCode === SecCode.CCD || check.SecCode === SecCode.PPD) ? false : true;
+          request.telephoneIndicator =
+            check.secCode === SecCode.CCD || check.SecCode === SecCode.PPD
+              ? false
+              : true;
           request.routingNumber = check.routingNumber;
           request.accountNumber = check.accountNumber;
           request.accountHolderYob = check.birthYear.toString();
@@ -159,14 +200,16 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
         }
 
         if ((entity.paymentMethod as PaymentMethod).isEncryptable) {
-          const enc = ((entity.paymentMethod as any) as IEncryptable).encryptionData;
+          const enc = ((entity.paymentMethod as any) as IEncryptable)
+            .encryptionData;
           if (enc) {
             paymentInfo.trackNumber = enc.trackNumber;
             paymentInfo.key = enc.ktb;
             paymentInfo.encryptionType = "E3";
           }
         }
-      } else { // edit fields
+      } else {
+        // edit fields
         delete request.customerKey;
         request.paymentStatus = entity.status;
         request.cpcTaxType = entity.taxType;
@@ -177,7 +220,11 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     return request;
   }
 
-  protected buildSchedule(request: any, entity: Schedule, transactionType: TransactionType) {
+  protected buildSchedule(
+    request: any,
+    entity: Schedule,
+    transactionType: TransactionType,
+  ) {
     const mapDuration = () => {
       if (entity.numberOfPayments) {
         return "Limited Number";
@@ -195,7 +242,10 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
         "Quarterly",
         "Semi-Annually",
       ];
-      if (entity.frequency && frequencies.indexOf(entity.frequency.toString()) !== -1) {
+      if (
+        entity.frequency &&
+        frequencies.indexOf(entity.frequency.toString()) !== -1
+      ) {
         switch (entity.paymentSchedule) {
           case PaymentSchedule.FirstDayOfTheMonth:
             return "First";
@@ -208,7 +258,10 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
             }
             return day.toString();
         }
-      } else if (entity.frequency && entity.frequency.toString() === "Semi-Monthly") {
+      } else if (
+        entity.frequency &&
+        entity.frequency.toString() === "Semi-Monthly"
+      ) {
         if (entity.paymentSchedule === PaymentSchedule.LastDayOfTheMonth) {
           return "Last";
         }
@@ -224,12 +277,29 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
       request.scheduleStatus = entity.status;
       request.paymentMethodKey = entity.paymentKey;
 
-      request = this.buildAmount(request, "subtotalAmount", entity.amount, entity.currency, transactionType);
-      request = this.buildAmount(request, "taxAmount", entity.taxAmount, entity.currency, transactionType);
+      request = this.buildAmount(
+        request,
+        "subtotalAmount",
+        entity.amount,
+        entity.currency,
+        transactionType,
+      );
+      request = this.buildAmount(
+        request,
+        "taxAmount",
+        entity.taxAmount,
+        entity.currency,
+        transactionType,
+      );
 
       request.deviceId = entity.deviceId;
       request.processingDateInfo = mapProcessingDate();
-      request = this.buildDate(request, "endDate", entity.endDate, (transactionType === TransactionType.Edit));
+      request = this.buildDate(
+        request,
+        "endDate",
+        entity.endDate,
+        transactionType === TransactionType.Edit,
+      );
       request.reprocessingCount = entity.reprocessingCount || 3;
       if (entity.emailReceipt) {
         request.emailReceipt = entity.emailReceipt.toString();
@@ -248,7 +318,8 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
           request.frequency = entity.frequency.toString();
         }
         request.duration = mapDuration();
-      } else { // edit Fields
+      } else {
+        // edit Fields
         if (!entity.hasStarted) {
           request = this.buildDate(request, "startDate", entity.startDate);
           if (entity.frequency) {
@@ -256,8 +327,16 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
           }
           request.duration = mapDuration();
         } else {
-          request = this.buildDate(request, "cancellationDate", entity.cancellationDate);
-          request = this.buildDate(request, "nextProcressingDate", entity.nextProcessingDate);
+          request = this.buildDate(
+            request,
+            "cancellationDate",
+            entity.cancellationDate,
+          );
+          request = this.buildDate(
+            request,
+            "nextProcressingDate",
+            entity.nextProcessingDate,
+          );
         }
       }
     }
@@ -300,7 +379,13 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     return request;
   }
 
-  protected buildAmount(request: any, name: string, amount: number | string, currency: string, transactionType: TransactionType) {
+  protected buildAmount(
+    request: any,
+    name: string,
+    amount: number | string,
+    currency: string,
+    transactionType: TransactionType,
+  ) {
     if (amount) {
       request[name] = {
         value: parseFloat(amount.toString()) * 100,
@@ -316,7 +401,11 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
   protected buildDate(request: any, name: string, date: Date, force = false) {
     const getDateValue = (d: Date) => {
       const day = StringUtils.leftPad(d.getUTCDate().toString(), 2, "0");
-      const month = StringUtils.leftPad((d.getUTCMonth() + 1).toString(), 2, "0");
+      const month = StringUtils.leftPad(
+        (d.getUTCMonth() + 1).toString(),
+        2,
+        "0",
+      );
       const year = StringUtils.leftPad(d.getUTCFullYear().toString(), 4, "0");
       return month + day + year;
     };
@@ -344,33 +433,46 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
 
   protected mapUrl<T extends IRecurringEntity>(builder: RecurringBuilder<T>) {
     let suffix = "";
-    if (builder.transactionType === TransactionType.Fetch
-      || builder.transactionType === TransactionType.Delete
-      || builder.transactionType === TransactionType.Edit
+    if (
+      builder.transactionType === TransactionType.Fetch ||
+      builder.transactionType === TransactionType.Delete ||
+      builder.transactionType === TransactionType.Edit
     ) {
       suffix = "/" + builder.entity.key;
     }
 
     if (builder.entity instanceof Customer) {
-      return (builder.transactionType === TransactionType.Search ? "searchCustomers" : "customers")
-        + suffix;
+      return (
+        (builder.transactionType === TransactionType.Search
+          ? "searchCustomers"
+          : "customers") + suffix
+      );
     }
 
     if (builder.entity instanceof RecurringPaymentMethod) {
       let paymentMethod = "";
       if (builder.transactionType === TransactionType.Create) {
-        paymentMethod = builder.entity.paymentMethod instanceof Credit ? "CreditCard" : "ACH";
+        paymentMethod =
+          builder.entity.paymentMethod instanceof Credit ? "CreditCard" : "ACH";
       } else if (builder.transactionType === TransactionType.Edit) {
         paymentMethod = builder.entity.paymentType.replace(" ", "");
       }
 
-      return (builder.transactionType === TransactionType.Search ? "searchPaymentMethods" : "paymentMethods")
-        + paymentMethod + suffix;
+      return (
+        (builder.transactionType === TransactionType.Search
+          ? "searchPaymentMethods"
+          : "paymentMethods") +
+        paymentMethod +
+        suffix
+      );
     }
 
     if (builder.entity instanceof Schedule) {
-      return (builder.transactionType === TransactionType.Search ? "searchSchedules" : "schedules")
-        + suffix;
+      return (
+        (builder.transactionType === TransactionType.Search
+          ? "searchSchedules"
+          : "schedules") + suffix
+      );
     }
 
     throw new UnsupportedTransactionError();
@@ -401,7 +503,9 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     return customer;
   }
 
-  protected hydrateRecurringPaymentMethod(response: any): RecurringPaymentMethod {
+  protected hydrateRecurringPaymentMethod(
+    response: any,
+  ): RecurringPaymentMethod {
     const paymentMethod = new RecurringPaymentMethod();
     paymentMethod.key = response.paymentMethodKey;
     paymentMethod.paymentType = response.paymentMethodType;

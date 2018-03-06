@@ -1,12 +1,7 @@
-import {
-  ReportType,
-  ServicesContainer,
-  TimeZoneConversion,
-} from "../";
+import { ReportType, ServicesContainer, TimeZoneConversion } from "../";
 import { BaseBuilder } from "./BaseBuilder";
 
-export abstract class ReportBuilder<T>
-  extends BaseBuilder<T> {
+export abstract class ReportBuilder<T> extends BaseBuilder<T> {
   public reportType: ReportType;
   public timeZoneConversion: TimeZoneConversion;
 

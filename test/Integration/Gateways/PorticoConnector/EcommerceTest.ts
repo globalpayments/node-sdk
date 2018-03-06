@@ -5,9 +5,7 @@ import {
   ServicesConfig,
   ServicesContainer,
 } from "../../../../src/";
-import {
-  TestCards,
-} from "../../../Data";
+import { TestCards } from "../../../Data";
 
 const config = new ServicesConfig();
 config.secretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A";
@@ -27,7 +25,8 @@ test("ecom with moto", async (t) => {
   const ecom = new EcommerceInfo();
   ecom.channel = EcommerceChannel.Moto;
 
-  const response = await card.charge(9)
+  const response = await card
+    .charge(9)
     .withCurrency("USD")
     .withEcommerceInfo(ecom)
     .withAllowDuplicates(true)
@@ -44,7 +43,8 @@ test("ecom with direct market ship date", async (t) => {
   ecom.shipDay = "25";
   ecom.shipMonth = "12";
 
-  const response = await card.charge(9)
+  const response = await card
+    .charge(9)
     .withCurrency("USD")
     .withEcommerceInfo(ecom)
     .withAllowDuplicates(true)
@@ -57,7 +57,8 @@ test("ecom with direct market ship date", async (t) => {
 test("ecom with direct market invoice no ship date", async (t) => {
   t.plan(2);
 
-  const response = await card.charge(9)
+  const response = await card
+    .charge(9)
     .withCurrency("USD")
     .withEcommerceInfo(new EcommerceInfo())
     .withInvoiceNumber("1234567890")
@@ -74,7 +75,8 @@ test("ecom with direct market invoice and ship date", async (t) => {
   const ecom = new EcommerceInfo();
   ecom.channel = EcommerceChannel.Moto;
 
-  const response = await card.charge(9)
+  const response = await card
+    .charge(9)
     .withCurrency("USD")
     .withEcommerceInfo(ecom)
     .withInvoiceNumber("1234567890")
@@ -93,7 +95,8 @@ test("ecom with secure ecommerce", async (t) => {
   ecom.cavv = "XXXXf98AAajXbDRg3HSUMAACAAA=";
   ecom.eci = "5";
 
-  const response = await card.charge(9)
+  const response = await card
+    .charge(9)
     .withCurrency("USD")
     .withEcommerceInfo(ecom)
     .withInvoiceNumber("1234567890")

@@ -22,8 +22,10 @@ const config = new ServicesConfig();
 config.secretApiKey = "skapi_cert_MbPdAQBL1l4A2ThZoTBKXEdEG1rIi7KAa6Yskl9Nzg";
 config.serviceUrl = "https://cert.api2.heartlandportico.com";
 
-const BATCH_NOT_OPEN = "Transaction was rejected because it requires a batch to be open.";
-const BATCH_EMPTY = "Batch close was rejected because no transactions are associated with the currently open batch";
+const BATCH_NOT_OPEN =
+  "Transaction was rejected because it requires a batch to be open.";
+const BATCH_EMPTY =
+  "Batch close was rejected because no transactions are associated with the currently open batch";
 const test = ava.serial;
 
 let customerPerson: Customer | undefined;
@@ -38,7 +40,8 @@ let scheduleCheckPpd: Schedule | undefined;
 let scheduleCheckCcd: Schedule | undefined;
 
 const todayDate = GenerationUtils.generateTimestamp();
-const getIdentifier = (id: string) => (`${todayDate}-${id}-${StringUtils.uuid()}`).substr(0, 50);
+const getIdentifier = (id: string) =>
+  `${todayDate}-${id}-${StringUtils.uuid()}`.substr(0, 50);
 
 ava.before((_t) => {
   ServicesContainer.configure(config);
@@ -54,8 +57,9 @@ ava.before("000 - close batch", (t) => {
         resolve();
       })
       .catch((e: Error) => {
-        if (e.message.indexOf(BATCH_NOT_OPEN) !== -1
-          || e.message.indexOf(BATCH_EMPTY) !== -1
+        if (
+          e.message.indexOf(BATCH_NOT_OPEN) !== -1 ||
+          e.message.indexOf(BATCH_EMPTY) !== -1
         ) {
           t.pass();
           resolve();
@@ -165,7 +169,9 @@ test("003 - add payment credit visa", async (t) => {
   card.expMonth = "12";
   card.expYear = "2025";
 
-  const paymentMethod = await customerPerson.addPaymentMethod(getIdentifier("CreditV"), card).create();
+  const paymentMethod = await customerPerson
+    .addPaymentMethod(getIdentifier("CreditV"), card)
+    .create();
 
   t.truthy(paymentMethod);
   t.truthy(paymentMethod.key);
@@ -184,7 +190,9 @@ test("004 - add payment credit visa", async (t) => {
   card.expMonth = "12";
   card.expYear = "2025";
 
-  const paymentMethod = await customerPerson.addPaymentMethod(getIdentifier("CreditMC"), card).create();
+  const paymentMethod = await customerPerson
+    .addPaymentMethod(getIdentifier("CreditMC"), card)
+    .create();
 
   t.truthy(paymentMethod);
   t.truthy(paymentMethod.key);
@@ -208,7 +216,9 @@ test("005 - add payment check ppd", async (t) => {
   check.accountNumber = "24413815";
   check.birthYear = "1989";
 
-  const paymentMethod = await customerPerson.addPaymentMethod(getIdentifier("CheckPPD"), check).create();
+  const paymentMethod = await customerPerson
+    .addPaymentMethod(getIdentifier("CheckPPD"), check)
+    .create();
 
   t.truthy(paymentMethod);
   t.truthy(paymentMethod.key);
@@ -232,7 +242,9 @@ test("006 - add payment check ccd", async (t) => {
   check.accountNumber = "24413815";
   check.birthYear = "1989";
 
-  const paymentMethod = await customerBusiness.addPaymentMethod(getIdentifier("CheckCCD"), check).create();
+  const paymentMethod = await customerBusiness
+    .addPaymentMethod(getIdentifier("CheckCCD"), check)
+    .create();
 
   t.truthy(paymentMethod);
   t.truthy(paymentMethod.key);
@@ -248,7 +260,8 @@ test("008 - add schedule credit visa", async (t) => {
     return;
   }
 
-  const schedule = await paymentMethodVisa.addSchedule(getIdentifier("CreditV"))
+  const schedule = await paymentMethodVisa
+    .addSchedule(getIdentifier("CreditV"))
     .withStartDate(new Date(2027, 1, 1))
     .withAmount(30.01)
     .withFrequency(ScheduleFrequency.Weekly)
@@ -269,7 +282,8 @@ test("009 - add schedule credit mastercard", async (t) => {
     return;
   }
 
-  const schedule = await paymentMethodMasterCard.addSchedule(getIdentifier("CreditMC"))
+  const schedule = await paymentMethodMasterCard
+    .addSchedule(getIdentifier("CreditMC"))
     .withStartDate(new Date(2027, 1, 1))
     .withEndDate(new Date(2027, 3, 1))
     .withAmount(30.02)
@@ -291,7 +305,8 @@ test("010 - add schedule check ppd", async (t) => {
     return;
   }
 
-  const schedule = await paymentMethodCheckPpd.addSchedule(getIdentifier("CheckPPD"))
+  const schedule = await paymentMethodCheckPpd
+    .addSchedule(getIdentifier("CheckPPD"))
     .withStartDate(new Date(2027, 1, 1))
     .withAmount(30.03)
     .withFrequency(ScheduleFrequency.Monthly)
@@ -313,7 +328,8 @@ test("011 - add schedule check ccd", async (t) => {
     return;
   }
 
-  const schedule = await paymentMethodCheckCcd.addSchedule(getIdentifier("CheckCCD"))
+  const schedule = await paymentMethodCheckCcd
+    .addSchedule(getIdentifier("CheckCCD"))
     .withStartDate(new Date(2027, 1, 1))
     .withAmount(30.04)
     .withFrequency(ScheduleFrequency.BiWeekly)
@@ -336,7 +352,8 @@ test("014 - recurring billing visa", async (t) => {
     return;
   }
 
-  const response = await paymentMethodVisa.charge(20.01)
+  const response = await paymentMethodVisa
+    .charge(20.01)
     .withCurrency("USD")
     .withScheduleId(scheduleVisa.key)
     .withOneTimePayment(false)
@@ -353,7 +370,8 @@ test("015 - recurring billing mastercard", async (t) => {
     return;
   }
 
-  const response = await paymentMethodMasterCard.charge(20.02)
+  const response = await paymentMethodMasterCard
+    .charge(20.02)
     .withCurrency("USD")
     .withScheduleId(scheduleMasterCard.key)
     .withOneTimePayment(false)
@@ -370,7 +388,8 @@ test("016 - recurring billing check ppd", async (t) => {
     return;
   }
 
-  const response = await paymentMethodCheckPpd.charge(20.03)
+  const response = await paymentMethodCheckPpd
+    .charge(20.03)
     .withCurrency("USD")
     .withScheduleId(scheduleCheckPpd.key)
     .withOneTimePayment(false)
@@ -387,7 +406,8 @@ test("017 - recurring billing check ccd", async (t) => {
     return;
   }
 
-  const response = await paymentMethodCheckCcd.charge(20.04)
+  const response = await paymentMethodCheckCcd
+    .charge(20.04)
     .withCurrency("USD")
     .withScheduleId(scheduleCheckCcd.key)
     .withOneTimePayment(false)
@@ -406,8 +426,7 @@ test("018 - recurring billing one time visa", async (t) => {
     return;
   }
 
-  const response = await paymentMethodVisa.charge(20.06)
-    .execute();
+  const response = await paymentMethodVisa.charge(20.06).execute();
 
   t.truthy(response);
   t.is(response.responseCode, "00");
@@ -420,7 +439,8 @@ test("019 - recurring billing one time mastercard", async (t) => {
     return;
   }
 
-  const response = await paymentMethodMasterCard.charge(20.07)
+  const response = await paymentMethodMasterCard
+    .charge(20.07)
     .withCurrency("USD")
     .execute();
 
@@ -435,7 +455,8 @@ test("020 - recurring billing one time check ppd", async (t) => {
     return;
   }
 
-  const response = await paymentMethodCheckPpd.charge(20.08)
+  const response = await paymentMethodCheckPpd
+    .charge(20.08)
     .withCurrency("USD")
     .execute();
 
@@ -450,7 +471,8 @@ test("021 - recurring billing one time check ccd", async (t) => {
     return;
   }
 
-  const response = await paymentMethodCheckCcd.charge(20.09)
+  const response = await paymentMethodCheckCcd
+    .charge(20.09)
     .withCurrency("USD")
     .execute();
 
@@ -467,8 +489,7 @@ test("022 - recurring billing one time visa decline", async (t) => {
     return;
   }
 
-  const response = await paymentMethodVisa.charge(10.08)
-    .execute();
+  const response = await paymentMethodVisa.charge(10.08).execute();
 
   t.truthy(response);
   t.is(response.responseCode, "51");
@@ -481,7 +502,8 @@ test("023 - recurring billing one time check ppd decline", async (t) => {
     return;
   }
 
-  const response = await paymentMethodCheckPpd.charge(25.02)
+  const response = await paymentMethodCheckPpd
+    .charge(25.02)
     .withCurrency("USD")
     .execute();
 
@@ -499,8 +521,9 @@ test.after("999 - close batch", (t) => {
         resolve();
       })
       .catch((e: Error) => {
-        if (e.message.indexOf(BATCH_NOT_OPEN) !== -1
-          || e.message.indexOf(BATCH_EMPTY) !== -1
+        if (
+          e.message.indexOf(BATCH_NOT_OPEN) !== -1 ||
+          e.message.indexOf(BATCH_EMPTY) !== -1
         ) {
           t.pass();
           resolve();

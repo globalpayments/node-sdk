@@ -1,12 +1,6 @@
 import ava from "ava";
-import {
-  Address,
-  CheckService,
-  ServicesConfig,
-} from "../../../src/";
-import {
-  TestChecks,
-} from "../../Data";
+import { Address, CheckService, ServicesConfig } from "../../../src/";
+import { TestChecks } from "../../Data";
 
 const config = new ServicesConfig();
 config.secretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A";
@@ -25,7 +19,8 @@ address.postalCode = "12345";
 test("sale", async (t) => {
   t.plan(2);
 
-  const response = await service.charge(10)
+  const response = await service
+    .charge(10)
     .withCurrency("USD")
     .withPaymentMethod(check)
     .withAddress(address)
@@ -38,7 +33,8 @@ test("sale", async (t) => {
 test("void", async (t) => {
   t.plan(4);
 
-  const response = await service.charge(10)
+  const response = await service
+    .charge(10)
     .withCurrency("USD")
     .withPaymentMethod(check)
     .withAddress(address)

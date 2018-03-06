@@ -1,9 +1,5 @@
-import {
-  EmailReceipt,
-  PaymentSchedule,
-  ScheduleFrequency,
-} from "../";
-import {RecurringEntity} from "./";
+import { EmailReceipt, PaymentSchedule, ScheduleFrequency } from "../";
+import { RecurringEntity } from "./";
 
 export class Schedule extends RecurringEntity<Schedule> {
   /// <summary>
@@ -125,7 +121,9 @@ export class Schedule extends RecurringEntity<Schedule> {
   /// The total amount for the schedule (`Amount` + `TaxAmount`).
   /// </summary>
   public get totalAmount() {
-    return parseFloat(this.amount.toString()) + parseFloat(this.taxAmount.toString());
+    return (
+      parseFloat(this.amount.toString()) + parseFloat(this.taxAmount.toString())
+    );
   }
 
   public constructor(customerKey?: string, paymentKey?: string) {

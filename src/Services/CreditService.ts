@@ -14,19 +14,20 @@ export class CreditService {
   }
 
   public authorize(amount?: number | string) {
-    return (new AuthorizationBuilder(TransactionType.Auth)).withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Auth).withAmount(amount);
   }
 
   public capture(transactionId: string) {
     const ref = new TransactionReference();
     ref.paymentMethodType = PaymentMethodType.Credit;
     ref.transactionId = transactionId;
-    return (new ManagementBuilder(TransactionType.Capture))
-      .withPaymentMethod(ref);
+    return new ManagementBuilder(TransactionType.Capture).withPaymentMethod(
+      ref,
+    );
   }
 
   public charge(amount?: number | string) {
-    return (new AuthorizationBuilder(TransactionType.Sale)).withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Sale).withAmount(amount);
   }
 
   public edit(transactionId?: string) {
@@ -35,14 +36,13 @@ export class CreditService {
     if (transactionId) {
       ref.transactionId = transactionId;
     }
-    return (new ManagementBuilder(TransactionType.Edit))
-      .withPaymentMethod(ref);
+    return new ManagementBuilder(TransactionType.Edit).withPaymentMethod(ref);
   }
 
   public refund(amount?: number | string) {
     const ref = new TransactionReference();
     ref.paymentMethodType = PaymentMethodType.Credit;
-    return (new AuthorizationBuilder(TransactionType.Refund))
+    return new AuthorizationBuilder(TransactionType.Refund)
       .withAmount(amount)
       .withPaymentMethod(ref);
   }
@@ -50,7 +50,7 @@ export class CreditService {
   public reverse(amount?: number | string) {
     const ref = new TransactionReference();
     ref.paymentMethodType = PaymentMethodType.Credit;
-    return (new AuthorizationBuilder(TransactionType.Reversal))
+    return new AuthorizationBuilder(TransactionType.Reversal)
       .withAmount(amount)
       .withPaymentMethod(ref);
   }
@@ -63,7 +63,6 @@ export class CreditService {
     const ref = new TransactionReference();
     ref.paymentMethodType = PaymentMethodType.Credit;
     ref.transactionId = transactionId;
-    return (new ManagementBuilder(TransactionType.Void))
-      .withPaymentMethod(ref);
+    return new ManagementBuilder(TransactionType.Void).withPaymentMethod(ref);
   }
 }

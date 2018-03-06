@@ -2,10 +2,14 @@
  * @NApiVersion 2.x
  * @NScriptType ScheduledScript
  */
-define(['SuiteScripts/Honeycomb Mfg/globalpayments.api', 'N/log'], function (GP, log) {
+define(["SuiteScripts/Honeycomb Mfg/globalpayments.api", "N/log"], function(
+  GP,
+  log,
+) {
   function execute(context) {
     var config = new GP.ServicesConfig();
-    config.secretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w";
+    config.secretApiKey =
+      "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w";
     config.serviceUrl = "https://cert.api2.heartlandportico.com";
 
     GP.ServicesContainer.configure(config);
@@ -17,17 +21,18 @@ define(['SuiteScripts/Honeycomb Mfg/globalpayments.api', 'N/log'], function (GP,
     card.cvn = "123";
     card.cardHolderName = "Joe Smith";
 
-    card.authorize("14")
-        .withCurrency("USD")
-        .withAllowDuplicates(true)
-        .execute()
-        .then(function (authorization) {
-          log.debug(authorization);
-          return authorization;
-        });
+    card
+      .authorize("14")
+      .withCurrency("USD")
+      .withAllowDuplicates(true)
+      .execute()
+      .then(function(authorization) {
+        log.debug(authorization);
+        return authorization;
+      });
   }
 
   return {
     execute: execute,
   };
-})
+});

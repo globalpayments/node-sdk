@@ -1,11 +1,5 @@
-import {
-  Address,
-  IPaymentMethod,
-  RecurringPaymentMethod,
-} from "../";
-import {
-  RecurringEntity,
-} from "./RecurringEntity";
+import { Address, IPaymentMethod, RecurringPaymentMethod } from "../";
+import { RecurringEntity } from "./RecurringEntity";
 
 export class Customer extends RecurringEntity<Customer> {
   /**

@@ -9,7 +9,8 @@ export interface IRecurringEntity {
   key: string;
 }
 
-export class RecurringEntity<TResult extends IRecurringEntity> implements IRecurringEntity {
+export class RecurringEntity<TResult extends IRecurringEntity>
+  implements IRecurringEntity {
   /// <summary>
   /// All resource should be supplied a merchant-/application-defined ID.
   /// </summary>
@@ -28,7 +29,9 @@ export class RecurringEntity<TResult extends IRecurringEntity> implements IRecur
   /// <exception cref="UnsupportedTransactionError">
   /// Thrown when gateway does not support retrieving recurring records.
   /// </exception>
-  public static find<TResult extends IRecurringEntity>(id: string): Promise<TResult | undefined> {
+  public static find<TResult extends IRecurringEntity>(
+    id: string,
+  ): Promise<TResult | undefined> {
     const client = ServicesContainer.instance().getRecurringClient();
     if (!client.supportsRetrieval) {
       throw new UnsupportedTransactionError();
@@ -65,13 +68,13 @@ export class RecurringEntity<TResult extends IRecurringEntity> implements IRecur
   }
 
   private static getIdentifierName() {
-      // if ((typeof(TResult)).Equals(typeof(Customer)))
-      //     return "customerIdentifier";
-      // else if ((typeof(TResult)).Equals(typeof(RecurringPaymentMethod)))
-      //     return "paymentMethodIdentifier";
-      // else if ((typeof(TResult)).Equals(typeof(Schedule)))
-      //     return "scheduleIdentifier";
-      return "";
+    // if ((typeof(TResult)).Equals(typeof(Customer)))
+    //     return "customerIdentifier";
+    // else if ((typeof(TResult)).Equals(typeof(RecurringPaymentMethod)))
+    //     return "paymentMethodIdentifier";
+    // else if ((typeof(TResult)).Equals(typeof(Schedule)))
+    //     return "scheduleIdentifier";
+    return "";
   }
 
   /// <summary>
@@ -79,7 +82,7 @@ export class RecurringEntity<TResult extends IRecurringEntity> implements IRecur
   /// </summary>
   /// <returns>TResult</returns>
   public create() {
-      return RecurringService.create((this as any) as TResult);
+    return RecurringService.create((this as any) as TResult);
   }
 
   /// <summary>

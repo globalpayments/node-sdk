@@ -18,8 +18,7 @@ test("report transaction details no transaction id", (t) => {
   t.plan(3);
 
   const error = t.throws(() => {
-    return ReportingService.transactionDetail("")
-      .execute();
+    return ReportingService.transactionDetail("").execute();
   }, ArgumentError);
 
   t.is(error.name, "ArgumentError");

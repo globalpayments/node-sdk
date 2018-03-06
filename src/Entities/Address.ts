@@ -1,4 +1,4 @@
-import {AddressType} from "../Entities";
+import { AddressType } from "../Entities";
 
 export class Address {
   public type: AddressType;

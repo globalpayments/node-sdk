@@ -22,7 +22,8 @@ card.cardHolderName = "Joe Smith";
 
 const track = new CreditTrackData();
 // tslint:disable:max-line-length
-track.value = "<E1050711%B4012001000000016^VI TEST CREDIT^251200000000000000000000?|LO04K0WFOmdkDz0um+GwUkILL8ZZOP6Zc4rCpZ9+kg2T3JBT4AEOilWTI|+++++++Dbbn04ekG|11;4012001000000016=25120000000000000000?|1u2F/aEhbdoPixyAPGyIDv3gBfF|+++++++Dbbn04ekG|00|||/wECAQECAoFGAgEH2wYcShV78RZwb3NAc2VjdXJlZXhjaGFuZ2UubmV0PX50qfj4dt0lu9oFBESQQNkpoxEVpCW3ZKmoIV3T93zphPS3XKP4+DiVlM8VIOOmAuRrpzxNi0TN/DWXWSjUC8m/PI2dACGdl/hVJ/imfqIs68wYDnp8j0ZfgvM26MlnDbTVRrSx68Nzj2QAgpBCHcaBb/FZm9T7pfMr2Mlh2YcAt6gGG1i2bJgiEJn8IiSDX5M2ybzqRT86PCbKle/XCTwFFe1X|>;";
+track.value =
+  "<E1050711%B4012001000000016^VI TEST CREDIT^251200000000000000000000?|LO04K0WFOmdkDz0um+GwUkILL8ZZOP6Zc4rCpZ9+kg2T3JBT4AEOilWTI|+++++++Dbbn04ekG|11;4012001000000016=25120000000000000000?|1u2F/aEhbdoPixyAPGyIDv3gBfF|+++++++Dbbn04ekG|00|||/wECAQECAoFGAgEH2wYcShV78RZwb3NAc2VjdXJlZXhjaGFuZ2UubmV0PX50qfj4dt0lu9oFBESQQNkpoxEVpCW3ZKmoIV3T93zphPS3XKP4+DiVlM8VIOOmAuRrpzxNi0TN/DWXWSjUC8m/PI2dACGdl/hVJ/imfqIs68wYDnp8j0ZfgvM26MlnDbTVRrSx68Nzj2QAgpBCHcaBb/FZm9T7pfMr2Mlh2YcAt6gGG1i2bJgiEJn8IiSDX5M2ybzqRT86PCbKle/XCTwFFe1X|>;";
 // tslint:enable:max-line-length
 track.encryptionData = new EncryptionData();
 track.encryptionData.version = "01";
@@ -34,7 +35,8 @@ test.before((_t) => {
 test("credit authorization", async (t) => {
   t.plan(4);
 
-  const authorization = await card.authorize("14")
+  const authorization = await card
+    .authorize("14")
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute();
@@ -42,7 +44,8 @@ test("credit authorization", async (t) => {
   t.truthy(authorization);
   t.is(authorization.responseCode, "00");
 
-  const capture = await authorization.capture("16")
+  const capture = await authorization
+    .capture("16")
     .withGratuity("2.00")
     .execute();
 
@@ -53,7 +56,8 @@ test("credit authorization", async (t) => {
 test("credit auth with convenience", async (t) => {
   t.plan(4);
 
-  const response = await card.authorize(14)
+  const response = await card
+    .authorize(14)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .withConvenienceAmt(2)
@@ -62,7 +66,9 @@ test("credit auth with convenience", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00");
 
-  const report = await ReportingService.transactionDetail(response.transactionId).execute();
+  const report = await ReportingService.transactionDetail(
+    response.transactionId,
+  ).execute();
 
   t.truthy(report);
   t.is(report.convenienceAmt, "2.00");
@@ -71,7 +77,8 @@ test("credit auth with convenience", async (t) => {
 test("credit auth with shipping", async (t) => {
   t.plan(4);
 
-  const response = await card.authorize(14)
+  const response = await card
+    .authorize(14)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .withShippingAmt(2)
@@ -80,7 +87,9 @@ test("credit auth with shipping", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00");
 
-  const report = await ReportingService.transactionDetail(response.transactionId).execute();
+  const report = await ReportingService.transactionDetail(
+    response.transactionId,
+  ).execute();
 
   t.truthy(report);
   t.is(report.shippingAmt, "2.00");
@@ -89,7 +98,8 @@ test("credit auth with shipping", async (t) => {
 test("credit sale", async (t) => {
   t.plan(2);
 
-  const response = await card.charge(15)
+  const response = await card
+    .charge(15)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute();
@@ -101,7 +111,8 @@ test("credit sale", async (t) => {
 test("credit sale with convenience", async (t) => {
   t.plan(4);
 
-  const response = await card.charge(15)
+  const response = await card
+    .charge(15)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .withConvenienceAmt(2)
@@ -110,7 +121,9 @@ test("credit sale with convenience", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00");
 
-  const report = await ReportingService.transactionDetail(response.transactionId).execute();
+  const report = await ReportingService.transactionDetail(
+    response.transactionId,
+  ).execute();
 
   t.truthy(report);
   t.is(report.convenienceAmt, "2.00");
@@ -119,7 +132,8 @@ test("credit sale with convenience", async (t) => {
 test("credit sale with shipping", async (t) => {
   t.plan(4);
 
-  const response = await card.charge(15)
+  const response = await card
+    .charge(15)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .withShippingAmt(2)
@@ -128,7 +142,9 @@ test("credit sale with shipping", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00");
 
-  const report = await ReportingService.transactionDetail(response.transactionId).execute();
+  const report = await ReportingService.transactionDetail(
+    response.transactionId,
+  ).execute();
 
   t.truthy(report);
   t.is(report.shippingAmt, "2.00");
@@ -137,7 +153,8 @@ test("credit sale with shipping", async (t) => {
 test("credit offline authorization", async (t) => {
   t.plan(2);
 
-  const authorization = await card.authorize("16")
+  const authorization = await card
+    .authorize("16")
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .withOfflineAuthCode("123456")
@@ -150,7 +167,8 @@ test("credit offline authorization", async (t) => {
 test("credit offline auth with convenience", async (t) => {
   t.plan(4);
 
-  const response = await card.authorize(16)
+  const response = await card
+    .authorize(16)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .withConvenienceAmt(2)
@@ -160,7 +178,9 @@ test("credit offline auth with convenience", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00");
 
-  const report = await ReportingService.transactionDetail(response.transactionId).execute();
+  const report = await ReportingService.transactionDetail(
+    response.transactionId,
+  ).execute();
 
   t.truthy(report);
   t.is(report.convenienceAmt, "2.00");
@@ -169,7 +189,8 @@ test("credit offline auth with convenience", async (t) => {
 test("credit offline auth with shipping", async (t) => {
   t.plan(4);
 
-  const response = await card.authorize(16)
+  const response = await card
+    .authorize(16)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .withShippingAmt(2)
@@ -179,7 +200,9 @@ test("credit offline auth with shipping", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00");
 
-  const report = await ReportingService.transactionDetail(response.transactionId).execute();
+  const report = await ReportingService.transactionDetail(
+    response.transactionId,
+  ).execute();
 
   t.truthy(report);
   t.is(report.shippingAmt, "2.00");
@@ -188,7 +211,8 @@ test("credit offline auth with shipping", async (t) => {
 test("credit offline sale", async (t) => {
   t.plan(2);
 
-  const response = await card.charge(17)
+  const response = await card
+    .charge(17)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .withOfflineAuthCode("123456")
@@ -201,7 +225,8 @@ test("credit offline sale", async (t) => {
 test("credit offline sale with convenience", async (t) => {
   t.plan(4);
 
-  const response = await card.charge(17)
+  const response = await card
+    .charge(17)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .withConvenienceAmt(2)
@@ -211,7 +236,9 @@ test("credit offline sale with convenience", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00");
 
-  const report = await ReportingService.transactionDetail(response.transactionId).execute();
+  const report = await ReportingService.transactionDetail(
+    response.transactionId,
+  ).execute();
 
   t.truthy(report);
   t.is(report.convenienceAmt, "2.00");
@@ -220,7 +247,8 @@ test("credit offline sale with convenience", async (t) => {
 test("credit offline sale with shipping", async (t) => {
   t.plan(4);
 
-  const response = await card.charge(17)
+  const response = await card
+    .charge(17)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .withShippingAmt(2)
@@ -230,7 +258,9 @@ test("credit offline sale with shipping", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00");
 
-  const report = await ReportingService.transactionDetail(response.transactionId).execute();
+  const report = await ReportingService.transactionDetail(
+    response.transactionId,
+  ).execute();
 
   t.truthy(report);
   t.is(report.shippingAmt, "2.00");
@@ -239,7 +269,8 @@ test("credit offline sale with shipping", async (t) => {
 test("credit refund", async (t) => {
   t.plan(2);
 
-  const response = await card.refund(16)
+  const response = await card
+    .refund(16)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute();
@@ -251,7 +282,8 @@ test("credit refund", async (t) => {
 test("credit reverse", async (t) => {
   t.plan(2);
 
-  const response = await card.reverse(15)
+  const response = await card
+    .reverse(15)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute();
@@ -263,7 +295,8 @@ test("credit reverse", async (t) => {
 test("credit verify", async (t) => {
   t.plan(2);
 
-  const response = await card.verify()
+  const response = await card
+    .verify()
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute();
@@ -275,7 +308,8 @@ test("credit verify", async (t) => {
 test("credit swipe authorization", async (t) => {
   t.plan(4);
 
-  const authorization = await track.authorize("14")
+  const authorization = await track
+    .authorize("14")
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute();
@@ -283,7 +317,8 @@ test("credit swipe authorization", async (t) => {
   t.truthy(authorization);
   t.is(authorization.responseCode, "00");
 
-  const capture = await authorization.capture("16")
+  const capture = await authorization
+    .capture("16")
     .withGratuity("2.00")
     .execute();
 
@@ -294,7 +329,8 @@ test("credit swipe authorization", async (t) => {
 test("credit swipe sale", async (t) => {
   t.plan(2);
 
-  const response = await track.charge(15)
+  const response = await track
+    .charge(15)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute();
@@ -306,7 +342,8 @@ test("credit swipe sale", async (t) => {
 test("credit swipe offline authorization", async (t) => {
   t.plan(2);
 
-  const authorization = await track.authorize("16")
+  const authorization = await track
+    .authorize("16")
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .withOfflineAuthCode("123456")
@@ -319,7 +356,8 @@ test("credit swipe offline authorization", async (t) => {
 test("credit swipe offline sale", async (t) => {
   t.plan(2);
 
-  const response = await track.charge(17)
+  const response = await track
+    .charge(17)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .withOfflineAuthCode("123456")
@@ -332,7 +370,8 @@ test("credit swipe offline sale", async (t) => {
 test.failing("credit swipe add value", async (t) => {
   t.plan(2);
 
-  const response = await track.addValue(16)
+  const response = await track
+    .addValue(16)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute();
@@ -353,7 +392,8 @@ test("credit swipe balance inquiry", async (t) => {
 test("credit swipe refund", async (t) => {
   t.plan(2);
 
-  const response = await track.refund(16)
+  const response = await track
+    .refund(16)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute();
@@ -365,7 +405,8 @@ test("credit swipe refund", async (t) => {
 test("credit swipe reverse", async (t) => {
   t.plan(4);
 
-  const sale = await track.charge(19)
+  const sale = await track
+    .charge(19)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute();
@@ -373,7 +414,8 @@ test("credit swipe reverse", async (t) => {
   t.truthy(sale);
   t.is(sale.responseCode, "00");
 
-  const response = await track.reverse(19)
+  const response = await track
+    .reverse(19)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute();
@@ -385,7 +427,8 @@ test("credit swipe reverse", async (t) => {
 test("credit swipe verify", async (t) => {
   t.plan(2);
 
-  const response = await track.verify()
+  const response = await track
+    .verify()
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute();
@@ -397,7 +440,8 @@ test("credit swipe verify", async (t) => {
 test("credit void from transaction id", async (t) => {
   t.plan(4);
 
-  const auth = await card.authorize(10)
+  const auth = await card
+    .authorize(10)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute();

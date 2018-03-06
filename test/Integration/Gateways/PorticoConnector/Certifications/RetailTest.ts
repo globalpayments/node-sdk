@@ -10,16 +10,16 @@ import {
   ServicesContainer,
   TaxType,
 } from "../../../../../src/";
-import {
-  TestCards,
-} from "../../../../Data/";
+import { TestCards } from "../../../../Data/";
 
 const config = new ServicesConfig();
 config.secretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw";
 config.serviceUrl = "https://cert.api2.heartlandportico.com";
 
-const BATCH_NOT_OPEN = "Transaction was rejected because it requires a batch to be open.";
-const BATCH_EMPTY = "Batch close was rejected because no transactions are associated with the currently open batch";
+const BATCH_NOT_OPEN =
+  "Transaction was rejected because it requires a batch to be open.";
+const BATCH_EMPTY =
+  "Batch close was rejected because no transactions are associated with the currently open batch";
 const runSerially = false;
 const test = runSerially ? ava.serial : ava;
 
@@ -43,8 +43,9 @@ test.before("000 - close batch", (t) => {
         resolve();
       })
       .catch((e: Error) => {
-        if (e.message.indexOf(BATCH_NOT_OPEN) !== -1
-          || e.message.indexOf(BATCH_EMPTY) !== -1
+        if (
+          e.message.indexOf(BATCH_NOT_OPEN) !== -1 ||
+          e.message.indexOf(BATCH_EMPTY) !== -1
         ) {
           t.pass();
           resolve();
@@ -64,7 +65,8 @@ test("001 - card verify visa", (t) => {
 
   const card = TestCards.visaSwipeEncrypted();
 
-  return card.verify()
+  return card
+    .verify()
     .withAllowDuplicates(true)
     .withRequestMultiUseToken(useTokens)
     .execute()
@@ -84,7 +86,8 @@ test("001 - card verify visa", (t) => {
       const token = new CreditCardData();
       token.token = response.token;
 
-      return token.charge(15.01)
+      return token
+        .charge(15.01)
         .withAllowDuplicates(true)
         .execute()
         .then((chargeResponse) => {
@@ -99,7 +102,8 @@ test("002 - card verify mastercard", (t) => {
 
   const card = TestCards.masterCardSwipeEncrypted();
 
-  return card.verify()
+  return card
+    .verify()
     .withAllowDuplicates(true)
     .withRequestMultiUseToken(useTokens)
     .execute()
@@ -119,7 +123,8 @@ test("002 - card verify mastercard", (t) => {
       const token = new CreditCardData();
       token.token = response.token;
 
-      return token.charge(15.02)
+      return token
+        .charge(15.02)
         .withAllowDuplicates(true)
         .execute()
         .then((chargeResponse) => {
@@ -134,7 +139,8 @@ test("003 - card verify discover", (t) => {
 
   const card = TestCards.discoverSwipeEncrypted();
 
-  return card.verify()
+  return card
+    .verify()
     .withAllowDuplicates(true)
     .withRequestMultiUseToken(useTokens)
     .execute()
@@ -154,7 +160,8 @@ test("003 - card verify discover", (t) => {
       const token = new CreditCardData();
       token.token = response.token;
 
-      return token.charge(15.03)
+      return token
+        .charge(15.03)
         .withAllowDuplicates(true)
         .execute()
         .then((chargeResponse) => {
@@ -174,7 +181,8 @@ test("004 - card verify amex", (t) => {
 
   const card = TestCards.amexManual(false, true);
 
-  return card.verify()
+  return card
+    .verify()
     .withAllowDuplicates(true)
     .withAddress(address)
     .withRequestMultiUseToken(useTokens)
@@ -195,7 +203,8 @@ test("004 - card verify amex", (t) => {
       const token = new CreditCardData();
       token.token = response.token;
 
-      return token.charge(15.04)
+      return token
+        .charge(15.04)
         .withAllowDuplicates(true)
         .execute()
         .then((chargeResponse) => {
@@ -212,7 +221,8 @@ test("005 - balance inquiry visa", (t) => {
 
   const card = TestCards.visaSwipeEncrypted();
 
-  return card.balanceInquiry()
+  return card
+    .balanceInquiry()
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -227,7 +237,8 @@ test("006 - charge visa swipe token", (t) => {
 
   const card = TestCards.visaSwipe();
 
-  return card.charge(15.01)
+  return card
+    .charge(15.01)
     .withCurrency("USD")
     .withRequestMultiUseToken(true)
     .withAllowDuplicates(true)
@@ -244,7 +255,8 @@ test("007 - charge mastercard swipe token", (t) => {
 
   const card = TestCards.masterCardSwipe();
 
-  return card.charge(15.02)
+  return card
+    .charge(15.02)
     .withCurrency("USD")
     .withRequestMultiUseToken(true)
     .withAllowDuplicates(true)
@@ -261,7 +273,8 @@ test("008 - charge discover swipe token", (t) => {
 
   const card = TestCards.discoverSwipe();
 
-  return card.charge(15.03)
+  return card
+    .charge(15.03)
     .withCurrency("USD")
     .withRequestMultiUseToken(true)
     .withAllowDuplicates(true)
@@ -278,7 +291,8 @@ test("009 - charge amex swipe token", (t) => {
 
   const card = TestCards.amexSwipe();
 
-  return card.charge(15.04)
+  return card
+    .charge(15.04)
     .withCurrency("USD")
     .withRequestMultiUseToken(true)
     .withAllowDuplicates(true)
@@ -298,7 +312,8 @@ test("010 - charge visa swipe", (t) => {
 
   const card = TestCards.visaSwipe();
 
-  return card.charge(15.01)
+  return card
+    .charge(15.01)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute()
@@ -309,13 +324,16 @@ test("010 - charge visa swipe", (t) => {
     })
     .then((response) => {
       // test 059
-      return response.reverse(15.01)
-        // .withAllowDuplicates(true)
-        .execute()
-        .then((reverseResponse) => {
-          t.truthy(reverseResponse);
-          t.is(reverseResponse.responseCode, "00");
-        });
+      return (
+        response
+          .reverse(15.01)
+          // .withAllowDuplicates(true)
+          .execute()
+          .then((reverseResponse) => {
+            t.truthy(reverseResponse);
+            t.is(reverseResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -324,7 +342,8 @@ test("011 - charge mastercard swipe", (t) => {
 
   const card = TestCards.masterCardSwipe();
 
-  return card.charge(15.02)
+  return card
+    .charge(15.02)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute()
@@ -339,7 +358,8 @@ test("012 - charge discover swipe", (t) => {
 
   const card = TestCards.discoverSwipe();
 
-  return card.charge(15.02)
+  return card
+    .charge(15.02)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute()
@@ -354,7 +374,8 @@ test("013 - charge amex swipe", (t) => {
 
   const card = TestCards.amexSwipe();
 
-  return card.charge(15.02)
+  return card
+    .charge(15.02)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute()
@@ -369,7 +390,8 @@ test("014 - charge jcb swipe", (t) => {
 
   const card = TestCards.visaSwipe();
 
-  return card.charge(15.05)
+  return card
+    .charge(15.05)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute()
@@ -380,14 +402,17 @@ test("014 - charge jcb swipe", (t) => {
     })
     .then((response) => {
       // test 058
-      return response.refund(15.05)
-        // .withAllowDuplicates(true)
-        .withCurrency("USD")
-        .execute()
-        .then((refundResponse) => {
-          t.truthy(refundResponse);
-          t.is(refundResponse.responseCode, "00");
-        });
+      return (
+        response
+          .refund(15.05)
+          // .withAllowDuplicates(true)
+          .withCurrency("USD")
+          .execute()
+          .then((refundResponse) => {
+            t.truthy(refundResponse);
+            t.is(refundResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -396,7 +421,8 @@ test("014a - charge mastercard 24 swipe", (t) => {
 
   const card = TestCards.masterCard24Swipe();
 
-  return card.charge(15.34)
+  return card
+    .charge(15.34)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute()
@@ -411,7 +437,8 @@ test("014b - charge mastercard 25 swipe", (t) => {
 
   const card = TestCards.masterCard25Swipe();
 
-  return card.charge(15.34)
+  return card
+    .charge(15.34)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute()
@@ -426,7 +453,8 @@ test("015 - charge visa swipe", (t) => {
 
   const card = TestCards.visaSwipe();
 
-  return card.charge(15.06)
+  return card
+    .charge(15.06)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute()
@@ -437,14 +465,17 @@ test("015 - charge visa swipe", (t) => {
     })
     .then((response) => {
       // test 063
-      return response.reverse(15.06)
-        // .withAllowDuplicates(true)
-        .withAuthAmount(5.06)
-        .execute()
-        .then((reverseResponse) => {
-          t.truthy(reverseResponse);
-          t.is(reverseResponse.responseCode, "00");
-        });
+      return (
+        response
+          .reverse(15.06)
+          // .withAllowDuplicates(true)
+          .withAuthAmount(5.06)
+          .execute()
+          .then((reverseResponse) => {
+            t.truthy(reverseResponse);
+            t.is(reverseResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -459,7 +490,8 @@ test("016 - charge visa manual card present", (t) => {
 
   const card = TestCards.visaManual(true, true);
 
-  return card.charge(16.01)
+  return card
+    .charge(16.01)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -479,7 +511,8 @@ test("017 - charge mastercard manual card present", (t) => {
 
   const card = TestCards.masterCardManual(true, true);
 
-  return card.charge(16.02)
+  return card
+    .charge(16.02)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -491,13 +524,16 @@ test("017 - charge mastercard manual card present", (t) => {
     })
     .then((response) => {
       // test case 60
-      return response.reverse(16.02)
-        // .withAllowDuplicates(true)
-        .execute()
-        .then((reverseResponse) => {
-          t.truthy(reverseResponse);
-          t.is(reverseResponse.responseCode, "00");
-        });
+      return (
+        response
+          .reverse(16.02)
+          // .withAllowDuplicates(true)
+          .execute()
+          .then((reverseResponse) => {
+            t.truthy(reverseResponse);
+            t.is(reverseResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -509,7 +545,8 @@ test("018 - charge discover manual card present", (t) => {
 
   const card = TestCards.discoverManual(true, true);
 
-  return card.charge(16.03)
+  return card
+    .charge(16.03)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -529,7 +566,8 @@ test("019 - charge amex manual card present", (t) => {
 
   const card = TestCards.amexManual(true, true);
 
-  return card.charge(16.04)
+  return card
+    .charge(16.04)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -548,7 +586,8 @@ test("020 - charge jcb manual card present", (t) => {
 
   const card = TestCards.jcbManual(true, true);
 
-  return card.charge(16.05)
+  return card
+    .charge(16.05)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -568,7 +607,8 @@ test("021 - charge discover manual card present", (t) => {
 
   const card = TestCards.discoverManual(true, true);
 
-  return card.charge(16.07)
+  return card
+    .charge(16.07)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -580,14 +620,17 @@ test("021 - charge discover manual card present", (t) => {
     })
     .then((response) => {
       // test case 64
-      return response.reverse(16.07)
-        // .withAllowDuplicates(true)
-        .withAuthAmount(6.07)
-        .execute()
-        .then((reverseResponse) => {
-          t.truthy(reverseResponse);
-          t.is(reverseResponse.responseCode, "00");
-        });
+      return (
+        response
+          .reverse(16.07)
+          // .withAllowDuplicates(true)
+          .withAuthAmount(6.07)
+          .execute()
+          .then((reverseResponse) => {
+            t.truthy(reverseResponse);
+            t.is(reverseResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -608,7 +651,8 @@ test("022 - charge visa manual card not present", (t) => {
     card = TestCards.visaManual(false, true);
   }
 
-  return card.charge(17.01)
+  return card
+    .charge(17.01)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -634,7 +678,8 @@ test("023 - charge mastercard manual card not present", (t) => {
     card = TestCards.masterCardManual(false, true);
   }
 
-  return card.charge(17.02)
+  return card
+    .charge(17.02)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -646,13 +691,16 @@ test("023 - charge mastercard manual card not present", (t) => {
     })
     .then((response) => {
       // test case 61
-      return response.reverse(17.02)
-        // .withAllowDuplicates(true)
-        .execute()
-        .then((reverseResponse) => {
-          t.truthy(reverseResponse);
-          t.is(reverseResponse.responseCode, "00");
-        });
+      return (
+        response
+          .reverse(17.02)
+          // .withAllowDuplicates(true)
+          .execute()
+          .then((reverseResponse) => {
+            t.truthy(reverseResponse);
+            t.is(reverseResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -670,7 +718,8 @@ test("024 - charge discover manual card not present", (t) => {
     card = TestCards.discoverManual(false, true);
   }
 
-  return card.charge(17.03)
+  return card
+    .charge(17.03)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -696,7 +745,8 @@ test("025 - charge amex manual card not present", (t) => {
     card = TestCards.amexManual(false, true);
   }
 
-  return card.charge(17.04)
+  return card
+    .charge(17.04)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -715,7 +765,8 @@ test("026 - charge jcb manual card not present", (t) => {
 
   const card = TestCards.jcbManual(false, true);
 
-  return card.charge(17.05)
+  return card
+    .charge(17.05)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -733,7 +784,8 @@ test("027 - charge visa contactless", (t) => {
 
   const card = TestCards.visaSwipe(EntryMethod.Proximity);
 
-  return card.charge(18.01)
+  return card
+    .charge(18.01)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .execute()
@@ -748,7 +800,8 @@ test("028 - charge mastercard contactless", (t) => {
 
   const card = TestCards.masterCardSwipe(EntryMethod.Proximity);
 
-  return card.charge(18.02)
+  return card
+    .charge(18.02)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .execute()
@@ -763,7 +816,8 @@ test("029 - charge discover contactless", (t) => {
 
   const card = TestCards.discoverSwipe(EntryMethod.Proximity);
 
-  return card.charge(18.03)
+  return card
+    .charge(18.03)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .execute()
@@ -778,7 +832,8 @@ test("030 - charge amex contactless", (t) => {
 
   const card = TestCards.amexSwipe(EntryMethod.Proximity);
 
-  return card.charge(18.04)
+  return card
+    .charge(18.04)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .execute()
@@ -796,24 +851,28 @@ test("031 - authorize visa swipe", (t) => {
   const card = TestCards.visaSwipe();
 
   // 031a authorize
-  return card.authorize(15.08)
-    .withAllowDuplicates(true)
-    .withCurrency("USD")
-    .execute()
-    .then((response) => {
-      t.truthy(response);
-      t.is(response.responseCode, "00");
-      return response;
-    })
-    // 031b capture
-    .then((response) => {
-      return response.capture()
-        .execute()
-        .then((captureResponse) => {
-          t.truthy(captureResponse);
-          t.is(captureResponse.responseCode, "00");
-        });
-    });
+  return (
+    card
+      .authorize(15.08)
+      .withAllowDuplicates(true)
+      .withCurrency("USD")
+      .execute()
+      .then((response) => {
+        t.truthy(response);
+        t.is(response.responseCode, "00");
+        return response;
+      })
+      // 031b capture
+      .then((response) => {
+        return response
+          .capture()
+          .execute()
+          .then((captureResponse) => {
+            t.truthy(captureResponse);
+            t.is(captureResponse.responseCode, "00");
+          });
+      })
+  );
 });
 
 test("032 - authorize visa swipe additional auth", (t) => {
@@ -822,25 +881,29 @@ test("032 - authorize visa swipe additional auth", (t) => {
   const card = TestCards.visaSwipe();
 
   // 032a authorize
-  return card.authorize(15.09)
-    .withAllowDuplicates(true)
-    .withCurrency("USD")
-    .execute()
-    .then((response) => {
-      t.truthy(response);
-      t.is(response.responseCode, "00");
-      return response;
-    })
-    // 032b Additional Auth (restaurant only)
-    // 032c Add to batch
-    .then((response) => {
-      return response.capture()
-        .execute()
-        .then((captureResponse) => {
-          t.truthy(captureResponse);
-          t.is(captureResponse.responseCode, "00");
-        });
-    });
+  return (
+    card
+      .authorize(15.09)
+      .withAllowDuplicates(true)
+      .withCurrency("USD")
+      .execute()
+      .then((response) => {
+        t.truthy(response);
+        t.is(response.responseCode, "00");
+        return response;
+      })
+      // 032b Additional Auth (restaurant only)
+      // 032c Add to batch
+      .then((response) => {
+        return response
+          .capture()
+          .execute()
+          .then((captureResponse) => {
+            t.truthy(captureResponse);
+            t.is(captureResponse.responseCode, "00");
+          });
+      })
+  );
 });
 
 test("033 - authorize mastercard swipe", (t) => {
@@ -849,24 +912,28 @@ test("033 - authorize mastercard swipe", (t) => {
   const card = TestCards.masterCardSwipe();
 
   // 033a authorize
-  return card.authorize(15.10)
-    .withAllowDuplicates(true)
-    .withCurrency("USD")
-    .execute()
-    .then((response) => {
-      t.truthy(response);
-      t.is(response.responseCode, "00");
-      return response;
-    })
-    // 033b capture
-    .then((response) => {
-      return response.capture()
-        .execute()
-        .then((captureResponse) => {
-          t.truthy(captureResponse);
-          t.is(captureResponse.responseCode, "00");
-        });
-    });
+  return (
+    card
+      .authorize(15.1)
+      .withAllowDuplicates(true)
+      .withCurrency("USD")
+      .execute()
+      .then((response) => {
+        t.truthy(response);
+        t.is(response.responseCode, "00");
+        return response;
+      })
+      // 033b capture
+      .then((response) => {
+        return response
+          .capture()
+          .execute()
+          .then((captureResponse) => {
+            t.truthy(captureResponse);
+            t.is(captureResponse.responseCode, "00");
+          });
+      })
+  );
 });
 
 test("033a - authorize discover swipe", (t) => {
@@ -874,7 +941,8 @@ test("033a - authorize discover swipe", (t) => {
 
   const card = TestCards.discoverSwipe();
 
-  return card.authorize(15.10)
+  return card
+    .authorize(15.1)
     .withCurrency("USD")
     .withAllowDuplicates(true)
     .execute()
@@ -896,25 +964,29 @@ test("034 - authorize visa manual card present", (t) => {
   const card = TestCards.visaManual(true, true);
 
   // 034a authorize
-  return card.authorize(16.08)
-    .withAllowDuplicates(true)
-    .withCurrency("USD")
-    .withAddress(address)
-    .execute()
-    .then((response) => {
-      t.truthy(response);
-      t.is(response.responseCode, "00");
-      return response;
-    })
-    // 034b capture
-    .then((response) => {
-      return response.capture()
-        .execute()
-        .then((captureResponse) => {
-          t.truthy(captureResponse);
-          t.is(captureResponse.responseCode, "00");
-        });
-    });
+  return (
+    card
+      .authorize(16.08)
+      .withAllowDuplicates(true)
+      .withCurrency("USD")
+      .withAddress(address)
+      .execute()
+      .then((response) => {
+        t.truthy(response);
+        t.is(response.responseCode, "00");
+        return response;
+      })
+      // 034b capture
+      .then((response) => {
+        return response
+          .capture()
+          .execute()
+          .then((captureResponse) => {
+            t.truthy(captureResponse);
+            t.is(captureResponse.responseCode, "00");
+          });
+      })
+  );
 });
 
 test("035 - authorize visa manual card present additional auth", (t) => {
@@ -927,26 +999,30 @@ test("035 - authorize visa manual card present additional auth", (t) => {
   const card = TestCards.visaManual(true, true);
 
   // 035a authorize
-  return card.authorize(16.09)
-    .withAllowDuplicates(true)
-    .withCurrency("USD")
-    .withAddress(address)
-    .execute()
-    .then((response) => {
-      t.truthy(response);
-      t.is(response.responseCode, "00");
-      return response;
-    })
-    // 035b Additional Auth (restaurant only)
-    // 035c Add to batch
-    .then((response) => {
-      return response.capture()
-        .execute()
-        .then((captureResponse) => {
-          t.truthy(captureResponse);
-          t.is(captureResponse.responseCode, "00");
-        });
-    });
+  return (
+    card
+      .authorize(16.09)
+      .withAllowDuplicates(true)
+      .withCurrency("USD")
+      .withAddress(address)
+      .execute()
+      .then((response) => {
+        t.truthy(response);
+        t.is(response.responseCode, "00");
+        return response;
+      })
+      // 035b Additional Auth (restaurant only)
+      // 035c Add to batch
+      .then((response) => {
+        return response
+          .capture()
+          .execute()
+          .then((captureResponse) => {
+            t.truthy(captureResponse);
+            t.is(captureResponse.responseCode, "00");
+          });
+      })
+  );
 });
 
 test("036 - authorize mastercard manual card present", (t) => {
@@ -959,25 +1035,29 @@ test("036 - authorize mastercard manual card present", (t) => {
   const card = TestCards.masterCardManual(true, true);
 
   // 036a authorize
-  return card.authorize(16.10)
-    .withAllowDuplicates(true)
-    .withCurrency("USD")
-    .withAddress(address)
-    .execute()
-    .then((response) => {
-      t.truthy(response);
-      t.is(response.responseCode, "00");
-      return response;
-    })
-    // 036b capture
-    .then((response) => {
-      return response.capture()
-        .execute()
-        .then((captureResponse) => {
-          t.truthy(captureResponse);
-          t.is(captureResponse.responseCode, "00");
-        });
-    });
+  return (
+    card
+      .authorize(16.1)
+      .withAllowDuplicates(true)
+      .withCurrency("USD")
+      .withAddress(address)
+      .execute()
+      .then((response) => {
+        t.truthy(response);
+        t.is(response.responseCode, "00");
+        return response;
+      })
+      // 036b capture
+      .then((response) => {
+        return response
+          .capture()
+          .execute()
+          .then((captureResponse) => {
+            t.truthy(captureResponse);
+            t.is(captureResponse.responseCode, "00");
+          });
+      })
+  );
 });
 
 test("036a - authorize discover manual card present", (t) => {
@@ -988,7 +1068,8 @@ test("036a - authorize discover manual card present", (t) => {
 
   const card = TestCards.discoverManual(true, true);
 
-  return card.authorize(16.10)
+  return card
+    .authorize(16.1)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -1011,25 +1092,29 @@ test("037 - authorize visa manual", (t) => {
   const card = TestCards.visaManual(false, true);
 
   // 034a authorize
-  return card.authorize(17.08)
-    .withAllowDuplicates(true)
-    .withCurrency("USD")
-    .withAddress(address)
-    .execute()
-    .then((response) => {
-      t.truthy(response);
-      t.is(response.responseCode, "00");
-      return response;
-    })
-    // 034b capture
-    .then((response) => {
-      return response.capture()
-        .execute()
-        .then((captureResponse) => {
-          t.truthy(captureResponse);
-          t.is(captureResponse.responseCode, "00");
-        });
-    });
+  return (
+    card
+      .authorize(17.08)
+      .withAllowDuplicates(true)
+      .withCurrency("USD")
+      .withAddress(address)
+      .execute()
+      .then((response) => {
+        t.truthy(response);
+        t.is(response.responseCode, "00");
+        return response;
+      })
+      // 034b capture
+      .then((response) => {
+        return response
+          .capture()
+          .execute()
+          .then((captureResponse) => {
+            t.truthy(captureResponse);
+            t.is(captureResponse.responseCode, "00");
+          });
+      })
+  );
 });
 
 test("038 - authorize mastercard manual", (t) => {
@@ -1042,25 +1127,29 @@ test("038 - authorize mastercard manual", (t) => {
   const card = TestCards.masterCardManual(false, true);
 
   // 036a authorize
-  return card.authorize(17.09)
-    .withAllowDuplicates(true)
-    .withCurrency("USD")
-    .withAddress(address)
-    .execute()
-    .then((response) => {
-      t.truthy(response);
-      t.is(response.responseCode, "00");
-      return response;
-    })
-    // 036b capture
-    .then((response) => {
-      return response.capture()
-        .execute()
-        .then((captureResponse) => {
-          t.truthy(captureResponse);
-          t.is(captureResponse.responseCode, "00");
-        });
-    });
+  return (
+    card
+      .authorize(17.09)
+      .withAllowDuplicates(true)
+      .withCurrency("USD")
+      .withAddress(address)
+      .execute()
+      .then((response) => {
+        t.truthy(response);
+        t.is(response.responseCode, "00");
+        return response;
+      })
+      // 036b capture
+      .then((response) => {
+        return response
+          .capture()
+          .execute()
+          .then((captureResponse) => {
+            t.truthy(captureResponse);
+            t.is(captureResponse.responseCode, "00");
+          });
+      })
+  );
 });
 
 test("038a - authorize discover manual", (t) => {
@@ -1071,7 +1160,8 @@ test("038a - authorize discover manual", (t) => {
 
   const card = TestCards.discoverManual(false, true);
 
-  return card.authorize(17.10)
+  return card
+    .authorize(17.1)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -1089,7 +1179,8 @@ test("039 - charge discover swipe partial approval", (t) => {
 
   const card = TestCards.discoverSwipe();
 
-  return card.charge(40.00)
+  return card
+    .charge(40.0)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAllowPartialAuth(true)
@@ -1106,7 +1197,8 @@ test("040 - charge visa swipe partial approval", (t) => {
 
   const card = TestCards.visaSwipe();
 
-  return card.charge(130.00)
+  return card
+    .charge(130.0)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAllowPartialAuth(true)
@@ -1126,7 +1218,8 @@ test("041 - charge discover manual partial approval", (t) => {
 
   const card = TestCards.discoverManual(true, true);
 
-  return card.charge(145.00)
+  return card
+    .charge(145.0)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAllowPartialAuth(true)
@@ -1144,27 +1237,33 @@ test("042 - charge mastercard swipe partial approval", (t) => {
 
   const card = TestCards.masterCardSwipe();
 
-  return card.charge(155.00)
-    .withAllowDuplicates(true)
-    .withCurrency("USD")
-    .withAllowPartialAuth(true)
-    .execute()
-    .then((response) => {
-      t.truthy(response);
-      t.is(response.responseCode, "10");
-      t.is(response.authorizedAmount, "100.00");
-      return response;
-    })
-    // test case 62
-    .then((response) => {
-      return response.reverse(100.00)
-        // .withAllowDuplicates(true)
-        .execute()
-        .then((reverseResponse) => {
-          t.truthy(reverseResponse);
-          t.is(reverseResponse.responseCode, "00");
-        });
-    });
+  return (
+    card
+      .charge(155.0)
+      .withAllowDuplicates(true)
+      .withCurrency("USD")
+      .withAllowPartialAuth(true)
+      .execute()
+      .then((response) => {
+        t.truthy(response);
+        t.is(response.responseCode, "10");
+        t.is(response.authorizedAmount, "100.00");
+        return response;
+      })
+      // test case 62
+      .then((response) => {
+        return (
+          response
+            .reverse(100.0)
+            // .withAllowDuplicates(true)
+            .execute()
+            .then((reverseResponse) => {
+              t.truthy(reverseResponse);
+              t.is(reverseResponse.responseCode, "00");
+            })
+        );
+      })
+  );
 });
 
 /// SALE WITH GRATUITY
@@ -1173,7 +1272,8 @@ test("042 - charge mastercard swipe partial approval", (t) => {
 test("043 - charge visa swipe edit gratuity", (t) => {
   const card = TestCards.visaSwipe();
 
-  return card.charge(15.12)
+  return card
+    .charge(15.12)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .execute()
@@ -1183,15 +1283,18 @@ test("043 - charge visa swipe edit gratuity", (t) => {
       return response;
     })
     .then((response) => {
-      return response.edit()
-        // .withAllowDuplicates(true)
-        .withAmount(18.12)
-        .withGratuity(3.00)
-        .execute()
-        .then((editResponse) => {
-          t.truthy(editResponse);
-          t.is(editResponse.responseCode, "00");
-        });
+      return (
+        response
+          .edit()
+          // .withAllowDuplicates(true)
+          .withAmount(18.12)
+          .withGratuity(3.0)
+          .execute()
+          .then((editResponse) => {
+            t.truthy(editResponse);
+            t.is(editResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -1202,7 +1305,8 @@ test("044 - charge mastercard manual edit gratuity", (t) => {
   address.postalCode = "75024";
 
   const card = TestCards.masterCardManual(true, true);
-  return card.charge(15.13)
+  return card
+    .charge(15.13)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -1213,15 +1317,18 @@ test("044 - charge mastercard manual edit gratuity", (t) => {
       return response;
     })
     .then((response) => {
-      return response.edit()
-        // .withAllowDuplicates(true)
-        .withAmount(18.13)
-        .withGratuity(3.00)
-        .execute()
-        .then((editResponse) => {
-          t.truthy(editResponse);
-          t.is(editResponse.responseCode, "00");
-        });
+      return (
+        response
+          .edit()
+          // .withAllowDuplicates(true)
+          .withAmount(18.13)
+          .withGratuity(3.0)
+          .execute()
+          .then((editResponse) => {
+            t.truthy(editResponse);
+            t.is(editResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -1235,11 +1342,12 @@ test("045 - charge visa manual gratuity", (t) => {
 
   const card = TestCards.visaManual(true, true);
 
-  return card.charge(18.61)
+  return card
+    .charge(18.61)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
-    .withGratuity(3.50)
+    .withGratuity(3.5)
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -1252,10 +1360,11 @@ test("046 - charge mastercard swipe gratuity", (t) => {
 
   const card = TestCards.masterCardSwipe();
 
-  return card.charge(18.62)
+  return card
+    .charge(18.62)
     .withAllowDuplicates(true)
     .withCurrency("USD")
-    .withGratuity(3.50)
+    .withGratuity(3.5)
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -1263,15 +1372,18 @@ test("046 - charge mastercard swipe gratuity", (t) => {
       return response;
     })
     .then((response) => {
-      return response.edit()
-        // .withAllowDuplicates(true)
-        .withAmount(18.12)
-        .withGratuity(3.00)
-        .execute()
-        .then((editResponse) => {
-          t.truthy(editResponse);
-          t.is(editResponse.responseCode, "00");
-        });
+      return (
+        response
+          .edit()
+          // .withAllowDuplicates(true)
+          .withAmount(18.12)
+          .withGratuity(3.0)
+          .execute()
+          .then((editResponse) => {
+            t.truthy(editResponse);
+            t.is(editResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -1282,7 +1394,8 @@ test("047 - level ii visa swipe response b", (t) => {
 
   const card = TestCards.visaSwipe();
 
-  return card.charge(112.34)
+  return card
+    .charge(112.34)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withCommercialRequest(true)
@@ -1294,15 +1407,18 @@ test("047 - level ii visa swipe response b", (t) => {
       return response;
     })
     .then((response) => {
-      return response.edit()
-        // .withAllowDuplicates(true)
-        .withTaxType(TaxType.SalesTax)
-        .withTaxAmount(1)
-        .execute()
-        .then((cpcResponse) => {
-          t.truthy(cpcResponse);
-          t.is(cpcResponse.responseCode, "00");
-        });
+      return (
+        response
+          .edit()
+          // .withAllowDuplicates(true)
+          .withTaxType(TaxType.SalesTax)
+          .withTaxAmount(1)
+          .execute()
+          .then((cpcResponse) => {
+            t.truthy(cpcResponse);
+            t.is(cpcResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -1311,7 +1427,8 @@ test("047a - level ii visa swipe response b", (t) => {
 
   const card = TestCards.visaSwipe();
 
-  return card.charge(112.34)
+  return card
+    .charge(112.34)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withCommercialRequest(true)
@@ -1323,14 +1440,17 @@ test("047a - level ii visa swipe response b", (t) => {
       return response;
     })
     .then((response) => {
-      return response.edit()
-        // .withAllowDuplicates(true)
-        .withTaxType(TaxType.NotUsed)
-        .execute()
-        .then((cpcResponse) => {
-          t.truthy(cpcResponse);
-          t.is(cpcResponse.responseCode, "00");
-        });
+      return (
+        response
+          .edit()
+          // .withAllowDuplicates(true)
+          .withTaxType(TaxType.NotUsed)
+          .execute()
+          .then((cpcResponse) => {
+            t.truthy(cpcResponse);
+            t.is(cpcResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -1339,7 +1459,8 @@ test("048 - level ii visa swipe response r", (t) => {
 
   const card = TestCards.visaSwipe();
 
-  return card.charge(123.45)
+  return card
+    .charge(123.45)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withCommercialRequest(true)
@@ -1351,14 +1472,17 @@ test("048 - level ii visa swipe response r", (t) => {
       return response;
     })
     .then((response) => {
-      return response.edit()
-        // .withAllowDuplicates(true)
-        .withTaxType(TaxType.TaxExempt)
-        .execute()
-        .then((cpcResponse) => {
-          t.truthy(cpcResponse);
-          t.is(cpcResponse.responseCode, "00");
-        });
+      return (
+        response
+          .edit()
+          // .withAllowDuplicates(true)
+          .withTaxType(TaxType.TaxExempt)
+          .execute()
+          .then((cpcResponse) => {
+            t.truthy(cpcResponse);
+            t.is(cpcResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -1370,7 +1494,8 @@ test("049 - level ii visa manual response s", (t) => {
 
   const card = TestCards.visaManual(true, true);
 
-  return card.charge(134.56)
+  return card
+    .charge(134.56)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -1383,16 +1508,19 @@ test("049 - level ii visa manual response s", (t) => {
       return response;
     })
     .then((response) => {
-      return response.edit()
-        // .withAllowDuplicates(true)
-        .withPoNumber("9876543210")
-        .withTaxType(TaxType.SalesTax)
-        .withTaxAmount(1)
-        .execute()
-        .then((cpcResponse) => {
-          t.truthy(cpcResponse);
-          t.is(cpcResponse.responseCode, "00");
-        });
+      return (
+        response
+          .edit()
+          // .withAllowDuplicates(true)
+          .withPoNumber("9876543210")
+          .withTaxType(TaxType.SalesTax)
+          .withTaxAmount(1)
+          .execute()
+          .then((cpcResponse) => {
+            t.truthy(cpcResponse);
+            t.is(cpcResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -1401,7 +1529,8 @@ test("050 - level ii mastercard swipe response s", (t) => {
 
   const card = TestCards.masterCardSwipe();
 
-  return card.charge(111.06)
+  return card
+    .charge(111.06)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withCommercialRequest(true)
@@ -1413,15 +1542,18 @@ test("050 - level ii mastercard swipe response s", (t) => {
       return response;
     })
     .then((response) => {
-      return response.edit()
-        // .withAllowDuplicates(true)
-        .withPoNumber("9876543210")
-        .withTaxType(TaxType.NotUsed)
-        .execute()
-        .then((cpcResponse) => {
-          t.truthy(cpcResponse);
-          t.is(cpcResponse.responseCode, "00");
-        });
+      return (
+        response
+          .edit()
+          // .withAllowDuplicates(true)
+          .withPoNumber("9876543210")
+          .withTaxType(TaxType.NotUsed)
+          .execute()
+          .then((cpcResponse) => {
+            t.truthy(cpcResponse);
+            t.is(cpcResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -1433,7 +1565,8 @@ test("051 - level ii mastercard manual response s", (t) => {
 
   const card = TestCards.masterCardManual(true, true);
 
-  return card.charge(111.07)
+  return card
+    .charge(111.07)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -1446,16 +1579,19 @@ test("051 - level ii mastercard manual response s", (t) => {
       return response;
     })
     .then((response) => {
-      return response.edit()
-        // .withAllowDuplicates(true)
-        .withPoNumber("9876543210")
-        .withTaxType(TaxType.SalesTax)
-        .withTaxAmount(1)
-        .execute()
-        .then((cpcResponse) => {
-          t.truthy(cpcResponse);
-          t.is(cpcResponse.responseCode, "00");
-        });
+      return (
+        response
+          .edit()
+          // .withAllowDuplicates(true)
+          .withPoNumber("9876543210")
+          .withTaxType(TaxType.SalesTax)
+          .withTaxAmount(1)
+          .execute()
+          .then((cpcResponse) => {
+            t.truthy(cpcResponse);
+            t.is(cpcResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -1467,7 +1603,8 @@ test("051a - level ii mastercard manual response s", (t) => {
 
   const card = TestCards.masterCardManual(true, true);
 
-  return card.charge(111.08)
+  return card
+    .charge(111.08)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -1480,16 +1617,19 @@ test("051a - level ii mastercard manual response s", (t) => {
       return response;
     })
     .then((response) => {
-      return response.edit()
-        // .withAllowDuplicates(true)
-        .withPoNumber("9876543210")
-        .withTaxType(TaxType.SalesTax)
-        .withTaxAmount(1)
-        .execute()
-        .then((cpcResponse) => {
-          t.truthy(cpcResponse);
-          t.is(cpcResponse.responseCode, "00");
-        });
+      return (
+        response
+          .edit()
+          // .withAllowDuplicates(true)
+          .withPoNumber("9876543210")
+          .withTaxType(TaxType.SalesTax)
+          .withTaxAmount(1)
+          .execute()
+          .then((cpcResponse) => {
+            t.truthy(cpcResponse);
+            t.is(cpcResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -1501,7 +1641,8 @@ test("052 - level ii mastercard manual response s", (t) => {
 
   const card = TestCards.masterCardManual(true, true);
 
-  return card.charge(111.09)
+  return card
+    .charge(111.09)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -1514,15 +1655,18 @@ test("052 - level ii mastercard manual response s", (t) => {
       return response;
     })
     .then((response) => {
-      return response.edit()
-        // .withAllowDuplicates(true)
-        .withPoNumber("9876543210")
-        .withTaxType(TaxType.TaxExempt)
-        .execute()
-        .then((cpcResponse) => {
-          t.truthy(cpcResponse);
-          t.is(cpcResponse.responseCode, "00");
-        });
+      return (
+        response
+          .edit()
+          // .withAllowDuplicates(true)
+          .withPoNumber("9876543210")
+          .withTaxType(TaxType.TaxExempt)
+          .execute()
+          .then((cpcResponse) => {
+            t.truthy(cpcResponse);
+            t.is(cpcResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -1531,7 +1675,8 @@ test("053 - level ii amex swipe no response", (t) => {
 
   const card = TestCards.amexSwipe();
 
-  return card.charge(111.10)
+  return card
+    .charge(111.1)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withCommercialRequest(true)
@@ -1543,15 +1688,18 @@ test("053 - level ii amex swipe no response", (t) => {
       return response;
     })
     .then((response) => {
-      return response.edit()
-        // .withAllowDuplicates(true)
-        .withTaxType(TaxType.SalesTax)
-        .withTaxAmount(1)
-        .execute()
-        .then((cpcResponse) => {
-          t.truthy(cpcResponse);
-          t.is(cpcResponse.responseCode, "00");
-        });
+      return (
+        response
+          .edit()
+          // .withAllowDuplicates(true)
+          .withTaxType(TaxType.SalesTax)
+          .withTaxAmount(1)
+          .execute()
+          .then((cpcResponse) => {
+            t.truthy(cpcResponse);
+            t.is(cpcResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -1563,7 +1711,8 @@ test("054 - level ii amex manual no response", (t) => {
 
   const card = TestCards.amexManual(true, true);
 
-  return card.charge(111.11)
+  return card
+    .charge(111.11)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -1576,15 +1725,18 @@ test("054 - level ii amex manual no response", (t) => {
       return response;
     })
     .then((response) => {
-      return response.edit()
-        // .withAllowDuplicates(true)
-        .withPoNumber("9876543210")
-        .withTaxType(TaxType.NotUsed)
-        .execute()
-        .then((cpcResponse) => {
-          t.truthy(cpcResponse);
-          t.is(cpcResponse.responseCode, "00");
-        });
+      return (
+        response
+          .edit()
+          // .withAllowDuplicates(true)
+          .withPoNumber("9876543210")
+          .withTaxType(TaxType.NotUsed)
+          .execute()
+          .then((cpcResponse) => {
+            t.truthy(cpcResponse);
+            t.is(cpcResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -1596,7 +1748,8 @@ test("055 - level ii amex manual no response", (t) => {
 
   const card = TestCards.amexManual(true, true);
 
-  return card.charge(111.12)
+  return card
+    .charge(111.12)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -1609,15 +1762,18 @@ test("055 - level ii amex manual no response", (t) => {
       return response;
     })
     .then((response) => {
-      return response.edit()
-        // .withAllowDuplicates(true)
-        .withPoNumber("9876543210")
-        .withTaxType(TaxType.NotUsed)
-        .execute()
-        .then((cpcResponse) => {
-          t.truthy(cpcResponse);
-          t.is(cpcResponse.responseCode, "00");
-        });
+      return (
+        response
+          .edit()
+          // .withAllowDuplicates(true)
+          .withPoNumber("9876543210")
+          .withTaxType(TaxType.NotUsed)
+          .execute()
+          .then((cpcResponse) => {
+            t.truthy(cpcResponse);
+            t.is(cpcResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -1628,7 +1784,8 @@ test("055a - level ii amex manual no response", (t) => {
   address.postalCode = "75024";
 
   const card = TestCards.amexManual(true, true);
-  return card.charge(111.13)
+  return card
+    .charge(111.13)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAddress(address)
@@ -1641,15 +1798,18 @@ test("055a - level ii amex manual no response", (t) => {
       return response;
     })
     .then((response) => {
-      return response.edit()
-        // .withAllowDuplicates(true)
-        .withPoNumber("9876543210")
-        .withTaxType(TaxType.TaxExempt)
-        .execute()
-        .then((cpcResponse) => {
-          t.truthy(cpcResponse);
-          t.is(cpcResponse.responseCode, "00");
-        });
+      return (
+        response
+          .edit()
+          // .withAllowDuplicates(true)
+          .withPoNumber("9876543210")
+          .withTaxType(TaxType.TaxExempt)
+          .execute()
+          .then((cpcResponse) => {
+            t.truthy(cpcResponse);
+            t.is(cpcResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -1660,7 +1820,8 @@ test("056 - offline charge visa manual", (t) => {
 
   const card = TestCards.visaManual(false, true);
 
-  return card.charge(15.12)
+  return card
+    .charge(15.12)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withOfflineAuthCode("654321")
@@ -1676,7 +1837,8 @@ test("056 - offline auth visa manual", (t) => {
 
   const card = TestCards.visaManual(false, true);
 
-  return card.authorize(15.11)
+  return card
+    .authorize(15.11)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withOfflineAuthCode("654321")
@@ -1694,7 +1856,8 @@ test("057 - return mastercard", (t) => {
 
   const card = TestCards.masterCardManual(false, true);
 
-  return card.refund(15.11)
+  return card
+    .refund(15.11)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .execute()
@@ -1709,7 +1872,8 @@ test("057a - return mastercard swipe", (t) => {
 
   const card = TestCards.masterCardSwipe();
 
-  return card.refund(15.15)
+  return card
+    .refund(15.15)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .execute()
@@ -1720,33 +1884,33 @@ test("057a - return mastercard swipe", (t) => {
 });
 
 test("058 - return jcb transaction id", (_t) => {
-    // see test 14
+  // see test 14
 });
 
 /// ONLINE VOID / REVERSAL (Required)
 
 test("059 - reversal visa", (_t) => {
-    // see test 10
+  // see test 10
 });
 
 test("060 - reversal mastercard", (_t) => {
-    // see test case 17
+  // see test case 17
 });
 
 test("061 - reversal mastercard", (_t) => {
-    // see test case 23
+  // see test case 23
 });
 
 test("062 - reversal mastercard", (_t) => {
-    // see test case 42
+  // see test case 42
 });
 
 test("063 - reversal visa partial", (_t) => {
-    // see test case 15
+  // see test case 15
 });
 
 test("064 - reversal discover partial", (_t) => {
-    // see test 21
+  // see test 21
 });
 
 /// PIN DEBIT CARD FUNCTIONS
@@ -1754,9 +1918,13 @@ test("064 - reversal discover partial", (_t) => {
 test("065 - debit sale visa swipe", (t) => {
   t.plan(2);
 
-  const card = TestCards.asDebit(TestCards.visaSwipe(), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asDebit(
+    TestCards.visaSwipe(),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.charge(14.01)
+  return card
+    .charge(14.01)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .execute()
@@ -1769,9 +1937,13 @@ test("065 - debit sale visa swipe", (t) => {
 test("066 - debit sale mastercard swipe", (t) => {
   t.plan(4);
 
-  const card = TestCards.asDebit(TestCards.masterCardSwipe(), "F505AD81659AA42A3D123412324000AB");
+  const card = TestCards.asDebit(
+    TestCards.masterCardSwipe(),
+    "F505AD81659AA42A3D123412324000AB",
+  );
 
-  return card.charge(14.02)
+  return card
+    .charge(14.02)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .execute()
@@ -1782,25 +1954,32 @@ test("066 - debit sale mastercard swipe", (t) => {
     })
     .then((_response) => {
       // test case 71
-      return card.reverse(14.02)
-        // .withAllowDuplicates(true)
-        .execute()
-        .then((reverseResponse) => {
-          t.truthy(reverseResponse);
-          t.is(reverseResponse.responseCode, "00");
-        });
+      return (
+        card
+          .reverse(14.02)
+          // .withAllowDuplicates(true)
+          .execute()
+          .then((reverseResponse) => {
+            t.truthy(reverseResponse);
+            t.is(reverseResponse.responseCode, "00");
+          })
+      );
     });
 });
 
 test("067 - debit sale visa swipe cashback", (t) => {
   t.plan(2);
 
-  const card = TestCards.asDebit(TestCards.visaSwipe(), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asDebit(
+    TestCards.visaSwipe(),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.charge(14.03)
+  return card
+    .charge(14.03)
     .withAllowDuplicates(true)
     .withCurrency("USD")
-    .withCashBack(5.00)
+    .withCashBack(5.0)
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -1811,9 +1990,13 @@ test("067 - debit sale visa swipe cashback", (t) => {
 test("067a - debit sale mastercard", (t) => {
   t.plan(2);
 
-  const card = TestCards.asDebit(TestCards.masterCardSwipe(), "F505AD81659AA42A3D123412324000AB");
+  const card = TestCards.asDebit(
+    TestCards.masterCardSwipe(),
+    "F505AD81659AA42A3D123412324000AB",
+  );
 
-  return card.charge(14.04)
+  return card
+    .charge(14.04)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .execute()
@@ -1828,9 +2011,13 @@ test("067a - debit sale mastercard", (t) => {
 test("068 - debit sale mastercard partial approval", (t) => {
   t.plan(3);
 
-  const card = TestCards.asDebit(TestCards.masterCardSwipe(), "F505AD81659AA42A3D123412324000AB");
+  const card = TestCards.asDebit(
+    TestCards.masterCardSwipe(),
+    "F505AD81659AA42A3D123412324000AB",
+  );
 
-  return card.charge(33.00)
+  return card
+    .charge(33.0)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAllowPartialAuth(true)
@@ -1845,9 +2032,13 @@ test("068 - debit sale mastercard partial approval", (t) => {
 test("069 - debit sale visa partial approval", (t) => {
   t.plan(5);
 
-  const card = TestCards.asDebit(TestCards.visaSwipe(), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asDebit(
+    TestCards.visaSwipe(),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.charge(44.00)
+  return card
+    .charge(44.0)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withAllowPartialAuth(true)
@@ -1860,13 +2051,16 @@ test("069 - debit sale visa partial approval", (t) => {
     })
     .then((_response) => {
       // test case 72
-      return card.reverse(33.00)
-        // .withAllowDuplicates(true)
-        .execute()
-        .then((reverseResponse) => {
-          t.truthy(reverseResponse);
-          t.is(reverseResponse.responseCode, "00");
-        });
+      return (
+        card
+          .reverse(33.0)
+          // .withAllowDuplicates(true)
+          .execute()
+          .then((reverseResponse) => {
+            t.truthy(reverseResponse);
+            t.is(reverseResponse.responseCode, "00");
+          })
+      );
     });
 });
 
@@ -1875,9 +2069,13 @@ test("069 - debit sale visa partial approval", (t) => {
 test("070 - debit return visa swipe", (t) => {
   t.plan(2);
 
-  const card = TestCards.asDebit(TestCards.visaSwipe(), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asDebit(
+    TestCards.visaSwipe(),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.refund(14.07)
+  return card
+    .refund(14.07)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .execute()
@@ -1890,9 +2088,13 @@ test("070 - debit return visa swipe", (t) => {
 test("070a - debit return visa swipe", (t) => {
   t.plan(4);
 
-  const card = TestCards.asDebit(TestCards.visaSwipe(), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asDebit(
+    TestCards.visaSwipe(),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.refund(14.08)
+  return card
+    .refund(14.08)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .execute()
@@ -1902,24 +2104,27 @@ test("070a - debit return visa swipe", (t) => {
       return response;
     })
     .then((_response) => {
-      return card.reverse(14.08)
-        // .withAllowDuplicates(true)
-        .execute()
-        .then((reverseResponse) => {
-          t.truthy(reverseResponse);
-          t.is(reverseResponse.responseCode, "00");
-        });
+      return (
+        card
+          .reverse(14.08)
+          // .withAllowDuplicates(true)
+          .execute()
+          .then((reverseResponse) => {
+            t.truthy(reverseResponse);
+            t.is(reverseResponse.responseCode, "00");
+          })
+      );
     });
 });
 
 /// REVERSAL
 
 test("071 - debit reversal mastercard", (_t) => {
-    // see test case 66
+  // see test case 66
 });
 
 test("072 - debit reversal visa", (_t) => {
-    // see test case 96
+  // see test case 96
 });
 
 /// EBT FUNCTIONS
@@ -1928,9 +2133,13 @@ test("072 - debit reversal visa", (_t) => {
 test("080 - ebt fs purchase visa swipe", (t) => {
   t.plan(2);
 
-  const card = TestCards.asEBTTrack(TestCards.visaSwipe(), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asEBTTrack(
+    TestCards.visaSwipe(),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.charge(101.01)
+  return card
+    .charge(101.01)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .execute()
@@ -1943,9 +2152,13 @@ test("080 - ebt fs purchase visa swipe", (t) => {
 test("081 - ebt fs purchase visa manual", (t) => {
   t.plan(2);
 
-  const card = TestCards.asEBTManual(TestCards.visaManual(false, true), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asEBTManual(
+    TestCards.visaManual(false, true),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.charge(102.01)
+  return card
+    .charge(102.01)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .execute()
@@ -1960,11 +2173,15 @@ test("081 - ebt fs purchase visa manual", (t) => {
 test("082 - ebt voucher purchase visa", (t) => {
   t.plan(2);
 
-  const card = TestCards.asEBTManual(TestCards.visaManual(false, true), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asEBTManual(
+    TestCards.visaManual(false, true),
+    "32539F50C245A6A93D123412324000AA",
+  );
   card.serialNumber = "123456789012345";
   card.approvalCode = "123456";
 
-  return card.charge(103.01)
+  return card
+    .charge(103.01)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .execute()
@@ -1979,9 +2196,13 @@ test("082 - ebt voucher purchase visa", (t) => {
 test("083 - ebt fs return visa swipe", (t) => {
   t.plan(2);
 
-  const card = TestCards.asEBTTrack(TestCards.visaSwipeEncrypted(), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asEBTTrack(
+    TestCards.visaSwipeEncrypted(),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.refund(104.01)
+  return card
+    .refund(104.01)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .execute()
@@ -1994,9 +2215,13 @@ test("083 - ebt fs return visa swipe", (t) => {
 test("084 - ebt fs return visa manual", (t) => {
   t.plan(2);
 
-  const card = TestCards.asEBTManual(TestCards.visaManual(false, true), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asEBTManual(
+    TestCards.visaManual(false, true),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.refund(105.01)
+  return card
+    .refund(105.01)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .execute()
@@ -2011,9 +2236,13 @@ test("084 - ebt fs return visa manual", (t) => {
 test("085 - ebt balance inquiry visa swipe", (t) => {
   t.plan(2);
 
-  const card = TestCards.asEBTTrack(TestCards.visaSwipeEncrypted(), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asEBTTrack(
+    TestCards.visaSwipeEncrypted(),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.balanceInquiry()
+  return card
+    .balanceInquiry()
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -2024,9 +2253,13 @@ test("085 - ebt balance inquiry visa swipe", (t) => {
 test("086 - ebt balance inquiry visa manual", (t) => {
   t.plan(2);
 
-  const card = TestCards.asEBTManual(TestCards.visaManual(true, true), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asEBTManual(
+    TestCards.visaManual(true, true),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.balanceInquiry()
+  return card
+    .balanceInquiry()
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -2040,12 +2273,16 @@ test("086 - ebt balance inquiry visa manual", (t) => {
 test("087 - ebt cash back purchase visa swipe", (t) => {
   t.plan(2);
 
-  const card = TestCards.asEBTTrack(TestCards.visaSwipeEncrypted(), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asEBTTrack(
+    TestCards.visaSwipeEncrypted(),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.charge(106.01)
+  return card
+    .charge(106.01)
     .withAllowDuplicates(true)
     .withCurrency("USD")
-    .withCashBack(5.00)
+    .withCashBack(5.0)
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -2056,12 +2293,16 @@ test("087 - ebt cash back purchase visa swipe", (t) => {
 test("088 - ebt cash back purchase visa manual", (t) => {
   t.plan(2);
 
-  const card = TestCards.asEBTManual(TestCards.visaManual(false, true), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asEBTManual(
+    TestCards.visaManual(false, true),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.charge(107.01)
+  return card
+    .charge(107.01)
     .withAllowDuplicates(true)
     .withCurrency("USD")
-    .withCashBack(5.00)
+    .withCashBack(5.0)
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -2074,9 +2315,13 @@ test("088 - ebt cash back purchase visa manual", (t) => {
 test("089 - ebt cash back purchase visa swipe no cash back", (t) => {
   t.plan(2);
 
-  const card = TestCards.asEBTTrack(TestCards.visaSwipeEncrypted(), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asEBTTrack(
+    TestCards.visaSwipeEncrypted(),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.charge(108.01)
+  return card
+    .charge(108.01)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withCashBack(0)
@@ -2090,9 +2335,13 @@ test("089 - ebt cash back purchase visa swipe no cash back", (t) => {
 test("090 - ebt cash back purchase visa manual no cash back", (t) => {
   t.plan(2);
 
-  const card = TestCards.asEBTManual(TestCards.visaManual(false, true), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asEBTManual(
+    TestCards.visaManual(false, true),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.charge(109.01)
+  return card
+    .charge(109.01)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withCashBack(0)
@@ -2108,9 +2357,13 @@ test("090 - ebt cash back purchase visa manual no cash back", (t) => {
 test("091 - ebt balance inquiry visa swipe cash", (t) => {
   t.plan(2);
 
-  const card = TestCards.asEBTTrack(TestCards.visaSwipeEncrypted(), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asEBTTrack(
+    TestCards.visaSwipeEncrypted(),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.balanceInquiry(InquiryType.Cash)
+  return card
+    .balanceInquiry(InquiryType.Cash)
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -2121,9 +2374,13 @@ test("091 - ebt balance inquiry visa swipe cash", (t) => {
 test("092 - ebt balance inquiry visa manual cash", (t) => {
   t.plan(2);
 
-  const card = TestCards.asEBTManual(TestCards.visaManual(true, true), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asEBTManual(
+    TestCards.visaManual(true, true),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.balanceInquiry(InquiryType.Cash)
+  return card
+    .balanceInquiry(InquiryType.Cash)
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -2136,9 +2393,13 @@ test("092 - ebt balance inquiry visa manual cash", (t) => {
 test("093 - ebt benefit withdrawal visa swipe", (t) => {
   t.plan(2);
 
-  const card = TestCards.asEBTTrack(TestCards.visaSwipeEncrypted(), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asEBTTrack(
+    TestCards.visaSwipeEncrypted(),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.charge(110.01)
+  return card
+    .charge(110.01)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .execute()
@@ -2151,9 +2412,13 @@ test("093 - ebt benefit withdrawal visa swipe", (t) => {
 test("094 - ebt benefit withdrawal visa manual", (t) => {
   t.plan(2);
 
-  const card = TestCards.asEBTManual(TestCards.visaManual(false, true), "32539F50C245A6A93D123412324000AA");
+  const card = TestCards.asEBTManual(
+    TestCards.visaManual(false, true),
+    "32539F50C245A6A93D123412324000AA",
+  );
 
-  return card.charge(111.01)
+  return card
+    .charge(111.01)
     .withAllowDuplicates(true)
     .withCurrency("USD")
     .withCashBack(0)
@@ -2173,7 +2438,8 @@ test("095 - activate gift 1 swipe", (t) => {
 
   const card = TestCards.giftCard1Swipe();
 
-  return card.activate(6.00)
+  return card
+    .activate(6.0)
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -2186,7 +2452,8 @@ test("096 - activate gift 2 manual", (t) => {
 
   const card = TestCards.giftCard2Manual();
 
-  return card.activate(7.00)
+  return card
+    .activate(7.0)
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -2201,7 +2468,8 @@ test("097 - add value gift 1 swipe", (t) => {
 
   const card = TestCards.giftCard1Swipe();
 
-  return card.addValue(8.00)
+  return card
+    .addValue(8.0)
     .withCurrency("USD")
     .execute()
     .then((response) => {
@@ -2215,7 +2483,8 @@ test("098 - add value gift 2 manual", (t) => {
 
   const card = TestCards.giftCard2Manual();
 
-  return card.addValue(9.00)
+  return card
+    .addValue(9.0)
     .withCurrency("USD")
     .execute()
     .then((response) => {
@@ -2231,7 +2500,8 @@ test("099 - balance inquiry gift 1 swipe", (t) => {
 
   const card = TestCards.giftCard1Swipe();
 
-  return card.balanceInquiry()
+  return card
+    .balanceInquiry()
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -2245,7 +2515,8 @@ test("100 - balance inquiry gift 2 manual", (t) => {
 
   const card = TestCards.giftCard2Manual();
 
-  return card.balanceInquiry()
+  return card
+    .balanceInquiry()
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -2262,7 +2533,8 @@ test("101 - replace gift 1 swipe", (t) => {
   const oldCard = TestCards.giftCard1Swipe();
   const newCard = TestCards.giftCard2Manual();
 
-  return oldCard.replaceWith(newCard)
+  return oldCard
+    .replaceWith(newCard)
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -2276,7 +2548,8 @@ test("102 - replace gift 2 manual", (t) => {
   const newCard = TestCards.giftCard1Swipe();
   const oldCard = TestCards.giftCard2Manual();
 
-  return oldCard.replaceWith(newCard)
+  return oldCard
+    .replaceWith(newCard)
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -2291,7 +2564,8 @@ test("103 - sale gift 1 swipe", (t) => {
 
   const card = TestCards.giftCard1Swipe();
 
-  return card.charge(1.00)
+  return card
+    .charge(1.0)
     .withCurrency("USD")
     .execute()
     .then((response) => {
@@ -2305,7 +2579,8 @@ test("104 - sale gift 2 manual", (t) => {
 
   const card = TestCards.giftCard2Manual();
 
-  return card.charge(2.00)
+  return card
+    .charge(2.0)
     .withCurrency("USD")
     .execute()
     .then((response) => {
@@ -2319,7 +2594,8 @@ test("105 - sale gift 1 void swipe", (t) => {
 
   const card = TestCards.giftCard1Swipe();
 
-  return card.charge(3.00)
+  return card
+    .charge(3.0)
     .withCurrency("USD")
     .execute()
     .then((response) => {
@@ -2329,7 +2605,8 @@ test("105 - sale gift 1 void swipe", (t) => {
     })
     .then((response) => {
       // test case 107
-      return response.void()
+      return response
+        .void()
         .execute()
         .then((voidResponse) => {
           t.truthy(voidResponse);
@@ -2343,7 +2620,8 @@ test("106 - sale gift 2 reversal manual", (t) => {
 
   const card = TestCards.giftCard2Manual();
 
-  return card.charge(4.00)
+  return card
+    .charge(4.0)
     .withCurrency("USD")
     .execute()
     .then((response) => {
@@ -2353,7 +2631,8 @@ test("106 - sale gift 2 reversal manual", (t) => {
     })
     .then((response) => {
       // test case 108
-      return response.reverse(4.00)
+      return response
+        .reverse(4.0)
         .execute()
         .then((voidResponse) => {
           t.truthy(voidResponse);
@@ -2381,7 +2660,8 @@ test("109 - deactivate gift 1", (t) => {
 
   const card = TestCards.giftCard1Swipe();
 
-  return card.deactivate()
+  return card
+    .deactivate()
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -2403,7 +2683,8 @@ test("111 - balance inquiry rewards 1", (t) => {
 
   const card = TestCards.giftCard1Swipe();
 
-  return card.balanceInquiry()
+  return card
+    .balanceInquiry()
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -2417,7 +2698,8 @@ test("112 - balance inquiry rewards 2", (t) => {
 
   const card = TestCards.giftCard2Manual();
 
-  return card.balanceInquiry()
+  return card
+    .balanceInquiry()
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -2431,19 +2713,17 @@ test("112 - balance inquiry rewards 2", (t) => {
 test("113 - create alias gift 1", (t) => {
   t.plan(1);
 
-  return GiftCard.create("9725550100")
-    .then((card) => {
-      t.truthy(card);
-    });
+  return GiftCard.create("9725550100").then((card) => {
+    t.truthy(card);
+  });
 });
 
 test("114 - create alias gift 2", (t) => {
   t.plan(1);
 
-  return GiftCard.create("9725550100")
-    .then((card) => {
-      t.truthy(card);
-    });
+  return GiftCard.create("9725550100").then((card) => {
+    t.truthy(card);
+  });
 });
 
 test("115 - add alias gift 1", (t) => {
@@ -2451,7 +2731,8 @@ test("115 - add alias gift 1", (t) => {
 
   const card = TestCards.giftCard1Swipe();
 
-  return card.addAlias("2145550199")
+  return card
+    .addAlias("2145550199")
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -2464,7 +2745,8 @@ test("116 - add alias gift 2", (t) => {
 
   const card = TestCards.giftCard2Manual();
 
-  return card.addAlias("2145550199")
+  return card
+    .addAlias("2145550199")
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -2477,7 +2759,8 @@ test("117 - delete alias gift 1", (t) => {
 
   const card = TestCards.giftCard1Swipe();
 
-  return card.removeAlias("2145550199")
+  return card
+    .removeAlias("2145550199")
     .execute()
     .then((response) => {
       t.truthy(response);
@@ -2495,8 +2778,9 @@ test.after("999 - close batch", (t) => {
         resolve();
       })
       .catch((e: Error) => {
-        if (e.message.indexOf(BATCH_NOT_OPEN) !== -1
-          || e.message.indexOf(BATCH_EMPTY) !== -1
+        if (
+          e.message.indexOf(BATCH_NOT_OPEN) !== -1 ||
+          e.message.indexOf(BATCH_EMPTY) !== -1
         ) {
           t.pass();
           resolve();

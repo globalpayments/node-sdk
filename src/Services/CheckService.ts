@@ -14,14 +14,13 @@ export class CheckService {
   }
 
   public charge(amount?: number | string) {
-    return (new AuthorizationBuilder(TransactionType.Sale)).withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Sale).withAmount(amount);
   }
 
   public void(transactionId: string) {
     const ref = new TransactionReference();
     ref.paymentMethodType = PaymentMethodType.ACH;
     ref.transactionId = transactionId;
-    return (new ManagementBuilder(TransactionType.Void))
-      .withPaymentMethod(ref);
+    return new ManagementBuilder(TransactionType.Void).withPaymentMethod(ref);
   }
 }

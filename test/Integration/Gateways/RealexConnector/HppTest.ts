@@ -26,7 +26,8 @@ address.country = "IRELAND";
 test("credit auth", (t) => {
   t.plan(1);
 
-  const json = service.authorize(1)
+  const json = service
+    .authorize(1)
     .withCurrency("EUR")
     .withCustomerId("123456")
     .withAddress(address)
@@ -38,7 +39,8 @@ test("credit auth", (t) => {
 test("credit sale", (t) => {
   t.plan(1);
 
-  const json = service.charge(1)
+  const json = service
+    .charge(1)
     .withCurrency("EUR")
     .withCustomerId("123456")
     .withAddress(address)
@@ -50,7 +52,8 @@ test("credit sale", (t) => {
 test("credit verify", (t) => {
   t.plan(1);
 
-  const json = service.verify(1)
+  const json = service
+    .verify(1)
     .withCurrency("EUR")
     .withCustomerId("123456")
     .withAddress(address)
@@ -63,7 +66,10 @@ test("auth no amount", (t) => {
   t.plan(2);
 
   const error = t.throws(() => {
-    service.authorize(undefined).withCurrency("USD").serialize();
+    service
+      .authorize(undefined)
+      .withCurrency("USD")
+      .serialize();
   }, BuilderError);
 
   t.truthy(error.message);
@@ -83,7 +89,10 @@ test("sale no amount", (t) => {
   t.plan(2);
 
   const error = t.throws(() => {
-    service.charge(undefined).withCurrency("USD").serialize();
+    service
+      .charge(undefined)
+      .withCurrency("USD")
+      .serialize();
   }, BuilderError);
 
   t.truthy(error.message);
@@ -113,7 +122,10 @@ test("verify with amount", (t) => {
   t.plan(2);
 
   const error = t.throws(() => {
-    service.verify().withAmount(10).serialize();
+    service
+      .verify()
+      .withAmount(10)
+      .serialize();
   }, BuilderError);
 
   t.truthy(error.message);

@@ -29,7 +29,9 @@ if (P) {
 
   try {
     promiseToString = Object.prototype.toString.call(local.setTimeout);
-  } catch (e) { /** om nom nom */ }
+  } catch (e) {
+    /** om nom nom */
+  }
 
   if (promiseToString !== "[object Function]") {
     definePolyfill(local);

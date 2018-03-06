@@ -1,7 +1,4 @@
-import {
-  FraudFilterMode,
-  HppVersion,
-} from "./";
+import { FraudFilterMode, HppVersion } from "./";
 
 export class HostedPaymentConfig {
   public cardStorageEnabled: boolean;

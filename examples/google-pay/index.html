@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>PaymentRequest API Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  </head>
+  <body>
+    <h1>PaymentRequest API Example</h1>
+
+    <div><button id="buyButton" style="display:none;">Buy</button></div>
+    <div><pre id="result"></pre></div>
+
+    <script>
+      /**
+       * Invokes PaymentRequest for credit cards.
+       */
+      function createPaymentRequest() {
+        var supportedInstruments = [
+          {
+            supportedMethods: [
+              'https://google.com/pay'
+            ],
+            data: {
+              merchantName: 'Pay with Google Demo',
+              // Place your own Pay with Google merchant ID here. The merchant ID is tied to
+              // the origin of the website.
+              merchantId: '10490697845843384566',
+              // If you do not yet have a merchant ID, uncomment the following line.
+              environment: 'TEST',
+              apiVersion: 1,
+              allowedPaymentMethods: ['CARD', 'TOKENIZED_CARD'],
+              paymentMethodTokenizationParameters: {
+                tokenizationType: 'PAYMENT_GATEWAY',
+                parameters: {
+                  'gateway': 'globalpayments',
+                  'gatewayMerchantId': 'heartlandgpsandbox'
+                }
+              },
+              cardRequirements: {
+                allowedCardNetworks: ['AMEX', 'DISCOVER', 'MASTERCARD', 'VISA'],
+                billingAddressRequired: true,
+                billingAddressFormat: 'MIN'
+              },
+              phoneNumberRequired: true,
+              emailRequired: true,
+              shippingRequired: false
+            }
+          }
+        ];
+
+        var details = {
+          total: {label: 'Donation', amount: {currency: 'USD', value: '20.00'}},
+          displayItems: [
+            {
+              label: 'Original donation amount',
+              amount: {currency: 'USD', value: '21.00'}
+            },
+            {
+              label: 'Friends and family discount',
+              amount: {currency: 'USD', value: '-1.00'}
+            }
+          ]
+        };
+
+        var options = {
+          requestShipping: false,
+          requestPayerEmail: true,
+          requestPayerPhone: true,
+          requestPayerName: true
+        };
+
+        return new PaymentRequest(supportedInstruments, details, options); // eslint-disable-line no-undef
+      }
+
+      function onBuyClicked() {
+        createPaymentRequest()
+          .show()
+          .then(function(response) {
+            console.log(response);
+            sendPaymentToServer(response);
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
+      }
+
+      /**
+       * Simulates processing the payment data on the server.
+       *
+       * @param {PaymentResponse} instrumentResponse The payment information to
+       * process.
+       */
+      function sendPaymentToServer(response) {
+        // There's no server-side component of these samples. Not transactions are
+        // processed and no money exchanged hands. Instantaneous transactions are not
+        // realistic. Add a 2 second delay to make it seem more real.
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState != XMLHttpRequest.DONE || xhr.status != 200) {
+            return;
+          }
+
+          var resp = JSON.parse(xhr.responseText);
+
+          response.complete(resp.error ? 'fail' : 'success')
+            .then(function() {
+              // present response to user
+              document.getElementById('result').innerHTML =
+                  instrumentToJsonString(response) + '\n' +
+                  JSON.stringify(resp, null, 2);
+            })
+            .catch(function(err) {
+              console.log(err);
+            });
+        };
+        xhr.send(instrumentToJsonString(response));
+      }
+
+      /**
+       * Converts the payment instrument into a JSON string.
+       *
+       * @private
+       * @param {PaymentResponse} instrument The instrument to convert.
+       * @return {string} The JSON string representation of the instrument.
+       */
+      function instrumentToJsonString(response) {
+        // var details = response.details;
+        // details.cardNumber = 'XXXX-XXXX-XXXX-' + details.cardNumber.substr(12);
+        // details.cardSecurityCode = '***';
+
+        // PaymentInsrument is an interface, but JSON.stringify works only on
+        // dictionaries.
+        return JSON.stringify({
+          mobileType: 'pay-with-google',
+          response: response.toJSON()
+        }, undefined, 2);
+      }
+
+      var buyButton = document.getElementById('buyButton');
+      if ('PaymentRequest' in window) {
+        var request = createPaymentRequest();
+        request.canMakePayment()
+          .then(function (result) {
+            if (result) {
+              buyButton.setAttribute('style', 'display: inline;');
+              buyButton.addEventListener('click', onBuyClicked);
+            } else {
+              alert('Issue creating payment request');
+            }
+          })
+          .catch(function (error) {
+            alert('cannot check if Google Pay is available');
+          });
+      } else {
+        alert('This browser does not support web payments');
+      }
+    </script>
+  </body>
+</html>

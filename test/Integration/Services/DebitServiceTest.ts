@@ -4,9 +4,7 @@ import {
   ServicesConfig,
   UnsupportedTransactionError,
 } from "../../../src/";
-import {
-  TestCards,
-} from "../../Data";
+import { TestCards } from "../../Data";
 
 const config = new ServicesConfig();
 config.secretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw";
@@ -15,12 +13,16 @@ const service = new DebitService(config);
 const runSerially = false;
 const test = runSerially ? ava.serial : ava;
 
-const card = TestCards.asDebit(TestCards.visaSwipe(), "32539F50C245A6A93D123412324000AA");
+const card = TestCards.asDebit(
+  TestCards.visaSwipe(),
+  "32539F50C245A6A93D123412324000AA",
+);
 
 test("sale", async (t) => {
   t.plan(2);
 
-  const response = await service.charge(14)
+  const response = await service
+    .charge(14)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .withAllowDuplicates(true)
@@ -33,7 +35,8 @@ test("sale", async (t) => {
 test("refund by card", async (t) => {
   t.plan(4);
 
-  const response = await service.charge(15)
+  const response = await service
+    .charge(15)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .withAllowDuplicates(true)
@@ -42,7 +45,8 @@ test("refund by card", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00", response.responseMessage);
 
-  const refund = await service.refund(15)
+  const refund = await service
+    .refund(15)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .execute();
@@ -54,7 +58,8 @@ test("refund by card", async (t) => {
 test("reverse by card", async (t) => {
   t.plan(4);
 
-  const response = await service.charge(16)
+  const response = await service
+    .charge(16)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .withAllowDuplicates(true)
@@ -63,7 +68,8 @@ test("reverse by card", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00", response.responseMessage);
 
-  const reverse = await service.reverse(16)
+  const reverse = await service
+    .reverse(16)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .execute();
@@ -75,7 +81,8 @@ test("reverse by card", async (t) => {
 test("reverse by transaction id fails", async (t) => {
   t.plan(4);
 
-  const response = await service.charge(17)
+  const response = await service
+    .charge(17)
     .withCurrency("USD")
     .withPaymentMethod(card)
     .withAllowDuplicates(true)
@@ -85,7 +92,8 @@ test("reverse by transaction id fails", async (t) => {
   t.is(response.responseCode, "00", response.responseMessage);
 
   const error = t.throws(() => {
-    service.reverse(17)
+    service
+      .reverse(17)
       .withCurrency("USD")
       .withTransactionId(response.transactionId)
       .execute();

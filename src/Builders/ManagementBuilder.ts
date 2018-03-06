@@ -9,8 +9,7 @@ import {
 } from "../";
 import { TransactionBuilder } from "./TransactionBuilder";
 
-export class ManagementBuilder
-  extends TransactionBuilder<Transaction> {
+export class ManagementBuilder extends TransactionBuilder<Transaction> {
   public amount: string | number;
   public authAmount: string | number;
   public get authorizationCode() {
@@ -62,24 +61,31 @@ export class ManagementBuilder
   }
 
   protected setupValidations() {
-    this.validations.of(
-      "transactionType",
-      /* tslint:disable:trailing-comma */
-      TransactionType.Capture |
-      TransactionType.Edit |
-      TransactionType.Hold |
-      TransactionType.Release
-      /* tslint:enable:trailing-comma */
-    )
-      .check("transactionId").isNotNull();
+    this.validations
+      .of(
+        "transactionType",
+        /* tslint:disable:trailing-comma */
+        TransactionType.Capture |
+          TransactionType.Edit |
+          TransactionType.Hold |
+          TransactionType.Release,
+        /* tslint:enable:trailing-comma */
+      )
+      .check("transactionId")
+      .isNotNull();
 
-    this.validations.of("transactionType", TransactionType.Edit)
+    this.validations
+      .of("transactionType", TransactionType.Edit)
       .with("transactionModifier", TransactionModifier.LevelII)
-      .check("taxType").isNotNull();
+      .check("taxType")
+      .isNotNull();
 
-    this.validations.of("transactionType", TransactionType.Refund)
-      .when("amount").isNotNull()
-      .check("currency").isNotNull();
+    this.validations
+      .of("transactionType", TransactionType.Refund)
+      .when("amount")
+      .isNotNull()
+      .check("currency")
+      .isNotNull();
   }
 
   /**

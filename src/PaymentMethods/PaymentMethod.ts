@@ -30,10 +30,12 @@ export abstract class PaymentMethod implements IPaymentMethod {
   }
 
   get isCardData() {
-    return (this.isTokenizable
-        && ((this as object) as ITokenizable).token !== undefined
-        || ((this as object) as ICardData).number !== undefined)
-      && this.paymentMethodType !== PaymentMethodType.Gift;
+    return (
+      ((this.isTokenizable &&
+        ((this as object) as ITokenizable).token !== undefined) ||
+        ((this as object) as ICardData).number !== undefined) &&
+      this.paymentMethodType !== PaymentMethodType.Gift
+    );
   }
 
   get isChargable() {
@@ -69,10 +71,12 @@ export abstract class PaymentMethod implements IPaymentMethod {
   }
 
   get isTrackData() {
-    return ((this as object) as ITrackData).value !== undefined
-      && (((this as object) as ITrackData).entryMethod !== undefined
-        || ((this as object) as IPinProtected).pinBlock !== undefined
-        || ((this as object) as IEncryptable).encryptionData !== undefined);
+    return (
+      ((this as object) as ITrackData).value !== undefined &&
+      (((this as object) as ITrackData).entryMethod !== undefined ||
+        ((this as object) as IPinProtected).pinBlock !== undefined ||
+        ((this as object) as IEncryptable).encryptionData !== undefined)
+    );
   }
 
   get isVerifyable() {

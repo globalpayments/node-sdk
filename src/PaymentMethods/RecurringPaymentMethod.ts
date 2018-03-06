@@ -8,9 +8,11 @@ import {
   TransactionType,
   UnsupportedTransactionError,
 } from "../";
-import {RecurringEntity} from "../Entities";
+import { RecurringEntity } from "../Entities";
 
-export class RecurringPaymentMethod extends RecurringEntity<RecurringPaymentMethod> {
+export class RecurringPaymentMethod extends RecurringEntity<
+  RecurringPaymentMethod
+> {
   public address: Address;
   public commercialIndicator: string;
   public customerKey: string;
@@ -35,10 +37,17 @@ export class RecurringPaymentMethod extends RecurringEntity<RecurringPaymentMeth
     this._paymentMethod = value;
   }
 
-  public constructor(customerIdOrPaymentMethod?: string | IPaymentMethod, paymentId?: string) {
+  public constructor(
+    customerIdOrPaymentMethod?: string | IPaymentMethod,
+    paymentId?: string,
+  ) {
     super();
 
-    if (customerIdOrPaymentMethod && typeof customerIdOrPaymentMethod === "string" || customerIdOrPaymentMethod instanceof String) {
+    if (
+      (customerIdOrPaymentMethod &&
+        typeof customerIdOrPaymentMethod === "string") ||
+      customerIdOrPaymentMethod instanceof String
+    ) {
       this.paymentType = "Credit Card";
       this.customerKey = customerIdOrPaymentMethod;
       if (paymentId) {
@@ -50,20 +59,21 @@ export class RecurringPaymentMethod extends RecurringEntity<RecurringPaymentMeth
   }
 
   public authorize(amount?: number | string) {
-    return (new AuthorizationBuilder(TransactionType.Auth, this))
+    return new AuthorizationBuilder(TransactionType.Auth, this)
       .withAmount(amount)
       .withOneTimePayment(true);
   }
 
   public charge(amount?: number | string) {
-    return (new AuthorizationBuilder(TransactionType.Sale, this))
+    return new AuthorizationBuilder(TransactionType.Sale, this)
       .withAmount(amount)
       .withOneTimePayment(true);
   }
 
   public refund(amount?: number | string) {
-    return (new AuthorizationBuilder(TransactionType.Refund, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Refund, this).withAmount(
+      amount,
+    );
   }
 
   public verify() {

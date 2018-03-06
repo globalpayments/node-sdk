@@ -14,13 +14,13 @@ import {
 } from "./Interfaces";
 import { PaymentMethod } from "./PaymentMethod";
 
-export abstract class Debit extends PaymentMethod implements
-  IChargable,
-  IEncryptable,
-  IRefundable,
-  IReversable,
-  IPrePayable,
-  IPinProtected {
+export abstract class Debit extends PaymentMethod
+  implements IChargable,
+    IEncryptable,
+    IRefundable,
+    IReversable,
+    IPrePayable,
+    IPinProtected {
   public encryptionData: EncryptionData;
   public paymentMethodType: PaymentMethodType = PaymentMethodType.Debit;
   public pinBlock: string;
@@ -33,8 +33,9 @@ export abstract class Debit extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public charge(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.Sale, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Sale, this).withAmount(
+      amount,
+    );
   }
 
   /**
@@ -45,8 +46,9 @@ export abstract class Debit extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public addValue(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.AddValue, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.AddValue, this).withAmount(
+      amount,
+    );
   }
 
   /**
@@ -57,8 +59,9 @@ export abstract class Debit extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public refund(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.Refund, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Refund, this).withAmount(
+      amount,
+    );
   }
 
   /**
@@ -69,7 +72,8 @@ export abstract class Debit extends PaymentMethod implements
    * @return AuthorizationBuilder
    */
   public reverse(amount?: string | number) {
-    return (new AuthorizationBuilder(TransactionType.Reversal, this))
-      .withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Reversal, this).withAmount(
+      amount,
+    );
   }
 }

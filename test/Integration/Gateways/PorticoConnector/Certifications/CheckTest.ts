@@ -7,9 +7,7 @@ import {
   ServicesConfig,
   ServicesContainer,
 } from "../../../../../src/";
-import {
-  TestChecks,
-} from "../../../../Data/";
+import { TestChecks } from "../../../../Data/";
 
 const config = new ServicesConfig();
 config.secretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A";
@@ -39,7 +37,8 @@ test("001 - consumer personal checking", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(11.00)
+    check
+      .charge(11.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -51,7 +50,8 @@ test("001 - consumer personal checking", (t) => {
       })
       .then((response) => {
         // test case 25
-        response.void()
+        response
+          .void()
           .execute()
           .then((voidResponse) => {
             t.truthy(voidResponse);
@@ -74,7 +74,8 @@ test("002 - consumer business checking", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(12.00)
+    check
+      .charge(12.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -98,7 +99,8 @@ test("003 - consumer personal savings", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(13.00)
+    check
+      .charge(13.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -122,7 +124,8 @@ test("004 - consumer business savings", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(14.00)
+    check
+      .charge(14.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -147,7 +150,8 @@ test("005 - corporate personal checking", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(15.00)
+    check
+      .charge(15.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -159,7 +163,8 @@ test("005 - corporate personal checking", (t) => {
       })
       .then((response) => {
         // test case 26
-        response.void()
+        response
+          .void()
           .execute()
           .then((voidResponse) => {
             t.truthy(voidResponse);
@@ -183,7 +188,8 @@ test("006 - corporate business checking", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(16.00)
+    check
+      .charge(16.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -208,7 +214,8 @@ test("007 - corporate personal savings", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(17.00)
+    check
+      .charge(17.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -233,7 +240,8 @@ test("008 - corporate business savings", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(18.00)
+    check
+      .charge(18.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -257,7 +265,8 @@ test("009 - egold personal checking", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(11.00)
+    check
+      .charge(11.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -281,7 +290,8 @@ test("010 - egold business checking", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(12.00)
+    check
+      .charge(12.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -305,7 +315,8 @@ test("011 - egold personal savings", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(13.00)
+    check
+      .charge(13.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -329,7 +340,8 @@ test("012 - egold business savings", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(14.00)
+    check
+      .charge(14.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -353,7 +365,8 @@ test("013 - esilver personal checking", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(15.00)
+    check
+      .charge(15.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -377,7 +390,8 @@ test("014 - esilver business checking", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(16.00)
+    check
+      .charge(16.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -401,7 +415,8 @@ test("015 - esilver personal savings", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(17.00)
+    check
+      .charge(17.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -425,7 +440,8 @@ test("016 - esilver business savings", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(18.00)
+    check
+      .charge(18.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -449,7 +465,8 @@ test("017 - ebronze personal checking", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(19.00)
+    check
+      .charge(19.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -477,7 +494,8 @@ test("018 - ebronze business checking", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(20.00)
+    check
+      .charge(20.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -505,7 +523,8 @@ test("019 - ebronze personal savings", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(21.00)
+    check
+      .charge(21.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -533,7 +552,8 @@ test("020 - ebronze business savings", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(22.00)
+    check
+      .charge(22.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)
@@ -559,7 +579,8 @@ test("021 - web personal checking", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(23.00)
+    check
+      .charge(23.0)
       .withCurrency("USD")
       .withAddress(address)
       .execute()
@@ -580,7 +601,8 @@ test("022 - web business checking", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(24.00)
+    check
+      .charge(24.0)
       .withCurrency("USD")
       .withAddress(address)
       .execute()
@@ -601,7 +623,8 @@ test("023 - web personal savings", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(25.00)
+    check
+      .charge(25.0)
       .withCurrency("USD")
       .withAddress(address)
       .execute()
@@ -622,7 +645,8 @@ test("024 - web business savings", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(5.00)
+    check
+      .charge(5.0)
       .withCurrency("USD")
       .withAddress(address)
       .execute()

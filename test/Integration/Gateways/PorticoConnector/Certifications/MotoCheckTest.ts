@@ -7,9 +7,7 @@ import {
   ServicesConfig,
   ServicesContainer,
 } from "../../../../../src/";
-import {
-  TestChecks,
-} from "../../../../Data/";
+import { TestChecks } from "../../../../Data/";
 
 const config = new ServicesConfig();
 config.secretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A";
@@ -37,7 +35,8 @@ test("001 - web personal checking", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(23.00)
+    check
+      .charge(23.0)
       .withCurrency("USD")
       .withAddress(address)
       .execute()
@@ -58,7 +57,8 @@ test("002 - web business checking", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(24.00)
+    check
+      .charge(24.0)
       .withCurrency("USD")
       .withAddress(address)
       .execute()
@@ -79,7 +79,8 @@ test("003 - web personal savings", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(25.00)
+    check
+      .charge(25.0)
       .withCurrency("USD")
       .withAddress(address)
       .execute()
@@ -100,7 +101,8 @@ test("004 - web business savings", (t) => {
   );
 
   return new Promise((resolve, reject) => {
-    check.charge(5.00)
+    check
+      .charge(5.0)
       .withCurrency("USD")
       .withAddress(address)
       .execute()

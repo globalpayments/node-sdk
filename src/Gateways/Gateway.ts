@@ -1,8 +1,8 @@
 import { RequestOptions } from "https";
 import * as url from "url";
 
-import {IDictionary} from "../Builders";
-import {request} from "./https-wrapper";
+import { IDictionary } from "../Builders";
+import { request } from "./https-wrapper";
 
 export abstract class Gateway {
   public headers: IDictionary<string>;
@@ -16,7 +16,12 @@ export abstract class Gateway {
     this.headers["Content-Type"] = contentType;
   }
 
-  public sendRequest(httpMethod: string, endpoint: string, data?: string, queryStringParams?: IDictionary<string>) {
+  public sendRequest(
+    httpMethod: string,
+    endpoint: string,
+    data?: string,
+    queryStringParams?: IDictionary<string>,
+  ) {
     const uri = url.parse(this.serviceUrl);
     const queryString = this.buildQueryString(queryStringParams);
     const options: RequestOptions = {
@@ -41,7 +46,11 @@ export abstract class Gateway {
     const params: string[] = [];
     for (const param in queryStringParams) {
       if (queryStringParams.hasOwnProperty(param)) {
-        params.push(`${encodeURIComponent(param)}=${encodeURIComponent(queryStringParams[param])}`);
+        params.push(
+          `${encodeURIComponent(param)}=${encodeURIComponent(
+            queryStringParams[param],
+          )}`,
+        );
       }
     }
 

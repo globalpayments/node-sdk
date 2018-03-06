@@ -13,13 +13,13 @@ export class DebitService {
   }
 
   public charge(amount?: number | string) {
-    return (new AuthorizationBuilder(TransactionType.Sale)).withAmount(amount);
+    return new AuthorizationBuilder(TransactionType.Sale).withAmount(amount);
   }
 
   public refund(amount?: number | string) {
     const ref = new TransactionReference();
     ref.paymentMethodType = PaymentMethodType.Debit;
-    return (new AuthorizationBuilder(TransactionType.Refund))
+    return new AuthorizationBuilder(TransactionType.Refund)
       .withAmount(amount)
       .withPaymentMethod(ref);
   }
@@ -27,7 +27,7 @@ export class DebitService {
   public reverse(amount?: number | string) {
     const ref = new TransactionReference();
     ref.paymentMethodType = PaymentMethodType.Debit;
-    return (new AuthorizationBuilder(TransactionType.Reversal))
+    return new AuthorizationBuilder(TransactionType.Reversal)
       .withAmount(amount)
       .withPaymentMethod(ref);
   }
