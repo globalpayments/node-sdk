@@ -207,11 +207,19 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       subElement(manualEntry, hasToken ? "TokenValue" : "CardNbr").append(
         cData(tokenValue || card.number),
       );
-      subElement(manualEntry, "ExpMonth").append(
-        cData(card.expMonth.toString()),
-      );
-      subElement(manualEntry, "ExpYear").append(cData(card.expYear.toString()));
-      subElement(manualEntry, "CVV2").append(cData(card.cvn));
+      if (card.expMonth) {
+        subElement(manualEntry, "ExpMonth").append(
+          cData(card.expMonth.toString()),
+        );
+      }
+      if (card.expYear) {
+        subElement(manualEntry, "ExpYear").append(
+          cData(card.expYear.toString()),
+        );
+      }
+      if (card.cvn) {
+        subElement(manualEntry, "CVV2").append(cData(card.cvn));
+      }
       subElement(manualEntry, "ReaderPresent").append(
         cData(card.readerPresent ? "Y" : "N"),
       );
@@ -636,7 +644,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       subElement(header, "DeveloperID").append(cData(this.developerId));
     }
     if (this.versionNumber) {
-      subElement(header, "VersionNumber").append(cData(this.versionNumber));
+      subElement(header, "VersionNbr").append(cData(this.versionNumber));
     }
     if (clientTransactionId) {
       subElement(header, "ClientTxnId").append(cData(clientTransactionId));

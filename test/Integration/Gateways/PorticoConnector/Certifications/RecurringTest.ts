@@ -20,7 +20,7 @@ import {
 
 const config = new ServicesConfig();
 config.secretApiKey = "skapi_cert_MbPdAQBL1l4A2ThZoTBKXEdEG1rIi7KAa6Yskl9Nzg";
-config.serviceUrl = "https://cert.api2.heartlandportico.com";
+config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 
 const BATCH_NOT_OPEN =
   "Transaction was rejected because it requires a batch to be open.";

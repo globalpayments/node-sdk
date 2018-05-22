@@ -14,7 +14,7 @@ import { TestCards } from "../../../../Data/";
 
 const config = new ServicesConfig();
 config.secretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw";
-config.serviceUrl = "https://cert.api2.heartlandportico.com";
+config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 
 const BATCH_NOT_OPEN =
   "Transaction was rejected because it requires a batch to be open.";

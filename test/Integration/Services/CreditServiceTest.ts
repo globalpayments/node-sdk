@@ -4,7 +4,7 @@ import { TestCards } from "../../Data";
 
 const config = new ServicesConfig();
 config.secretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A";
-config.serviceUrl = "https://cert.api2.heartlandportico.com";
+config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 const service = new CreditService(config);
 const runSerially = false;
 const test = runSerially ? ava.serial : ava;

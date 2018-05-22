@@ -1,6 +1,6 @@
 {
   "name": "globalpayments-api",
-  "version": "1.0.0-dev",
+  "version": "1.0.2",
   "description": "Global Payments SDK for NodeJS",
   "author": "Heartland Payment Systems",
   "license": "GPL-2.0",
@@ -12,13 +12,10 @@
   "typings": "./lib/src/index",
   "scripts": {
     "build": "tsc",
-    "build:netsuite":
-      "webpack --env.GP_NETSUITE_BUILD --config config/webpack.netsuite.js && node bin/netsuite-post.js",
+    "build:netsuite": "webpack --env.GP_NETSUITE_BUILD --config config/webpack.netsuite.js && node bin/netsuite-post.js",
     "build:clean": "rimraf lib",
-    "docs":
-      "typedoc --mode file --name \"GlobalPayments.Api\" --project tsconfig.json --out docs src",
-    "format":
-      "prettier --write --config .prettierrc 'src/**/*.ts' 'test/**/*.ts' '*.md'",
+    "docs": "typedoc --mode file --name \"GlobalPayments.Api\" --project tsconfig.json --out docs src",
+    "format": "prettier --write --config .prettierrc 'src/**/*.ts' 'test/**/*.ts' '*.md'",
     "prebuild": "npm-run-all test:lint",
     "prepublish": "npm-run-all build",
     "pretest": "npm-run-all build:clean test:lint build",
@@ -42,14 +39,18 @@
     "rimraf": "^2.6.2",
     "tslint": "^4.5.1",
     "typedoc": "^0.9.0",
-    "typescript": "^2.5.2",
+    "typescript": "2.5.2",
     "webpack": "^3.6.0"
   },
   "ava": {
     "concurrency": 1,
     "timeout": "5m",
     "failFast": true,
-    "files": ["lib/test/**/*Test.js"],
-    "source": ["lib/src/**/*.js"]
+    "files": [
+      "lib/test/**/*Test.js"
+    ],
+    "source": [
+      "lib/src/**/*.js"
+    ]
   }
 }

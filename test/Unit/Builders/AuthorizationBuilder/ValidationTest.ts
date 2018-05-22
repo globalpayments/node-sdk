@@ -12,7 +12,7 @@ import {
 
 const config = new ServicesConfig();
 config.secretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w";
-config.serviceUrl = "https://cert.api2.heartlandportico.com";
+config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 
 const card = new CreditCardData();
 card.number = "4111111111111111";
@@ -140,10 +140,10 @@ test("gift replace no replacement card", (t) => {
   t.true(-1 !== error.message.indexOf("replacementCard cannot be null"));
 });
 
-test("check sale no address", (t) => {
+test("check sale no address", async (t) => {
   t.plan(3);
 
-  const error = t.throws(() => {
+  const error = await t.throws(() => {
     const check = new ECheck();
     return check
       .charge(14)

@@ -19,7 +19,7 @@ ecom.channel = EcommerceChannel.Moto;
 
 const config = new ServicesConfig();
 config.secretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A";
-config.serviceUrl = "https://cert.api2.heartlandportico.com";
+config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 
 const BATCH_NOT_OPEN =
   "Transaction was rejected because it requires a batch to be open.";
