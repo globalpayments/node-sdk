@@ -2,7 +2,7 @@
     <img src="https://globalpayments.github.io/images/globapaymentsLogo.png" alt="Global Payments logo" title="Global Payments" align="right" width="225" />
 </a>
 
-# Global Payments Node.js SDK
+# Heartland & Global Payments Node.js SDK
 
 This SDK makes it easy to integrate your Node.js application with our Card Not Present and Card Present APIs.
 

@@ -1,5 +1,5 @@
 {
-  "name": "google-pay",
+  "name": "end-to-end",
   "version": "1.0.0",
   "main": "index.js",
   "license": "GPL-2.0",
@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "globalpayments-api": "^1.0",
-    "micro": "^9.3.2"
+    "micro": "^9.3.2",
+    "urlencoded-body-parser": "^2.0.1"
   },
   "devDependencies": {
     "micro-dev": "^2.2.0",
