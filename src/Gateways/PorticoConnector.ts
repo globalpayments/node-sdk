@@ -1275,7 +1275,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     result.referenceNumber = root.findtext(".//RefNbr");
     result.serviceName = root.findtext(".//ServiceName");
     result.settlementAmount = root.findtext(".//SettlementAmt");
-    result.status = root.findtext(".//Status");
+    result.status = root.findtext(".//TxnStatus");
     result.transactionDate = new Date(root.findtext(".//TxnUtcDT"));
     result.transactionId = root.findtext(".//GatewayTxnId");
     result.convenienceAmt = root.findtext(".//ConvenienceAmtInfo");
