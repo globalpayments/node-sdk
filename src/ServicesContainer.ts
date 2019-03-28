@@ -50,9 +50,17 @@ export class ServicesContainer {
       gateway.serviceUrl =
         config.serviceUrl + "/Hps.Exchange.PosGateway/PosGatewayService.asmx";
       const payplan = new PayPlanConnector();
+      payplan.siteId = config.siteId;
+      payplan.licenseId = config.licenseId;
+      payplan.deviceId = config.deviceId;
+      payplan.username = config.username;
+      payplan.password = config.password;
       payplan.secretApiKey = config.secretApiKey;
+      payplan.developerId = config.developerId;
+      payplan.versionNumber = config.versionNumber;
       payplan.timeout = config.timeout;
-      payplan.serviceUrl = config.serviceUrl + "/Portico.PayPlan.v2/";
+      payplan.serviceUrl = config.serviceUrl
+        + (config.serviceUrl.indexOf('cert.') ? "/Portico.PayPlan.v2/" : "/payplan.v2/");
       ServicesContainer._instance = new ServicesContainer(gateway, payplan);
     }
   }

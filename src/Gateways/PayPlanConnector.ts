@@ -28,16 +28,48 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
   public supportsRetrieval = true;
   public supportsUpdatePaymentDetails = false;
   private _secretApiKey: string;
+  public siteId: string;
+  public licenseId: string;
+  public deviceId: string;
+  private _username: string;
+  private _password: string;
+  public developerId: string;
+  public versionNumber: string;
 
   get secretApiKey() {
     return this._secretApiKey;
   }
 
   set secretApiKey(value: string) {
+    if (!value) {
+      return;
+    }
     this._secretApiKey = value;
-    const buffer = new Buffer(value);
-    const auth = `Basic ${buffer.toString("base64")}`;
-    this.headers[RestGateway.AUTHORIZATION_HEADER] = auth;
+    this.setAuthorizationHeader(this.secretApiKey);
+  }
+
+  get username() {
+    return this._username;
+  }
+
+  set username(value: string) {
+    if (!value) {
+      return;
+    }
+    this._username = value;
+    this.setAuthorizationHeader(`${this.username}:${this.password}`);
+  }
+
+  get password() {
+    return this._password;
+  }
+
+  set password(value: string) {
+    if (!value) {
+      return;
+    }
+    this._password = value;
+    this.setAuthorizationHeader(`${this.username}:${this.password}`);
   }
 
   public processRecurring<T extends IRecurringEntity>(
@@ -75,6 +107,9 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
         }
       }
     }
+
+    this.maybeSetIdentityHeader();
+    this.maybeSetIntegrationHeader();
 
     return this.doTransaction(
       this.mapMethod(builder.transactionType),
@@ -601,5 +636,37 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
       hasToken: false,
       tokenValue: "",
     };
+  }
+
+  protected setAuthorizationHeader(value: string) {
+    const buffer = (Buffer.from ? Buffer.from(value) : new Buffer(value));
+    const auth = `Basic ${buffer.toString("base64")}`;
+    this.headers[RestGateway.AUTHORIZATION_HEADER] = auth;
+  }
+
+  protected maybeSetIdentityHeader() {
+    const identity: string[] = [];
+
+    if (this.siteId) {
+      identity.push(`SiteID=${this.siteId}`);
+    }
+
+    if (this.deviceId) {
+      identity.push(`DeviceID=${this.deviceId}`);
+    }
+
+    if (this.licenseId) {
+      identity.push(`LicenseID=${this.licenseId}`);
+    }
+
+    if (identity.length > 0) {
+      this.headers['HPS-Identity'] = identity.join(',');
+    }
+  }
+
+  protected maybeSetIntegrationHeader() {
+    if (this.versionNumber || this.developerId) {
+      this.headers['HPS-Integration'] = `DeveloperId=${this.developerId},VersionNbr=${this.versionNumber}`;
+    }
   }
 }
