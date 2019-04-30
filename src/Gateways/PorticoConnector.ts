@@ -46,6 +46,7 @@ import {
   TransactionType,
   UnsupportedTransactionError,
 } from "../";
+import { validateAmount, validateInput } from "../Utils/InputValidation";
 import { XmlGateway } from "./XmlGateway";
 
 export class PorticoConnector extends XmlGateway implements IPaymentGateway {
@@ -93,21 +94,21 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     }
 
     if (builder.amount !== undefined && builder.amount !== "") {
-      subElement(block1, "Amt").append(cData(builder.amount.toString()));
+      subElement(block1, "Amt").append(cData(validateAmount("portico", builder.amount)));
     }
     if (builder.gratuity) {
       subElement(block1, "GratuityAmtInfo").append(
-        cData(builder.gratuity.toString()),
+        cData(validateAmount("portico", builder.gratuity)),
       );
     }
     if (builder.convenienceAmt) {
       subElement(block1, "ConvenienceAmtInfo").append(
-        cData(builder.convenienceAmt.toString()),
+        cData(validateAmount("portico", builder.convenienceAmt)),
       );
     }
     if (builder.shippingAmt) {
       subElement(block1, "ShippingAmtInfo").append(
-        cData(builder.shippingAmt.toString()),
+        cData(validateAmount("portico", builder.shippingAmt)),
       );
     }
 
@@ -118,7 +119,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         builder.paymentMethod.paymentMethodType === PaymentMethodType.Debit
           ? "CashbackAmtInfo"
           : "CashBackAmount",
-      ).append(cData(builder.cashBackAmount.toString()));
+      ).append(cData(validateAmount("portico", builder.cashBackAmount)));
     }
 
     if (builder.offlineAuthCode) {
@@ -147,15 +148,15 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
           cData(builder.billingAddress.streetAddress1),
         );
         subElement(holder, isCheck ? "City" : "CardHolderCity").append(
-          cData(builder.billingAddress.city),
+          cData(validateInput("portico", "city", builder.billingAddress.city)),
         );
         subElement(holder, isCheck ? "State" : "CardHolderState").append(
           cData(
-            builder.billingAddress.province || builder.billingAddress.state,
+            validateInput("portico", "province", builder.billingAddress.province || builder.billingAddress.state),
           ),
         );
         subElement(holder, isCheck ? "Zip" : "CardHolderZip").append(
-          cData(builder.billingAddress.postalCode),
+          cData(validateInput("portico", "postalCode", builder.billingAddress.postalCode)),
         );
       }
 
@@ -164,14 +165,16 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
 
         if (check.checkHolderName) {
           const names = check.checkHolderName.split(" ", 2);
-          subElement(holder, "FirstName").append(cData(names[0]));
-          subElement(holder, "LastName").append(cData(names[1]));
+          subElement(holder, "FirstName").append(cData(validateInput("portico", "firstName", names[0])));
+          if (names[1]) {
+            subElement(holder, "LastName").append(cData(validateInput("portico", "lastName", names[1])));
+          }
         }
 
         subElement(holder, "CheckName").append(
           cData(check.checkName || check.checkHolderName),
         );
-        subElement(holder, "PhoneNumber").append(cData(check.phoneNumber));
+        subElement(holder, "PhoneNumber").append(cData(validateInput("portico", "phoneNumber", check.phoneNumber)));
         subElement(holder, "DLNumber").append(
           cData(check.driversLicenseNumber),
         );
