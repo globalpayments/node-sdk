@@ -9,11 +9,11 @@
     "start": "micro"
   },
   "dependencies": {
-    "globalpayments-api": "^1.0",
-    "micro": "^9.3.2"
+    "globalpayments-api": "^1.2",
+    "micro": "^9.3.4"
   },
   "devDependencies": {
-    "micro-dev": "^2.2.0",
-    "now": "^9.2.7"
+    "micro-dev": "^2.2.2",
+    "now": "^9.3.3"
   }
 }

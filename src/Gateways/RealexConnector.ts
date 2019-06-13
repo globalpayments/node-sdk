@@ -515,7 +515,7 @@ export class RealexConnector extends XmlGateway implements IRecurringService {
           subElement(cardElement, "number").append(cData(card.number));
           subElement(cardElement, "expdate").append(cData(expiry));
           subElement(cardElement, "chname").append(cData(card.cardHolderName));
-          subElement(cardElement, "type").append(cData(card.getCardType()));
+          subElement(cardElement, "type").append(cData(card.getCardType().toUpperCase()));
 
           let sha1hash = "";
           if (builder.transactionType === TransactionType.Create) {

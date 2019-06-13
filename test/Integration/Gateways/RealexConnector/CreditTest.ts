@@ -1,10 +1,12 @@
 import test from "ava";
 import {
   CreditCardData,
+  GatewayError,
   RecurringSequence,
   RecurringType,
   ServicesConfig,
   ServicesContainer,
+  TransactionModifier,
 } from "../../../../src/";
 
 const config = new ServicesConfig();
@@ -136,4 +138,72 @@ test("credit verify", async (t) => {
 
   t.truthy(response);
   t.is(response.responseCode, "00", response.responseMessage);
+});
+
+test.only("credit auth mobile - apple pay", async (t) => {
+  t.plan(6);
+
+  const encryptedCard = new CreditCardData();
+  // tslint:disable-next-line:max-line-length
+  encryptedCard.token = `{"version":"EC_v1","data":"Ft+dvMNzlcy6WNB+zerKtkh/RWW4RWW4yXIRgmM3WC/FYEC6Z+OJEzir2sDyzDkjIUJ0TFCQd/QAAAAAAAA==","header":{"ephemeralPublicKey":"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEWdNhNAHy9kO2Kol33kIh7k6wh6E/lxriM46MR1FUrn7SHugprkaeFmWKZPgGpWgZ+telY/G1+YSoaCbR5YSoaCbR57bdGA==","transactionId":"fd88874954acdb299c285f95a3202ad1f330d3fd4ebc22a864398684198644c3","publicKeyHash":"h7WnNVz2gmpTSkHqETOWsskFPLSj31e3sPTS2cBxgrk="}}`;
+  encryptedCard.mobileType = "apple-pay";
+
+  const incorrectHashError = await t.throws(
+    encryptedCard
+      .authorize(10)
+      .withCurrency("USD")
+      .withModifier(TransactionModifier.EncryptedMobile)
+      .withAllowDuplicates(true)
+      .execute(),
+    GatewayError,
+  );
+
+  t.truthy(incorrectHashError);
+  t.is(incorrectHashError.responseCode, "505", incorrectHashError.responseMessage);
+
+  const cannotDecryptError = await t.throws(
+    encryptedCard
+      .authorize()
+      .withModifier(TransactionModifier.EncryptedMobile)
+      .withAllowDuplicates(true)
+      .execute(),
+    GatewayError,
+  );
+
+  t.truthy(cannotDecryptError);
+  t.is(cannotDecryptError.responseCode, "515", cannotDecryptError.responseMessage);
+});
+
+test.only("credit auth mobile - google pay", async (t) => {
+  t.plan(6);
+
+  const encryptedCard = new CreditCardData();
+  // tslint:disable-next-line:max-line-length
+  encryptedCard.token = `{"signature":"MEUCIQDapDDJyf9lH3ztEWksgAjNe...AXjW+ZM+Ut2BWoTExppDDPc1a9Z7U\u003d","protocolVersion":"ECv1","signedMessage":"{\"encryptedMessage\":\"VkqwkFuMdXp...TZQxVMnkTeJjwyc4\\u003d\",\"ephemeralPublicKey\":\"BMglUoKZWxgB...YCiBNkLaMTD9G4sec\\u003d\",\"tag\":\"4VYypqW2Q5FN7UP87QNDGsLgc48vAe5+AcjR+BxQ2Zo\\u003d\"}"}`;
+  encryptedCard.mobileType = "pay-with-google";
+
+  const missingAmountError = await t.throws(
+    encryptedCard
+      .authorize()
+      .withModifier(TransactionModifier.EncryptedMobile)
+      .withAllowDuplicates(true)
+      .execute(),
+    GatewayError,
+  );
+
+  t.truthy(missingAmountError);
+  t.is(missingAmountError.responseCode, "502", missingAmountError.responseMessage);
+
+  const invalidTokenError = await t.throws(
+    encryptedCard
+      .authorize(10)
+      .withCurrency("USD")
+      .withModifier(TransactionModifier.EncryptedMobile)
+      .withAllowDuplicates(true)
+      .execute(),
+    GatewayError,
+  );
+
+  t.truthy(invalidTokenError);
+  t.is(invalidTokenError.responseCode, "509", invalidTokenError.responseMessage);
 });

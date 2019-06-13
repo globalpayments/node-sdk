@@ -5,7 +5,7 @@ import { ICardData } from "./Interfaces";
 export class CreditCardData extends Credit implements ICardData {
   public static cardTypes = [
     { name: "Visa", regex: /^4/ },
-    { name: "MasterCard", regex: /^(5[1-5]|2[2-7])/ },
+    { name: "MC", regex: /^(5[1-5]|2[2-7])/ },
     { name: "Amex", regex: /^3[47]/ },
     { name: "Diners", regex: /^3[0689]/ },
     { name: "EnRoute", regex: /^2(014|149)/ },
