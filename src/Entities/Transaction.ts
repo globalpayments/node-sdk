@@ -68,7 +68,8 @@ export class Transaction {
   public additionalAuth(amount?: string | number) {
     return new AuthorizationBuilder(TransactionType.Auth)
       .withPaymentMethod(this.transactionReference)
-      .withAmount(amount);
+      .withAmount(amount)
+      .withModifier(TransactionModifier.Additional);
   }
 
   /**
