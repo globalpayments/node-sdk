@@ -140,7 +140,7 @@ test("credit verify", async (t) => {
   t.is(response.responseCode, "00", response.responseMessage);
 });
 
-test.only("credit auth mobile - apple pay", async (t) => {
+test("credit auth mobile - apple pay", async (t) => {
   t.plan(6);
 
   const encryptedCard = new CreditCardData();
@@ -174,7 +174,7 @@ test.only("credit auth mobile - apple pay", async (t) => {
   t.is(cannotDecryptError.responseCode, "515", cannotDecryptError.responseMessage);
 });
 
-test.only("credit auth mobile - google pay", async (t) => {
+test("credit auth mobile - google pay", async (t) => {
   t.plan(6);
 
   const encryptedCard = new CreditCardData();
@@ -206,4 +206,44 @@ test.only("credit auth mobile - google pay", async (t) => {
 
   t.truthy(invalidTokenError);
   t.is(invalidTokenError.responseCode, "509", invalidTokenError.responseMessage);
+});
+
+test("implied decimal conversion", async (t) => {
+  t.plan(8);
+
+  const responseNumber1 = await card
+    .charge(78.68)
+    .withCurrency("USD")
+    .withAllowDuplicates(true)
+    .execute();
+
+  t.truthy(responseNumber1);
+  t.is(responseNumber1.responseCode, "00", responseNumber1.responseMessage);
+
+  const responseNumber2 = await card
+    .charge(78.68000000000001)
+    .withCurrency("USD")
+    .withAllowDuplicates(true)
+    .execute();
+
+  t.truthy(responseNumber2);
+  t.is(responseNumber2.responseCode, "00", responseNumber2.responseMessage);
+
+  const responseString1 = await card
+    .charge("78.68")
+    .withCurrency("USD")
+    .withAllowDuplicates(true)
+    .execute();
+
+  t.truthy(responseString1);
+  t.is(responseString1.responseCode, "00", responseString1.responseMessage);
+
+  const responseString2 = await card
+    .charge("78.68000000000001")
+    .withCurrency("USD")
+    .withAllowDuplicates(true)
+    .execute();
+
+  t.truthy(responseString2);
+  t.is(responseString2.responseCode, "00", responseString2.responseMessage);
 });
