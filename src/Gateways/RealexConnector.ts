@@ -431,6 +431,22 @@ export class RealexConnector extends XmlGateway implements IRecurringService {
         cData(builder.reasonCode.toString()),
       );
     }
+    if (builder.shippingAddress) {
+        subElement(request, "shipping_code").append(
+          cData(builder.shippingAddress.shipping_code || builder.shippingAddress.postalCode || "")
+        );
+        subElement(request, "shipping_co").append(
+          cData(builder.shippingAddress.country || "")
+        );
+    }
+    if (builder.billingAddress) {
+        subElement(request, "billing_code").append(
+          cData(builder.billingAddress.billing_code || builder.billingAddress.postalCode || "")
+        );
+        subElement(request, "billing_co").append(
+          cData(builder.billingAddress.country || "")
+        );
+    }
 
     if (builder.description) {
       const comments = subElement(request, "comments");
