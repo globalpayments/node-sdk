@@ -293,7 +293,7 @@ export class RealexConnector extends XmlGateway implements IRecurringService {
       request.SHIPPING_CODE = encoder(builder.shippingAddress.postalCode || "");
       request.SHIPPING_CO = encoder(builder.shippingAddress.country || "");
     }
-    if (builder.sillingAddress) {
+    if (builder.billingAddress) {
       request.BILLING_CODE = encoder(builder.billingAddress.postalCode || "");
       request.BILLING_CO = encoder(builder.billingAddress.country || "");
     }
@@ -430,6 +430,22 @@ export class RealexConnector extends XmlGateway implements IRecurringService {
       subElement(request, "reasoncode").append(
         cData(builder.reasonCode.toString()),
       );
+    }
+    if (builder.shippingAddress) {
+        subElement(request, "shipping_code").append(
+          cData(builder.shippingAddress.shipping_code || builder.shippingAddress.postalCode || "")
+        );
+        subElement(request, "shipping_co").append(
+          cData(builder.shippingAddress.country || "")
+        );
+    }
+    if (builder.billingAddress) {
+        subElement(request, "billing_code").append(
+          cData(builder.billingAddress.billing_code || builder.billingAddress.postalCode || "")
+        );
+        subElement(request, "billing_co").append(
+          cData(builder.billingAddress.country || "")
+        );
     }
 
     if (builder.description) {
@@ -614,7 +630,9 @@ export class RealexConnector extends XmlGateway implements IRecurringService {
     const result = new Transaction();
     const root = xml(rawResponse);
 
-    this.checkResponse(root);
+    var r=this.checkResponse(rawResponse,root);
+    result.responseCode = r.code;
+    result.responseMessage = r.message;
 
     result.responseCode = root.findtext(".//result");
     result.responseMessage = root.findtext(".//message");
@@ -636,17 +654,23 @@ export class RealexConnector extends XmlGateway implements IRecurringService {
   ) {
     const root = xml(rawResponse);
 
-    this.checkResponse(root);
+    this.checkResponse(rawResponse,root);
     return builder.entity as T;
   }
 
-  protected checkResponse(root: Element, acceptedCodes?: string[]) {
+  protected checkResponse(rawResponse: string,root: Element, acceptedCodes?: string[]) {
     if (!acceptedCodes) {
       acceptedCodes = ["00"];
     }
 
-    const responseCode = root.findtext(".//result");
-    const responseMessage = root.findtext(".//message");
+    var responseCode = root.findtext(".//result");
+    var responseMessage = root.findtext(".//message");
+    if(!responseCode){
+        var _rc=rawResponse.match('error_code">([0-9]+)</');
+        if(_rc && _rc.length) responseCode=_rc[1];
+        var _rm=rawResponse.match('error_message">([0-9a-zA-Z\-\._\ ]+)</');
+        if(_rm && _rm.length) responseMessage =_rm[1];
+    }
 
     if (acceptedCodes.indexOf(responseCode) === -1) {
       throw new GatewayError(
@@ -654,6 +678,10 @@ export class RealexConnector extends XmlGateway implements IRecurringService {
         responseCode,
         responseMessage,
       );
+    }
+    return {
+      code:responseCode,
+      message:responseMessage
     }
   }
 
@@ -767,9 +795,13 @@ export class RealexConnector extends XmlGateway implements IRecurringService {
         throw new UnsupportedTransactionError();
     }
   }
-
   protected numberFormat(amount: number | string) {
+<<<<<<< Updated upstream
     const f = parseFloat(amount.toString());
     return (parseFloat(f.toFixed(2)) * 100).toString();
+=======
+    const f = parseFloat(amount.toString()) * 100;
+    return parseInt(f.toString()).toString();
+>>>>>>> Stashed changes
   }
 }
