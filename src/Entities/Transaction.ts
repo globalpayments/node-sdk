@@ -58,6 +58,17 @@ export class Transaction {
     return transaction;
   }
 
+  public static fromClientId(
+    clientTransactionId: string,
+    paymentMethodType = PaymentMethodType.Credit,
+  ) {
+    const transaction = new Transaction();
+    transaction.transactionReference = new TransactionReference();
+    transaction.transactionReference.clientTransactionId = clientTransactionId;
+    transaction.transactionReference.paymentMethodType = paymentMethodType;
+    return transaction;
+  }
+
   /**
    * Allows for a follow-up request to add an additional authorization
    *
