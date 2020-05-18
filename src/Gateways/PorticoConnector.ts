@@ -11,6 +11,8 @@ import {
   AccountType,
   AliasAction,
   AuthorizationBuilder,
+  BatchHistoryReportBuilder,
+  BatchHistory,
   CheckType,
   CreditCardData,
   CreditTrackData,
@@ -584,6 +586,18 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       );
     }
 
+    if (builder instanceof BatchHistoryReportBuilder) {
+      const trb = builder as BatchHistoryReportBuilder<T>;
+
+      if (trb.startDate) {
+        subElement(transaction, "RptStartUtcDT").append(cData(trb.startDate.toISOString()));
+      }
+
+      if (trb.endDate) {
+      subElement(transaction, "RptEndUtcDT").append(cData(trb.endDate.toISOString()));
+      }
+    }
+
     if (builder instanceof TransactionReportBuilder) {
       const trb = builder as TransactionReportBuilder<T>;
 
@@ -888,6 +902,8 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         return "ReportActivity";
       case ReportType.TransactionDetail:
         return "ReportTxnDetail";
+      case ReportType.BatchHistory:
+        return "ReportBatchHistory";
       default:
         throw new UnsupportedTransactionError();
     }
@@ -985,6 +1001,9 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         .map(this.hydrateTransactionSummary.bind(this));
     } else if (builder.reportType === ReportType.TransactionDetail) {
       result = this.hydrateTransactionSummary(doc);
+    } else if (builder.reportType === ReportType.BatchHistory) {
+      result = doc.findall('.//Details')
+        .map(this.hydrateBatchHistorySummary);
     }
 
     return result;
@@ -1285,6 +1304,18 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     result.transactionId = root.findtext(".//GatewayTxnId");
     result.convenienceAmt = root.findtext(".//ConvenienceAmtInfo");
     result.shippingAmt = root.findtext(".//ShippingAmtInfo");
+
+    return result;
+  }
+
+  protected hydrateBatchHistorySummary(root: Element): BatchHistory {
+    const result = new BatchHistory();
+
+    result.date = root.findtext('.//CloseUtcDT');
+    result.approvalNumber = root.findtext('.//BatchSeqNbr');
+    result.batchNumber = root.findtext('.//BatchId');
+    result.transactionCount = root.findtext('.//BatchTxnCnt');
+    result.transactionNumber = root.findtext('.//BatchTxnAmt');
 
     return result;
   }

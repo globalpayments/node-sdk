@@ -1,4 +1,5 @@
 export * from "./Address";
+export * from "./BatchHistory";
 export * from "./BatchSummary";
 export * from "./Customer";
 export * from "./EcommerceInfo";
