@@ -27,7 +27,7 @@ export const request = (
       res.on("error", reject);
     });
     req.on("socket", (socket: Socket) => {
-      socket.setTimeout(this.timeout || 100000);
+      socket.setTimeout(100000);
       socket.on("timeout", () => {
         req.abort();
         reject(new ApiError("Socket timeout occurred."));

@@ -1311,11 +1311,16 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
   protected hydrateBatchHistorySummary(root: Element): BatchHistory {
     const result = new BatchHistory();
 
-    result.date = root.findtext('.//CloseUtcDT');
-    result.approvalNumber = root.findtext('.//BatchSeqNbr');
-    result.batchNumber = root.findtext('.//BatchId');
-    result.transactionCount = root.findtext('.//BatchTxnCnt');
-    result.transactionNumber = root.findtext('.//BatchTxnAmt');
+    result.deviceId = Number(root.findtext('.//DeviceId'));
+    result.batchId = Number(root.findtext('.//BatchId'));
+    result.batchStatus = root.findtext('.//BatchStatus');
+    result.batchSequenceNumber = Number(root.findtext('.//BatchSeqNbr'));
+    result.batchOpenDate = new Date(root.findtext('.//OpenUtcDT'));
+    result.batchCloseDate = new Date(root.findtext('.//CloseUtcDT'));
+    result.openTransactionId = root.findtext('.//OpenTxnId');
+    result.closeTransactionId = root.findtext('.//CloseTxnId');
+    result.batchTransactionCount = Number(root.findtext('.//BatchTxnCnt'));
+    result.batchTransactionAmount = Number(root.findtext('.//BatchTxnAmt'));
 
     return result;
   }

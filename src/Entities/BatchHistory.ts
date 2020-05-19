@@ -1,8 +1,13 @@
 export class BatchHistory {
-    public batchNumber: string;
-    public date: string;
-    public approvalNumber: string;
-    public transactionCount: string;
-    public transactionNumber: string;
+    public deviceId: number;
+    public batchId: number;
+    public batchStatus: string;
+    public batchSequenceNumber: number;
+    public batchOpenDate: Date;
+    public batchCloseDate: Date;
+    public openTransactionId: string;
+    public closeTransactionId: string;
+    public batchTransactionCount: number;
+    public batchTransactionAmount: number;
   }
   
