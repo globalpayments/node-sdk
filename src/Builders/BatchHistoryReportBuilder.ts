@@ -14,14 +14,14 @@ export class BatchHistoryReportBuilder<T> extends ReportBuilder<T> {
       .isNotNull();
   }
 
-  public withEndDate(endDate?: Date) {
+  public withEndDate(endDate: Date) {
     if (endDate !== undefined) {
       this.endDate = endDate;
     }
     return this;
   }
 
-  public withStartDate(startDate?: Date) {
+  public withStartDate(startDate: Date) {
     if (startDate !== undefined) {
       this.startDate = startDate;
     }
