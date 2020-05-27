@@ -11,6 +11,8 @@ import {
   AccountType,
   AliasAction,
   AuthorizationBuilder,
+  BatchHistoryReportBuilder,
+  BatchHistory,
   CheckType,
   CreditCardData,
   CreditTrackData,
@@ -584,6 +586,18 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       );
     }
 
+    if (builder instanceof BatchHistoryReportBuilder) {
+      const trb = builder as BatchHistoryReportBuilder<T>;
+
+      if (trb.startDate) {
+        subElement(transaction, "RptStartUtcDT").append(cData(trb.startDate.toISOString()));
+      }
+
+      if (trb.endDate) {
+      subElement(transaction, "RptEndUtcDT").append(cData(trb.endDate.toISOString()));
+      }
+    }
+
     if (builder instanceof TransactionReportBuilder) {
       const trb = builder as TransactionReportBuilder<T>;
 
@@ -888,6 +902,8 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         return "ReportActivity";
       case ReportType.TransactionDetail:
         return "ReportTxnDetail";
+      case ReportType.BatchHistory:
+        return "ReportBatchHistory";
       default:
         throw new UnsupportedTransactionError();
     }
@@ -985,6 +1001,9 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         .map(this.hydrateTransactionSummary.bind(this));
     } else if (builder.reportType === ReportType.TransactionDetail) {
       result = this.hydrateTransactionSummary(doc);
+    } else if (builder.reportType === ReportType.BatchHistory) {
+      result = doc.findall('.//Details')
+        .map(this.hydrateBatchHistorySummary);
     }
 
     return result;
@@ -1285,6 +1304,23 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     result.transactionId = root.findtext(".//GatewayTxnId");
     result.convenienceAmt = root.findtext(".//ConvenienceAmtInfo");
     result.shippingAmt = root.findtext(".//ShippingAmtInfo");
+
+    return result;
+  }
+
+  protected hydrateBatchHistorySummary(root: Element): BatchHistory {
+    const result = new BatchHistory();
+
+    result.deviceId = Number(root.findtext('.//DeviceId'));
+    result.batchId = Number(root.findtext('.//BatchId'));
+    result.batchStatus = root.findtext('.//BatchStatus');
+    result.batchSequenceNumber = Number(root.findtext('.//BatchSeqNbr'));
+    result.batchOpenDate = new Date(root.findtext('.//OpenUtcDT'));
+    result.batchCloseDate = new Date(root.findtext('.//CloseUtcDT'));
+    result.openTransactionId = root.findtext('.//OpenTxnId');
+    result.closeTransactionId = root.findtext('.//CloseTxnId');
+    result.batchTransactionCount = Number(root.findtext('.//BatchTxnCnt'));
+    result.batchTransactionAmount = Number(root.findtext('.//BatchTxnAmt'));
 
     return result;
   }
