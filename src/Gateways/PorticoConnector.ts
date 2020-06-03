@@ -999,7 +999,6 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     builder: ReportBuilder<T>,
   ): T {
     // todo: handle non-200 responses
-    debugger;
 
     const posResponse = xml(rawResponse).find(".//PosResponse");
     const doc = posResponse.find(`.//${this.mapReportRequestType(builder)}`);
