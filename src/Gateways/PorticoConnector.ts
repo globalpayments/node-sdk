@@ -602,7 +602,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     if (builder instanceof FindTransactionsBuilder) {
       const trb = builder as FindTransactionsBuilder<T>;
 
-      const Criteria = subElement(transaction, 'criteria');
+      const Criteria = subElement(transaction, 'Criteria');
       subElement(Criteria, 'ClientTxnId').append(cData(trb.clientTransactionId));
     }
 
@@ -999,6 +999,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     builder: ReportBuilder<T>,
   ): T {
     // todo: handle non-200 responses
+    debugger;
 
     const posResponse = xml(rawResponse).find(".//PosResponse");
     const doc = posResponse.find(`.//${this.mapReportRequestType(builder)}`);
