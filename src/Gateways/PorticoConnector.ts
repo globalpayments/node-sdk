@@ -602,12 +602,8 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     if (builder instanceof FindTransactionsBuilder) {
       const trb = builder as FindTransactionsBuilder<T>;
 
-      const Criteria = element('Criteria')
+      const Criteria = subElement(transaction, 'criteria');
       subElement(Criteria, 'ClientTxnId').append(cData(trb.clientTransactionId));
-      subElement(transaction, "Criteria").append(Criteria);
-      transaction;
-      // TODO inspect to make sure this is right structure
-      debugger;
     }
 
     if (builder instanceof TransactionReportBuilder) {
