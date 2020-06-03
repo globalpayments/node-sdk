@@ -607,6 +607,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       subElement(Criteria, 'ClientTxnId').append(cData(trb.clientTransactionId));
       subElement(transaction, "Criteria").append(Criteria);
       transaction;
+      // todo inspect to make sure this is right structure
       debugger;
     }
 
