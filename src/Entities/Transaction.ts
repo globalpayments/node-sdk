@@ -7,6 +7,15 @@ import {
   TransactionReference,
   TransactionType,
 } from "../";
+
+enum transactionStatus {
+  Active = 'A',
+  Closed = 'C',
+  Voided = 'V',
+  Inactive = 'I',
+  Reversed = 'R'
+}
+
 export class Transaction {
   public authorizedAmount: string;
   public balanceAmount: string;
@@ -30,6 +39,7 @@ export class Transaction {
   public giftCard: GiftCard;
   public clientTransactionId: string;
   public timestamp: string;
+  public transactionStatus: transactionStatus;
 
   get transactionId(): string {
     return this.transactionReference.transactionId;
@@ -58,6 +68,7 @@ export class Transaction {
     return transaction;
   }
 
+  // todo see if we actually need this
   public static fromClientId(
     clientTransactionId: string,
     paymentMethodType = PaymentMethodType.Credit,

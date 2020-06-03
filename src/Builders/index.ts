@@ -6,3 +6,4 @@ export * from "./ReportBuilder";
 export * from "./TransactionBuilder";
 export * from "./TransactionReportBuilder";
 export * from "./BatchHistoryReportBuilder";
+export * from "./FindTransactionsBuilder";
