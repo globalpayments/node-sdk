@@ -1340,9 +1340,25 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
 
   protected hydrateFoundTransactions(root: Element): Transaction {
     const result = new Transaction();
-    result.transactionStatus = root.findtext('.//TxnStatus');
 
-    // TODO pull data off the response
+    result.transactionStatus = root.findtext('.//TxnStatus');
+    result.transactionDescriptor = root.findtext('.//TxnDescriptor');
+
+    result.transactionReference = new TransactionReference(
+      root.findtext(".//GatewayTxnId"),
+    );
+    result.transactionReference.authCode = root.findtext(".//AuthCode");
+    result.transactionReference.clientTransactionId = root.findtext('.//ClientTxnId');
+
+    result.authorizedAmount = root.findtext('.//AuthAmt');
+
+    result.customerFirstName = root.findtext('.//CustomerFirstname');
+    result.customerLastName = root.findtext('.//CustomerLastname');
+
+    result.responseCode = root.findtext('.//RspCode');
+    result.responseMessage = root.findtext('.//RspText');
+    result.maskedCardNumber = root.findtext('.//MaskedCardNbr');
+    result.cardType = root.findtext('.//CardType');
 
     return result;
   }
