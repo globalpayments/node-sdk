@@ -1352,9 +1352,6 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
 
     result.authorizedAmount = root.findtext('.//AuthAmt');
 
-    result.customerFirstName = root.findtext('.//CustomerFirstname');
-    result.customerLastName = root.findtext('.//CustomerLastname');
-
     result.responseCode = root.findtext('.//RspCode');
     result.responseMessage = root.findtext('.//RspText');
     result.maskedCardNumber = root.findtext('.//MaskedCardNbr');

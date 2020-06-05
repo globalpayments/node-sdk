@@ -33,8 +33,6 @@ export class Transaction {
   public timestamp: string;
   public transactionStatus: string;
   public maskedCardNumber: string;
-  public customerLastName: string;
-  public customerFirstName: string;
 
   get transactionId(): string {
     return this.transactionReference.transactionId;
