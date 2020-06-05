@@ -12,8 +12,6 @@ if (typeof exports !== "undefined") {
   local = exports;
 } else if (typeof global !== "undefined") {
   local = global;
-} else if (typeof self !== "undefined") {
-  local = self;
 } else {
   try {
     local = Function("return this")();
