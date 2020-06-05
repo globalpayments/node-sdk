@@ -7,6 +7,7 @@ import {
   TransactionReference,
   TransactionType,
 } from "../";
+
 export class Transaction {
   public authorizedAmount: string;
   public balanceAmount: string;
@@ -30,6 +31,8 @@ export class Transaction {
   public giftCard: GiftCard;
   public clientTransactionId: string;
   public timestamp: string;
+  public transactionStatus: string;
+  public maskedCardNumber: string;
 
   get transactionId(): string {
     return this.transactionReference.transactionId;

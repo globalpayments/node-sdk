@@ -50,6 +50,7 @@ import {
 } from "../";
 import { validateAmount, validateInput } from "../Utils/InputValidation";
 import { XmlGateway } from "./XmlGateway";
+import { FindTransactionsBuilder } from "../Builders";
 
 export class PorticoConnector extends XmlGateway implements IPaymentGateway {
   protected static XmlNamespace = "http://Hps.Exchange.PosGateway";
@@ -598,6 +599,13 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       }
     }
 
+    if (builder instanceof FindTransactionsBuilder) {
+      const trb = builder as FindTransactionsBuilder<T>;
+
+      const Criteria = subElement(transaction, 'Criteria');
+      subElement(Criteria, 'ClientTxnId').append(cData(trb.clientTransactionId));
+    }
+
     if (builder instanceof TransactionReportBuilder) {
       const trb = builder as TransactionReportBuilder<T>;
 
@@ -904,6 +912,8 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         return "ReportTxnDetail";
       case ReportType.BatchHistory:
         return "ReportBatchHistory";
+      case ReportType.FindTransactions:
+        return 'FindTransactions';
       default:
         throw new UnsupportedTransactionError();
     }
@@ -1004,6 +1014,9 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     } else if (builder.reportType === ReportType.BatchHistory) {
       result = doc.findall('.//Details')
         .map(this.hydrateBatchHistorySummary);
+    } else if (builder.reportType === ReportType.FindTransactions) {
+      result = doc.findall('.//Transactions')
+        .map(this.hydrateFoundTransactions);
     }
 
     return result;
@@ -1321,6 +1334,28 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     result.closeTransactionId = root.findtext('.//CloseTxnId');
     result.batchTransactionCount = Number(root.findtext('.//BatchTxnCnt'));
     result.batchTransactionAmount = Number(root.findtext('.//BatchTxnAmt'));
+
+    return result;
+  }
+
+  protected hydrateFoundTransactions(root: Element): Transaction {
+    const result = new Transaction();
+
+    result.transactionStatus = root.findtext('.//TxnStatus');
+    result.transactionDescriptor = root.findtext('.//TxnDescriptor');
+
+    result.transactionReference = new TransactionReference(
+      root.findtext(".//GatewayTxnId"),
+    );
+    result.transactionReference.authCode = root.findtext(".//AuthCode");
+    result.transactionReference.clientTransactionId = root.findtext('.//ClientTxnId');
+
+    result.authorizedAmount = root.findtext('.//AuthAmt');
+
+    result.responseCode = root.findtext('.//RspCode');
+    result.responseMessage = root.findtext('.//RspText');
+    result.maskedCardNumber = root.findtext('.//MaskedCardNbr');
+    result.cardType = root.findtext('.//CardType');
 
     return result;
   }

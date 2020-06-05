@@ -18,11 +18,11 @@
   },
   "include": [
     "src/**/*",
-    "test/**/*"
+    "test/**/*",
+    "netsuite/**/*"
   ],
   "exclude": [
     "node_modules",
-    "lib",
-    "netsuite"
+    "lib"
   ]
 }
