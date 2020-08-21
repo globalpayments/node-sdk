@@ -36,6 +36,8 @@ export abstract class Gateway {
       options.headers["Content-Length"] = data.length;
     }
 
+    console.log("Request: ", data)
+
     return request(data, options);
   }
 

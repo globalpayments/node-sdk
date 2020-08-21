@@ -17,6 +17,8 @@ export const request = (
 
       res.on("data", (d: string) => (responseData += d));
       res.on("end", () => {
+        console.log(`Response: ${responseData}`);
+        console.log(`Response status code: ${res.statusCode}`);
         if (res.statusCode !== 200) {
           reject(
             new GatewayError(`Unexpected HTTP status code [${res.statusCode}]`),
