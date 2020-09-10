@@ -5,6 +5,7 @@ import {
   ServicesConfig,
   ServicesContainer,
 } from "../../../../src/";
+import { validateAmount } from "../../../../src/Utils/InputValidation";
 
 const config = new ServicesConfig();
 config.secretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w";
@@ -18,7 +19,6 @@ card.cvn = "123";
 card.cardHolderName = "Joe Smith";
 
 test.before((_t) => {
-
   ServicesContainer.configure(config);
 });
 
@@ -159,4 +159,15 @@ test("invalid last name - length", async (t) => {
         "length greater than the configured gateway's maximum length",
       ),
   );
+});
+
+test("floating point math", async (t) => {
+  t.is(validateAmount("portico", 15.01), "15.01");
+  t.is(validateAmount("portico", 15.0100000000001), "15.01");
+  t.is(validateAmount("portico", "15.01"), "15.01");
+  t.is(validateAmount("portico", "15.0100000000001"), "15.01");
+  t.is(validateAmount("portico", 76.68), "76.68");
+  t.is(validateAmount("portico", 76.6800000000001), "76.68");
+  t.is(validateAmount("portico", "76.68"), "76.68");
+  t.is(validateAmount("portico", "76.6800000000001"), "76.68");
 });

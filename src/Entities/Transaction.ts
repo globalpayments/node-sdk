@@ -11,6 +11,7 @@ export class Transaction {
   public authorizedAmount: string;
   public balanceAmount: string;
   public pointsBalanceAmount: string;
+  public cardBrandTransactionId: string;
   public commercialIndicator: string;
   public responseCode: string;
   public responseMessage: string;

@@ -12,6 +12,7 @@ import {
   RecurringSequence,
   RecurringType,
   ServicesContainer,
+  StoredCredentialInitiator,
   Transaction,
   TransactionModifier,
   TransactionReference,
@@ -29,6 +30,7 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public authAmount: string | number;
   public balanceInquiryType: InquiryType;
   public billingAddress: Address;
+  public cardBrandTransactionId: string;
   public cashBackAmount: string | number;
   public clientTransactionId: string;
   public currency: string;
@@ -55,6 +57,7 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public scheduleId: string;
   public shippingAddress: Address;
   public timestamp: string;
+  public transactionInitiator: StoredCredentialInitiator;
 
   public constructor(type: number, paymentMethod?: IPaymentMethod) {
     super(type, paymentMethod);
@@ -281,6 +284,17 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public withBalanceInquiryType(inquiry?: InquiryType) {
     if (inquiry !== undefined) {
       this.balanceInquiryType = inquiry;
+    }
+    return this;
+  }
+
+  /**
+   * Sets Credential on File fields
+   */
+  public withCardBrandStorage(transactionInitiator: StoredCredentialInitiator, value?: string) {
+    this.transactionInitiator = transactionInitiator;
+    if (value !== undefined) {
+      this.cardBrandTransactionId = value;
     }
     return this;
   }

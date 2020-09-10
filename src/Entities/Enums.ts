@@ -192,6 +192,11 @@ export enum SecCode {
   EBronze = "EBronze",
 }
 
+export enum StoredCredentialInitiator {
+  CardHolder = "C",
+  Merchant = "M",
+}
+
 export enum TaxType {
   NotUsed,
   SalesTax,

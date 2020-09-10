@@ -769,7 +769,7 @@ export class RealexConnector extends XmlGateway implements IRecurringService {
   }
 
   protected numberFormat(amount: number | string) {
-    const f = parseFloat(amount.toString());
-    return (parseFloat(f.toFixed(2)) * 100).toString();
+    const f = parseFloat(amount.toString()) * 100;
+    return parseFloat(f.toFixed(2)).toString();
   }
 }

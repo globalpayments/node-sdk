@@ -7,6 +7,7 @@ import {
   ServicesConfig,
   ServicesContainer,
   Transaction,
+  StoredCredentialInitiator,
 } from "../../../../src/";
 
 const config = new ServicesConfig();
@@ -95,6 +96,36 @@ test("credit auth with shipping", async (t) => {
   t.is(report.shippingAmt, "2.00");
 });
 
+test("credit auth with cof", async (t) => {
+  t.plan(7);
+
+  const response = await card
+    .authorize(15)
+    .withCurrency("USD")
+    .withAllowDuplicates(true)
+    .withCardBrandStorage(StoredCredentialInitiator.CardHolder)
+    .execute();
+
+  t.truthy(response);
+  t.is(response.responseCode, "00");
+  t.truthy(response.cardBrandTransactionId);
+
+  const cofResponse = await card
+    .authorize(15)
+    .withCurrency("USD")
+    .withAllowDuplicates(true)
+    .withCardBrandStorage(StoredCredentialInitiator.Merchant, response.cardBrandTransactionId)
+    .execute();
+
+    t.truthy(cofResponse);
+    t.is(cofResponse.responseCode, "00");
+
+  const capture = await cofResponse.capture().execute();
+
+  t.truthy(capture);
+  t.is(capture.responseCode, "00");
+});
+
 test("credit sale", async (t) => {
   t.plan(2);
 
@@ -148,6 +179,31 @@ test("credit sale with shipping", async (t) => {
 
   t.truthy(report);
   t.is(report.shippingAmt, "2.00");
+});
+
+test("credit sale with cof", async (t) => {
+  t.plan(5);
+
+  const response = await card
+    .charge(15)
+    .withCurrency("USD")
+    .withAllowDuplicates(true)
+    .withCardBrandStorage(StoredCredentialInitiator.CardHolder)
+    .execute();
+
+  t.truthy(response);
+  t.is(response.responseCode, "00");
+  t.truthy(response.cardBrandTransactionId);
+
+  const cofResponse = await card
+    .charge(15)
+    .withCurrency("USD")
+    .withAllowDuplicates(true)
+    .withCardBrandStorage(StoredCredentialInitiator.Merchant, response.cardBrandTransactionId)
+    .execute();
+
+    t.truthy(cofResponse);
+    t.is(cofResponse.responseCode, "00");
 });
 
 test("credit offline authorization", async (t) => {
@@ -303,6 +359,23 @@ test("credit verify", async (t) => {
 
   t.truthy(response);
   t.is(response.responseCode, "00");
+});
+
+
+test("credit verify with cof", async (t) => {
+  t.plan(3);
+
+  const response = await card
+    .verify()
+    .withCurrency("USD")
+    .withAllowDuplicates(true)
+    .withRequestMultiUseToken(true)
+    .withCardBrandStorage(StoredCredentialInitiator.Merchant)
+    .execute();
+
+  t.truthy(response);
+  t.is(response.responseCode, "00");
+  t.truthy(response.cardBrandTransactionId);
 });
 
 test("credit swipe authorization", async (t) => {

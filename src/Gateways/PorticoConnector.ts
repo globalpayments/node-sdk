@@ -138,7 +138,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     const isCheck =
       builder.paymentMethod.paymentMethodType === PaymentMethodType.ACH;
     const property = isCheck ? "checkHolderName" : "cardHolderName";
-    if (isCheck || builder.billingAddress || builder.paymentMethod[property]) {
+    if (builder.transactionType !== TransactionType.Reversal && (isCheck || builder.billingAddress || builder.paymentMethod[property])) {
       const holder = subElement(
         block1,
         isCheck ? "ConsumerInfo" : "CardHolderData",
@@ -209,6 +209,11 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         cardData,
         hasToken ? "TokenData" : "ManualEntry",
       );
+
+      if (this.shouldIncludeCredentialOnFile(builder) && (builder.cardBrandTransactionId || builder.transactionInitiator)) {
+        block1.append(this.hydrateCredentialOnFile(builder));
+      }
+
       subElement(manualEntry, hasToken ? "TokenValue" : "CardNbr").append(
         cData(tokenValue || card.number),
       );
@@ -363,6 +368,10 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         subElement(data, "ExpMonth").append(cData(card.expMonth));
         subElement(data, "ExpYear").append(cData(card.expYear));
         subElement(data, "CVV2").append(cData(card.cvn));
+
+        if (this.shouldIncludeCredentialOnFile(builder) && (builder.cardBrandTransactionId || builder.transactionInitiator)) {
+          block1.append(this.hydrateCredentialOnFile(builder));
+        }
       }
 
       const recurring = subElement(block1, "RecurringData");
@@ -934,6 +943,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     result.recurringDataCode = root.findtext(".//RecurringDataCode");
     result.referenceNumber = root.findtext(".//RefNbr");
     result.transactionDescriptor = root.findtext(".//TxnDescriptor");
+    result.cardBrandTransactionId = root.findtext(".//CardBrandTxnId");
 
     if (builder.paymentMethod) {
       result.transactionReference = new TransactionReference(
@@ -1036,6 +1046,20 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       default:
         return "";
     }
+  }
+
+  protected hydrateCredentialOnFile(builder: AuthorizationBuilder) {
+    const cof = new Element("CardOnFileData");
+
+    if (builder.transactionInitiator) {
+      subElement(cof, "CardOnFile").append(cData(builder.transactionInitiator));
+    }
+
+    if (builder.cardBrandTransactionId) {
+      subElement(cof, "CardBrandTxnId").append(cData(builder.cardBrandTransactionId));
+    }
+
+    return cof;
   }
 
   protected hydrateEncryptionData(builder: TransactionBuilder<Transaction>) {
@@ -1147,7 +1171,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
 
   protected hydrateManualEntry(
     block1: Element,
-    builder: TransactionBuilder<Transaction>,
+    builder: AuthorizationBuilder,
     hasToken: boolean,
     tokenValue: string,
   ) {
@@ -1157,6 +1181,10 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       card = builder.paymentMethod as CreditCardData;
     } else {
       card = builder.paymentMethod as EBTCardData;
+    }
+
+    if (builder.cardBrandTransactionId || builder.transactionInitiator) {
+      block1.append(this.hydrateCredentialOnFile(builder));
     }
 
     if (card.number || hasToken) {
@@ -1287,5 +1315,18 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     result.shippingAmt = root.findtext(".//ShippingAmtInfo");
 
     return result;
+  }
+
+  protected shouldIncludeCredentialOnFile(builder: TransactionBuilder<Transaction>) {
+    if ([
+      TransactionType.Auth,
+      TransactionType.Refund,
+      TransactionType.Sale,
+      TransactionType.Verify,
+    ].indexOf(builder.transactionType) !== -1) {
+      return true;
+    }
+
+    return false;
   }
 }
