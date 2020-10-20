@@ -6,7 +6,7 @@
   "scripts": {
     "deploy": "now",
     "develop": "micro-dev",
-    "start": "micro"
+    "start": "firebase serve"
   },
   "dependencies": {
     "globalpayments-api": "^1.0",
