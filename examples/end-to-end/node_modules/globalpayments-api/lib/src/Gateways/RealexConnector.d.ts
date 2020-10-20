@@ -1,0 +1,30 @@
+import { Element } from "@azz/elementtree";
+import { AuthorizationBuilder, Customer, HostedPaymentConfig, IRecurringEntity, IRecurringService, ManagementBuilder, RecurringBuilder, ReportBuilder, Transaction, TransactionType } from "../";
+import { XmlGateway } from "./XmlGateway";
+export declare class RealexConnector extends XmlGateway implements IRecurringService {
+    merchantId: string;
+    accountId: string;
+    sharedSecret: string;
+    channel: string;
+    rebatePassword: string;
+    refundPassword: string;
+    supportsHostedPayments: boolean;
+    supportsRetrieval: boolean;
+    supportsUpdatePaymentDetails: boolean;
+    hostedPaymentConfig: HostedPaymentConfig;
+    processAuthorization(builder: AuthorizationBuilder): Promise<Transaction>;
+    serializeRequest(builder: AuthorizationBuilder): string;
+    manageTransaction(builder: ManagementBuilder): Promise<Transaction>;
+    processReport<T>(_builder: ReportBuilder<T>): Promise<T>;
+    processRecurring<T extends IRecurringEntity>(builder: RecurringBuilder<T>): Promise<T>;
+    protected buildEnvelope(transaction: Element): string;
+    protected buildCustomer(customer: Customer): Element;
+    protected mapResponse(rawResponse: string): Transaction;
+    protected mapRecurringResponse<T extends IRecurringEntity>(rawResponse: string, builder: RecurringBuilder<T>): T;
+    protected checkResponse(root: Element, acceptedCodes?: string[]): void;
+    protected generateHash(timestamp: string, orderId: string, amount: string, currency: string, paymentData: string, verify?: boolean): string;
+    protected mapAuthRequestType(builder: AuthorizationBuilder): string;
+    protected mapManageRequestType(type: TransactionType): string;
+    protected mapRecurringRequestType<T extends IRecurringEntity>(builder: RecurringBuilder<T>): "payer-new" | "card-new" | "payer-edit" | "card-update-card" | "card-cancel-card";
+    protected numberFormat(amount: number | string): string;
+}
