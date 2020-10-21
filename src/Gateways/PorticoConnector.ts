@@ -998,10 +998,20 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     rawResponse: string,
     builder: ReportBuilder<T>,
   ): T {
-    // todo: handle non-200 responses
-
     const posResponse = xml(rawResponse).find(".//PosResponse");
     const doc = posResponse.find(`.//${this.mapReportRequestType(builder)}`);
+    const acceptedCodes = ["00"];
+
+    const gatewayRspCode = this.normalizeResponse(
+      posResponse.findtext(".//GatewayRspCode"),
+    );
+    const gatewayRspText = posResponse.findtext(".//GatewayRspMsg");
+
+    if (acceptedCodes.indexOf(gatewayRspCode) === -1) {
+      throw new GatewayError(
+        `Unexpected Gateway Response: ${gatewayRspCode} - ${gatewayRspText}`,
+      );
+    }
 
     let result: any;
 
