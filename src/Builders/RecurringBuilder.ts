@@ -10,7 +10,7 @@ export class RecurringBuilder<
 > extends TransactionBuilder<T> {
   public key: string;
   public orderId: string;
-  public entity: IRecurringEntity;
+  public entity: IRecurringEntity | Function;
   public searchCriteria: IDictionary<string>;
 
   public constructor(type: TransactionType, entity?: IRecurringEntity | Function) {
@@ -18,7 +18,7 @@ export class RecurringBuilder<
     this.searchCriteria = {};
     if (entity) {
       this.entity = entity;
-      this.key = entity.key;
+      this.key = (entity as any).key;
     }
   }
 

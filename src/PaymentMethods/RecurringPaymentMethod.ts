@@ -44,17 +44,17 @@ export class RecurringPaymentMethod extends RecurringEntity<
     super();
 
     if (
-      (customerIdOrPaymentMethod &&
-        typeof customerIdOrPaymentMethod === "string") ||
-      customerIdOrPaymentMethod instanceof String
+      customerIdOrPaymentMethod &&
+        (typeof customerIdOrPaymentMethod === "string" ||
+      customerIdOrPaymentMethod instanceof String)
     ) {
       this.paymentType = "Credit Card";
-      this.customerKey = customerIdOrPaymentMethod;
+      this.customerKey = customerIdOrPaymentMethod as string;
       if (paymentId) {
         this.key = paymentId;
       }
     } else if (customerIdOrPaymentMethod) {
-      this._paymentMethod = customerIdOrPaymentMethod;
+      this._paymentMethod = customerIdOrPaymentMethod as IPaymentMethod;
     }
   }
 

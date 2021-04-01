@@ -13,7 +13,7 @@ export abstract class Gateway {
   public constructor(contentType: string) {
     this.contentType = contentType;
     this.headers = {};
-    this.headers["Content-Type"] = contentType;
+    this.headers["Content-Type"] = this.contentType;
   }
 
   public sendRequest(
@@ -30,6 +30,7 @@ export abstract class Gateway {
       method: httpMethod,
       path: uri.path + endpoint + queryString,
       port: uri.port ? parseInt(uri.port, 10) : 443,
+      timeout: this.timeout || 100000,
     };
 
     if (data !== undefined && options && options.headers) {

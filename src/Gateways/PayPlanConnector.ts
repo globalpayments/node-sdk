@@ -130,7 +130,7 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     let result: any;
 
     if (
-      (builder.entity instanceof Customer || builder.entity.name === 'Customer') &&
+      (builder.entity instanceof Customer || ((builder.entity as any) as Function).name === 'Customer') &&
       builder.transactionType === TransactionType.Search
     ) {
       result = response.results.map((customer: object) =>
@@ -141,7 +141,7 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     }
 
     if (
-      (builder.entity instanceof RecurringPaymentMethod || builder.entity.name === 'RecurringPaymentMethod') &&
+      (builder.entity instanceof RecurringPaymentMethod || ((builder.entity as any) as Function).name === 'RecurringPaymentMethod') &&
       builder.transactionType === TransactionType.Search
     ) {
       result = response.results.map((paymentMethod: object) =>
@@ -152,7 +152,7 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     }
 
     if (
-      (builder.entity instanceof Schedule || builder.entity.name === 'Schedule') &&
+      (builder.entity instanceof Schedule || ((builder.entity as any) as Function).name === 'Schedule') &&
       builder.transactionType === TransactionType.Search
     ) {
       result = response.results.map((schedule: object) =>
@@ -473,10 +473,10 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
       builder.transactionType === TransactionType.Delete ||
       builder.transactionType === TransactionType.Edit
     ) {
-      suffix = "/" + builder.entity.key;
+      suffix = "/" + (builder.entity as any).key;
     }
 
-    if (builder.entity instanceof Customer || builder.entity.name === 'Customer') {
+    if (builder.entity instanceof Customer || ((builder.entity as any) as Function).name === 'Customer') {
       return (
         (builder.transactionType === TransactionType.Search
           ? "searchCustomers"
@@ -484,13 +484,13 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
       );
     }
 
-    if (builder.entity instanceof RecurringPaymentMethod || builder.entity.name === 'RecurringPaymentMethod') {
+    if (builder.entity instanceof RecurringPaymentMethod || ((builder.entity as any) as Function).name === 'RecurringPaymentMethod') {
       let paymentMethod = "";
       if (builder.transactionType === TransactionType.Create) {
         paymentMethod =
-          builder.entity.paymentMethod instanceof Credit ? "CreditCard" : "ACH";
+          (builder.entity as any).paymentMethod instanceof Credit ? "CreditCard" : "ACH";
       } else if (builder.transactionType === TransactionType.Edit) {
-        paymentMethod = builder.entity.paymentType.replace(" ", "");
+        paymentMethod = (builder.entity as any).paymentType.replace(" ", "");
       }
 
       return (
@@ -502,7 +502,7 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
       );
     }
 
-    if (builder.entity instanceof Schedule || builder.entity.name === 'Schedule') {
+    if (builder.entity instanceof Schedule || ((builder.entity as any) as Function).name === 'Schedule') {
       return (
         (builder.transactionType === TransactionType.Search
           ? "searchSchedules"

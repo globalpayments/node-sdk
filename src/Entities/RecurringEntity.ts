@@ -41,11 +41,11 @@ export class RecurringEntity<TResult extends IRecurringEntity>
     return RecurringService.search<TResult>(this)
       .addSearchCriteria(identifier, id)
       .execute()
-      .then((response: any[]) => {
+      .then((response: any[] | TResult) => {
         if (!response) {
           return;
         }
-        const entity = response[0];
+        const entity = (response as any)[0] || response
         if (entity) {
           return RecurringService.get<TResult>(entity);
         }
@@ -72,9 +72,9 @@ export class RecurringEntity<TResult extends IRecurringEntity>
         return "customerIdentifier";
     } else if (fn.name === 'RecurringPaymentMethod') {
         return "paymentMethodIdentifier";
-    } else if (fn.name === 'Schedule') {
-        return "scheduleIdentifier";
     }
+    
+    return "scheduleIdentifier";
   }
 
   /// <summary>
