@@ -13,13 +13,18 @@ export class RecurringBuilder<
   public entity: IRecurringEntity;
   public searchCriteria: IDictionary<string>;
 
-  public constructor(type: TransactionType, entity?: IRecurringEntity) {
+  public constructor(type: TransactionType, entity?: IRecurringEntity | Function) {
     super(type);
     this.searchCriteria = {};
     if (entity) {
       this.entity = entity;
       this.key = entity.key;
     }
+  }
+
+  public addSearchCriteria(key: string, value: string) {
+    this.searchCriteria[key] = value;
+    return this
   }
 
   public execute(): Promise<T> {

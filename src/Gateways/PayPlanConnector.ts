@@ -130,7 +130,7 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     let result: any;
 
     if (
-      builder.entity instanceof Customer &&
+      (builder.entity instanceof Customer || builder.entity.name === 'Customer') &&
       builder.transactionType === TransactionType.Search
     ) {
       result = response.results.map((customer: object) =>
@@ -141,7 +141,7 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     }
 
     if (
-      builder.entity instanceof RecurringPaymentMethod &&
+      (builder.entity instanceof RecurringPaymentMethod || builder.entity.name === 'RecurringPaymentMethod') &&
       builder.transactionType === TransactionType.Search
     ) {
       result = response.results.map((paymentMethod: object) =>
@@ -152,7 +152,7 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     }
 
     if (
-      builder.entity instanceof Schedule &&
+      (builder.entity instanceof Schedule || builder.entity.name === 'Schedule') &&
       builder.transactionType === TransactionType.Search
     ) {
       result = response.results.map((schedule: object) =>
@@ -476,7 +476,7 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
       suffix = "/" + builder.entity.key;
     }
 
-    if (builder.entity instanceof Customer) {
+    if (builder.entity instanceof Customer || builder.entity.name === 'Customer') {
       return (
         (builder.transactionType === TransactionType.Search
           ? "searchCustomers"
@@ -484,7 +484,7 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
       );
     }
 
-    if (builder.entity instanceof RecurringPaymentMethod) {
+    if (builder.entity instanceof RecurringPaymentMethod || builder.entity.name === 'RecurringPaymentMethod') {
       let paymentMethod = "";
       if (builder.transactionType === TransactionType.Create) {
         paymentMethod =
@@ -502,7 +502,7 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
       );
     }
 
-    if (builder.entity instanceof Schedule) {
+    if (builder.entity instanceof Schedule || builder.entity.name === 'Schedule') {
       return (
         (builder.transactionType === TransactionType.Search
           ? "searchSchedules"
@@ -583,7 +583,7 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     }
 
     schedule.deviceId = response.deviceId;
-    schedule.startDate = new Date(response.startDate);
+    schedule.startDate = response.startDate === "" ? null : response.startDate;
     schedule.paymentSchedule = ((value: string) => {
       switch (value) {
         case "Last":
@@ -595,7 +595,7 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
       }
     })(response.processingDateInfo);
     schedule.frequency = response.frequency;
-    schedule.endDate = new Date(response.endDate);
+    schedule.endDate = response.endDate === "" ? null : response.endDate;
     schedule.reprocessingCount = response.reprocessingCount;
     schedule.emailReceipt = response.emailReceipt;
     schedule.emailNotification = ((value: string) => {
@@ -609,13 +609,13 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     schedule.poNumber = response.poNumber;
     schedule.description = response.description;
     // statusSetDate
-    schedule.nextProcessingDate = new Date(response.nextProcessingDate);
+    schedule.nextProcessingDate = response.nextProcessingDate === "" ? null : response.nextProcessingDate;
     // previousProcessingDate
     // approvedTransactionCount
     // failureCount
     // totalApprovedAmountToDate
     // numberOfPaymentsRemaining
-    schedule.cancellationDate = new Date(response.cancellationDate);
+    schedule.cancellationDate = response.cancellationDate === "" ? null : response.cancellationDate;
     // creationDate
     // lastChangeDate
     schedule.hasStarted = response.scheduleStarted as boolean;

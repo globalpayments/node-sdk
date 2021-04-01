@@ -14,16 +14,14 @@ export class RecurringService {
   }
 
   public static get<T extends IRecurringEntity>(key: string) {
-    const entity = {
-      key,
-    };
+    const entity = key;
     return new RecurringBuilder<T>(
       TransactionType.Fetch,
       (entity as any) as T,
     ).execute();
   }
 
-  public static search<T extends IRecurringEntity>() {
-    return new RecurringBuilder<T>(TransactionType.Search);
+  public static search<T extends IRecurringEntity>(enity: IRecurringEntity | Function) {
+    return new RecurringBuilder<T>(TransactionType.Search, enity);
   }
 }

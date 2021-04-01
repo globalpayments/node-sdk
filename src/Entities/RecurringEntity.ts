@@ -37,17 +37,17 @@ export class RecurringEntity<TResult extends IRecurringEntity>
       throw new UnsupportedTransactionError();
     }
 
-    const identifier = RecurringEntity.getIdentifierName();
-    return RecurringService.search<TResult>()
+    const identifier = RecurringEntity.getIdentifierName(this);
+    return RecurringService.search<TResult>(this)
       .addSearchCriteria(identifier, id)
       .execute()
       .then((response: any[]) => {
         if (!response) {
           return;
         }
-        const entity = response[1];
+        const entity = response[0];
         if (entity) {
-          return RecurringService.get<TResult>(entity.key);
+          return RecurringService.get<TResult>(entity);
         }
         return;
       });
@@ -62,19 +62,19 @@ export class RecurringEntity<TResult extends IRecurringEntity>
   public static findAll<TResult extends IRecurringEntity>() {
     const client = ServicesContainer.instance().getRecurringClient();
     if (client.supportsRetrieval) {
-      return RecurringService.search<TResult>().execute();
+      return RecurringService.search<TResult>(this).execute();
     }
     throw new UnsupportedTransactionError();
   }
 
-  private static getIdentifierName() {
-    // if ((typeof(TResult)).Equals(typeof(Customer)))
-    //     return "customerIdentifier";
-    // else if ((typeof(TResult)).Equals(typeof(RecurringPaymentMethod)))
-    //     return "paymentMethodIdentifier";
-    // else if ((typeof(TResult)).Equals(typeof(Schedule)))
-    //     return "scheduleIdentifier";
-    return "";
+  private static getIdentifierName(fn: any) {
+    if (fn.name === 'Customer') {
+        return "customerIdentifier";
+    } else if (fn.name === 'RecurringPaymentMethod') {
+        return "paymentMethodIdentifier";
+    } else if (fn.name === 'Schedule') {
+        return "scheduleIdentifier";
+    }
   }
 
   /// <summary>
