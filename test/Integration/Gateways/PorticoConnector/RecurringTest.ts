@@ -1,15 +1,17 @@
-import ava from "ava";
-import { ServicesConfig, ServicesContainer } from "../../../../src/";
+import test from "ava";
+import {
+  ServicesConfig,
+  ServicesContainer,
+  Address,
+  Customer,
+  CreditCardData,
+  RecurringPaymentMethod,
+  EmailReceipt,
+  ScheduleFrequency,
+  Schedule,
+} from "../../../../src/";
 
-const config = new ServicesConfig();
-config.secretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A";
-config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
-const runSerially = false;
-const test = runSerially ? ava.serial : ava;
-
-ava.before((_t) => {
-  ServicesContainer.configure(config);
-});
+const timeForId = new Date().getTime();
 
 test("allow 5-part credentials", (t) => {
   const c = new ServicesConfig();
@@ -22,3 +24,91 @@ test("allow 5-part credentials", (t) => {
   ServicesContainer.configure(c);
   t.truthy(true);
 });
+
+test("make PayPlan customer", async (t) => {
+  t.plan(1);
+
+  handleAuth();
+
+  let customer = new Customer();
+  customer.id = "Customer" + timeForId;
+  customer.firstName = "John";
+  customer.lastName = "Doe";
+  customer.status = "Active";
+  customer.email = "john.doe@email.com";
+  customer.address = new Address();
+      customer.address.streetAddress1 = "123 Main St.";
+      customer.address.city = "Dallas";
+      customer.address.state = "TX";
+      customer.address.postalCode = "98765";
+      customer.address.country = "USA";
+  customer.workPhone = "5551112222";
+  const createdCustomer = await customer.create();
+
+  t.truthy(createdCustomer);
+});
+
+test("attach CC payment method to customer", async (t) => {
+  t.plan(2);
+
+  handleAuth();
+
+  const foundCustomer = await Customer.find("Customer" + timeForId) as Customer;
+
+  t.truthy(foundCustomer);
+
+  const card = new CreditCardData();
+  card.number = "4111111111111111";
+  card.expMonth = "12";
+  card.expYear = "2025";
+  card.cvn = "123";
+
+  const ccPaymentMethod = await foundCustomer
+      .addPaymentMethod("Payment" + timeForId, card)
+      .create();
+
+  t.truthy(ccPaymentMethod);
+});
+
+test("attach payment schedule to customer", async (t) => {
+  t.plan(2);
+
+  handleAuth();
+
+  const foundCcPaymentMethod = await RecurringPaymentMethod.find("Payment" + timeForId) as RecurringPaymentMethod;
+
+  t.truthy(foundCcPaymentMethod);
+
+  const paymentSchedule =  await foundCcPaymentMethod
+    .addSchedule("Schedule" + timeForId)
+    .withStartDate(new Date(2027, 1, 1))
+    .withAmount(30.01)
+    .withFrequency(ScheduleFrequency.Weekly)
+    .withReprocessingCount(1)
+    .withStatus("Active")
+    .withEmailReceipt(EmailReceipt.Never)
+    .create();
+
+  t.truthy(paymentSchedule);
+});
+
+test("edit/deactivate the schedule from above test", async (t) => {
+  t.plan(2);
+
+  handleAuth();
+
+  const foundSchedule = await Schedule.find("Schedule" + timeForId) as Schedule;
+
+  t.truthy(foundSchedule);
+
+  foundSchedule.status = "Inactive";
+
+  t.truthy(foundSchedule.saveChanges());
+});
+
+function handleAuth() {
+  const config = new ServicesConfig();
+  config.secretApiKey = "skapi_cert_MXvdAQB61V4AkyM-x3EJuY6hkEaCzaMimTWav7mVfQ";
+  config.serviceUrl = "https://cert.api2.heartlandportico.com";
+  ServicesContainer.configure(config);
+}

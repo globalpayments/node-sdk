@@ -435,6 +435,10 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
 
   protected buildDate(request: any, name: string, date: Date, force = false) {
     const getDateValue = (d: Date) => {
+      if (typeof(date) === 'string' && (date as string).length === 8) {
+        return d;
+      }
+
       const day = StringUtils.leftPad(d.getUTCDate().toString(), 2, "0");
       const month = StringUtils.leftPad(
         (d.getUTCMonth() + 1).toString(),
@@ -573,13 +577,13 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
 
     if (response.subtotalAmount) {
       const subtotal = response.subtotalAmount;
-      schedule.amount = subtotal.value;
+      schedule.amount = subtotal.value.slice(0, -2) + '.' + subtotal.value.slice(-2); // add the decimal back in
       schedule.currency = subtotal.currency;
     }
 
     if (response.taxAmount) {
       const taxAmount = response.taxAmount;
-      schedule.taxAmount = taxAmount.value;
+      schedule.taxAmount = taxAmount.value.slice(0, -2) + '.' + taxAmount.value.slice(-2); // add the decimal back in
     }
 
     schedule.deviceId = response.deviceId;
