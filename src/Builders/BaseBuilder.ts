@@ -1,5 +1,9 @@
 import { Validations } from "./BaseBuilder/Validations";
 
+export interface IDictionary<T> {
+  [key: string]: T;
+}
+
 export abstract class BaseBuilder<T> {
   protected validations: Validations;
   [key: string]: any;

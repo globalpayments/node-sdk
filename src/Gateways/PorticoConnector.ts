@@ -615,6 +615,16 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       if (trb.transactionId) {
         subElement(transaction, "TxnId").append(cData(trb.transactionId));
       }
+
+      if (trb.searchCriteria) {
+        const criteriaNode = element("Criteria");
+
+        for (const property in trb.searchCriteria) {
+          subElement(criteriaNode, property).append(cData(trb.searchCriteria[property]));
+        }
+
+        transaction.append(criteriaNode);
+      }
     }
     return this.doTransaction(this.buildEnvelope(transaction)).then(
       (response) => this.mapReportResponse(response, builder),
@@ -897,6 +907,8 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         return "ReportActivity";
       case ReportType.TransactionDetail:
         return "ReportTxnDetail";
+      case ReportType.FindTransactions:
+        return "FindTransactions";
       default:
         throw new UnsupportedTransactionError();
     }
@@ -993,6 +1005,10 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       result = doc
         .findall(".//Details")
         .map(this.hydrateTransactionSummary.bind(this));
+    } if (builder.reportType === ReportType.FindTransactions) {
+      result = doc
+      .findall(".//Transactions")
+      .map(this.hydrateTransactionSummary.bind(this));
     } else if (builder.reportType === ReportType.TransactionDetail) {
       result = this.hydrateTransactionSummary(doc);
     }

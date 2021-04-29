@@ -9,6 +9,7 @@ import {
   EmailReceipt,
   ScheduleFrequency,
   Schedule,
+  ReportingService,
 } from "../../../../src/";
 
 const timeForId = new Date().getTime();
@@ -105,6 +106,34 @@ test("edit/deactivate the schedule from above test", async (t) => {
 
   t.truthy(foundSchedule.saveChanges());
 });
+
+test("find and charge payment method", async (t) => {
+  t.plan(1)
+
+  handleAuth();
+
+  const foundCcPaymentMethod = await RecurringPaymentMethod.find("Payment" + timeForId) as RecurringPaymentMethod;
+
+  const chargeResponse = await foundCcPaymentMethod.charge(12.34)
+    .withCurrency("USD")
+    .execute();
+
+  t.true(chargeResponse.responseCode == '00')
+})
+
+test("find transactions from this new payment method", async (t) => {
+  t.plan(1)
+
+  handleAuth();
+
+  const foundCcPaymentMethod = await RecurringPaymentMethod.find("Payment" + timeForId) as RecurringPaymentMethod;
+
+  const foundTransactions = await ReportingService.findTransactions()
+    .where("PaymentMethodKey", foundCcPaymentMethod.key)
+    .execute();
+
+  t.true(foundTransactions.length === 2); // one transaction was the CreditAccountVerify from creating the payment method
+})
 
 function handleAuth() {
   const config = new ServicesConfig();

@@ -1,11 +1,13 @@
 import { ReportType } from "../";
 import { ReportBuilder } from "./ReportBuilder";
+import { IDictionary } from "./BaseBuilder";
 
 export class TransactionReportBuilder<T> extends ReportBuilder<T> {
   public deviceId: string;
   public endDate: Date;
   public startDate: Date;
   public transactionId: string;
+  public searchCriteria: IDictionary<string>;  
 
   public setupValidations() {
     this.validations
@@ -51,6 +53,16 @@ export class TransactionReportBuilder<T> extends ReportBuilder<T> {
   public withTransactionId(transactionId?: string) {
     if (transactionId !== undefined) {
       this.transactionId = transactionId;
+    }
+    return this;
+  }
+
+  public where(criteria: string, value: string) {
+    if (criteria !== undefined && value !== undefined) {
+      if (this.searchCriteria == undefined) {
+        this.searchCriteria = {};
+      }
+      this.searchCriteria[criteria] = value;
     }
     return this;
   }
