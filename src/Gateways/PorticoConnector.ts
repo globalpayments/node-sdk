@@ -987,6 +987,11 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       result.giftCard.pin = cardData.findtext(".//PIN");
     }
 
+    if (root.find(".//BatchId")) {
+      result.batchId = root.findtext(".//BatchId");
+      result.batchSeqNbr = root.findtext(".//BatchSeqNbr");
+    }
+
     return result;
   }
 

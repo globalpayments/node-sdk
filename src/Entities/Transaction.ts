@@ -31,6 +31,8 @@ export class Transaction {
   public giftCard: GiftCard;
   public clientTransactionId: string;
   public timestamp: string;
+  public batchId: string;
+  public batchSeqNbr: string;
 
   get transactionId(): string {
     return this.transactionReference.transactionId;

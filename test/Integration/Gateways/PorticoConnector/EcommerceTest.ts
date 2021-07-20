@@ -20,7 +20,7 @@ ava.before((_t) => {
 });
 
 test("ecom with moto", async (t) => {
-  t.plan(2);
+  t.plan(4);
 
   const ecom = new EcommerceInfo();
   ecom.channel = EcommerceChannel.Moto;
@@ -34,6 +34,8 @@ test("ecom with moto", async (t) => {
 
   t.truthy(response);
   t.is(response.responseCode, "00");
+  t.truthy(response.batchId);
+  t.truthy(response.batchSeqNbr);
 });
 
 test("ecom with direct market ship date", async (t) => {
