@@ -6,6 +6,7 @@ import {
   TransactionModifier,
   TransactionReference,
   TransactionType,
+  CreditCardData
 } from "../";
 
 export class Transaction {
@@ -33,6 +34,10 @@ export class Transaction {
   public timestamp: string;
   public transactionStatus: string;
   public maskedCardNumber: string;
+  public surchargeAmountInfo: string;
+  public creditCardData: CreditCardData;
+  public globalUID: string;
+  public entryMethod: string;
 
   get transactionId(): string {
     return this.transactionReference.transactionId;

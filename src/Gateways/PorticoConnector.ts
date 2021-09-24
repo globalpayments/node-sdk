@@ -1351,6 +1351,9 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
   protected hydrateFoundTransactions(root: Element): Transaction {
     const result = new Transaction();
 
+    result.creditCardData = new CreditCardData();
+    result.creditCardData.cardHolderName = `${root.findtext('.//CardHolderFirstName')} ${root.findtext('.//CardHolderLastName')}`;
+
     result.transactionStatus = root.findtext('.//TxnStatus');
     result.transactionDescriptor = root.findtext('.//TxnDescriptor');
 
@@ -1366,6 +1369,21 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     result.responseMessage = root.findtext('.//RspText');
     result.maskedCardNumber = root.findtext('.//MaskedCardNbr');
     result.cardType = root.findtext('.//CardType');
+    result.surchargeAmountInfo = root.findtext('.//SurchargeAmtInfo');
+    result.globalUID = root.findtext('.//x_global_transaction_id');
+
+    result.entryMethod = EntryMethod.Manual;
+
+    const hasEMVTag = root.findtext('.//HasEMVTag');
+    const cardSwiped = root.findtext('.//CardSwiped');
+
+    if ((hasEMVTag == 'N' || !hasEMVTag) && cardSwiped == 'Y') {
+      result.entryMethod = EntryMethod.Swipe;
+    } else if (hasEMVTag == 'Y' && cardSwiped == 'Y') {
+      result.entryMethod = EntryMethod.Proximity;
+    } else if (cardSwiped == 'N') {
+      result.entryMethod = EntryMethod.Manual;
+    }
 
     return result;
   }
