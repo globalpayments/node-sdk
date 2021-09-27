@@ -50,6 +50,14 @@ export enum EntryMethod {
   Manual = "MANUAL",
 }
 
+export enum PaxEntryMethod {
+  Swipe = "SWIPE",
+  Chip = "CHIP",
+  Manual = "MANUAL",
+  Contactless = 'CONTACTLESS'
+
+}
+
 export enum ExceptionCodes {
   // general codes
   AuthenticationError,

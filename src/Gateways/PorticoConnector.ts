@@ -47,6 +47,7 @@ import {
   TransactionSummary,
   TransactionType,
   UnsupportedTransactionError,
+  PaxEntryMethod
 } from "../";
 import { validateAmount, validateInput } from "../Utils/InputValidation";
 import { XmlGateway } from "./XmlGateway";
@@ -1377,12 +1378,14 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     const hasEMVTag = root.findtext('.//HasEMVTag');
     const cardSwiped = root.findtext('.//CardSwiped');
 
-    if ((hasEMVTag == 'N' || !hasEMVTag) && cardSwiped == 'Y') {
-      result.entryMethod = EntryMethod.Swipe;
+    if (hasEMVTag == 'N' && cardSwiped == 'N') {
+      result.entryMethod = PaxEntryMethod.Manual;
+    } else if (hasEMVTag == 'N' && cardSwiped == 'Y') {
+      result.entryMethod = PaxEntryMethod.Swipe;
     } else if (hasEMVTag == 'Y' && cardSwiped == 'Y') {
-      result.entryMethod = EntryMethod.Proximity;
-    } else if (cardSwiped == 'N') {
-      result.entryMethod = EntryMethod.Manual;
+      result.entryMethod = PaxEntryMethod.Chip;
+    } else if (!hasEMVTag && cardSwiped == 'Y') {
+      result.entryMethod = PaxEntryMethod.Contactless
     }
 
     return result;
