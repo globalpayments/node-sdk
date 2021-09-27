@@ -47,6 +47,7 @@ import {
   TransactionSummary,
   TransactionType,
   UnsupportedTransactionError,
+  PaxEntryMethod
 } from "../";
 import { validateAmount, validateInput } from "../Utils/InputValidation";
 import { XmlGateway } from "./XmlGateway";
@@ -1351,6 +1352,13 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
   protected hydrateFoundTransactions(root: Element): Transaction {
     const result = new Transaction();
 
+    const firstName = root.findtext('.//CardHolderFirstName');
+    const lastName = root.findtext('.//CardHolderLastName');
+    if (firstName || lastName) {
+      result.creditCardData = new CreditCardData();
+      result.creditCardData.cardHolderName = `${root.findtext('.//CardHolderFirstName')} ${root.findtext('.//CardHolderLastName')}`;
+    }
+
     result.transactionStatus = root.findtext('.//TxnStatus');
     result.transactionDescriptor = root.findtext('.//TxnDescriptor');
 
@@ -1366,6 +1374,23 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     result.responseMessage = root.findtext('.//RspText');
     result.maskedCardNumber = root.findtext('.//MaskedCardNbr');
     result.cardType = root.findtext('.//CardType');
+    result.surchargeAmountInfo = root.findtext('.//SurchargeAmtInfo');
+    result.globalUID = root.findtext('.//x_global_transaction_id');
+
+    result.entryMethod = EntryMethod.Manual;
+
+    const hasEMVTag = root.findtext('.//HasEMVTag');
+    const cardSwiped = root.findtext('.//CardSwiped');
+
+    if (hasEMVTag == 'N' && cardSwiped == 'N') {
+      result.entryMethod = PaxEntryMethod.Manual;
+    } else if (hasEMVTag == 'N' && cardSwiped == 'Y') {
+      result.entryMethod = PaxEntryMethod.Swipe;
+    } else if (hasEMVTag == 'Y' && cardSwiped == 'Y') {
+      result.entryMethod = PaxEntryMethod.Chip;
+    } else if (!hasEMVTag && cardSwiped == 'Y') {
+      result.entryMethod = PaxEntryMethod.Contactless
+    }
 
     return result;
   }
