@@ -1352,8 +1352,12 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
   protected hydrateFoundTransactions(root: Element): Transaction {
     const result = new Transaction();
 
-    result.creditCardData = new CreditCardData();
-    result.creditCardData.cardHolderName = `${root.findtext('.//CardHolderFirstName')} ${root.findtext('.//CardHolderLastName')}`;
+    const firstName = root.findtext('.//CardHolderFirstName');
+    const lastName = root.findtext('.//CardHolderLastName');
+    if (firstName || lastName) {
+      result.creditCardData = new CreditCardData();
+      result.creditCardData.cardHolderName = `${root.findtext('.//CardHolderFirstName')} ${root.findtext('.//CardHolderLastName')}`;
+    }
 
     result.transactionStatus = root.findtext('.//TxnStatus');
     result.transactionDescriptor = root.findtext('.//TxnDescriptor');
