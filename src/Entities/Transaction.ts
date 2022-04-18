@@ -67,6 +67,12 @@ export class Transaction {
   }
 
   /**
+   * @deprecated
+   *
+   * This function is deprecated, please use incrementalAuth
+   *
+   * @link incrementalAuth
+   *
    * Allows for a follow-up request to add an additional authorization
    *
    * @param string|number amount Amount to authorize
@@ -78,6 +84,20 @@ export class Transaction {
       .withPaymentMethod(this.transactionReference)
       .withAmount(amount)
       .withModifier(TransactionModifier.Additional);
+  }
+
+  /**
+   * Allows for a follow-up request to add an incremental authorization
+   *
+   * @param string|number amount Amount to authorize
+   *
+   * @return AuthorizationBuilder
+   */
+  public incrementalAuth(amount?: string | number) {
+    return new AuthorizationBuilder(TransactionType.Auth)
+      .withPaymentMethod(this.transactionReference)
+      .withAmount(amount)
+      .withModifier(TransactionModifier.Incremental);
   }
 
   /**

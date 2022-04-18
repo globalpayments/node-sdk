@@ -79,7 +79,8 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     ) {
       if (
         builder.paymentMethod.paymentMethodType !== PaymentMethodType.Gift &&
-        builder.paymentMethod.paymentMethodType !== PaymentMethodType.ACH
+        builder.paymentMethod.paymentMethodType !== PaymentMethodType.ACH  &&
+        builder.transactionModifier !== TransactionModifier.Incremental
       ) {
         allowDuplicates = subElement(block1, "AllowDup");
         allowDuplicates.append(cData(builder.allowDuplicates ? "Y" : "N"));
