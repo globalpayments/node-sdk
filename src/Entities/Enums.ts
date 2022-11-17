@@ -251,3 +251,17 @@ export enum TransactionType {
   Hold = 1 << 22,
   Release = 1 << 23,
 }
+
+export enum MobilePaymentMethodType {
+  APPLEPAY = "apple-pay",
+  GOOGLEPAY = "pay-with-google",
+}
+
+export enum PaymentDataSourceType {
+  APPLEPAY = "ApplePay",
+  APPLEPAYAPP = "ApplePayApp",
+  APPLEPAYWEB = "ApplePayWeb",
+  GOOGLEPAYAPP = "GooglePayApp",
+  GOOGLEPAYWEB = "GooglePayWeb",
+  DISCOVER3DSECURE = "Discover 3DSecure"
+}

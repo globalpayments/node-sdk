@@ -45,6 +45,8 @@ import {
   TransactionSummary,
   TransactionType,
   UnsupportedTransactionError,
+  MobilePaymentMethodType,
+  PaymentDataSourceType,
 } from "../";
 import { validateAmount, validateInput } from "../Utils/InputValidation";
 import { XmlGateway } from "./XmlGateway";
@@ -237,6 +239,28 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         cData(card.cardPresent ? "Y" : "N"),
       );
       block1.append(cardData);
+
+      if (card instanceof CreditCardData) {
+        const creditCardData = card as CreditCardData;
+
+        //  WalletData Element
+        if (
+          (
+            creditCardData.mobileType == MobilePaymentMethodType.APPLEPAY
+            || creditCardData.mobileType == MobilePaymentMethodType.GOOGLEPAY
+          )
+          && typeof creditCardData.paymentSource != "undefined"
+          && this.isAppleOrGooglePay(creditCardData.paymentSource)
+        ) {            
+          const walletData = subElement(block1, "WalletData");
+          subElement(walletData, "PaymentSource").append(cData(creditCardData.paymentSource.trim()));
+
+          if (typeof creditCardData.mobileType != "undefined") {
+            subElement(walletData, "DigitalPaymentToken").append(cData(creditCardData.token));
+            block1.remove(cardData);
+          }
+        }
+      }
 
       if (builder.transactionModifier === TransactionModifier.Recurring) {
         const recurring = subElement(block1, "RecurringData");
@@ -1390,5 +1414,13 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     }
 
     return false;
+  }
+
+  protected isAppleOrGooglePay(paymentDataSource: string) {
+    return paymentDataSource == PaymentDataSourceType.APPLEPAY
+      || paymentDataSource == PaymentDataSourceType.APPLEPAYAPP
+      || paymentDataSource == PaymentDataSourceType.APPLEPAYWEB
+      || paymentDataSource == PaymentDataSourceType.GOOGLEPAYAPP
+      || paymentDataSource == PaymentDataSourceType.GOOGLEPAYWEB;
   }
 }

@@ -44,6 +44,12 @@ export abstract class Credit extends PaymentMethod
    * transactions.
    */
   public mobileType: string;
+  /**
+   * Payment Source is the API or source of the cryptogram for WalletData.
+   */
+  public paymentSource: string;
+  public cryptogram: string;
+  public eci: string;
 
   /**
    * Authorizes the payment method
