@@ -46,6 +46,7 @@ export class ServicesContainer {
       gateway.secretApiKey = config.secretApiKey;
       gateway.developerId = config.developerId;
       gateway.versionNumber = config.versionNumber;
+      gateway.sdkNameVersion = config.sdkNameVersion;
       gateway.timeout = config.timeout;
       gateway.serviceUrl =
         config.serviceUrl + "/Hps.Exchange.PosGateway/PosGatewayService.asmx";

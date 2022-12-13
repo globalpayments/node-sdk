@@ -61,6 +61,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
   public secretApiKey: string;
   public developerId: string;
   public versionNumber: string;
+  public sdkNameVersion: string;
   public supportsHostedPayments = false;
 
   public processAuthorization(
@@ -696,6 +697,12 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     }
     if (clientTransactionId) {
       subElement(header, "ClientTxnId").append(cData(clientTransactionId));
+    }
+    if (this.sdkNameVersion) {      
+      subElement(header, "SDKNameVersion").append(cData(this.sdkNameVersion));
+    }
+    else{      
+      subElement(header, "SDKNameVersion").append(cData("nodejs-version:" + process.env.npm_package_version));
     }
 
     // transaction

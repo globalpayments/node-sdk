@@ -10,6 +10,7 @@ export class ServicesConfig {
   public developerId: string;
   public versionNumber: string;
   public secretApiKey: string;
+  public sdkNameVersion: string;
 
   // realex
   public accountId: string;
