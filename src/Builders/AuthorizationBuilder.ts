@@ -43,6 +43,7 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public gratuity: string | number;
   public convenienceAmt: string | number;
   public shippingAmt: string | number;
+  public surchargeAmt: string | number;
   public hostedPaymentData: HostedPaymentData;
   public invoiceNumber: string;
   public level2Request: boolean;
@@ -497,6 +498,19 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public withShippingAmt(shippingAmt?: string | number) {
     if (shippingAmt !== undefined) {
       this.shippingAmt = shippingAmt;
+    }
+    return this;
+  }
+
+  /**
+   * Sets the Surcharge amount; where applicable.
+   *
+   * @param surchargeAmt The Surcharge amount
+   * @returns AuthorizationBuilder
+   */
+  public withSurchargeAmt(surchargeAmt?: string | number) {
+    if (surchargeAmt !== undefined) {
+      this.surchargeAmt = surchargeAmt;
     }
     return this;
   }

@@ -114,6 +114,11 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         cData(validateAmount("portico", builder.shippingAmt)),
       );
     }
+    if (builder.surchargeAmt) {
+      subElement(block1, "SurchargeAmtInfo").append(
+        cData(validateAmount("portico", builder.shippingAmt)),
+      );
+    }
 
     if (builder.cashBackAmount !== undefined && builder.cashBackAmount !== "") {
       subElement(
