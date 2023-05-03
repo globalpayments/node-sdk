@@ -1412,6 +1412,8 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     result.captureAmount = root.findtext(".//CaptureAmtInfo");
     result.fullyCaptured = root.findtext(".//FullyCapturedInd");
 
+    result.data = elementToJSON(root)
+
     return result;
   }
 
@@ -1434,5 +1436,18 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       || paymentDataSource == PaymentDataSourceType.APPLEPAYWEB
       || paymentDataSource == PaymentDataSourceType.GOOGLEPAYAPP
       || paymentDataSource == PaymentDataSourceType.GOOGLEPAYWEB;
+  }
+}
+
+function elementToJSON (element: Element) {
+  return Object.fromEntries(elementToJSONHelper(element))
+}
+function elementToJSONHelper (element: Element): [string, string|any&{}] {
+  const elementChildren = element.getchildren();
+  if (elementChildren.length) {
+    const obj = Object.fromEntries(elementChildren.map(elementToJSONHelper))
+	return [element.tag, obj]
+  } else {
+	return [element.tag, element.text]
   }
 }

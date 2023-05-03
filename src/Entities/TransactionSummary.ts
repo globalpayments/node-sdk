@@ -59,4 +59,6 @@ export class TransactionSummary {
   public debtRepaymentIndicator: string;
   public captureAmount: string;
   public fullyCaptured: string;
+
+  public data: any;
 }

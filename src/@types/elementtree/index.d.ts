@@ -15,6 +15,8 @@ declare module "@azz/elementtree" {
   export interface Element {
     new (tag: string, attrib?: Object): Element;
     (tag: string, attrib?: Object): Element;
+    tag: string;
+    text: string;
     toString(): string;
     makeelement(tag: string, attrib?: Object): Element;
     len(): number;
