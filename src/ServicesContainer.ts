@@ -7,11 +7,14 @@ import {
   RealexConnector,
   ServicesConfig,
 } from "./";
+import { IPayFacProvider } from "./Gateways/IPayFacProvider";
+import { ProPayConnector } from "./Gateways/ProPayConnector";
 
 export class ServicesContainer {
   private static _instance: ServicesContainer;
   private _gateway: IPaymentGateway;
   private _recurring: IRecurringService;
+  private _xmlGateway: IPayFacProvider;
 
   public static instance(): ServicesContainer {
     if (ServicesContainer._instance === null) {
@@ -62,16 +65,27 @@ export class ServicesContainer {
       payplan.timeout = config.timeout;
       payplan.serviceUrl = config.serviceUrl
         + (config.serviceUrl.includes('cert.') ? "/Portico.PayPlan.v2/" : "/payplan.v2/");
-      ServicesContainer._instance = new ServicesContainer(gateway, payplan);
+      const gatewayObj = new ProPayConnector();
+      gatewayObj.serviceUrl = config.serviceUrl;
+      gatewayObj.certStr = config.certificationStr;
+      gatewayObj.termID = config.terminalID;
+      gatewayObj.timeout = config.timeout;
+
+      gatewayObj.x509CertificatePath = config.x509CertificationPath;
+      gatewayObj.x509CertStr = config.x509CertificateString;
+      ServicesContainer._instance = new ServicesContainer(gateway, payplan, gatewayObj);
     }
   }
 
-  public constructor(gateway?: IPaymentGateway, recurring?: IRecurringService) {
+  public constructor(gateway?: IPaymentGateway, recurring?: IRecurringService, xmlGateway?: IPayFacProvider) {
     if (gateway) {
       this._gateway = gateway;
     }
     if (recurring) {
       this._recurring = recurring;
+    }
+    if (xmlGateway) {
+      this._xmlGateway = xmlGateway;
     }
   }
 
@@ -81,5 +95,9 @@ export class ServicesContainer {
 
   public getRecurringClient(): IRecurringService {
     return this._recurring;
+  }
+
+  public getXmlClient(): IPayFacProvider {
+    return this._xmlGateway;
   }
 }

@@ -7,6 +7,7 @@ import {
   TransactionReference,
   TransactionType,
 } from "../";
+import { PayFacResponseData } from "./ProFac/PayFacResponseData";
 export class Transaction {
   public authorizedAmount: string;
   public balanceAmount: string;
@@ -33,6 +34,7 @@ export class Transaction {
   public timestamp: string;
   public batchId: string;
   public batchSeqNbr: string;
+  public payFacData: PayFacResponseData; 
 
   get transactionId(): string {
     return this.transactionReference.transactionId;

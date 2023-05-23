@@ -39,6 +39,7 @@ declare module "@azz/elementtree" {
     items(): Element[];
     iter(tag: string, callback: Function): void;
     itertext(callback: Function): void;
+    text: string;
   }
 
   export class QName {
@@ -57,7 +58,7 @@ declare module "@azz/elementtree" {
   ): Element;
   export function Comment(text: string): Element;
   export function CData(text: string): Element;
-
+    
   export interface ProcessingInstruction {
     (target: string, text?: string): Element;
   }

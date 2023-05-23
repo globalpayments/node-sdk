@@ -250,6 +250,140 @@ export enum TransactionType {
   Search = 1 << 21,
   Hold = 1 << 22,
   Release = 1 << 23,
+  /// <summary>
+  /// 
+  /// ProPay: Create Account
+  /// </summary>
+  CreateAccount = 1 << 40,
+
+  /// <summary>
+  /// ProPay: Edit Account
+  /// </summary>
+  EditAccount = 1 << 41,
+
+  /// <summary>
+  /// ProPay: Reset Account Password
+  /// </summary>
+  ResetPassword = 1 << 42,
+
+  /// <summary>
+  /// ProPay: Renew Account
+  /// </summary>
+  RenewAccount = 1 << 43,
+
+  /// <summary>
+  /// ProPay: Update Beneficial Ownership Information
+  /// </summary>
+  UpdateBeneficialOwnership = 1 << 44,
+
+  /// <summary>
+  /// ProPay: Disown an account
+  /// </summary>
+  DisownAccount = 1 << 45,
+
+  /// <summary>
+  /// ProPay: Upload a document to a ProPay account related to a chargeback
+  /// </summary>
+  UploadDocumentChargeback = 1 << 46,
+
+  /// <summary>
+  /// ProPay: Upload a document to a ProPay account
+  /// </summary>
+  UploadDocument = 1 << 47,
+
+  /// <summary>
+  /// ProPay: Obtain a single-sign-on key
+  /// </summary>
+  ObtainSSOKey = 1 << 48,
+
+  /// <summary>
+  /// ProPay: Update bank account ownership information
+  /// </summary>
+  UpdateBankAccountOwnership = 1 << 49,
+
+  /// <summary>
+  /// ProPay: Add funds to a ProPay account (EFT)
+  /// </summary>
+  AddFunds = 1 << 50,
+
+  /// <summary>
+  /// ProPay: Sweep funds from a ProPay account (EFT)
+  /// </summary>
+  SweepFunds = 1 << 51,
+
+  /// <summary>
+  /// ProPay: Add a card for Flash Funds
+  /// </summary>
+  AddCardFlashFunds = 1 << 52,
+
+  /// <summary>
+  /// ProPay: Move money out via Flash Funds
+  /// </summary>
+  PushMoneyFlashFunds = 1 << 53,
+
+  /// <summary>
+  /// ProPay: Disburse funds to a ProPay account
+  /// </summary>
+  DisburseFunds = 1 << 54,
+
+  /// <summary>
+  /// ProPay: SpendBack Transaction
+  /// </summary>
+  SpendBack = 1 << 55,
+
+  /// <summary>
+  /// ProPay: Roll back a SplitPay transaction
+  /// </summary>
+  ReverseSplitPay = 1 << 56,
+
+  /// <summary>
+  /// ProPay: Split funds from an existing transaction
+  /// </summary>
+  SplitFunds = 1 << 57,
+
+  /// <summary>
+  /// ProPay: Get Account details
+  /// </summary>
+  GetAccountDetails = 1 << 58,
+
+  /// <summary>
+  /// ProPay: Get Account balance
+  /// </summary>
+  GetAccountBalance = 1 << 59,
+
+  /// <summary>
+  /// Indicates a transaction reauthorization
+  /// </summary>
+  Reauth = 1 << 60,
+
+  /// <summary>
+  /// 
+  /// </summary>
+  SiteConfig = 1 << 61,
+
+  /// <summary>
+  /// 
+  /// </summary>
+  TimeRequest = 1 << 62,
+
+  /// <summary>
+  /// Get Token Information for the given token
+  /// </summary>
+  GetTokenInfo = 1 << 63,
+
+  PayLinkUpdate = 1 << 63,
+  OrderDevice = 1 << 64
+}
+
+export enum ProPayAccountStatus {
+  ReadyToProcess,
+  FraudAccount,
+  RiskwiseDeclined,
+  Hold,
+  Canceled,
+  FraudVictim,
+  ClosedEula,
+  ClosedExcessiveChargeback
 }
 
 export enum MobilePaymentMethodType {
@@ -264,4 +398,12 @@ export enum PaymentDataSourceType {
   GOOGLEPAYAPP = "GooglePayApp",
   GOOGLEPAYWEB = "GooglePayWeb",
   DISCOVER3DSECURE = "Discover 3DSecure"
+}
+
+export enum PropayTermsVersion {
+  merchantUS = 1,
+  paymentUS = 2,
+  merchantCA = 3,
+  merchantUK = 4,
+  merchantAU = 5
 }

@@ -2,6 +2,12 @@
 
 ## Latest
 
+#### Profac Enhancements
+
+- Profac Implementation - Implement profac functionality.
+
+## v1.4.9 (05/17/23)
+
 #### Reporting Enhancements
 
 - SdkNameVersion Identifier: Name and Version of the SDK used for integration, where applicable. 

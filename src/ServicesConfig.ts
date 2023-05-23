@@ -21,6 +21,12 @@ export class ServicesConfig {
   public refundPassword: string;
   public hostedPaymentConfig: HostedPaymentConfig;
 
+  // Profac
+  public certificationStr: string;
+  public terminalID: string;
+  public x509CertificateString: string;
+  public x509CertificationPath: string;
+
   // common
   public serviceUrl: string;
   public timeout: number;
