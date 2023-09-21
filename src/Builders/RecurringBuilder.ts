@@ -24,10 +24,10 @@ export class RecurringBuilder<
     return this
   }
 
-  public execute(): Promise<T> {
+  public execute(configName: string = 'default'): Promise<T> {
     super.execute();
     return ServicesContainer.instance()
-      .getRecurringClient()
+      .getRecurringClient(configName)
       .processRecurring(this);
   }
 

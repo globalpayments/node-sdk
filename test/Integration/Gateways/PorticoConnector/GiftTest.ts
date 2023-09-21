@@ -2,14 +2,13 @@ import ava from "ava";
 import {
   GiftCard,
   PaymentMethodType,
-  ServicesConfig,
+  PorticoConfig,
   ServicesContainer,
   Transaction,
 } from "../../../../src/";
 
-const config = new ServicesConfig();
+const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw";
-config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 const runSerially = false;
 const test = runSerially ? ava.serial : ava;
 
@@ -21,7 +20,7 @@ track.trackData =
   "%B5022440000000000098^^391200081613?;5022440000000000098=391200081613?";
 
 ava.before((_t) => {
-  ServicesContainer.configure(config);
+  ServicesContainer.configureService(config);
 });
 
 test("gift create", async (t) => {

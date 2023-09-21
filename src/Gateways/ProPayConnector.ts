@@ -30,12 +30,16 @@ import { AccountBalanceResponseData } from "../Entities/ProFac/AccountBalanceRes
 import { BeneficialOwnerDataResult } from "../Entities/ProFac/BeneficialOwnerDataResult";
 import * as fs from 'fs';
 import { OrderDevice } from "../Entities/ProFac/OrderDevice";
+import { GatewayConfig } from "src/ServiceConfigs";
 
 export class ProPayConnector extends XmlGateway implements IPayFacProvider {
+    public config: GatewayConfig;
+
     public certStr: string;
     public termID: string;
     public x509CertificatePath: string;
     public x509CertStr: string;
+    public selfSignedCert: string;
 
     public processPayFac(builder: PayFacBuilder): Promise<Transaction> {
         const transaction = element("XMLRequest");
@@ -124,6 +128,10 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
 
         if (builder.orderDevice != null) {
             this.HydrateOrderDeviceData(xmlTrans, builder.orderDevice);
+        }
+        
+        if (builder.orderDeviceData != null) {
+            this.HydrateOrderDeviceDetails(xmlTrans, builder.orderDeviceData)
         }
 
         this.HydrateBankAccountOwnershipData(xmlTrans, builder);
@@ -242,6 +250,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
         subElement(xmlTrans, "BusinessCountry").append(cData(businessData.businessAddress.country));
         subElement(xmlTrans, "BusinessState").append(cData(businessData.businessAddress.state));
         subElement(xmlTrans, "BusinessZip").append(cData(businessData.businessAddress.postalCode));
+        subElement(xmlTrans, "BusinessType").append(cData(businessData.businessType));
     }
 
     private HydrateUserPersonalData(xmlTrans: Element, userPersonalData: UserPersonalData) {
@@ -259,6 +268,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
         subElement(xmlTrans, "tier").append(cData(userPersonalData.tier));
         if (userPersonalData.externalID != null)
             subElement(xmlTrans, "externalId").append(cData(userPersonalData.externalID));
+        // user address
         if (userPersonalData.userAddress != null)
             subElement(xmlTrans, "addr").append(cData(userPersonalData.userAddress.streetAddress1));
         if (userPersonalData.userAddress != null)
@@ -273,6 +283,23 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
             subElement(xmlTrans, "zip").append(cData(userPersonalData.userAddress.postalCode));
         if (userPersonalData.userAddress != null)
             subElement(xmlTrans, "country").append(cData(userPersonalData.userAddress.country));
+        
+        // mailing address
+        if (userPersonalData.mailingAddress != null)
+            subElement(xmlTrans, "mailAddr").append(cData(userPersonalData.mailingAddress.streetAddress1));
+        if (userPersonalData.mailingAddress != null)
+            subElement(xmlTrans, "mailApt").append(cData(userPersonalData.mailingAddress.streetAddress2));
+        if (userPersonalData.mailingAddress != null)
+            subElement(xmlTrans, "mailAddr3").append(cData(userPersonalData.mailingAddress.streetAddress3));
+        if (userPersonalData.mailingAddress != null)
+            subElement(xmlTrans, "mailCity").append(cData(userPersonalData.mailingAddress.city));
+        if (userPersonalData.mailingAddress != null)
+            subElement(xmlTrans, "mailCountry").append(cData(userPersonalData.mailingAddress.state));
+        if (userPersonalData.mailingAddress != null)
+            subElement(xmlTrans, "mailState").append(cData(userPersonalData.mailingAddress.postalCode));
+        if (userPersonalData.mailingAddress != null)
+            subElement(xmlTrans, "mailZip").append(cData(userPersonalData.mailingAddress.country));
+        
         subElement(xmlTrans, "IpSignup").append(cData(userPersonalData.ipSignup));
         subElement(xmlTrans, "USCitizen").append(cData(userPersonalData.uSCitizen == true ? 'true' : userPersonalData.uSCitizen == false ? 'false' : ''));
         subElement(xmlTrans, "bOAttestation").append(cData(userPersonalData.bOAttestation == true ? 'true' : userPersonalData.bOAttestation == false ? 'false' : ''));
@@ -340,16 +367,16 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
                 var device = subElement(devices, "Device");
                 subElement(device, "Name").append(cData(deviceObj.name));
                 subElement(device, "Quantity").append(cData(deviceObj.quantity == null ? "0" : String(deviceObj.quantity)));
-                if (deviceObj.attributes != null) {
-                    if (deviceObj.attributes.length > 0) {
-                        var attributes = subElement(device, "Attributes");
-                        deviceObj.attributes.forEach(attributeInfo => {
-                            var item = subElement(attributes, "Item");
-                            item.set("Name", attributeInfo.name);
-                            item.set("Value", attributeInfo.value);
-                        })
-                    }
-                }
+                // if (deviceObj.attributes != null) {
+                //     if (deviceObj.attributes.length > 0) {
+                //         var attributes = subElement(device, "Attributes");
+                //         deviceObj.attributes.forEach(attributeInfo => {
+                //             var item = subElement(attributes, "Item");
+                //             item.set("Name", attributeInfo.name);
+                //             item.set("Value", attributeInfo.value);
+                //         })
+                //     }
+                // }
             })
         }
     }
@@ -458,6 +485,27 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
          subElement(xmlTrans, "billingZip").append(cData(orderDeviceData.billingZip));
      }
 
+     private HydrateOrderDeviceDetails(xmlTrans: Element, orderDeviceData: DeviceData) {
+        var devices = subElement(xmlTrans, "Devices");
+        if (orderDeviceData.devices.length > 0) {
+            orderDeviceData.devices.forEach(deviceObj => {
+                var device = subElement(devices, "Device");
+                subElement(device, "Name").append(cData(deviceObj.name));
+                subElement(device, "Quantity").append(cData(deviceObj.quantity == null ? "0" : String(deviceObj.quantity)));
+                if (deviceObj.attributes != null) {
+                    if (deviceObj.attributes.length > 0) {
+                        var attributes = subElement(device, "Attributes");
+                        deviceObj.attributes.forEach(attributeInfo => {
+                            var item = subElement(attributes, "Item");
+                            item.set("Name", attributeInfo.name);
+                            item.set("Value", attributeInfo.value);
+                        })
+                    }
+                }
+            })
+        }
+     }
+
     private UpdateGatewaySettings(builder: PayFacBuilder) {
         let certTransactions: TransactionType[] = [
             TransactionType.EditAccount,
@@ -480,7 +528,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
     }
 
     private setX509Certificate(): string {
-        let x509RawData = fs.readFileSync(this.x509CertificatePath);
+        let x509RawData = fs.readFileSync(this.selfSignedCert);
         return x509RawData.toString().replace(/(\r\n|\n|\r)/gm, "");
     }
 

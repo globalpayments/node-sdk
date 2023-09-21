@@ -29,7 +29,7 @@ export class TestAccountData {
 
     public static GetOrderNewDeviceData(): OrderDevice {
         var orderDevice = new OrderDevice();
-        orderDevice.accountNum = 718150930;
+        orderDevice.accountNum = 718581359;
         orderDevice.shipTo = "Test Company";
         orderDevice.shipToContact = "John Q. Public";
         orderDevice.shipToAddress = "2675 W 600 N";
@@ -45,18 +45,42 @@ export class TestAccountData {
         orderDevice.billingZip = "84003";
         return orderDevice;
     }
+    
+    public static GetDeviceDataForOrderDevice(numDeviceTypes: number = 1, withAttributes: boolean = true): DeviceData {
+        var deviceTypes: Array<string> =  ["Secure Submit"];
+
+        var deviceData = new DeviceData();
+        deviceData.devices = Array<DeviceInfo>();
+
+        for (let i = 0; i < numDeviceTypes; i++) {
+            var deviceInfo = new DeviceInfo();
+            if (i >= deviceTypes.length)
+                break;
+            deviceInfo.name = deviceTypes[i];
+            deviceInfo.quantity = 1;
+            if (withAttributes) {
+                var deviceAtrributeInfo = new DeviceAttributeInfo();
+                deviceAtrributeInfo.name = "Heartland.AMD.OfficeKey",
+                    deviceAtrributeInfo.value = "123456"
+                deviceInfo.attributes = [deviceAtrributeInfo];
+            }
+            deviceData.devices = [deviceInfo];
+        }
+        return deviceData;
+    }
 
     public static GetBusinessData(): BusinessData {
         var businessData = new BusinessData();
-        businessData.businessLegalName = "LegalName";
-        businessData.doingBusinessAs = "PPA";
+        businessData.businessLegalName = "Twain Enterprises";
+        businessData.doingBusinessAs = "Twain Enterprises";
         businessData.employerIdentificationNumber = String(this.getRandomInt(100000000, 999999999));
         businessData.businessDescription = "Accounting Services";
-        businessData.websiteURL = "https://www.propay.com";
+        businessData.websiteURL = "https://www.Propay.com";
         businessData.merchantCategoryCode = "5399";
         businessData.monthlyBankCardVolume = "50000";
         businessData.averageTicket = "100";
         businessData.highestTicket = "300";
+        businessData.businessType = "D";
         var businessAddress = new Address();
         businessAddress.streetAddress1 = "123 Main St.";
         businessAddress.city = "Downtown";
@@ -72,13 +96,20 @@ export class TestAccountData {
         accountPersonalInformation.dayPhone = "4464464464";
         accountPersonalInformation.eveningPhone = "4464464464";
         accountPersonalInformation.externalID = String(this.getRandomInt(1000000, 999999999));
-        accountPersonalInformation.firstName = "John";
-        accountPersonalInformation.lastName = "Doe";
+        accountPersonalInformation.firstName = "David";
+        accountPersonalInformation.lastName = "Tennant";
         accountPersonalInformation.phonePIN = "1234";
         accountPersonalInformation.sourceEmail = 'user' + this.getRandomInt(1, 10000) + '@user.com';
         accountPersonalInformation.sSN = "123456789";
         accountPersonalInformation.dateOfBirth = "01-01-1981";
         accountPersonalInformation.tier = "TestEIN";
+        accountPersonalInformation.ipSignup = '4.14.150.145';
+        accountPersonalInformation.uSCitizen = true;
+        accountPersonalInformation.bOAttestation = true;
+        accountPersonalInformation.termsAcceptanceIP = '4.14.150.145';
+        accountPersonalInformation.termsAcceptanceTimeStamp = '2022-10-27 12:57:08.2021237';
+        accountPersonalInformation.termsVersion = 1;
+
         var userAddress = new Address();
         userAddress.streetAddress1 = "123 Main St.";
         userAddress.city = "Downtown";
@@ -86,6 +117,14 @@ export class TestAccountData {
         userAddress.postalCode = "12345";
         userAddress.country = "USA";
         accountPersonalInformation.userAddress = userAddress;
+
+        var mailingAddress = new Address();
+        mailingAddress.streetAddress1 = "123 Main St.";
+        mailingAddress.city = "Downtown";
+        mailingAddress.state = "NJ";
+        mailingAddress.postalCode = "12345";
+        mailingAddress.country = "USA";
+        accountPersonalInformation.mailingAddress = mailingAddress;
         return accountPersonalInformation;
     }
 
@@ -127,8 +166,8 @@ export class TestAccountData {
 
         //Second Owner
         var secondOwner = new OwnersData();
-        secondOwner.firstName = "First2";
-        secondOwner.lastName = "Last2";
+        secondOwner.firstName = "First4";
+        secondOwner.lastName = "Last4";
         secondOwner.title = "Director";
         secondOwner.email = "abc1@qamail.com";
         secondOwner.DateOfBirth = "11-11-1989";
@@ -181,6 +220,7 @@ export class TestAccountData {
             bankAccountInformation.accountOwnershipType = "Personal",
             bankAccountInformation.accountType = "C",
             bankAccountInformation.routingNumber = "102000076"
+            bankAccountInformation.bankName = "My Bank";
         return bankAccountInformation;
     }
 
@@ -218,26 +258,23 @@ export class TestAccountData {
         return accountPermissions;
     }
 
-    public static GetRenewAccountDetails(payByCC: boolean): RenewAccountData {
+    public static GetRenewAccountDetails(): RenewAccountData {
         var renewAccountData = new RenewAccountData();
         renewAccountData.tier = "TestEIN";
-        if (payByCC) {
-            renewAccountData.zipCode = "12345";
-            renewAccountData.creditCard = new CreditCardData();
-            renewAccountData.creditCard.number = "4111111111111111";
-            renewAccountData.creditCard.expMonth = '12';
-            renewAccountData.creditCard.expYear = '2025';
-            renewAccountData.creditCard.cvn = '123';
-        } else {
-            renewAccountData.paymentBankAccountNumber = "123456789";
-            renewAccountData.paymentBankRoutingNumber = "102000076";
-            renewAccountData.paymentBankAccountType = "Checking";
-        }
+        renewAccountData.zipCode = "12345";
+        renewAccountData.creditCard = new CreditCardData();
+        renewAccountData.creditCard.number = "4111111111111111";
+        renewAccountData.creditCard.expMonth = '12';
+        renewAccountData.creditCard.expYear = '2025';
+        renewAccountData.creditCard.cvn = '123';
+        renewAccountData.paymentBankAccountNumber = "123456789";
+        renewAccountData.paymentBankRoutingNumber = "102000076";
+        renewAccountData.paymentBankAccountType = "Checking";
         return renewAccountData;
     }
 
     public static GetDeviceData(numDeviceTypes: number = 1, withAttributes: boolean = true): DeviceData {
-        var deviceTypes: Array<string> = ["PAX S300", "PAX S500"];
+        var deviceTypes: Array<string> = ["PAX S500", "Secure Submit"];
 
         var deviceData = new DeviceData();
         deviceData.devices = Array<DeviceInfo>();

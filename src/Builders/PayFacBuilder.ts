@@ -99,6 +99,7 @@ export class PayFacBuilder extends BaseBuilder<Transaction> {
     public globalTransSource: string;
 
     public orderDevice: OrderDevice;
+    public orderDeviceData: DeviceData;
     
     public constructor(type: TransactionType, modifer: TransactionModifier = TransactionModifier.None) {
         super();
@@ -106,9 +107,9 @@ export class PayFacBuilder extends BaseBuilder<Transaction> {
         this.transactionModifier = modifer;
     }
 
-    public execute(): Promise<Transaction> {
+    public execute(configName: string = 'default'): Promise<Transaction> {
         super.execute();
-        return ServicesContainer.instance().getXmlClient().processPayFac(this);
+        return ServicesContainer.instance().getXmlClient(configName).processPayFac(this);
     }
 
     public withBankAccountData(bankAccountData: BankAccountData) {
@@ -293,4 +294,10 @@ export class PayFacBuilder extends BaseBuilder<Transaction> {
         this.orderDevice = orderDevice;
         return this;
     }
+
+    public withOrderDeviceData(orderDeviceData: DeviceData) {
+        this.orderDeviceData = orderDeviceData;
+        return this;
+    }
+
 }

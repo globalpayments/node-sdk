@@ -1,16 +1,15 @@
 import test from "ava";
 import {
+  PorticoConfig,
   ReportingService,
-  ServicesConfig,
   ServicesContainer,
 } from "../../../../src/";
 
-const config = new ServicesConfig();
+const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w";
-config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 
 test.before((_t) => {
-  ServicesContainer.configure(config);
+  ServicesContainer.configureService(config);
 });
 
 test("report activity", (t) => {

@@ -1,6 +1,5 @@
 import test from "ava";
 import {
-  ServicesConfig,
   ServicesContainer,
   Address,
   Customer,
@@ -10,19 +9,19 @@ import {
   ScheduleFrequency,
   Schedule,
   ReportingService,
+  PorticoConfig,
 } from "../../../../src/";
 
 const timeForId = new Date().getTime();
 
 test("allow 5-part credentials", (t) => {
-  const c = new ServicesConfig();
+  const c = new PorticoConfig();
   c.username = "123456789";
   c.password = "$Test1234";
   c.siteId = "12345";
   c.deviceId = "123456";
   c.licenseId = "12345";
-  c.serviceUrl = "https://cert.api2-c.heartlandportico.com";
-  ServicesContainer.configure(c);
+  ServicesContainer.configureService(c);
   t.truthy(true);
 });
 
@@ -88,7 +87,7 @@ test("attach payment schedule to customer", async (t) => {
     .withReprocessingCount(1)
     .withStatus("Active")
     .withEmailReceipt(EmailReceipt.Never)
-    .create();
+    .create("auth");
 
   t.truthy(paymentSchedule);
 });
@@ -104,7 +103,7 @@ test("edit/deactivate the schedule from above test", async (t) => {
 
   foundSchedule.status = "Inactive";
 
-  t.truthy(foundSchedule.saveChanges());
+  t.truthy(foundSchedule.saveChanges("auth"));
 });
 
 test("find and charge payment method", async (t) => {
@@ -116,7 +115,7 @@ test("find and charge payment method", async (t) => {
 
   const chargeResponse = await foundCcPaymentMethod.charge(12.34)
     .withCurrency("USD")
-    .execute();
+    .execute("auth");
 
   t.true(chargeResponse.responseCode == '00')
 })
@@ -130,14 +129,13 @@ test("find transactions from this new payment method", async (t) => {
 
   const foundTransactions = await ReportingService.findTransactions()
     .where("PaymentMethodKey", foundCcPaymentMethod.key)
-    .execute();
+    .execute("auth");
 
   t.true(foundTransactions.length === 2); // one transaction was the CreditAccountVerify from creating the payment method
 })
 
 function handleAuth() {
-  const config = new ServicesConfig();
+  const config = new PorticoConfig();
   config.secretApiKey = "skapi_cert_MXvdAQB61V4AkyM-x3EJuY6hkEaCzaMimTWav7mVfQ";
-  config.serviceUrl = "https://cert.api2.heartlandportico.com";
-  ServicesContainer.configure(config);
+  ServicesContainer.configureService(config, "auth");
 }

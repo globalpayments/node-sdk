@@ -1,16 +1,16 @@
+import { GatewayConfig } from "src/ServiceConfigs";
 import {
   AuthorizationBuilder,
   InquiryType,
   PaymentMethodType,
-  ServicesConfig,
   ServicesContainer,
   TransactionReference,
   TransactionType,
 } from "../";
 
 export class EBTService {
-  constructor(config: ServicesConfig) {
-    ServicesContainer.configure(config);
+  constructor(config: GatewayConfig, configName: string = 'default') {
+    ServicesContainer.configureService(config, configName);
   }
 
   public balanceInquiry(type = InquiryType.Foodstamp) {

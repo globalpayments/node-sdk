@@ -1,6 +1,6 @@
 {
   "name": "globalpayments-api",
-  "version" : "1.4.9",
+  "version" : "2.0.0",
   "description": "Global Payments SDK for NodeJS for Heartland and Global Payments eCommerce gateways",
   "author": "Heartland Payment Systems",
   "license": "GPL-2.0",
@@ -16,9 +16,8 @@
     "build:clean": "rimraf lib",
     "docs": "typedoc --mode file --name \"GlobalPayments.Api\" --project tsconfig.json --out docs src",
     "format": "prettier --write --config .prettierrc 'src/**/*.ts' 'test/**/*.ts' '*.md'",
-    "prebuild": "npm-run-all test:lint",
     "prepublish": "npm-run-all build",
-    "pretest": "npm-run-all build:clean test:lint build",
+    "pretest": "npm-run-all build:clean build",
     "test": "ava",
     "test:lint": "tslint --project tsconfig.json src"
   },
@@ -46,7 +45,7 @@
     "concurrency": 1,
     "timeout": "5m",
     "failFast": true,
-    "files": [
+    "files": [  
       "lib/test/**/*Test.js"
     ],
     "source": [

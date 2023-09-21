@@ -3,15 +3,14 @@ import {
   AccountType,
   Address,
   CheckType,
+  PorticoConfig,
   SecCode,
-  ServicesConfig,
   ServicesContainer,
 } from "../../../../../src/";
 import { TestChecks } from "../../../../Data/";
 
-const config = new ServicesConfig();
+const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A";
-config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 const runSerially = false;
 const test = runSerially ? ava.serial : ava;
 
@@ -22,7 +21,7 @@ address.province = "NJ";
 address.postalCode = "12345";
 
 ava.before((_t) => {
-  ServicesContainer.configure(config);
+  ServicesContainer.configureService(config);
 });
 
 /// ACH Debit - Consumer

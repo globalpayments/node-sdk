@@ -42,6 +42,8 @@ export class BusinessData {
     // The business' address
     public businessAddress: Address;
 
+    public businessType: string;
+
     constructor() {
         this.businessAddress = new Address();
     }

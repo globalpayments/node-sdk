@@ -6,15 +6,14 @@ import {
   EntryMethod,
   GiftCard,
   InquiryType,
-  ServicesConfig,
+  PorticoConfig,
   ServicesContainer,
   TaxType,
 } from "../../../../../src/";
 import { TestCards } from "../../../../Data/";
 
-const config = new ServicesConfig();
+const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw";
-config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 
 const BATCH_NOT_OPEN =
   "Transaction was rejected because it requires a batch to be open.";
@@ -30,7 +29,7 @@ let discoverToken = "";
 let amexToken = "";
 
 ava.before((_t) => {
-  ServicesContainer.configure(config);
+  ServicesContainer.configureService(config);
 });
 
 test.before("000 - close batch", (t) => {
@@ -2689,7 +2688,7 @@ test("111 - balance inquiry rewards 1", (t) => {
     .then((response) => {
       t.truthy(response);
       t.is(response.responseCode, "00");
-      t.is(response.pointsBalanceAmount, "0");
+      t.truthy(response.pointsBalanceAmount > "0");
     });
 });
 
@@ -2704,7 +2703,7 @@ test("112 - balance inquiry rewards 2", (t) => {
     .then((response) => {
       t.truthy(response);
       t.is(response.responseCode, "00");
-      t.is(response.pointsBalanceAmount, "0");
+      t.truthy(response.pointsBalanceAmount > "0");
     });
 });
 

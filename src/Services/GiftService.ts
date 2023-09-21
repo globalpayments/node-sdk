@@ -1,3 +1,4 @@
+import { GatewayConfig } from "src/ServiceConfigs";
 import {
   AliasAction,
   AuthorizationBuilder,
@@ -5,15 +6,14 @@ import {
   InquiryType,
   ManagementBuilder,
   PaymentMethodType,
-  ServicesConfig,
   ServicesContainer,
   TransactionReference,
   TransactionType,
 } from "../";
 
 export class GiftService {
-  constructor(config: ServicesConfig) {
-    ServicesContainer.configure(config);
+  constructor(config: GatewayConfig, configName: string = 'default') {
+    ServicesContainer.configureService(config, configName);
   }
 
   public activate(amount?: number | string) {

@@ -1,16 +1,16 @@
 import test from "ava";
 import {
-  ArgumentError,
+  BuilderError,
   CreditCardData,
   ECheck,
   GiftCard,
   PaymentMethod,
-  ServicesConfig,
+  PorticoConfig,
   ServicesContainer,
   UnsupportedTransactionError,
 } from "../../../../src/";
 
-const config = new ServicesConfig();
+const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w";
 config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 
@@ -22,7 +22,7 @@ card.cvn = "123";
 card.cardHolderName = "Joe Smith";
 
 test.before((_t) => {
-  ServicesContainer.configure(config);
+  ServicesContainer.configureService(config);
 });
 
 test("credit auth no amount", (t) => {
@@ -30,9 +30,9 @@ test("credit auth no amount", (t) => {
 
   const error = t.throws(() => {
     return card.authorize().execute();
-  }, ArgumentError);
+  }, BuilderError);
 
-  t.is(error.name, "ArgumentError");
+  t.is(error.name, "BuilderError");
   t.true(-1 !== error.message.indexOf("amount cannot be null"));
 });
 
@@ -41,9 +41,9 @@ test("credit auth no currency", (t) => {
 
   const error = t.throws(() => {
     return card.authorize(14).execute();
-  }, ArgumentError);
+  }, BuilderError);
 
-  t.is(error.name, "ArgumentError");
+  t.is(error.name, "BuilderError");
   t.true(-1 !== error.message.indexOf("currency cannot be null"));
 });
 
@@ -52,9 +52,9 @@ test("credit sale no amount", (t) => {
 
   const error = t.throws(() => {
     return card.charge().execute();
-  }, ArgumentError);
+  }, BuilderError);
 
-  t.is(error.name, "ArgumentError");
+  t.is(error.name, "BuilderError");
   t.true(-1 !== error.message.indexOf("amount cannot be null"));
 });
 
@@ -63,16 +63,16 @@ test("credit sale no currency", (t) => {
 
   const error = t.throws(() => {
     return card.charge(14).execute();
-  }, ArgumentError);
+  }, BuilderError);
 
-  t.is(error.name, "ArgumentError");
+  t.is(error.name, "BuilderError");
   t.true(-1 !== error.message.indexOf("currency cannot be null"));
 });
 
-test("credit sale no payment method", (t) => {
+test("credit sale no payment method", async (t) => {
   t.plan(3);
 
-  const error = t.throws(() => {
+  const error = await t.throws(() => {
     return card
       .charge(14)
       .withCurrency("USD")
@@ -92,9 +92,9 @@ test("credit offline no amount", (t) => {
       .charge()
       .withOfflineAuthCode("123456")
       .execute();
-  }, ArgumentError);
+  }, BuilderError);
 
-  t.is(error.name, "ArgumentError");
+  t.is(error.name, "BuilderError");
   t.true(-1 !== error.message.indexOf("amount cannot be null"));
 });
 
@@ -106,9 +106,9 @@ test("credit offline no currency", (t) => {
       .charge(14)
       .withOfflineAuthCode("123456")
       .execute();
-  }, ArgumentError);
+  }, BuilderError);
 
-  t.is(error.name, "ArgumentError");
+  t.is(error.name, "BuilderError");
   t.true(-1 !== error.message.indexOf("currency cannot be null"));
 });
 
@@ -121,9 +121,9 @@ test("credit offline no auth code", (t) => {
       .withCurrency("USD")
       .withOfflineAuthCode("")
       .execute();
-  }, ArgumentError);
+  }, BuilderError);
 
-  t.is(error.name, "ArgumentError");
+  t.is(error.name, "BuilderError");
   t.true(-1 !== error.message.indexOf("offlineAuthCode cannot be empty"));
 });
 
@@ -134,9 +134,9 @@ test("gift replace no replacement card", (t) => {
     const gift = new GiftCard();
     gift.alias = "1234567890";
     return gift.replaceWith(undefined).execute();
-  }, ArgumentError);
+  }, BuilderError);
 
-  t.is(error.name, "ArgumentError");
+  t.is(error.name, "BuilderError");
   t.true(-1 !== error.message.indexOf("replacementCard cannot be null"));
 });
 
@@ -149,8 +149,8 @@ test("check sale no address", async (t) => {
       .charge(14)
       .withCurrency("USD")
       .execute();
-  }, ArgumentError);
+  }, BuilderError);
 
-  t.is(error.name, "ArgumentError");
+  t.is(error.name, "BuilderError");
   t.true(-1 !== error.message.indexOf("billingAddress cannot be null"));
 });

@@ -1,9 +1,10 @@
+import { GatewayConfig } from "../../src/ServiceConfigs";
+
 import {
   ApiError,
   AuthorizationBuilder,
   GenerationUtils,
   PaymentMethodType,
-  ServicesConfig,
   ServicesContainer,
   StringUtils,
   Transaction,
@@ -12,11 +13,11 @@ import {
 } from "../";
 
 export class HostedService {
-  protected config: ServicesConfig;
+  protected config: GatewayConfig;
 
-  constructor(config: ServicesConfig) {
+  constructor(config: GatewayConfig, configName: string = 'default') {
     this.config = config;
-    ServicesContainer.configure(config);
+    ServicesContainer.configureService(config, configName);
   }
 
   public authorize(amount?: number | string) {
@@ -54,6 +55,7 @@ export class HostedService {
         transactionId,
         authCode,
       ].join("."),
+      // @ts-ignore
       this.config.sharedSecret,
     );
 

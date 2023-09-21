@@ -1,103 +1,68 @@
 import {
-  ApiError,
   IPaymentGateway,
   IRecurringService,
-  PayPlanConnector,
-  PorticoConnector,
-  RealexConnector,
-  ServicesConfig,
 } from "./";
+import { ConfiguredServices } from "./ConfiguredServices";
 import { IPayFacProvider } from "./Gateways/IPayFacProvider";
-import { ProPayConnector } from "./Gateways/ProPayConnector";
+import { GatewayConfig } from "./ServiceConfigs/Gateways/GatewayConfig";
+import { ServicesConfigs } from "./ServiceConfigs/ServicesConfigs";
 
 export class ServicesContainer {
+
   private static _instance: ServicesContainer;
-  private _gateway: IPaymentGateway;
-  private _recurring: IRecurringService;
-  private _xmlGateway: IPayFacProvider;
+  private _configs: Record<string, ConfiguredServices> = {};
 
   public static instance(): ServicesContainer {
-    if (ServicesContainer._instance === null) {
-      throw new ApiError("Services container not configured.");
+    if (ServicesContainer._instance === undefined) {
+      ServicesContainer._instance = new ServicesContainer();
     }
 
     return ServicesContainer._instance;
   }
 
-  public static configure(config: ServicesConfig): void {
+  public getClient(configName: string = 'default'): IPaymentGateway {
+    return this._configs[configName].gatewayConnector;
+  }
+
+  public getRecurringClient(configName: string = 'default'): IRecurringService {
+    return this._configs[configName].recurringConnector;
+  }
+
+  public getXmlClient(configName: string = 'default'): IPayFacProvider {
+    return this._configs[configName].getPayFacProvider();
+  }
+
+  public static configure(config: ServicesConfigs, configName: string = 'default') {
     config.validate();
-    if (config.merchantId && config.merchantId !== "") {
-      const gateway = new RealexConnector();
-      gateway.merchantId = config.merchantId;
-      gateway.sharedSecret = config.sharedSecret;
-      gateway.accountId = config.accountId;
-      gateway.channel = config.channel;
-      gateway.rebatePassword = config.rebatePassword;
-      gateway.refundPassword = config.refundPassword;
-      gateway.timeout = config.timeout;
-      gateway.serviceUrl = config.serviceUrl;
-      gateway.hostedPaymentConfig = config.hostedPaymentConfig;
-      gateway.channel = config.channel;
-      ServicesContainer._instance = new ServicesContainer(gateway, gateway);
-    } else {
-      const gateway = new PorticoConnector();
-      gateway.siteId = config.siteId;
-      gateway.licenseId = config.licenseId;
-      gateway.deviceId = config.deviceId;
-      gateway.username = config.username;
-      gateway.password = config.password;
-      gateway.secretApiKey = config.secretApiKey;
-      gateway.developerId = config.developerId;
-      gateway.versionNumber = config.versionNumber;
-      gateway.sdkNameVersion = config.sdkNameVersion;
-      gateway.timeout = config.timeout;
-      gateway.serviceUrl =
-        config.serviceUrl + "/Hps.Exchange.PosGateway/PosGatewayService.asmx";
-      const payplan = new PayPlanConnector();
-      payplan.siteId = config.siteId;
-      payplan.licenseId = config.licenseId;
-      payplan.deviceId = config.deviceId;
-      payplan.username = config.username;
-      payplan.password = config.password;
-      payplan.secretApiKey = config.secretApiKey;
-      payplan.developerId = config.developerId;
-      payplan.versionNumber = config.versionNumber;
-      payplan.timeout = config.timeout;
-      payplan.serviceUrl = config.serviceUrl
-        + (config.serviceUrl.includes('cert.') ? "/Portico.PayPlan.v2/" : "/payplan.v2/");
-      const gatewayObj = new ProPayConnector();
-      gatewayObj.serviceUrl = config.serviceUrl;
-      gatewayObj.certStr = config.certificationStr;
-      gatewayObj.termID = config.terminalID;
-      gatewayObj.timeout = config.timeout;
 
-      gatewayObj.x509CertificatePath = config.x509CertificationPath;
-      gatewayObj.x509CertStr = config.x509CertificateString;
-      ServicesContainer._instance = new ServicesContainer(gateway, payplan, gatewayObj);
+    ServicesContainer.configureService(config.gatewayConfig, configName)
+  }
+
+  public static configureService(config: GatewayConfig, configName: string = "default") {
+    if (config != null) {
+      if (!config.validated) {
+        config.validate();
+      }
+
+      const configuredService = ServicesContainer.instance().getConfiguration(configName);
+
+      config.configureContainer(configuredService);
+      ServicesContainer.instance().addConfiguration(configName, configuredService);
     }
   }
 
-  public constructor(gateway?: IPaymentGateway, recurring?: IRecurringService, xmlGateway?: IPayFacProvider) {
-    if (gateway) {
-      this._gateway = gateway;
-    }
-    if (recurring) {
-      this._recurring = recurring;
-    }
-    if (xmlGateway) {
-      this._xmlGateway = xmlGateway;
-    }
+  private getConfiguration(configName: string) {
+    const instance = ServicesContainer.instance();
+      if (instance._configs[configName]) {
+          return instance._configs[configName];
+      } else {
+          return new ConfiguredServices();
+      }
   }
 
-  public getClient(): IPaymentGateway {
-    return this._gateway;
+  private addConfiguration(configName: string, configuredService: ConfiguredServices) {
+    const instance = ServicesContainer.instance();
+    instance._configs[configName] = configuredService;
   }
 
-  public getRecurringClient(): IRecurringService {
-    return this._recurring;
-  }
-
-  public getXmlClient(): IPayFacProvider {
-    return this._xmlGateway;
-  }
 }

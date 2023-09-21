@@ -3,15 +3,14 @@ import {
   AccountType,
   Address,
   CheckType,
+  PorticoConfig,
   SecCode,
-  ServicesConfig,
   ServicesContainer,
 } from "../../../../../src/";
 import { TestChecks } from "../../../../Data/";
 
-const config = new ServicesConfig();
+const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A";
-config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 const runSerially = false;
 const test = runSerially ? ava.serial : ava;
 
@@ -22,7 +21,7 @@ address.province = "NJ";
 address.postalCode = "12345";
 
 ava.before((_t) => {
-  ServicesContainer.configure(config);
+  ServicesContainer.configureService(config);
 });
 
 /// ACH Debit - Consumer
@@ -255,36 +254,12 @@ test("008 - corporate business savings", (t) => {
   });
 });
 
-test("009 - egold personal checking", (t) => {
-  t.plan(2);
-
-  const check = TestChecks.certification(
-    SecCode.POP,
-    CheckType.Personal,
-    AccountType.Checking,
-  );
-
-  return new Promise((resolve, reject) => {
-    check
-      .charge(11.0)
-      .withCurrency("USD")
-      .withAddress(address)
-      .withAllowDuplicates(true)
-      .execute()
-      .then((response) => {
-        t.truthy(response);
-        t.is(response.responseCode, "00");
-        resolve();
-      })
-      .catch(reject);
-  });
-});
 
 test("010 - egold business checking", (t) => {
   t.plan(2);
 
   const check = TestChecks.certification(
-    SecCode.POP,
+    SecCode.CCD,
     CheckType.Business,
     AccountType.Checking,
   );
@@ -305,86 +280,11 @@ test("010 - egold business checking", (t) => {
   });
 });
 
-test("011 - egold personal savings", (t) => {
-  t.plan(2);
-
-  const check = TestChecks.certification(
-    SecCode.POP,
-    CheckType.Personal,
-    AccountType.Savings,
-  );
-
-  return new Promise((resolve, reject) => {
-    check
-      .charge(13.0)
-      .withCurrency("USD")
-      .withAddress(address)
-      .withAllowDuplicates(true)
-      .execute()
-      .then((response) => {
-        t.truthy(response);
-        t.is(response.responseCode, "00");
-        resolve();
-      })
-      .catch(reject);
-  });
-});
-
-test("012 - egold business savings", (t) => {
-  t.plan(2);
-
-  const check = TestChecks.certification(
-    SecCode.POP,
-    CheckType.Business,
-    AccountType.Savings,
-  );
-
-  return new Promise((resolve, reject) => {
-    check
-      .charge(14.0)
-      .withCurrency("USD")
-      .withAddress(address)
-      .withAllowDuplicates(true)
-      .execute()
-      .then((response) => {
-        t.truthy(response);
-        t.is(response.responseCode, "00");
-        resolve();
-      })
-      .catch(reject);
-  });
-});
-
-test("013 - esilver personal checking", (t) => {
-  t.plan(2);
-
-  const check = TestChecks.certification(
-    SecCode.POP,
-    CheckType.Personal,
-    AccountType.Checking,
-  );
-
-  return new Promise((resolve, reject) => {
-    check
-      .charge(15.0)
-      .withCurrency("USD")
-      .withAddress(address)
-      .withAllowDuplicates(true)
-      .execute()
-      .then((response) => {
-        t.truthy(response);
-        t.is(response.responseCode, "00");
-        resolve();
-      })
-      .catch(reject);
-  });
-});
-
 test("014 - esilver business checking", (t) => {
   t.plan(2);
 
   const check = TestChecks.certification(
-    SecCode.POP,
+    SecCode.CCD,
     CheckType.Business,
     AccountType.Checking,
   );
@@ -392,56 +292,6 @@ test("014 - esilver business checking", (t) => {
   return new Promise((resolve, reject) => {
     check
       .charge(16.0)
-      .withCurrency("USD")
-      .withAddress(address)
-      .withAllowDuplicates(true)
-      .execute()
-      .then((response) => {
-        t.truthy(response);
-        t.is(response.responseCode, "00");
-        resolve();
-      })
-      .catch(reject);
-  });
-});
-
-test("015 - esilver personal savings", (t) => {
-  t.plan(2);
-
-  const check = TestChecks.certification(
-    SecCode.POP,
-    CheckType.Personal,
-    AccountType.Savings,
-  );
-
-  return new Promise((resolve, reject) => {
-    check
-      .charge(17.0)
-      .withCurrency("USD")
-      .withAddress(address)
-      .withAllowDuplicates(true)
-      .execute()
-      .then((response) => {
-        t.truthy(response);
-        t.is(response.responseCode, "00");
-        resolve();
-      })
-      .catch(reject);
-  });
-});
-
-test("016 - esilver business savings", (t) => {
-  t.plan(2);
-
-  const check = TestChecks.certification(
-    SecCode.POP,
-    CheckType.Business,
-    AccountType.Savings,
-  );
-
-  return new Promise((resolve, reject) => {
-    check
-      .charge(18.0)
       .withCurrency("USD")
       .withAddress(address)
       .withAllowDuplicates(true)

@@ -6,15 +6,14 @@ import {
   ECheck,
   EntryMethod,
   PaymentMethodType,
+  PorticoConfig,
   SecCode,
-  ServicesConfig,
   ServicesContainer,
   Transaction,
 } from "../../../../src/";
 
-const config = new ServicesConfig();
+const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A";
-config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 const runSerially = false;
 const test = runSerially ? ava.serial : ava;
 
@@ -39,7 +38,7 @@ check.birthYear = "1997";
 check.ssnLast4 = "4321";
 
 ava.before((_t) => {
-  ServicesContainer.configure(config);
+  ServicesContainer.configureService(config);
 });
 
 test("check sale", async (t) => {

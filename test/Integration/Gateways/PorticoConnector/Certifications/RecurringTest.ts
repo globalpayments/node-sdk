@@ -9,18 +9,17 @@ import {
   ECheck,
   EmailReceipt,
   GenerationUtils,
+  PorticoConfig,
   RecurringPaymentMethod,
   Schedule,
   ScheduleFrequency,
   SecCode,
-  ServicesConfig,
   ServicesContainer,
   StringUtils,
 } from "../../../../../src/";
 
-const config = new ServicesConfig();
+const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MbPdAQBL1l4A2ThZoTBKXEdEG1rIi7KAa6Yskl9Nzg";
-config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 
 const BATCH_NOT_OPEN =
   "Transaction was rejected because it requires a batch to be open.";
@@ -44,7 +43,7 @@ const getIdentifier = (id: string) =>
   `${todayDate}-${id}-${StringUtils.uuid()}`.substr(0, 50);
 
 ava.before((_t) => {
-  ServicesContainer.configure(config);
+  ServicesContainer.configureService(config);
 });
 
 ava.before("000 - close batch", (t) => {
@@ -76,7 +75,7 @@ test.before("000 - cleanup", async () => {
     for (const result in results) {
       if (results.hasOwnProperty(result)) {
         const schedule: Schedule = (results as any)[result];
-        await schedule.delete(true);
+        await schedule.delete("default", true);
       }
     }
   } catch (_e) {
@@ -88,7 +87,7 @@ test.before("000 - cleanup", async () => {
     for (const result in results) {
       if (results.hasOwnProperty(result)) {
         const paymentMethod: RecurringPaymentMethod = (results as any)[result];
-        await paymentMethod.delete(true);
+        await paymentMethod.delete("default", true);
       }
     }
   } catch (_e) {
@@ -100,7 +99,7 @@ test.before("000 - cleanup", async () => {
     for (const result in results) {
       if (results.hasOwnProperty(result)) {
         const customer: Customer = (results as any)[result];
-        await customer.delete(true);
+        await customer.delete("default", true);
       }
     }
   } catch (_e) {
@@ -381,6 +380,7 @@ test("015 - recurring billing mastercard", async (t) => {
   t.is(response.responseCode, "00");
 });
 
+// TBD - odd behaviour with applicationb below
 test("016 - recurring billing check ppd", async (t) => {
   t.plan(2);
 
@@ -391,7 +391,7 @@ test("016 - recurring billing check ppd", async (t) => {
   const response = await paymentMethodCheckPpd
     .charge(20.03)
     .withCurrency("USD")
-    .withScheduleId(scheduleCheckPpd.key)
+    .withScheduleId(scheduleVisa?.key)
     .withOneTimePayment(false)
     .execute();
 
@@ -409,7 +409,7 @@ test("017 - recurring billing check ccd", async (t) => {
   const response = await paymentMethodCheckCcd
     .charge(20.04)
     .withCurrency("USD")
-    .withScheduleId(scheduleCheckCcd.key)
+    .withScheduleId(scheduleVisa?.key)
     .withOneTimePayment(false)
     .execute();
 

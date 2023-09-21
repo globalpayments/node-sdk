@@ -1,10 +1,9 @@
 import ava from "ava";
-import { Address, CheckService, ServicesConfig } from "../../../src/";
+import { Address, CheckService, PorticoConfig,  } from "../../../src/";
 import { TestChecks } from "../../Data";
 
-const config = new ServicesConfig();
+const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A";
-config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 const service = new CheckService(config);
 const runSerially = false;
 const test = runSerially ? ava.serial : ava;

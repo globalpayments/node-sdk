@@ -2,14 +2,13 @@ import test from "ava";
 import {
   Address,
   CreditCardData,
-  ServicesConfig,
+  PorticoConfig,
   ServicesContainer,
 } from "../../../../src/";
 import { validateAmount } from "../../../../src/Utils/InputValidation";
 
-const config = new ServicesConfig();
+const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w";
-config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 
 const card = new CreditCardData();
 card.number = "4111111111111111";
@@ -19,7 +18,7 @@ card.cvn = "123";
 card.cardHolderName = "Joe Smith";
 
 test.before((_t) => {
-  ServicesContainer.configure(config);
+  ServicesContainer.configureService(config);
 });
 
 test("correctable postal code - hyphen", async (t) => {

@@ -21,7 +21,7 @@ export abstract class Gateway {
     endpoint: string,
     data?: string,
     queryStringParams?: IDictionary<string>,
-  ) {
+  ): Promise<string> {
     const uri = url.parse(this.serviceUrl);
     const queryString = this.buildQueryString(queryStringParams);
     const options: RequestOptions = {

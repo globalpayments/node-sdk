@@ -4,15 +4,14 @@ import {
   CreditTrackData,
   EncryptionData,
   ReportingService,
-  ServicesConfig,
   ServicesContainer,
   Transaction,
   StoredCredentialInitiator,
+  PorticoConfig,
 } from "../../../../src/";
 
-const config = new ServicesConfig();
+const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w";
-config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 
 const card = new CreditCardData();
 card.number = "4111111111111111";
@@ -30,7 +29,7 @@ track.encryptionData = new EncryptionData();
 track.encryptionData.version = "01";
 
 test.before((_t) => {
-  ServicesContainer.configure(config);
+  ServicesContainer.configureService(config);
 });
 
 test("credit authorization", async (t) => {
@@ -172,7 +171,7 @@ test("credit sale with shipping", async (t) => {
 
   t.truthy(response);
   t.is(response.responseCode, "00");
-
+  
   const report = await ReportingService.transactionDetail(
     response.transactionId,
   ).execute();

@@ -72,10 +72,10 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
    *
    * @returns Promise<Transaction>
    */
-  public execute(): Promise<Transaction> {
+  public execute(configName: string = 'default'): Promise<Transaction> {
     super.execute();
     return ServicesContainer.instance()
-      .getClient()
+      .getClient(configName)
       .processAuthorization(this);
   }
 

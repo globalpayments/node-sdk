@@ -14,6 +14,55 @@ export enum AliasAction {
   Delete = "DELETE",
 }
 
+export enum AlternativePaymentType {
+  Paypal = 'paypal',
+  PayByBankApp = 'paybybankapp',
+}
+
+export enum CardDataInputCapability {
+  Unknown = 'UNKNOWN',
+  NoTerminalManual = 'NO_TERMINAL_MANUAL',
+  MagstripeReadOnly = 'MAGSTRIPE_READ_ONLY',
+  Ocr = 'OCR',
+  IccChipReadOnly = 'ICC_CHIP_READ_ONLY',
+  KeyedEntryOnly = 'KEYED_ENTRY_ONLY',
+  MagstripeContactlessOnly = 'MAGSTRIPE_CONTACTLESS_ONLY',
+  MagstripeKeyedEntryOnly = 'MAGSTRIPE_KEYED_ENTRY_ONLY',
+  MagstripeIccKeyedEntryOnly = 'MAGSTRIPE_ICC_KEYED_ENTRY_ONLY',
+  MagstripeIccOnly = 'MAGSTRIPE_ICC_ONLY',
+  IccKeyedEntryOnly = 'ICC_KEYED_ENTRY_ONLY',
+  IccChipConctactContactless = 'ICC_CHIP_CONTACT_CONTACTLESS',
+  IccContactlessOnly = 'ICC_CONTACTLESS_ONLY',
+  OtherCapabilityForMastercard = 'OTHER_CAPABILITY_FOR_MASTERCARD',
+  MagstripeSignatureForAmexOnly = 'MAGSTRIPE_SIGNATURE_FOR_AMEX_ONLY',
+}
+
+export enum CardDataOutputCapability {
+  None = 'NONE',
+  MagneticStripeWrite = 'MAGNETIC_STRIPE_WRITE',
+  Icc = 'ICC',
+  Other = 'OTHER',
+}
+
+export enum CardHolderAuthenticationCapability {
+  NoCapability = 'NO_CAPABILITY',
+  PinEntry = 'PIN_ENTRY',
+  SignatureAnalysis = 'SIGNATURE_ANALYSIS',
+  SignatureAnalysisInoperative = 'SIGNATURE_ANALYSIS_INOPERATIVE',
+  MposSoftwareBasedPinEntryCapability = 'MPOS_SOFTWARE_BASED_PIN_ENTRY_CAPABILITY',
+  Other = 'OTHER',
+  Unknown = 'UNKNOWN',
+}
+
+export enum CardHolderAuthenticationEntity {
+  NotAuthenticated = 'NOT_AUTHENTICATED',
+  IccOfflinePin = 'ICC_OFFLINE_PIN',
+  CardAcceptanceDevice = 'CARD_ACCEPTANCE_DEVICE',
+  AuthorizingAgentOnlinePin = 'AUTHORIZING_AGENT_ONLINE_PIN',
+  MerchantCardAcceptorSignature = 'MERCHANT_CARD_ACCEPTOR_SIGNATURE',
+  Other = 'OTHER',
+}
+
 export enum CheckType {
   Personal = "PERSONAL",
   Business = "BUSINESS",
@@ -44,10 +93,22 @@ export enum EmailReceipt {
   Declines = "Declines",
 }
 
+export enum EncyptedMobileType {
+  ApplePay = 'apple-pay',
+  GooglePay = 'pay-with-google',
+  ClickToPay = 'click-to-pay',
+}
+
 export enum EntryMethod {
   Swipe = "SWIPE",
   Proximity = "PROXIMITY",
   Manual = "MANUAL",
+}
+
+export enum Environment {
+  Test = "TEST",
+  Production = "PRODUCTION",
+  Qa = 'QA',
 }
 
 export enum ExceptionCodes {
@@ -104,6 +165,11 @@ export enum FraudFilterMode {
   Off = "OFF",
   Active = "ACTIVE",
   Passive = "PASSIVE",
+}
+
+export enum GatewayProvider {
+    GpEcom = 'GP_ECOM',
+    Portico = 'PORTICO',
 }
 
 export enum GiftEntryMethod {
@@ -192,6 +258,12 @@ export enum SecCode {
   EBronze = "EBronze",
 }
 
+export enum ShaHashType {
+  SHA1 = "SHA1",
+  SHA256 = "SHA256",
+  SHA512 = "SHA512",
+}
+
 export enum StoredCredentialInitiator {
   CardHolder = "C",
   Merchant = "M",
@@ -245,11 +317,12 @@ export enum TransactionType {
   BatchClose = 1 << 16,
   Create = 1 << 17,
   Delete = 1 << 18,
-  BenefitWithDrawal = 1 << 19,
-  Fetch = 1 << 20,
-  Search = 1 << 21,
-  Hold = 1 << 22,
+  BenefitWithDrawal = 1 << 32,
+  Fetch = 1 << 19,
+  Search = 1 << 20,
+  Hold = 1 << 21,
   Release = 1 << 23,
+  VerifySignature = 1 << 25,
   /// <summary>
   /// 
   /// ProPay: Create Account
@@ -335,6 +408,7 @@ export enum TransactionType {
   /// ProPay: Roll back a SplitPay transaction
   /// </summary>
   ReverseSplitPay = 1 << 56,
+  Confirm = 1 << 56,
 
   /// <summary>
   /// ProPay: Split funds from an existing transaction

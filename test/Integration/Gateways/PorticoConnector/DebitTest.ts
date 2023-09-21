@@ -3,15 +3,14 @@ import {
   DebitTrackData,
   EncryptionData,
   PaymentMethodType,
-  ServicesConfig,
+  PorticoConfig,
   ServicesContainer,
   Transaction,
   UnsupportedTransactionError,
 } from "../../../../src/";
 
-const config = new ServicesConfig();
+const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw";
-config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 const runSerially = false;
 const test = runSerially ? ava.serial : ava;
 
@@ -25,20 +24,20 @@ track.encryptionData = new EncryptionData();
 track.encryptionData.version = "01";
 
 ava.before((_t) => {
-  ServicesContainer.configure(config);
+  ServicesContainer.configureService(config);
 });
 
 test("debit sale", async (t) => {
-  t.plan(2);
+t.plan(2);
 
-  const response = await track
-    .charge(17.01)
-    .withCurrency("USD")
-    .withAllowDuplicates(true)
-    .execute();
+const response = await track
+.charge(17.01)
+.withCurrency("USD")
+.withAllowDuplicates(true)
+.execute();
 
-  t.truthy(response);
-  t.is(response.responseCode, "00", response.responseMessage);
+t.truthy(response);
+t.is(response.responseCode, "00", response.responseMessage);
 });
 
 test.failing("debit add value", async (t) => {
@@ -55,42 +54,42 @@ test.failing("debit add value", async (t) => {
 });
 
 test("debit refund", async (t) => {
-  t.plan(2);
+t.plan(2);
 
-  const response = await track
-    .refund(16.01)
-    .withCurrency("USD")
-    .withAllowDuplicates(true)
-    .execute();
+const response = await track
+.refund(16.01)
+.withCurrency("USD")
+.withAllowDuplicates(true)
+.execute();
 
-  t.truthy(response);
-  t.is(response.responseCode, "00", response.responseMessage);
+t.truthy(response);
+t.is(response.responseCode, "00", response.responseMessage);
 });
 
 test("debit reverse", async (t) => {
-  t.plan(2);
+t.plan(2);
 
-  const response = await track
-    .reverse(17.01)
-    .withCurrency("USD")
-    .withAllowDuplicates(true)
-    .execute();
+const response = await track
+.reverse(17.01)
+.withCurrency("USD")
+.withAllowDuplicates(true)
+.execute();
 
-  t.truthy(response);
-  t.is(response.responseCode, "00", response.responseMessage);
+t.truthy(response);
+t.is(response.responseCode, "00", response.responseMessage);
 });
 
 test("debit cannot refund from transaction id only", (t) => {
-  t.plan(2);
+t.plan(2);
 
-  const error = t.throws(() => {
-    Transaction.fromId("1234567890", PaymentMethodType.Debit)
-      .refund()
-      .withCurrency("USD")
-      .execute();
-  }, UnsupportedTransactionError);
+const error = t.throws(() => {
+Transaction.fromId("1234567890", PaymentMethodType.Debit)
+.refund()
+.withCurrency("USD")
+.execute();
+}, UnsupportedTransactionError);
 
-  t.truthy(error.message);
+t.truthy(error.message);
 });
 
 test("debit cannot reverse from transaction id only", (t) => {

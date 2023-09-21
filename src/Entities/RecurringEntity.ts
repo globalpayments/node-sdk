@@ -31,8 +31,9 @@ export class RecurringEntity<TResult extends IRecurringEntity>
   /// </exception>
   public static find<TResult extends IRecurringEntity>(
     id: string,
+    configName: string = 'default'
   ): Promise<TResult | undefined> {
-    const client = ServicesContainer.instance().getRecurringClient();
+    const client = ServicesContainer.instance().getRecurringClient(configName);
     if (!client.supportsRetrieval) {
       throw new UnsupportedTransactionError();
     }
@@ -40,14 +41,14 @@ export class RecurringEntity<TResult extends IRecurringEntity>
     const identifier = RecurringEntity.getIdentifierName(this);
     return RecurringService.search<TResult>(this)
       .addSearchCriteria(identifier, id)
-      .execute()
+      .execute(configName)
       .then((response: any[] | TResult) => {
         if (!response) {
           return;
         }
         const entity = (response as any)[0] || response
-        if (entity) {
-          return RecurringService.get<TResult>(entity);
+        if (entity && entity?.length) {
+          return RecurringService.get<TResult>(entity, configName);
         }
         return;
       });
@@ -59,10 +60,10 @@ export class RecurringEntity<TResult extends IRecurringEntity>
   /// <exception cref="UnsupportedTransactionError">
   /// Thrown when gateway does not support retrieving recurring records.
   /// </exception>
-  public static findAll<TResult extends IRecurringEntity>() {
+  public static findAll<TResult extends IRecurringEntity>(configName: string = 'default') {
     const client = ServicesContainer.instance().getRecurringClient();
     if (client.supportsRetrieval) {
-      return RecurringService.search<TResult>(this).execute();
+      return RecurringService.search<TResult>(this).execute(configName);
     }
     throw new UnsupportedTransactionError();
   }
@@ -81,8 +82,8 @@ export class RecurringEntity<TResult extends IRecurringEntity>
   /// Creates a resource
   /// </summary>
   /// <returns>TResult</returns>
-  public create() {
-    return RecurringService.create((this as any) as TResult);
+  public create(configName: string = "default") {
+    return RecurringService.create((this as any) as TResult, configName);
   }
 
   /// <summary>
@@ -90,8 +91,8 @@ export class RecurringEntity<TResult extends IRecurringEntity>
   /// </summary>
   /// <param name="force">Indicates if the deletion should be forced</summary>
   /// <exception cref="ApiException">Thrown when the record cannot be deleted.</exception>
-  public delete(force = false) {
-    return RecurringService.delete((this as any) as TResult, force);
+  public delete(configName: string = "default", force = false) {
+    return RecurringService.delete((this as any) as TResult, configName, force);
   }
 
   /// <summary>
@@ -101,7 +102,7 @@ export class RecurringEntity<TResult extends IRecurringEntity>
   /// Any modified properties will be persisted with the gateway.
   /// </remarks>
   /// <exception cref="ApiException">Thrown when the record cannot be updated.</exception>
-  public saveChanges() {
-    return RecurringService.edit((this as any) as TResult);
+  public saveChanges(configName: string = "default",) {
+    return RecurringService.edit((this as any) as TResult, configName);
   }
 }

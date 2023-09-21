@@ -1,16 +1,16 @@
+import { GatewayConfig } from "src/ServiceConfigs";
 import {
   AuthorizationBuilder,
   ManagementBuilder,
   PaymentMethodType,
-  ServicesConfig,
   ServicesContainer,
   TransactionReference,
   TransactionType,
 } from "../";
 
 export class CreditService {
-  constructor(config: ServicesConfig) {
-    ServicesContainer.configure(config);
+  constructor(config: GatewayConfig, configName: string = 'default') {
+    ServicesContainer.configureService(config, configName);
   }
 
   public authorize(amount?: number | string) {

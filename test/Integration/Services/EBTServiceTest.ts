@@ -1,10 +1,9 @@
 import ava from "ava";
-import { EBTService, ServicesConfig } from "../../../src/";
+import { EBTService, PorticoConfig } from "../../../src/";
 import { TestCards } from "../../Data";
 
-const config = new ServicesConfig();
+const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MaePAQBr-1QAqjfckFC8FTbRTT120bVQUlfVOjgCBw";
-config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 const service = new EBTService(config);
 const runSerially = false;
 const test = runSerially ? ava.serial : ava;

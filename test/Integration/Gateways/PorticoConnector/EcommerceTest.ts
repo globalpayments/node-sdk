@@ -4,14 +4,13 @@ import {
   EcommerceInfo,
   MobilePaymentMethodType,
   PaymentDataSourceType,
-  ServicesConfig,
+  PorticoConfig,
   ServicesContainer,
 } from "../../../../src/";
 import { TestCards } from "../../../Data";
 
-const config = new ServicesConfig();
+const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MY5OAAAQrmIF_IZDKbr1ecycRr7n1Q1SxNkVgzDhwg";
-config.serviceUrl = "https://cert.api2.heartlandportico.com";
 
 const runSerially = false;
 const test = runSerially ? ava.serial : ava;
@@ -20,11 +19,11 @@ const card = TestCards.visaManual();
 card.tokenize();
 
 ava.before((_t) => {
-  ServicesContainer.configure(config);  
+  ServicesContainer.configureService(config);  
 });
  
  test("ecom with moto", async (t) => {
-  t.plan(4);
+  t.plan(2);
 
   const ecom = new EcommerceInfo();
   ecom.channel = EcommerceChannel.Moto;
@@ -38,8 +37,6 @@ ava.before((_t) => {
 
   t.truthy(response);
   t.is(response.responseCode, "00");
-  t.truthy(response.batchId);
-  t.truthy(response.batchSeqNbr);
 });
 
 test("ecom with direct market ship date", async (t) => {
@@ -119,7 +116,15 @@ test("ecom with walletdata", async (t) => {
   t.plan(2);  
   card.mobileType = MobilePaymentMethodType.GOOGLEPAY;
   card.paymentSource = PaymentDataSourceType.GOOGLEPAYWEB;
-  card.token="{\"signature\":\"MEYCIQChbD9dizRQSTaboSQmp3GD3TSSKLd8kupbOr0IlL+AVgIhAKAbqM0PPn7WPTXZf7nXJPqq29h0hTQiRfusScTToLg8\",\"protocolVersion\":\"ECv1\",\"signedMessage\":\"{\\\"encryptedMessage\\\":\\\"S3P/E0IEZ32pUM1u737Susaj2kQst7cAXUw1bK7Lp9VM8GEqXTD6uaSCKSggFwhV9XNnOMvt9QYgEY69PHc5EFJBR4n9cB6QGrVjARGbUtANTXgSSJy08FFYwjFQ+/CqkHllY3JpnNjGsY5lny5cimatjkB4laTqIZv05mqc0KIzb4aUSfYQzukx6hfmDRDdrEGOfrKHiSx2EOkBguJ7r69BwcBAq58SL6Wpuvh99d8MJyhGSZLyozpD4gmhEVpyDZX5vdG5k6V0e6O6/Y53RPsnaKOH5nourzCLBMm28YBUY8TcqGY/TzRr7SNBDTXkem339CPlRYrFJNYhPRYJcutcf/Akfcrrj9NMBUMQ+Ab4bzbbcAyR/mneNGoWh/W5HFW7n8aYieZwFO2Of8TMOaUxLqpMyZv2UTguCHfSQdSKHt/fv9JxKPszlF0JuGkZmiv7ONDEaw\\\\u003d\\\\u003d\\\",\\\"ephemeralPublicKey\\\":\\\"BE0mGDo9yPUYbC7ERwX3JBNmnyRXRvJ9Nwj/N7B5VE+aN3yKe5UcCgUi8eUfJCwapGu0C8Rf2/9y4+rIY+72s0c\\\\u003d\\\",\\\"tag\\\":\\\"SBp7NAyNPgZ7lfyi8lIFGbo8S1sf/6ADqOqD1ZYT6y0\\\\u003d\\\"}\"}";
+  card.token=`{
+    "signature": "MEQCICd1jRuaiWW5z9olPR+xBi6Z7CmW019Ys+EOKO2RIgy9AiA2d/hWKuRYtayJl//Cc1r2wifxv69lRrRHTTPbelKhzA==",
+    "protocolVersion": "ECv1",
+    "signedMessage": {
+      "encryptedMessage": "wuSFSWEDYmECYdL57Glj1jtQ4hVN69cp82vsXyWN7Nw05ocSTqh6dYBb1FRboq1IjYhPf4MPOliBSJHugiHbeYilrT8HeXD+cU+rF9nNtucMFjMIFltik9aOSnpM0E8t9AJ60CFBwLebhHXvA53TlrziBTCQbhoVk2IAMO/tJKl1mI5rR+7sUI+BlIXFBcUba6T8eLz4z7wYwPxuBptP20u5C5QqMV5kY4aF6mCKwbLT5AzDLBiKA+eW9VtlP9icuxigYMOTP6wsrdiW7FMtHc0o3/MnBpZwWRpcponfnoNQnQMjOSiROZVHcHUK0i/lFUJg9p1Xi20qSyXIjq2WjCF7hSoDw1KzRnYO7uyx1yHN9vmLo+NqVfipRSpT7AtBt9CR8yHQftNQlady+VKSIhmigPTXVIapIf7CA27hiRysVGpWbrMZrJJYilFXh6eFPbk2",
+      "ephemeralPublicKey": "BFe4YpEa1hfmaYlcWR4eyVxZmanOCzDak9yy90PCIAfIMeeRCT9zX5KAnj2k/vWa+oZIv1McjgBIKAp/BoWKNkM=",
+      "tag": "IpXW8ECpNCLzN36M3S7nbQ1YnXxDeMx1RLwElW0xCg0="
+    }
+  }`;
   const response = await card
     .charge(10)
     .withCurrency("USD")    

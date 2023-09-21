@@ -53,10 +53,10 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
    *
    * @returns Promise<Transaction>
    */
-  public execute(): Promise<Transaction> {
+  public execute(configName: string = 'default'): Promise<Transaction> {
     super.execute();
     return ServicesContainer.instance()
-      .getClient()
+      .getClient(configName)
       .manageTransaction(this);
   }
 
@@ -220,6 +220,12 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
     if (type !== undefined) {
       this.taxType = type;
     }
+    return this;
+  }
+
+  public withDynamicDescriptor(dynamicDescriptor: string) {
+    this.dynamicDescriptor = dynamicDescriptor;
+
     return this;
   }
 }

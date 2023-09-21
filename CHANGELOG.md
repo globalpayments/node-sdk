@@ -2,11 +2,15 @@
 
 ## Latest
 
+#### Configuration via Service Containers
+
+- From now on we are going to use containers in order to configure the services in Node SDK.
+
+## v1.4.9 (05/17/23)
+
 #### Profac Enhancements
 
 - Profac Implementation - Implement profac functionality.
-
-## v1.4.9 (05/17/23)
 
 #### Reporting Enhancements
 

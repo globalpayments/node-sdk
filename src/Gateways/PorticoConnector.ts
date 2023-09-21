@@ -50,6 +50,7 @@ import {
 } from "../";
 import { validateAmount, validateInput } from "../Utils/InputValidation";
 import { XmlGateway } from "./XmlGateway";
+import { PorticoConfig } from "src/ServiceConfigs";
 
 export class PorticoConnector extends XmlGateway implements IPaymentGateway {
   protected static XmlNamespace = "http://Hps.Exchange.PosGateway";
@@ -63,6 +64,13 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
   public versionNumber: string;
   public sdkNameVersion: string;
   public supportsHostedPayments = false;
+  public uniqueDeviceId: string;
+  public config: PorticoConfig;
+
+  constructor (config: PorticoConfig) {
+    super();
+    this.config = config;
+  }
 
   public processAuthorization(
     builder: AuthorizationBuilder,
@@ -743,6 +751,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
           ) {
             return "CreditIncrementalAuth";
           } else if (
+            // @ts-ignore
             builder.paymentMethod.paymentMethodType ===
             PaymentMethodType.Recurring
           ) {

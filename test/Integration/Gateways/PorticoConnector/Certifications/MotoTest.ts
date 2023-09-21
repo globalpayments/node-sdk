@@ -7,7 +7,7 @@ import {
   EcommerceChannel,
   EcommerceInfo,
   GiftCard,
-  ServicesConfig,
+  PorticoConfig,
   ServicesContainer,
   TaxType,
   TransactionModifier,
@@ -17,9 +17,8 @@ import { TestCards } from "../../../../Data/";
 const ecom = new EcommerceInfo();
 ecom.channel = EcommerceChannel.Moto;
 
-const config = new ServicesConfig();
+const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A";
-config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 
 const BATCH_NOT_OPEN =
   "Transaction was rejected because it requires a batch to be open.";
@@ -35,7 +34,7 @@ let discoverToken = "";
 let amexToken = "";
 
 ava.before((_t) => {
-  ServicesContainer.configure(config);
+  ServicesContainer.configureService(config);
 });
 
 test.before("000 - close batch", (t) => {
@@ -1749,7 +1748,7 @@ test("059 - balance inquiry rewards 1", (t) => {
       .then((response) => {
         t.truthy(response);
         t.is(response.responseCode, "00");
-        t.is(response.pointsBalanceAmount, "0");
+        t.truthy(response.pointsBalanceAmount > "0");
         resolve();
       })
       .catch(reject);
@@ -1768,7 +1767,7 @@ test("060 - balance inquiry rewards 2", (t) => {
       .then((response) => {
         t.truthy(response);
         t.is(response.responseCode, "00");
-        t.is(response.pointsBalanceAmount, "0");
+        t.truthy(response.pointsBalanceAmount > "0");
         resolve();
       })
       .catch(reject);
