@@ -20,7 +20,7 @@ address.city = "Downtown";
 address.province = "NJ";
 address.postalCode = "12345";
 
-ava.before((_t) => {
+ava.before(() => {
   ServicesContainer.configureService(config);
 });
 
@@ -328,7 +328,7 @@ test("017 - ebronze personal checking", (t) => {
       })
       .catch((error) => {
         t.plan(1);
-        t.true(-1 !== error.message.indexOf("Processor Configuration error"));
+        t.true(-1 !== error?.message.indexOf("Processor Configuration error"));
         resolve();
       });
   });
@@ -357,7 +357,7 @@ test("018 - ebronze business checking", (t) => {
       })
       .catch((error) => {
         t.plan(1);
-        t.true(-1 !== error.message.indexOf("Processor Configuration error"));
+        t.true(-1 !== error?.message.indexOf("Processor Configuration error"));
         resolve();
       });
   });
@@ -386,7 +386,7 @@ test("019 - ebronze personal savings", (t) => {
       })
       .catch((error) => {
         t.plan(1);
-        t.true(-1 !== error.message.indexOf("Processor Configuration error"));
+        t.true(-1 !== error?.message.indexOf("Processor Configuration error"));
         resolve();
       });
   });
@@ -415,7 +415,7 @@ test("020 - ebronze business savings", (t) => {
       })
       .catch((error) => {
         t.plan(1);
-        t.true(-1 !== error.message.indexOf("Processor Configuration error"));
+        t.true(-1 !== error?.message.indexOf("Processor Configuration error"));
         resolve();
       });
   });

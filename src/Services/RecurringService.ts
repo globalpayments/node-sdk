@@ -5,7 +5,7 @@ export class RecurringService {
     return new RecurringBuilder<T>(TransactionType.Create, entity).execute(configName);
   }
 
-  public static delete<T extends IRecurringEntity>(entity: T, configName: string = 'default', _force = false,) {
+  public static delete<T extends IRecurringEntity>(entity: T, configName: string = 'default') {
     return new RecurringBuilder<T>(TransactionType.Delete, entity).execute(configName);
   }
 
@@ -17,7 +17,7 @@ export class RecurringService {
     const entity = key;
     return new RecurringBuilder<T>(
       TransactionType.Fetch,
-      (entity as any) as T,
+      (entity as unknown) as T,
     ).execute(configName);
   }
 

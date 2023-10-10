@@ -9,7 +9,6 @@ import { PayPlanConnector, PorticoConnector, ProPayConnector } from "../../../sr
 import { ConfiguredServices } from "../../../src/ConfiguredServices";
 
 export class PorticoConfig extends GatewayConfig {
-    public _gatewayProvider: GatewayProvider;
 
     public siteId: string;
     public licenseId: string;
@@ -46,11 +45,6 @@ export class PorticoConfig extends GatewayConfig {
 
     // Common
     public curlOptions: unknown;
-
-    public environment: Environment;
-    public serviceUrl: string;
-    public timeout: number;
-
 
     public configureContainer(services: ConfiguredServices) {
         // parent::configureContainer(services); // must implement data services first

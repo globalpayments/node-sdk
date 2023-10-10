@@ -13,13 +13,13 @@ config.terminalId = "ab6f48";
 config.selfSignedCertLocation = "test/Integration/Gateways/ProPayConnector/TestData/selfSignedCertificate.crt";
 const _service = new PayFacService();
 
-test.before((_t) => {
+test.before(() => {
   ServicesContainer.configureService(config);
 });
 
 test("add funds", async (t) => {
   t.plan(2);
-  var response = await _service.addFunds()
+  const response = await _service.addFunds()
     .withAccountNumber("718134204")
     .withAmount("10")
     .execute();
@@ -30,7 +30,7 @@ test("add funds", async (t) => {
 
 test("sweep funds", async (t) => {
   t.plan(2);
-  var response = await _service.sweepFunds()
+  const response = await _service.sweepFunds()
     .withAccountNumber("718570822")
     .withAmount("10")
     .execute();
@@ -41,7 +41,7 @@ test("sweep funds", async (t) => {
 
 test("add flash funds payment card", async (t) => {
   t.plan(2);
-  var response = await _service.addCardFlashFunds()
+  const response = await _service.addCardFlashFunds()
     .withAccountNumber("718136438")
     .withFlashFundsPaymentCardData(TestFundsData.GetFlashFundsPaymentCardData())
     .execute();
@@ -52,7 +52,7 @@ test("add flash funds payment card", async (t) => {
 
 test.skip("push money to flash funds card", async (t) => {
   t.plan(2);
-  var response = await _service.pushMoneyToFlashFundsCard()
+  const response = await _service.pushMoneyToFlashFundsCard()
     .withAccountNumber("718136438")
     .withAmount("100")
     .execute();

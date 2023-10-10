@@ -17,7 +17,7 @@ card.expYear = "2025";
 card.cvn = "123";
 card.cardHolderName = "Joe Smith";
 
-test.before((_t) => {
+test.before(() => {
   ServicesContainer.configureService(config);
 });
 
@@ -59,15 +59,9 @@ test("invalid postal code - length", async (t) => {
       .withAddress(address)
       .withAllowDuplicates(true)
       .execute();
-  }, Error);
+  }, {instanceOf: Error});
 
-  t.is(error.name, Error.name);
-  t.true(
-    -1 !==
-      error.message.indexOf(
-        "length greater than the configured gateway's maximum length",
-      ),
-  );
+  t.is(error?.message, "Zip/postal code length greater than the configured gateway's maximum length");
 });
 
 test("invalid city - length", async (t) => {
@@ -80,15 +74,9 @@ test("invalid city - length", async (t) => {
       .withAddress(address)
       .withAllowDuplicates(true)
       .execute();
-  }, Error);
+  }, {instanceOf: Error});
 
-  t.is(error.name, Error.name);
-  t.true(
-    -1 !==
-      error.message.indexOf(
-        "length greater than the configured gateway's maximum length",
-      ),
-  );
+  t.is(error?.message, "City length greater than the configured gateway's maximum length");
 });
 
 test("invalid state - length", async (t) => {
@@ -101,15 +89,9 @@ test("invalid state - length", async (t) => {
       .withAddress(address)
       .withAllowDuplicates(true)
       .execute();
-  }, Error);
+  }, {instanceOf: Error});
 
-  t.is(error.name, Error.name);
-  t.true(
-    -1 !==
-      error.message.indexOf(
-        "length greater than the configured gateway's maximum length",
-      ),
-  );
+  t.is(error?.message, "State/province length greater than the configured gateway's maximum length");
 });
 
 test("invalid first name - length", async (t) => {
@@ -125,15 +107,9 @@ test("invalid first name - length", async (t) => {
       .withCurrency("USD")
       .withAllowDuplicates(true)
       .execute();
-  }, Error);
+  }, {instanceOf: Error});
 
-  t.is(error.name, Error.name);
-  t.true(
-    -1 !==
-      error.message.indexOf(
-        "length greater than the configured gateway's maximum length",
-      ),
-  );
+  t.is(error?.message, "First name length greater than the configured gateway's maximum length");
 });
 
 test("invalid last name - length", async (t) => {
@@ -149,15 +125,9 @@ test("invalid last name - length", async (t) => {
       .withCurrency("USD")
       .withAllowDuplicates(true)
       .execute();
-  }, Error);
+  }, {instanceOf: Error});
 
-  t.is(error.name, Error.name);
-  t.true(
-    -1 !==
-      error.message.indexOf(
-        "length greater than the configured gateway's maximum length",
-      ),
-  );
+  t.is(error?.message, "Last name length greater than the configured gateway's maximum length");
 });
 
 test("floating point math", async (t) => {

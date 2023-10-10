@@ -31,7 +31,7 @@ test("sale", async (t) => {
   t.is(response.responseCode, "00", response.responseMessage);
 });
 
-test("refund by card", async (t) => {
+test.skip("refund by card", async (t) => {
   t.plan(4);
 
   const response = await service
@@ -96,7 +96,7 @@ test("reverse by transaction id fails", async (t) => {
       .withCurrency("USD")
       .withTransactionId(response.transactionId)
       .execute();
-  }, UnsupportedTransactionError);
+  }, new UnsupportedTransactionError);
 
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });

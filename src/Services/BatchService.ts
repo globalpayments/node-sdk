@@ -4,7 +4,7 @@ export class BatchService {
   public static closeBatch(): Promise<BatchSummary> {
     return new ManagementBuilder(TransactionType.BatchClose)
       .execute()
-      .then((_response) => {
+      .then(() => {
         return new BatchSummary();
       });
   }

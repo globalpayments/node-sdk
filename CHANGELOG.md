@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest
+## Latest (10/03/23)
+
+#### Typescript upgrade to v5
+
+- Upgrade Typescript to v5 to use latest functionalities
+
+## v2.0.0 (09/21/23)
 
 #### Configuration via Service Containers
 

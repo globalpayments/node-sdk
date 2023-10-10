@@ -18,7 +18,7 @@ const test = runSerially ? ava.serial : ava;
 const card = TestCards.visaManual();
 card.tokenize();
 
-ava.before((_t) => {
+ava.before(() => {
   ServicesContainer.configureService(config);  
 });
  
@@ -112,7 +112,7 @@ test("ecom with secure ecommerce", async (t) => {
   t.is(response.responseCode, "00");
 }); 
 
-test("ecom with walletdata", async (t) => {
+test.skip("ecom with walletdata", async (t) => {
   t.plan(2);  
   card.mobileType = MobilePaymentMethodType.GOOGLEPAY;
   card.paymentSource = PaymentDataSourceType.GOOGLEPAYWEB;

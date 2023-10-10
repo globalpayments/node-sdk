@@ -20,7 +20,7 @@ address.city = "Downtown";
 address.province = "NJ";
 address.postalCode = "12345";
 
-ava.before((_t) => {
+ava.before(() => {
   ServicesContainer.configureService(config);
 });
 

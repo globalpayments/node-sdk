@@ -22,7 +22,7 @@ card.expYear = "2025";
 card.cvn = "123";
 card.cardHolderName = "Joe Smith";
 
-test.before((_t) => {
+test.before(() => {
   ServicesContainer.configureService(config);
 });
 
@@ -34,12 +34,12 @@ test("credit reverse", (t) => {
       .reverse(15)
     .withAllowDuplicates(true)
     .execute();
-  }, UnsupportedTransactionError);
+  }, {instanceOf: UnsupportedTransactionError});
   
-  t.is(error.name, "UnsupportedTransactionError");
+  t.is(error?.name, "UnsupportedTransactionError");
   t.true(
     -1 !==
-      error.message.indexOf(
+      error?.message.indexOf(
         "selected gateway does not support this transaction type",
       ),
   );

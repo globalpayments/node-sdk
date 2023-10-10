@@ -53,8 +53,8 @@ test("JAVA_AVS_001a", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("GBP")
       .withCustomerId("100")
@@ -65,9 +65,9 @@ test("JAVA_AVS_001a", async (t) => {
       .withAddress(shippingAddress, AddressType.Shipping)
       .withDescription("JAVA-AVS-001a")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_AVS_001b", async (t) => {
@@ -93,8 +93,8 @@ test("JAVA_AVS_001b", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("GBP")
       .withCustomerId("100")
@@ -105,9 +105,9 @@ test("JAVA_AVS_001b", async (t) => {
       .withAddress(shippingAddress, AddressType.Shipping)
       .withDescription("JAVA-AVS-001b")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_AVS_001c", async (t) => {
@@ -134,8 +134,8 @@ test("JAVA_AVS_001c", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("GBP")
       .withCustomerId("100")
@@ -146,9 +146,9 @@ test("JAVA_AVS_001c", async (t) => {
       .withAddress(shippingAddress, AddressType.Shipping)
       .withDescription("JAVA-AVS-001c")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_AVS_001d", async (t) => {
@@ -172,8 +172,8 @@ test("JAVA_AVS_001d", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("GBP")
       .withCustomerId("100")
@@ -184,9 +184,9 @@ test("JAVA_AVS_001d", async (t) => {
       .withAddress(shippingAddress, AddressType.Shipping)
       .withDescription("JAVA-AVS-001d")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_AVS_001e", async (t) => {
@@ -216,8 +216,8 @@ test("JAVA_AVS_001e", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("GBP")
       .withCustomerId("100")
@@ -228,9 +228,9 @@ test("JAVA_AVS_001e", async (t) => {
       .withAddress(shippingAddress, AddressType.Shipping)
       .withDescription("JAVA-AVS-001e")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_AVS_001f", async (t) => {
@@ -256,8 +256,8 @@ test("JAVA_AVS_001f", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("GBP")
       .withCustomerId("100")
@@ -268,9 +268,9 @@ test("JAVA_AVS_001f", async (t) => {
       .withAddress(shippingAddress, AddressType.Shipping)
       .withDescription("JAVA-AVS-001f")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_AVS_001g", async (t) => {
@@ -300,8 +300,8 @@ test("JAVA_AVS_001g", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("GBP")
       .withCustomerId("100")
@@ -312,9 +312,9 @@ test("JAVA_AVS_001g", async (t) => {
       .withAddress(shippingAddress, AddressType.Shipping)
       .withDescription("JAVA-AVS-001g")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_AVS_003a", async (t) => {
@@ -340,8 +340,8 @@ test("JAVA_AVS_003a", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("GBP")
       .withCustomerId("100")
@@ -352,9 +352,9 @@ test("JAVA_AVS_003a", async (t) => {
       .withAddress(shippingAddress, AddressType.Shipping)
       .withDescription("JAVA-AVS-003a")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_AVS_003b", async (t) => {
@@ -380,8 +380,8 @@ test("JAVA_AVS_003b", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("GBP")
       .withCustomerId("100")
@@ -392,9 +392,9 @@ test("JAVA_AVS_003b", async (t) => {
       .withAddress(shippingAddress, AddressType.Shipping)
       .withDescription("JAVA-AVS-003b")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_AVS_003c", async (t) => {
@@ -420,8 +420,8 @@ test("JAVA_AVS_003c", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("GBP")
       .withCustomerId("100")
@@ -432,9 +432,9 @@ test("JAVA_AVS_003c", async (t) => {
       .withAddress(shippingAddress, AddressType.Shipping)
       .withDescription("JAVA-AVS-003c")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_AVS_003d", async (t) => {
@@ -460,8 +460,8 @@ test("JAVA_AVS_003d", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("GBP")
       .withCustomerId("100")
@@ -472,9 +472,9 @@ test("JAVA_AVS_003d", async (t) => {
       .withAddress(shippingAddress, AddressType.Shipping)
       .withDescription("JAVA-AVS-003d")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_AVS_003e", async (t) => {
@@ -500,8 +500,8 @@ test("JAVA_AVS_003e", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("GBP")
       .withCustomerId("100")
@@ -512,9 +512,9 @@ test("JAVA_AVS_003e", async (t) => {
       .withAddress(shippingAddress, AddressType.Shipping)
       .withDescription("JAVA-AVS-003e")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_AVS_003f", async (t) => {
@@ -540,8 +540,8 @@ test("JAVA_AVS_003f", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("GBP")
       .withCustomerId("100")
@@ -552,9 +552,9 @@ test("JAVA_AVS_003f", async (t) => {
       .withAddress(shippingAddress, AddressType.Shipping)
       .withDescription("JAVA-AVS-003f")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_AVS_003g", async (t) => {
@@ -578,8 +578,8 @@ test("JAVA_AVS_003g", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("GBP")
       .withCustomerId("100")
@@ -590,9 +590,9 @@ test("JAVA_AVS_003g", async (t) => {
       .withAddress(shippingAddress, AddressType.Shipping)
       .withDescription("JAVA-AVS-003e")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_AVS_003h", async (t) => {
@@ -616,8 +616,8 @@ test("JAVA_AVS_003h", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("GBP")
       .withCustomerId("100")
@@ -628,7 +628,7 @@ test("JAVA_AVS_003h", async (t) => {
       .withAddress(shippingAddress, AddressType.Shipping)
       .withDescription("JAVA-AVS-003f")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });

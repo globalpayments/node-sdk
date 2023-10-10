@@ -19,24 +19,24 @@ config.terminalId = "7039dd";
 config.selfSignedCertLocation = "test/Integration/Gateways/ProPayConnector/TestData/selfSignedCertificate.crt";
 const _service = new PayFacService();
 
-test.before((_t) => {
+test.before(() => {
   ServicesContainer.configureService(config);
 });
 
 test("create account", async (t) => {
   t.plan(5);
-  var bankAccountInfo = TestAccountData.GetBankAccountData();
-  var userBusinessInfo = TestAccountData.GetBusinessData();
-  var accountPersonalInfo = TestAccountData.GetUserPersonalData();
-  var threatRiskData = TestAccountData.GetThreatRiskData();
-  var significantOwnerData = TestAccountData.GetSignificantOwnerData();
-  var ownersInfo = TestAccountData.GetBeneficialOwnerData();
-  var creditCardInfo = TestAccountData.GetCreditCardData();
-  var achInfo = TestAccountData.GetACHData();
-  var secondaryBankInformation = TestAccountData.GetSecondaryBankAccountData();
-  var mailingAddressInfo = TestAccountData.GetMailingAddress();
-  var deviceData = TestAccountData.GetDeviceData(1, false);
-  var response = await _service.createAccount()
+  const bankAccountInfo = TestAccountData.GetBankAccountData();
+  const userBusinessInfo = TestAccountData.GetBusinessData();
+  const accountPersonalInfo = TestAccountData.GetUserPersonalData();
+  const threatRiskData = TestAccountData.GetThreatRiskData();
+  const significantOwnerData = TestAccountData.GetSignificantOwnerData();
+  const ownersInfo = TestAccountData.GetBeneficialOwnerData();
+  const creditCardInfo = TestAccountData.GetCreditCardData();
+  const achInfo = TestAccountData.GetACHData();
+  const secondaryBankInformation = TestAccountData.GetSecondaryBankAccountData();
+  const mailingAddressInfo = TestAccountData.GetMailingAddress();
+  const deviceData = TestAccountData.GetDeviceData(1, false);
+  const response = await _service.createAccount()
     .withBankAccountData(bankAccountInfo)
     .withBusinessData(userBusinessInfo)
     .withUserPersonalData(accountPersonalInfo)
@@ -59,9 +59,9 @@ test("create account", async (t) => {
 
 test("Order a new device", async (t) => {
   t.plan(2);
-  var orderDeviceInfo = TestAccountData.GetOrderNewDeviceData();
-  var deviceData = TestAccountData.GetDeviceDataForOrderDevice(1, false);
-  var response = await _service.orderDevice()
+  const orderDeviceInfo = TestAccountData.GetOrderNewDeviceData();
+  const deviceData = TestAccountData.GetDeviceDataForOrderDevice(1, false);
+  const response = await _service.orderDevice()
     .withOrderDevice(orderDeviceInfo)
     .withOrderDeviceData(deviceData)
     .execute();
@@ -71,7 +71,7 @@ test("Order a new device", async (t) => {
 });
 
 test("reset password", async (t) => {
-  var response = await _service.resetPassword()
+  const response = await _service.resetPassword()
     .withAccountNumber('718150930')
     .withNegativeLimit('1')
     .execute();
@@ -85,9 +85,9 @@ test("reset password", async (t) => {
 test("update beneficial data", async (t) => {
   //Owners count shoud not be excedded 6
 
-  var ownersInfo = TestAccountData.GetBeneficialOwnerData();
+  const ownersInfo = TestAccountData.GetBeneficialOwnerData();
 
-  var response = await _service.updateBeneficialOwnershipInfo()
+  const response = await _service.updateBeneficialOwnershipInfo()
     .withAccountNumber('718568507')
     .withBeneficialOwnerData(ownersInfo)
     .execute();
@@ -99,7 +99,7 @@ test("update beneficial data", async (t) => {
 test("edit account information", async (t) => {
   t.plan(2);
 
-  var accountPersonalInfo = new UserPersonalData();
+  const accountPersonalInfo = new UserPersonalData();
   accountPersonalInfo.dayPhone = "4464464464";
   accountPersonalInfo.eveningPhone = "4464464464";
   accountPersonalInfo.externalID = String(getRandomInt(100000000, 999999999));
@@ -109,7 +109,7 @@ test("edit account information", async (t) => {
   accountPersonalInfo.sourceEmail = 'user' + getRandomInt(1, 10000) + '@user.com';
   accountPersonalInfo.sSN = '1234';
 
-  var response = await _service.editAccount()
+  const response = await _service.editAccount()
     .withAccountNumber("718135662")
     .withUserPersonalData(accountPersonalInfo)
     .execute();
@@ -120,7 +120,7 @@ test("edit account information", async (t) => {
 
 test("edit account password", async (t) => {
   t.plan(2);
-  var response = await _service.editAccount()
+  const response = await _service.editAccount()
     .withAccountNumber("718568506")
     .withPassword("testPwd_" + getRandomInt(1, 100))
     .execute();
@@ -131,7 +131,7 @@ test("edit account password", async (t) => {
 
 test("edit account address", async (t) => {
   t.plan(2);
-  var personalInfo = new UserPersonalData();
+  const personalInfo = new UserPersonalData();
  
   personalInfo.userAddress = new Address();
   personalInfo.userAddress.streetAddress1 = '124 Main St.';
@@ -146,7 +146,7 @@ test("edit account address", async (t) => {
   personalInfo.mailingAddress.state = 'NJ';
   personalInfo.mailingAddress.postalCode = '12345';
 
-  var response = await _service.editAccount()
+  const response = await _service.editAccount()
     .withAccountNumber("718138433")
     .withUserPersonalData(personalInfo)
     .execute();
@@ -157,7 +157,7 @@ test("edit account address", async (t) => {
 
 test("edit account permissions", async (t) => {
   t.plan(2);
-  var response = await _service.editAccount()
+  const response = await _service.editAccount()
     .withAccountNumber("718135662")
     .withAccountPermissions(TestAccountData.GetAccountPermissions())
     .execute();
@@ -170,7 +170,7 @@ test("edit account permissions", async (t) => {
 //#region renew account 
 test("renew account", async (t) => {
   t.plan(2);
-  var response = await _service.renewAccount()
+  const response = await _service.renewAccount()
     .withRenewalAccountData(TestAccountData.GetRenewAccountDetails())
     .withAccountNumber("718568507")
     .execute();
@@ -181,7 +181,7 @@ test("renew account", async (t) => {
 
 test("renew account by credit card", async (t) => {
   t.plan(2);
-  var response = await _service.renewAccount()
+  const response = await _service.renewAccount()
     .withAccountNumber("718135662")
     .withRenewalAccountData(TestAccountData.GetRenewAccountDetails())
     .execute();
@@ -192,7 +192,7 @@ test("renew account by credit card", async (t) => {
 
 test.skip("renew account by bank account", async (t) => {
   t.plan(2);
-  var response = await _service.renewAccount()
+  const response = await _service.renewAccount()
     .withAccountNumber("718151055")
     .withRenewalAccountData(TestAccountData.GetRenewAccountDetails())
     .execute();
@@ -204,8 +204,8 @@ test.skip("renew account by bank account", async (t) => {
 
 test.skip("update account beneficial ownership", async (t) => {
   t.plan(3);
-  var beneficialOwners = TestAccountData.GetBeneficialOwnerData();
-  var response = await _service.updateBeneficialOwnershipInfo()
+  const beneficialOwners = TestAccountData.GetBeneficialOwnerData();
+  const response = await _service.updateBeneficialOwnershipInfo()
     .withAccountNumber("718134589") // This account must have been created with a beneficial owner count specified, but no owner details passed
     .withBeneficialOwnerData(beneficialOwners)
     .execute();
@@ -217,7 +217,7 @@ test.skip("update account beneficial ownership", async (t) => {
 
 test.skip("disown account", async (t) => {
   t.plan(2);
-  var response = await _service.disownAccount()
+  const response = await _service.disownAccount()
     .withAccountNumber("718134204") // The account being "disowned" needs to have another affiliation set. Contact propayimplementations@tsys.com and they will set one if necessary
     .execute();
 
@@ -228,12 +228,12 @@ test.skip("disown account", async (t) => {
 // Note : The transaction number of the chargeback you need to dispute. (can be verify at certification process)
 test("upload document chargeback", async (t) => {
   t.plan(2);
-  var docUploadData = new DocumentUploadData();
+  const docUploadData = new DocumentUploadData();
   docUploadData.documentName = "TestDocCB_12345";
   docUploadData.transactionReference = "123456789";
   docUploadData.documentPath = 'test/Integration/Gateways/ProPayConnector/TestData/TestDocChargeback.docx';
   docUploadData.DocumentPath(docUploadData.documentPath);
-  var response = await _service.uploadDocumentChargeback()
+  const response = await _service.uploadDocumentChargeback()
     .withAccountNumber("718567300")
     .withDocumentUploadData(docUploadData)
     .execute();
@@ -244,12 +244,12 @@ test("upload document chargeback", async (t) => {
 
 test("upload document", async (t) => {
   t.plan(2);
-  var docUploadData = new DocumentUploadData();
+  const docUploadData = new DocumentUploadData();
   docUploadData.documentName = "TestDoc_12345";
   docUploadData.docCategory = "Verification";
   docUploadData.documentPath = 'test/Integration/Gateways/ProPayConnector/TestData/TestDoc.docx';
   docUploadData.DocumentPath(docUploadData.documentPath);
-  var response = await _service.uploadDocument()
+  const response = await _service.uploadDocument()
     .withAccountNumber("718134204")
     .withDocumentUploadData(docUploadData)
     .execute();
@@ -260,13 +260,13 @@ test("upload document", async (t) => {
 
 test("upload document chargeback by document string", async (t) => {
   t.plan(2);
-  var docUploadData = new DocumentUploadData();
+  const docUploadData = new DocumentUploadData();
   docUploadData.documentName = "TestDocCB_12345";
   docUploadData.transactionReference = "123456789";
   docUploadData.document = TestAccountData.GetDocumentBase64String('test/Integration/Gateways/ProPayConnector/TestData/TestDocChargeback.docx');
   docUploadData.docType = "docx";
 
-  var response = await _service.uploadDocumentChargeback()
+  const response = await _service.uploadDocumentChargeback()
     .withAccountNumber("718134204")
     .withDocumentUploadData(docUploadData)
     .execute();
@@ -277,13 +277,13 @@ test("upload document chargeback by document string", async (t) => {
 
 test("upload document by document string", async (t) => {
   t.plan(2);
-  var docUploadData = new DocumentUploadData();
+  const docUploadData = new DocumentUploadData();
   docUploadData.documentName = "TestDoc_12345";
   docUploadData.docCategory = "Verification";
   docUploadData.document = TestAccountData.GetDocumentBase64String('test/Integration/Gateways/ProPayConnector/TestData/TestDoc.docx');
   docUploadData.docType = "docx";
 
-  var response = await _service.uploadDocument()
+  const response = await _service.uploadDocument()
     .withAccountNumber("718134204")
     .withDocumentUploadData(docUploadData)
     .execute();
@@ -294,12 +294,12 @@ test("upload document by document string", async (t) => {
 
 test("obtain sSO key", async (t) => {
   t.plan(3);
-  var ssoRequestData = new SSORequestData();
+  const ssoRequestData = new SSORequestData();
   ssoRequestData.referrerURL = "https://www.globalpaymentsinc.com/";
   ssoRequestData.iPAddress = "40.81.11.219";
   ssoRequestData.iPSubnetMask = "255.255.255.0";
 
-  var response = await _service.obtainSSOKey()
+  const response = await _service.obtainSSOKey()
     .withAccountNumber("718150930")
     .withSSORequestData(ssoRequestData)
     .execute();
@@ -317,19 +317,19 @@ test("update bank account ownership info", async (t) => {
   config.terminalId = "3b98";
   ServicesContainer.configureService(config, "secondService");
 
-  var primaryOwner = new BankAccountOwnershipData();
+  const primaryOwner = new BankAccountOwnershipData();
   primaryOwner.firstName = "Style";
   primaryOwner.lastName = "Stallone";
   primaryOwner.phoneNumber = "123456789";
-  var ownerAddress = new Address(); 
+  const ownerAddress = new Address(); 
 
   primaryOwner.ownerAddress = ownerAddress;
 
-  var secondaryOwner = new BankAccountOwnershipData();
+  const secondaryOwner = new BankAccountOwnershipData();
   secondaryOwner.firstName = "Thomas";
   secondaryOwner.lastName = "Hanks";
   secondaryOwner.phoneNumber = "123456789";
-  var secondaryOwnerAddress = new Address();
+  const secondaryOwnerAddress = new Address();
   secondaryOwnerAddress.streetAddress1 = "1970 Diamond Blvd";
   secondaryOwnerAddress.streetAddress2 = "1971 Diamond Blvd";
   secondaryOwnerAddress.streetAddress3 = "1972 Diamond Blvd";
@@ -339,7 +339,7 @@ test("update bank account ownership info", async (t) => {
   secondaryOwnerAddress.country = "CAN";
   secondaryOwner.ownerAddress = secondaryOwnerAddress;
 
-  var response = await _service.updateBankAccountOwnershipInfo()
+  const response = await _service.updateBankAccountOwnershipInfo()
     .withAccountNumber("716016890")
     .withPrimaryBankAccountOwner(primaryOwner)
     .withSecondaryBankAccountOwner(secondaryOwner)

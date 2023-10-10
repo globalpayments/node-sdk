@@ -3,20 +3,20 @@ declare module "@azz/elementtree" {
     constructor(element: Element);
     getroot(): Element;
     setroot(element: Element): void;
-    parse(source: string, parser?: any): ElementTree;
-    iter(tag: string, callback: Function): void;
+    parse(source: string, parser?: unknown): ElementTree;
+    iter(tag: string, callback: unknown): void;
     find(path: string): Element;
-    findtext(path: string, defvalue?: any): string;
-    findall(path: string, defvalue?: any): Element[];
-    write(options?: Object): string;
+    findtext(path: string, defvalue?: string): string;
+    findall(path: string, defvalue?: string): Element[];
+    write(options?: Record<string, unknown>): string;
   }
 
-  export var Element: Element;
+  export const Element: Element;
   export interface Element {
     new (tag: string, attrib?: Object): Element;
     (tag: string, attrib?: Object): Element;
     toString(): string;
-    makeelement(tag: string, attrib?: Object): Element;
+    makeelement(tag: string, attrib?: Record<string, unknown>): Element;
     len(): number;
     getItem(index: number): Element;
     setItem(index: number, element: Element): void;
@@ -30,15 +30,15 @@ declare module "@azz/elementtree" {
     remove(element: Element): void;
     getchildren(): Element[];
     find(path: string): Element;
-    findtext(path: string, defvalue?: any): string;
-    findall(path: string, defvalue?: any): Element[];
+    findtext(path: string, defvalue?: string): string;
+    findall(path: string, defvalue?: string): Element[];
     clear(): void;
-    get(key: string, defvalue?: any): any;
-    set(key: string, value: any): void;
+    get(key: string, defvalue?: string): string;
+    set(key: string, value: string): void;
     keys(): string[];
     items(): Element[];
-    iter(tag: string, callback: Function): void;
-    itertext(callback: Function): void;
+    iter(tag: string, callback: unknown): void;
+    itertext(callback: unknown): void;
     text: string;
   }
 
@@ -48,13 +48,13 @@ declare module "@azz/elementtree" {
   }
 
   export function XML(data: string): Element;
-  export function parse(source: string, parser?: any): ElementTree;
-  export function tostring(element: Element, options: Object): string;
+  export function parse(source: string, parser?: string): ElementTree;
+  export function tostring(element: Element, options: Record<string, unknown>): string;
   export function register_namespace(prefix: string, uri: string): void;
   export function SubElement(
     parent: Element,
     tag: string,
-    attrib?: Object,
+    attrib?: string | Object,
   ): Element;
   export function Comment(text: string): Element;
   export function CData(text: string): Element;
@@ -62,6 +62,6 @@ declare module "@azz/elementtree" {
   export interface ProcessingInstruction {
     (target: string, text?: string): Element;
   }
-  export var ProcessingInstruction: ProcessingInstruction;
-  export var PI: ProcessingInstruction;
+  export const ProcessingInstruction: ProcessingInstruction;
+  export const PI: ProcessingInstruction;
 }

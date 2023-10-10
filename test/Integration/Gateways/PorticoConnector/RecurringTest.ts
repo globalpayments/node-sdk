@@ -30,7 +30,7 @@ test("make PayPlan customer", async (t) => {
 
   handleAuth();
 
-  let customer = new Customer();
+  const customer = new Customer();
   customer.id = "Customer" + timeForId;
   customer.firstName = "John";
   customer.lastName = "Doe";

@@ -21,7 +21,7 @@ card.expYear = "2025";
 card.cvn = "123";
 card.cardHolderName = "Joe Smith";
 
-test.before((_t) => {
+test.before(() => {
   ServicesContainer.configureService(config);
 });
 
@@ -30,10 +30,10 @@ test("credit auth no amount", (t) => {
 
   const error = t.throws(() => {
     return card.authorize().execute();
-  }, BuilderError);
+  }, {instanceOf: BuilderError});
 
-  t.is(error.name, "BuilderError");
-  t.true(-1 !== error.message.indexOf("amount cannot be null"));
+  t.is(error?.name, "BuilderError");
+  t.true(-1 !== error?.message.indexOf("amount cannot be null"));
 });
 
 test("credit auth no currency", (t) => {
@@ -41,10 +41,10 @@ test("credit auth no currency", (t) => {
 
   const error = t.throws(() => {
     return card.authorize(14).execute();
-  }, BuilderError);
+  }, {instanceOf: BuilderError});
 
-  t.is(error.name, "BuilderError");
-  t.true(-1 !== error.message.indexOf("currency cannot be null"));
+  t.is(error?.name, "BuilderError");
+  t.true(-1 !== error?.message.indexOf("currency cannot be null"));
 });
 
 test("credit sale no amount", (t) => {
@@ -52,10 +52,10 @@ test("credit sale no amount", (t) => {
 
   const error = t.throws(() => {
     return card.charge().execute();
-  }, BuilderError);
+  }, {instanceOf: BuilderError});
 
-  t.is(error.name, "BuilderError");
-  t.true(-1 !== error.message.indexOf("amount cannot be null"));
+  t.is(error?.name, "BuilderError");
+  t.true(-1 !== error?.message.indexOf("amount cannot be null"));
 });
 
 test("credit sale no currency", (t) => {
@@ -63,10 +63,10 @@ test("credit sale no currency", (t) => {
 
   const error = t.throws(() => {
     return card.charge(14).execute();
-  }, BuilderError);
+  }, {instanceOf: BuilderError});
 
-  t.is(error.name, "BuilderError");
-  t.true(-1 !== error.message.indexOf("currency cannot be null"));
+  t.is(error?.name, "BuilderError");
+  t.true(-1 !== error?.message.indexOf("currency cannot be null"));
 });
 
 test("credit sale no payment method", async (t) => {
@@ -78,10 +78,10 @@ test("credit sale no payment method", async (t) => {
       .withCurrency("USD")
       .withPaymentMethod({} as PaymentMethod)
       .execute();
-  }, UnsupportedTransactionError);
+  }, {instanceOf: UnsupportedTransactionError});
 
-  t.is(error.name, "UnsupportedTransactionError");
-  t.true(-1 !== error.message.indexOf("not supported for this payment method"));
+  t.is(error?.name, "UnsupportedTransactionError");
+  t.true(-1 !== error?.message.indexOf("not supported for this payment method"));
 });
 
 test("credit offline no amount", (t) => {
@@ -92,10 +92,10 @@ test("credit offline no amount", (t) => {
       .charge()
       .withOfflineAuthCode("123456")
       .execute();
-  }, BuilderError);
+  }, {instanceOf: BuilderError});
 
-  t.is(error.name, "BuilderError");
-  t.true(-1 !== error.message.indexOf("amount cannot be null"));
+  t.is(error?.name, "BuilderError");
+  t.true(-1 !== error?.message.indexOf("amount cannot be null"));
 });
 
 test("credit offline no currency", (t) => {
@@ -106,10 +106,10 @@ test("credit offline no currency", (t) => {
       .charge(14)
       .withOfflineAuthCode("123456")
       .execute();
-  }, BuilderError);
+  }, {instanceOf: BuilderError});
 
-  t.is(error.name, "BuilderError");
-  t.true(-1 !== error.message.indexOf("currency cannot be null"));
+  t.is(error?.name, "BuilderError");
+  t.true(-1 !== error?.message.indexOf("currency cannot be null"));
 });
 
 test("credit offline no auth code", (t) => {
@@ -121,10 +121,10 @@ test("credit offline no auth code", (t) => {
       .withCurrency("USD")
       .withOfflineAuthCode("")
       .execute();
-  }, BuilderError);
+  }, {instanceOf: BuilderError});
 
-  t.is(error.name, "BuilderError");
-  t.true(-1 !== error.message.indexOf("offlineAuthCode cannot be empty"));
+  t.is(error?.name, "BuilderError");
+  t.true(-1 !== error?.message.indexOf("offlineAuthCode cannot be empty"));
 });
 
 test("gift replace no replacement card", (t) => {
@@ -134,10 +134,10 @@ test("gift replace no replacement card", (t) => {
     const gift = new GiftCard();
     gift.alias = "1234567890";
     return gift.replaceWith(undefined).execute();
-  }, BuilderError);
+  }, {instanceOf: BuilderError});
 
-  t.is(error.name, "BuilderError");
-  t.true(-1 !== error.message.indexOf("replacementCard cannot be null"));
+  t.is(error?.name, "BuilderError");
+  t.true(-1 !== error?.message.indexOf("replacementCard cannot be null"));
 });
 
 test("check sale no address", async (t) => {
@@ -149,8 +149,8 @@ test("check sale no address", async (t) => {
       .charge(14)
       .withCurrency("USD")
       .execute();
-  }, BuilderError);
+  }, {instanceOf: BuilderError});
 
-  t.is(error.name, "BuilderError");
-  t.true(-1 !== error.message.indexOf("billingAddress cannot be null"));
+  t.is(error?.name, "BuilderError");
+  t.true(-1 !== error?.message.indexOf("billingAddress cannot be null"));
 });

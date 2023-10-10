@@ -21,6 +21,8 @@ config.rebatePassword = "rebate";
 
 config.timeout = 20000;
 
+// const test = ava.serial;
+
 test.before(() => {
   ServicesContainer.configureService(config);
 })
@@ -31,507 +33,507 @@ test.beforeEach(async () => {
   i += 0.1;
 });
 
-test("JAVA_Auth_006a", async (t) => {
-  t.plan(2);
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("GBP")
-    .withDescription("JAVA-Auth-006a")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_006b", async (t) => {
-  t.plan(2);
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("EUR")
-    .withDescription("JAVA-Auth-006b")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_006c", async (t) => {
-  t.plan(2);
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("USD")
-    .withDescription("JAVA-Auth-006c")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_006d", async (t) => {
-  t.plan(2);
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("GBP")
-    .withDescription("JAVA-Auth-006d")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_006e", async (t) => {
-  t.plan(2);
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("EUR")
-    .withDescription("JAVA-Auth-006e")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_006f", async (t) => {
-  t.plan(2);
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("USD")
-    .withDescription("JAVA-Auth-006f")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_006g", async (t) => {
-  t.plan(2);
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("GBP")
-    .withDescription("JAVA-Auth-006g")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_006h", async (t) => {
-  t.plan(2);
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("EUR")
-    .withDescription("JAVA-Auth-006h")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_006i", async (t) => {
-  t.plan(2);
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("USD")
-    .withDescription("JAVA-Auth-006i")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_006j", async (t) => {
-  t.plan(2);
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("GBP")
-    .withDescription("JAVA-Auth-006j")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_006k", async (t) => {
-  t.plan(2);
-
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("EUR")
-    .withDescription("JAVA-Auth-006k")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_007a", async (t) => {
-  t.plan(2);
-
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("GBP")
-    .withDescription("JAVA-Auth-007a")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_007b", async (t) => {
-  t.plan(2);
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("EUR")
-    .withDescription("JAVA-Auth-007b")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_007c", async (t) => {
-  t.plan(2);
-
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("USD")
-    .withDescription("JAVA-Auth-007c")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_007d", async (t) => {
-  t.plan(2);
-
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("GBP")
-    .withDescription("JAVA-Auth-007d")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_007e", async (t) => {
-  t.plan(2);
-
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("EUR")
-    .withDescription("JAVA-Auth-007e")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_008a", async (t) => {
-  t.plan(2);
-
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("USD")
-    .withDescription("JAVA-Auth-008a")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_008b", async (t) => {
-  t.plan(2);
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("GBP")
-    .withDescription("JAVA-Auth-008b")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_008c", async (t) => {
-  t.plan(2);
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("EUR")
-    .withDescription("JAVA-Auth-008c")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_008d", async (t) => {
-  t.plan(2);
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("USD")
-    .withDescription("JAVA-Auth-008d")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_008e", async (t) => {
-  t.plan(2);
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("GBP")
-    .withDescription("JAVA-Auth-008e")
-    .execute();
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
-
-test("JAVA_Auth_009a", async (t) => {
-  t.plan(2);
-
-  const config = new GpEcomConfig();
-  config.merchantId = "heartlandgpsandbox";
-  config.accountId = "api";
-  config.sharedSecret = "secret";
-  config.refundPassword = "refund";
-  config.rebatePassword = "rebate";
-
-  config.timeout = 20000;
-  config.channel = "ECOM";
-
-  ServicesContainer.configureService(config, "withChannelEcom");
-
-  // create card
-  const card = new CreditCardData();
-  card.number = "4263970000005262";
-  card.expMonth = "12";
-  card.expYear = "2029";
-  card.cvn = "123";
-  card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  card.cardHolderName = "James Mason";
-
-  // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("EUR")
-    .withDescription("JAVA-Auth-009a")
-    .execute("withChannelEcom");
-  t.truthy(response);
-  t.is("00", response.responseCode);
-});
+// test("JAVA_Auth_006a", async (t) => {
+//   t.plan(2);
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("GBP")
+//     .withDescription("JAVA-Auth-006a")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_006b", async (t) => {
+//   t.plan(2);
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("EUR")
+//     .withDescription("JAVA-Auth-006b")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_006c", async (t) => {
+//   t.plan(2);
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("USD")
+//     .withDescription("JAVA-Auth-006c")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_006d", async (t) => {
+//   t.plan(2);
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("GBP")
+//     .withDescription("JAVA-Auth-006d")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_006e", async (t) => {
+//   t.plan(2);
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("EUR")
+//     .withDescription("JAVA-Auth-006e")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_006f", async (t) => {
+//   t.plan(2);
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("USD")
+//     .withDescription("JAVA-Auth-006f")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_006g", async (t) => {
+//   t.plan(2);
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("GBP")
+//     .withDescription("JAVA-Auth-006g")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_006h", async (t) => {
+//   t.plan(2);
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("EUR")
+//     .withDescription("JAVA-Auth-006h")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_006i", async (t) => {
+//   t.plan(2);
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("USD")
+//     .withDescription("JAVA-Auth-006i")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_006j", async (t) => {
+//   t.plan(2);
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("GBP")
+//     .withDescription("JAVA-Auth-006j")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_006k", async (t) => {
+//   t.plan(2);
+
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("EUR")
+//     .withDescription("JAVA-Auth-006k")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_007a", async (t) => {
+//   t.plan(2);
+
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("GBP")
+//     .withDescription("JAVA-Auth-007a")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_007b", async (t) => {
+//   t.plan(2);
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("EUR")
+//     .withDescription("JAVA-Auth-007b")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_007c", async (t) => {
+//   t.plan(2);
+
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("USD")
+//     .withDescription("JAVA-Auth-007c")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_007d", async (t) => {
+//   t.plan(2);
+
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("GBP")
+//     .withDescription("JAVA-Auth-007d")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_007e", async (t) => {
+//   t.plan(2);
+
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("EUR")
+//     .withDescription("JAVA-Auth-007e")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_008a", async (t) => {
+//   t.plan(2);
+
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("USD")
+//     .withDescription("JAVA-Auth-008a")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_008b", async (t) => {
+//   t.plan(2);
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("GBP")
+//     .withDescription("JAVA-Auth-008b")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_008c", async (t) => {
+//   t.plan(2);
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("EUR")
+//     .withDescription("JAVA-Auth-008c")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_008d", async (t) => {
+//   t.plan(2);
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("USD")
+//     .withDescription("JAVA-Auth-008d")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_008e", async (t) => {
+//   t.plan(2);
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("GBP")
+//     .withDescription("JAVA-Auth-008e")
+//     .execute();
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
+
+// test("JAVA_Auth_009a", async (t) => {
+//   t.plan(2);
+
+//   const config = new GpEcomConfig();
+//   config.merchantId = "heartlandgpsandbox";
+//   config.accountId = "api";
+//   config.sharedSecret = "secret";
+//   config.refundPassword = "refund";
+//   config.rebatePassword = "rebate";
+
+//   config.timeout = 20000;
+//   config.channel = "ECOM";
+
+//   ServicesContainer.configureService(config, "withChannelEcom");
+
+//   // create card
+//   const card = new CreditCardData();
+//   card.number = "4263970000005262";
+//   card.expMonth = "12";
+//   card.expYear = "2029";
+//   card.cvn = "123";
+//   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
+//   card.cardHolderName = "James Mason";
+
+//   // request
+//   const response = await card
+//     .charge(100.01)
+//     .withCurrency("EUR")
+//     .withDescription("JAVA-Auth-009a")
+//     .execute("withChannelEcom");
+//   t.truthy(response);
+//   t.is("00", response.responseCode);
+// });
 
 test("JAVA_Auth_009b", async (t) => {
   t.plan(2);
@@ -558,15 +560,17 @@ test("JAVA_Auth_009b", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
-      .charge(100.01)
-      .withCurrency("USD")
-      .withDescription("JAVA-Auth-009b")
-      .execute("withAnotherChannelEcom"),
-    GatewayError,
+  const error = await t.throwsAsync(
+    () => card
+        .charge(100.01)
+        .withCurrency("USD")
+        .withDescription("JAVA-Auth-009b")
+        .execute("withAnotherChannelEcom")
+    ,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+
+  t.truthy(error?.message);
 });
 
 test("JAVA_Auth_009c", async (t) => {
@@ -822,9 +826,9 @@ test("JAVA_Auth_011d", async (t) => {
         .withCurrency("EUR")
         .withDescription("JAVA-Auth-011d")
         .execute(),
-    BuilderError,
+    {instanceOf: BuilderError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Auth_012a", async (t) => {
@@ -862,15 +866,15 @@ test("JAVA_Auth_012b", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    () => card
       .charge(100.01)
       .withCurrency("EURO")
       .withDescription("JAVA-Auth-012b")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Auth_012c", async (t) => {
@@ -880,21 +884,21 @@ test("JAVA_Auth_012c", async (t) => {
   const card = new CreditCardData();
   card.number = "4263970000005262";
   card.expMonth = "12";
-  card.expYear = "2029";
+  card.expYear = "2019";
   card.cvn = "123";
   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    () => card
       .charge(100.01)
-      .withCurrency("�UR")
+      .withCurrency("EUR")
       .withDescription("JAVA-Auth-012c")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Auth_012d", async (t) => {
@@ -916,9 +920,9 @@ test("JAVA_Auth_012d", async (t) => {
         .charge(100.01)
         .withDescription("JAVA-Auth-012d")
         .execute(),
-    BuilderError,
+    {instanceOf: BuilderError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Auth_013a", async (t) => {
@@ -956,15 +960,15 @@ test("JAVA_Auth_013b1", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("EUR")
       .withDescription("JAVA-Auth-013b1")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Auth_013b2", async (t) => {
@@ -980,15 +984,15 @@ test("JAVA_Auth_013b2", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("USD")
       .withDescription("JAVA-Auth-013b2")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Auth_013c", async (t) => {
@@ -1004,15 +1008,15 @@ test("JAVA_Auth_013c", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("GBP")
       .withDescription("JAVA-Auth-013c")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Auth_014a", async (t) => {
@@ -1049,15 +1053,15 @@ test("JAVA_Auth_014b", async (t) => {
   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("USD")
       .withDescription("JAVA-Auth-014b")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Auth_014c", async (t) => {
@@ -1074,15 +1078,15 @@ test("JAVA_Auth_014c", async (t) => {
     "3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("GBP")
       .withDescription("JAVA-Auth-014c")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Auth_014d", async (t) => {
@@ -1164,15 +1168,15 @@ test("JAVA_Auth_015c", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("EUR")
       .withDescription("JAVA-Auth-015c")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Auth_015d", async (t) => {
@@ -1186,15 +1190,15 @@ test("JAVA_Auth_015d", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("USD")
       .withDescription("JAVA-Auth-015d")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Auth_016a", async (t) => {
@@ -1342,15 +1346,15 @@ test("JAVA_Auth_019b1", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("GBP")
       .withDescription("JAVA-Auth-019b1")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Auth_019b2", async (t) => {
@@ -1388,15 +1392,15 @@ test("JAVA_Auth_019c", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("EUR")
       .withDescription("JAVA-Auth-019c")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Auth_019d", async (t) => {
@@ -1522,15 +1526,15 @@ test("JAVA_Auth_020b", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .charge(100.01)
       .withCurrency("EUR")
       .withDescription("JAVA-Auth-020b")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Auth_020c", async (t) => {

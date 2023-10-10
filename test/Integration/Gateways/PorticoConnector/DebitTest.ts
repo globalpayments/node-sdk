@@ -23,7 +23,7 @@ track.pinBlock = "32539F50C245A6A93D123412324000AA";
 track.encryptionData = new EncryptionData();
 track.encryptionData.version = "01";
 
-ava.before((_t) => {
+ava.before(() => {
   ServicesContainer.configureService(config);
 });
 
@@ -87,9 +87,9 @@ Transaction.fromId("1234567890", PaymentMethodType.Debit)
 .refund()
 .withCurrency("USD")
 .execute();
-}, UnsupportedTransactionError);
+}, new UnsupportedTransactionError);
 
-t.truthy(error.message);
+t.truthy(error?.message);
 });
 
 test("debit cannot reverse from transaction id only", (t) => {
@@ -99,7 +99,7 @@ test("debit cannot reverse from transaction id only", (t) => {
     Transaction.fromId("1234567890", PaymentMethodType.Debit)
       .reverse()
       .execute();
-  }, UnsupportedTransactionError);
+  }, new UnsupportedTransactionError);
 
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });

@@ -138,7 +138,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
     }
 
     private hydrateCommonFields(xmlTrans: Element, builder: PayFacBuilder) {
-        var elementMap = {
+        const elementMap = {
             'accountNum': builder.accountNumber ? builder.accountNumber : '',
             'amount': builder.amount ? builder.amount : '',
             'recAccntNum': builder.receivingAccountNumber ? builder.receivingAccountNumber : '',
@@ -158,10 +158,10 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
 
     private HydrateBankAccountOwnershipData(xmlTrans: Element, builder: PayFacBuilder) {
         if (builder.primaryBankAccountOwner != null || builder.secondaryBankAccountOwner != null) {
-            var ownersDataTag = subElement(xmlTrans, "BankAccountOwnerData");
+            const ownersDataTag = subElement(xmlTrans, "BankAccountOwnerData");
 
             if (builder.primaryBankAccountOwner != null) {
-                var primaryOwnerTag = subElement(ownersDataTag, "PrimaryBankAccountOwner");
+                const primaryOwnerTag = subElement(ownersDataTag, "PrimaryBankAccountOwner");
                 subElement(primaryOwnerTag, "FirstName").text = builder.primaryBankAccountOwner.firstName;
                 subElement(primaryOwnerTag, "LastName").text = builder.primaryBankAccountOwner.lastName;
                 subElement(primaryOwnerTag, "Address1").text = builder.primaryBankAccountOwner.ownerAddress?.streetAddress1;
@@ -175,7 +175,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
             }
 
             if (builder.secondaryBankAccountOwner != null) {
-                var secondaryOwnerTag = subElement(ownersDataTag, "SecondaryBankAccountOwner");
+                const secondaryOwnerTag = subElement(ownersDataTag, "SecondaryBankAccountOwner");
                 subElement(secondaryOwnerTag, "FirstName").text = builder.secondaryBankAccountOwner.firstName;
                 subElement(secondaryOwnerTag, "LastName").text = builder.secondaryBankAccountOwner.lastName;
                 subElement(secondaryOwnerTag, "Address1").text = builder.secondaryBankAccountOwner.ownerAddress?.streetAddress1;
@@ -361,10 +361,10 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
     }
 
     private HydrateDeviceData(xmlTrans: Element, deviceData: DeviceData) {
-        var devices = subElement(xmlTrans, "Devices");
+        const devices = subElement(xmlTrans, "Devices");
         if (deviceData.devices.length > 0) {
             deviceData.devices.forEach(deviceObj => {
-                var device = subElement(devices, "Device");
+                const device = subElement(devices, "Device");
                 subElement(device, "Name").append(cData(deviceObj.name));
                 subElement(device, "Quantity").append(cData(deviceObj.quantity == null ? "0" : String(deviceObj.quantity)));
                 // if (deviceObj.attributes != null) {
@@ -382,13 +382,13 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
     }
 
     private HydrateBeneficialOwnerData(xmlTrans: Element, beneficialOwnerData: BeneficialOwnerData) {
-        var ownerDetails = subElement(xmlTrans, "BeneficialOwnerData");
+        const ownerDetails = subElement(xmlTrans, "BeneficialOwnerData");
         subElement(ownerDetails, "OwnerCount").text = beneficialOwnerData?.ownersCount;
 
         if (Number(beneficialOwnerData?.ownersCount) > 0) {
-            var ownersList = subElement(ownerDetails, "Owners");
+            const ownersList = subElement(ownerDetails, "Owners");
             beneficialOwnerData.ownersList.forEach(ownerInfo => {
-                var newOwner = subElement(ownersList, "Owner");
+                const newOwner = subElement(ownersList, "Owner");
                 subElement(newOwner, "FirstName").text = ownerInfo.firstName;
                 subElement(newOwner, "LastName").text = ownerInfo.lastName;
                 subElement(newOwner, "Email").text = ownerInfo.email;
@@ -424,7 +424,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
 
     private HydrateAccountRenewDetails(xmlTrans: Element, renewAccountData: RenewAccountData) {
 
-        var elementMap = {
+        const elementMap = {
             'tier': renewAccountData.tier,
             'CVV2': renewAccountData.creditCard.cvn,
             'ccNum': renewAccountData.creditCard.number,
@@ -452,8 +452,8 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
     }
 
     private HydrateDocumentUploadData(xmlTrans: Element, transType: TransactionType, docUploadData: DocumentUploadData) {
-        var docNameTag = transType == TransactionType.UploadDocumentChargeback ? "DocumentName" : "documentName";
-        var docTypeTag = transType == TransactionType.UploadDocumentChargeback ? "DocType" : "docType";
+        const docNameTag = transType == TransactionType.UploadDocumentChargeback ? "DocumentName" : "documentName";
+        const docTypeTag = transType == TransactionType.UploadDocumentChargeback ? "DocType" : "docType";
 
         subElement(xmlTrans, docNameTag).append(cData(docUploadData.documentName));
         docUploadData.transactionReference ? subElement(xmlTrans, "TransactionReference").append(cData(docUploadData.transactionReference)) : '';
@@ -486,17 +486,17 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
      }
 
      private HydrateOrderDeviceDetails(xmlTrans: Element, orderDeviceData: DeviceData) {
-        var devices = subElement(xmlTrans, "Devices");
+        const devices = subElement(xmlTrans, "Devices");
         if (orderDeviceData.devices.length > 0) {
             orderDeviceData.devices.forEach(deviceObj => {
-                var device = subElement(devices, "Device");
+                const device = subElement(devices, "Device");
                 subElement(device, "Name").append(cData(deviceObj.name));
                 subElement(device, "Quantity").append(cData(deviceObj.quantity == null ? "0" : String(deviceObj.quantity)));
                 if (deviceObj.attributes != null) {
                     if (deviceObj.attributes.length > 0) {
-                        var attributes = subElement(device, "Attributes");
+                        const attributes = subElement(device, "Attributes");
                         deviceObj.attributes.forEach(attributeInfo => {
-                            var item = subElement(attributes, "Item");
+                            const item = subElement(attributes, "Item");
                             item.set("Name", attributeInfo.name);
                             item.set("Value", attributeInfo.value);
                         })
@@ -507,7 +507,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
      }
 
     private UpdateGatewaySettings(builder: PayFacBuilder) {
-        let certTransactions: TransactionType[] = [
+        const certTransactions: TransactionType[] = [
             TransactionType.EditAccount,
             TransactionType.ObtainSSOKey,
             TransactionType.UpdateBankAccountOwnership,
@@ -520,7 +520,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
         }
     }
 
-    private createNewElements(xmlns: Element, mapping: any) {
+    private createNewElements(xmlns: Element, mapping: Record<string, string>) {
         for (const [key, value] of Object.entries(mapping)) {
             if (value != null && value != '')
                 subElement(xmlns, key).append(cData(`${value}`));
@@ -528,7 +528,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
     }
 
     private setX509Certificate(): string {
-        let x509RawData = fs.readFileSync(this.selfSignedCert);
+        const x509RawData = fs.readFileSync(this.selfSignedCert);
         return x509RawData.toString().replace(/(\r\n|\n|\r)/gm, "");
     }
 
@@ -588,13 +588,13 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
 
     public mapResponse(builder: PayFacBuilder, rawResponse: string): Transaction {
         const xmlTransaction = xml(rawResponse).find(".//XMLTrans");
-        var responseCode = xmlTransaction.findtext(".//status");
+        const responseCode = xmlTransaction.findtext(".//status");
         if (responseCode != "00" && responseCode != "66") {
             throw new Error("Unexpected Gateway Response: " + String(responseCode));
         }
 
-        var proPayResponse = this.populateProPayResponse(builder, xmlTransaction);
-        var response = new Transaction();
+        const proPayResponse = this.populateProPayResponse(builder, xmlTransaction);
+        const response = new Transaction();
         response.payFacData = proPayResponse,
             response.responseCode = responseCode
 
@@ -607,7 +607,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
             return this.populateResponseWithEnhancedAccountDetails(root);
         }
         else {
-            var responseData = new PayFacResponseData();
+            const responseData = new PayFacResponseData();
             responseData.accountNumber = this.getAccountNumberFromResponse(root);
             responseData.recAccountNum = root.findtext(".//recAccntNum");
             responseData.password = root.findtext(".//password");
@@ -641,13 +641,13 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
             responseData.aCHOut = this.getACHOutBalanceInfoFromResponse(root);
             responseData.flashFunds = this.getFlashFundsBalanceInfoFromResponse(root);
             return responseData;
-        };
+        }
     }
 
     private populateResponseWithEnhancedAccountDetails(root: Element): PayFacResponseData {
-        var responseResult = new PayFacResponseData();
+        const responseResult = new PayFacResponseData();
         responseResult.accountNumber = this.getAccountNumberFromResponse(root);
-        var personalData = new UserPersonalData();
+        const personalData = new UserPersonalData();
         personalData.sourceEmail = root.findtext(".//sourceEmail");
         personalData.firstName = root.findtext(".//firstName");
         personalData.middleInitial = root.findtext(".//middleInitial");
@@ -659,7 +659,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
         personalData.currencyCode = root.findtext(".//currencyCode");
         personalData.notificationEmail = root.findtext(".//notificati;onEmail");
         responseResult.personalData = personalData;
-        var homeAddress = new Address();
+        const homeAddress = new Address();
         homeAddress.streetAddress1 = root.findtext(".//addr");
         homeAddress.streetAddress2 = root.findtext(".//aptNum");
         homeAddress.city = root.findtext(".//city");
@@ -667,7 +667,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
         homeAddress.postalCode = root.findtext(".//postalCode");
         homeAddress.country = root.findtext(".//country");
         responseResult.homeAddress = homeAddress;
-        var mailAddress = new Address();
+        const mailAddress = new Address();
         mailAddress.streetAddress1 = root.findtext(".//mailAddr");
         mailAddress.streetAddress2 = root.findtext(".//mailApt");
         mailAddress.city = root.findtext(".//mailCity");
@@ -675,7 +675,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
         mailAddress.postalCode = root.findtext(".//mailPostalCode");
         mailAddress.country = root.findtext(".//mailCountry");
         responseResult.mailAddress = mailAddress;
-        var businessData = new BusinessData();
+        const businessData = new BusinessData();
         businessData.businessLegalName = root.findtext(".//businessLegalName");
         businessData.doingBusinessAs = root.findtext(".//doingBusinessAs");
         businessData.employerIdentificationNumber = root.findtext(".//ein");
@@ -683,7 +683,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
         businessData.averageTicket = root.findtext(".//averageTicket");
         businessData.highestTicket = root.findtext(".//highestTicket");
         responseResult.businessData = businessData;
-        var businessAddress = new Address();
+        const businessAddress = new Address();
         businessAddress.streetAddress1 = root.findtext(".//businessAddress");
         businessAddress.streetAddress2 = root.findtext(".//businessAddress2");
         businessAddress.city = root.findtext(".//businessCity");
@@ -692,7 +692,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
         businessData.businessAddress = businessAddress;
         responseResult.businessData = businessData;
 
-        var accountLimits = new AccountPermissions();
+        const accountLimits = new AccountPermissions();
         accountLimits.creditCardTransactionLimit = root.findtext(".//creditCardTransactionLimit");
         accountLimits.creditCardMonthLimit = root.findtext(".//creditCardMonthLimit");
         accountLimits.aCHPaymentSoftLimitEnabled = root.findtext(".//achPaymentSoftLimitEnabled")?.toUpperCase() == "Y" ? true : false;
@@ -709,7 +709,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
         responseResult.reserveBalance = root.findtext(".//reserveBalance");
         responseResult.accountLimits = accountLimits;
 
-        var primaryBankAccountData = new BankAccountData();
+        const primaryBankAccountData = new BankAccountData();
         primaryBankAccountData.accountCountryCode = root.findtext(".//primaryAccountCountryCode");
         primaryBankAccountData.accountType = root.findtext(".//primaryAccountType");
         primaryBankAccountData.accountOwnershipType = root.findtext(".//primaryAccountOwnershipType");
@@ -718,7 +718,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
         primaryBankAccountData.routingNumber = root.findtext(".//primaryRoutingNumber");
         responseResult.primaryBankAccountData = primaryBankAccountData;
 
-        var secondaryBankAccountData = new BankAccountData();
+        const secondaryBankAccountData = new BankAccountData();
         secondaryBankAccountData.accountCountryCode = root.findtext(".//secondaryAccountCountryCode");
         secondaryBankAccountData.accountType = root.findtext(".//secondaryAccountType");
         secondaryBankAccountData.accountOwnershipType = root.findtext(".//secondaryAccountOwnershipTy;e");
@@ -727,14 +727,14 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
         secondaryBankAccountData.routingNumber = root.findtext(".//secondaryRoutingNumber");
         responseResult.secondaryBankAccountData = secondaryBankAccountData;
 
-        var grossBillingInformation = new GrossBillingInformation();
-        var grossSettleBankData = new BankAccountData();
+        const grossBillingInformation = new GrossBillingInformation();
+        const grossSettleBankData = new BankAccountData();
         grossSettleBankData.accountHolderName = root.findtext(".//grossSettleAccountHolderName");
         grossSettleBankData.accountNumber = root.findtext(".//grossSettleAccountNumberLast4");
         grossSettleBankData.routingNumber = root.findtext(".//grossSettleRoutingNumber");
         grossSettleBankData.accountType = root.findtext(".//grossSettleAccountType");
 
-        var grossSettleAddress = new Address();
+        const grossSettleAddress = new Address();
         grossSettleAddress.streetAddress1 = root.findtext(".//grossSettleAccountAddress");
         grossSettleAddress.city = root.findtext(".//rossSettleAccountCity");
         grossSettleAddress.state = root.findtext(".//grossSettleAccountState");
@@ -758,10 +758,10 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
     }
 
     private getBeneficialOwnerDataResultsFromResponse(root: Element): Array<BeneficialOwnerDataResult> {
-        var beneficialOwnerDataResults = new Array<BeneficialOwnerDataResult>();
+        const beneficialOwnerDataResults = new Array<BeneficialOwnerDataResult>();
         if (root.find("beneficialOwnerDataResult")) {
             root.findall("Owner").forEach(owner => {
-                var beneficialOwner = new BeneficialOwnerDataResult();
+                const beneficialOwner = new BeneficialOwnerDataResult();
                 beneficialOwner.firstName = owner.findtext(".//FirstName");
                 beneficialOwner.lastName = owner.findtext(".//LastName");
                 beneficialOwner.status = owner.findtext(".//Status");
@@ -772,7 +772,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
     }
 
     private getPhysicalAddressFromResponse(root: Element): Address {
-        var addr = new Address();
+        const addr = new Address();
         if (root.find("addr") || root.find("city") || root.find("state") || root.find("zip")) {
             addr.streetAddress1 = root.findtext(".//addr"),
                 addr.city = root.findtext(".//city"),
@@ -783,7 +783,7 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
     }
 
     private getACHOutBalanceInfoFromResponse(root: Element): AccountBalanceResponseData {
-        var balanceResponse = new AccountBalanceResponseData();
+        const balanceResponse = new AccountBalanceResponseData();
         if (root.find("achOut")) {
             balanceResponse.enabled = root.findtext(".//enabled"),
                 balanceResponse.limitRemaining = root.findtext(".//limitRemaining"),
@@ -791,11 +791,11 @@ export class ProPayConnector extends XmlGateway implements IPayFacProvider {
                 balanceResponse.feeType = root.findtext(".//feeType"),
                 balanceResponse.accountLastFour = root.findtext(".//accountLastFour")
         }
-        return balanceResponse;;
+        return balanceResponse;
     }
 
     private getFlashFundsBalanceInfoFromResponse(root: Element): AccountBalanceResponseData {
-        var balanceResponse = new AccountBalanceResponseData();
+        const balanceResponse = new AccountBalanceResponseData();
         if (root.find("flashFunds")) {
             balanceResponse.enabled = root.findtext(".//enabled"),
                 balanceResponse.limitRemaining = root.findtext(".//limitRemaining"),

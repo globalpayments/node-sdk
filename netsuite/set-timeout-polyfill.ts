@@ -22,7 +22,7 @@ if (typeof exports !== "undefined") {
   }
 }
 
-let P = local.Promise;
+const P = local.Promise;
 
 if (P) {
   let promiseToString: string | null = null;

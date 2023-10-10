@@ -8,7 +8,7 @@ import {
 const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w";
 
-test.before((_t) => {
+test.before(() => {
   ServicesContainer.configureService(config);
 });
 

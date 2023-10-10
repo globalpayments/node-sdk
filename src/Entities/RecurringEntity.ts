@@ -91,8 +91,8 @@ export class RecurringEntity<TResult extends IRecurringEntity>
   /// </summary>
   /// <param name="force">Indicates if the deletion should be forced</summary>
   /// <exception cref="ApiException">Thrown when the record cannot be deleted.</exception>
-  public delete(configName: string = "default", force = false) {
-    return RecurringService.delete((this as any) as TResult, configName, force);
+  public delete(configName: string = "default") {
+    return RecurringService.delete((this as any) as TResult, configName);
   }
 
   /// <summary>

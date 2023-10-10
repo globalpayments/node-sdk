@@ -33,7 +33,7 @@ let mastercardToken = "";
 let discoverToken = "";
 let amexToken = "";
 
-ava.before((_t) => {
+ava.before(() => {
   ServicesContainer.configureService(config);
 });
 
@@ -561,7 +561,7 @@ test("017 - authorization discover", (t) => {
         t.is(response.responseCode, "00");
         return response;
       })
-      .then((_response) => {
+      .then(() => {
         // test 017b Capture/AddToBatch
         // do not capture
         resolve();

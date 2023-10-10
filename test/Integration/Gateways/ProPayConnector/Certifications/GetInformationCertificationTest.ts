@@ -11,13 +11,13 @@ config.certificationStr = "d17d770d4734341aaedab32b7a7763";
 config.terminalId = "7a7763";
 const _service = new PayFacService();
 
-test.before((_t) => {
+test.before(() => {
   ServicesContainer.configureService(config);
 });
 
 test("get account info", async (t) => {
   t.plan(2);
-  var response = await _service.getAccountDetails()
+  const response = await _service.getAccountDetails()
     .withAccountNumber("718570752")
     .execute();
 
@@ -27,7 +27,7 @@ test("get account info", async (t) => {
 
 test("get account balance", async (t) => {
   t.plan(2);
-  var response = await _service.getAccountBalance()
+  const response = await _service.getAccountBalance()
     .withAccountNumber("718570752")
     .execute();
 
@@ -37,7 +37,7 @@ test("get account balance", async (t) => {
 
 test("get account info enchance", async (t) => {
   t.plan(2);
-  var response = await _service.getAccountDetailsEnhanced()
+  const response = await _service.getAccountDetailsEnhanced()
     .withAccountNumber("718570752")
     .execute();
 

@@ -20,9 +20,9 @@ export class DocumentUploadData {
     public documentPath: string;
 
     DocumentPath(value: string) { 
-        var docPath = value;
+        const docPath = value;
         if (docPath != null) {
-                var documentType = docPath.substring(docPath.lastIndexOf('.') + 1);
+                const documentType = docPath.substring(docPath.lastIndexOf('.') + 1);
                 if (this._validDocTypes.includes(documentType)) {
                     this.docType = documentType;
                     this.document = String(this.getByteArray(docPath));
@@ -38,9 +38,9 @@ export class DocumentUploadData {
 
     
     private getByteArray(filePath: string){
-        let fileData = fs.readFileSync(filePath);
-        let buff = Buffer.from(fileData);
-        let base64data = buff.toString('base64');
+        const fileData = fs.readFileSync(filePath);
+        const buff = Buffer.from(fileData);
+        const base64data = buff.toString('base64');
         return base64data;
     }
 

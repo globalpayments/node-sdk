@@ -108,7 +108,7 @@ function core_sha1(x: number[], len: number): number[] {
     d = safe_add(d, oldd);
     e = safe_add(e, olde);
   }
-  return Array(a, b, c, d, e);
+  return [a, b, c, d, e];
 }
 
 /*
@@ -182,7 +182,7 @@ function rol(num: number, cnt: number): number {
  * In 8-bit function, characters >255 have their hi-byte silently ignored.
  */
 function str2binb(str: string): number[] {
-  const bin = Array();
+  const bin: number[] = [];
   const mask = (1 << chrsz) - 1;
   for (let i = 0; i < str.length * chrsz; i += chrsz) {
     bin[i >> 5] |= (str.charCodeAt(i / chrsz) & mask) << (32 - chrsz - i % 32);

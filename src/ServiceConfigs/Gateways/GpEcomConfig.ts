@@ -11,7 +11,6 @@ import { HostedPaymentConfig } from "../../../src";
 import { ConfiguredServices } from "../../../src/ConfiguredServices";
 
 export class GpEcomConfig extends GatewayConfig {
-    public _gatewayProvider: GatewayProvider;
 
     public accountId: string;
     public merchantId: string;

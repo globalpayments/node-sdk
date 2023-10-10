@@ -15,7 +15,7 @@ export abstract class GpEcomRequestBuilder {
       for (const key of Object.keys(supplementaryData)) {
         const item = subElement(supplementaryDataElem, "item", {type: key});
         
-        let items: string[] = !Array.isArray(supplementaryData[key])
+        const items: string[] = !Array.isArray(supplementaryData[key])
           ? (<string>supplementaryData[key]).split(" ")
           : <string[]>supplementaryData[key];
 

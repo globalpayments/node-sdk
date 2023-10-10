@@ -42,7 +42,7 @@ const todayDate = GenerationUtils.generateTimestamp();
 const getIdentifier = (id: string) =>
   `${todayDate}-${id}-${StringUtils.uuid()}`.substr(0, 50);
 
-ava.before((_t) => {
+ava.before(() => {
   ServicesContainer.configureService(config);
 });
 
@@ -75,7 +75,7 @@ test.before("000 - cleanup", async () => {
     for (const result in results) {
       if (results.hasOwnProperty(result)) {
         const schedule: Schedule = (results as any)[result];
-        await schedule.delete("default", true);
+        await schedule.delete("default");
       }
     }
   } catch (_e) {
@@ -87,7 +87,7 @@ test.before("000 - cleanup", async () => {
     for (const result in results) {
       if (results.hasOwnProperty(result)) {
         const paymentMethod: RecurringPaymentMethod = (results as any)[result];
-        await paymentMethod.delete("default", true);
+        await paymentMethod.delete("default");
       }
     }
   } catch (_e) {
@@ -99,7 +99,7 @@ test.before("000 - cleanup", async () => {
     for (const result in results) {
       if (results.hasOwnProperty(result)) {
         const customer: Customer = (results as any)[result];
-        await customer.delete("default", true);
+        await customer.delete("default");
       }
     }
   } catch (_e) {

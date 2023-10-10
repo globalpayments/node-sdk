@@ -10,7 +10,7 @@ const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MTeSAQAfG1UA9qQDrzl-kz4toXvARyieptFwSKP24w";
 config.serviceUrl = "https://cert.api2-c.heartlandportico.com";
 
-test.before((_t) => {
+test.before(() => {
   ServicesContainer.configureService(config);
 });
 
@@ -19,10 +19,10 @@ test("report transaction details no transaction id", (t) => {
 
   const error = t.throws(() => {
     return ReportingService.transactionDetail("").execute();
-  }, BuilderError);
+  }, {instanceOf: BuilderError});
 
-  t.is(error.name, "BuilderError");
-  t.true(-1 !== error.message.indexOf("transactionId cannot be empty"));
+  t.is(error?.name, "BuilderError");
+  t.true(-1 !== error?.message.indexOf("transactionId cannot be empty"));
 });
 
 test("report transaction details with device id", async (t) => {
@@ -32,10 +32,10 @@ test("report transaction details with device id", async (t) => {
     return ReportingService.transactionDetail("1234567890")
       .withDeviceId("123456")
       .execute();
-  }, BuilderError);
+  }, {instanceOf: BuilderError});
 
-  t.is(error.name, "BuilderError");
-  t.true(-1 !== error.message.indexOf("deviceId cannot be set"));
+  t.is(error?.name, "BuilderError");
+  t.true(-1 !== error?.message.indexOf("deviceId cannot be set"));
 });
 
 test("report transaction details with start date", async (t) => {
@@ -45,10 +45,10 @@ test("report transaction details with start date", async (t) => {
     return ReportingService.transactionDetail("1234567890")
       .withStartDate(new Date())
       .execute();
-  }, BuilderError);
+  }, {instanceOf: BuilderError});
 
-  t.is(error.name, "BuilderError");
-  t.true(-1 !== error.message.indexOf("startDate cannot be set"));
+  t.is(error?.name, "BuilderError");
+  t.true(-1 !== error?.message.indexOf("startDate cannot be set"));
 });
 
 test("report transaction details with end date", async (t) => {
@@ -58,10 +58,10 @@ test("report transaction details with end date", async (t) => {
     return ReportingService.transactionDetail("1234567890")
       .withEndDate(new Date())
       .execute();
-  }, BuilderError);
+  }, {instanceOf: BuilderError});
 
-  t.is(error.name, "BuilderError");
-  t.true(-1 !== error.message.indexOf("endDate cannot be set"));
+  t.is(error?.name, "BuilderError");
+  t.true(-1 !== error?.message.indexOf("endDate cannot be set"));
 });
 
 test("report activity with transaction id", async (t) => {
@@ -71,8 +71,8 @@ test("report activity with transaction id", async (t) => {
     return ReportingService.activity()
       .withTransactionId("1234567890")
       .execute();
-  }, BuilderError);
+  }, {instanceOf: BuilderError});
 
-  t.is(error.name, "BuilderError");
-  t.true(-1 !== error.message.indexOf("transactionId cannot be set"));
+  t.is(error?.name, "BuilderError");
+  t.true(-1 !== error?.message.indexOf("transactionId cannot be set"));
 });

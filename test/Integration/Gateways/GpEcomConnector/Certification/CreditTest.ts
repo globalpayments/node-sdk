@@ -760,15 +760,15 @@ test("JAVA_Credit_013b", async (t) => {
   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .refund(1)
       .withCurrency("EUR")
       .withDescription("JAVA-Credit")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Credit_013c", async (t) => {
@@ -787,15 +787,15 @@ test("JAVA_Credit_013c", async (t) => {
   // tslint:enable:max-line-length
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .refund(1)
       .withCurrency("EUR")
       .withDescription("JAVA-Credit")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Credit_014a", async (t) => {
@@ -875,15 +875,15 @@ test("JAVA_Credit_014d", async (t) => {
   card.cardHolderName = "Peter Watermelon";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .refund(1)
       .withCurrency("EUR")
       .withDescription("JAVA-Credit")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Credit_015a", async (t) => {
@@ -1031,15 +1031,15 @@ test("JAVA_Credit_017c", async (t) => {
   card.cardHolderName = "Peter Watermelon";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .refund(1)
       .withCurrency("EUR")
       .withDescription("JAVA-Credit")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Credit_017d", async (t) => {
@@ -1077,15 +1077,15 @@ test("JAVA_Credit_017f", async (t) => {
   card.cardHolderName = "Peter Watermelon";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .refund(1)
       .withCurrency("EUR")
       .withDescription("JAVA-Credit")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Credit_017g", async (t) => {
@@ -1101,15 +1101,15 @@ test("JAVA_Credit_017g", async (t) => {
   card.cardHolderName = "Peter Watermelon";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .refund(1)
       .withCurrency("EUR")
       .withDescription("JAVA-Credit")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Credit_018a", async (t) => {
@@ -1314,15 +1314,15 @@ test("JAVA_Credit_020b", async (t) => {
   card.cardHolderName = "Peter Watermelon";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .refund(1)
       .withCurrency("EUR")
       .withDescription("JAVA-Credit")
       .execute("withSecreto"),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Credit_021a", async (t) => {
@@ -1347,7 +1347,7 @@ test("JAVA_Credit_021a", async (t) => {
   t.is("00", response.responseCode);
 });
 
-test.skip("JAVA_Credit_021b", async (t) => {
+test("JAVA_Credit_021b", async (t) => {
   t.plan(2);
 
   // create card
@@ -1389,9 +1389,9 @@ test("JAVA_Credit_021c", async (t) => {
         .withCurrency("EUR")
         .withDescription("JAVA-Credit")
         .execute(),
-    BuilderError,
+    {instanceOf: BuilderError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Credit_021d", async (t) => {
@@ -1414,9 +1414,9 @@ test("JAVA_Credit_021d", async (t) => {
         .withCurrency("EUR")
         .withDescription("JAVA-Credit")
         .execute(),
-    BuilderError,
+    {instanceOf: BuilderError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Credit_021e", async (t) => {
@@ -1461,9 +1461,9 @@ test("JAVA_Credit_021f", async (t) => {
         .withCurrency("EUR")
         .withDescription("JAVA-Credit")
         .execute(),
-    BuilderError,
+    {instanceOf: BuilderError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Credit_022a", async (t) => {
@@ -1501,15 +1501,15 @@ test("JAVA_Credit_022b", async (t) => {
   card.cardHolderName = "Peter Watermelon";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .refund(1)
       .withCurrency("EURO")
       .withDescription("JAVA-Credit")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Credit_022c", async (t) => {
@@ -1525,15 +1525,15 @@ test("JAVA_Credit_022c", async (t) => {
   card.cardHolderName = "Peter Watermelon";
 
   // request
-  const error = await t.throws(
-    card
+  const error = await t.throwsAsync(
+    async () => await card
       .refund(1)
       .withCurrency("EU#")
       .withDescription("JAVA-Credit")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Credit_022d", async (t) => {
@@ -1555,7 +1555,7 @@ test("JAVA_Credit_022d", async (t) => {
         .refund(1)
         .withDescription("JAVA-Credit")
         .execute(),
-    BuilderError,
+    {instanceOf: BuilderError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });

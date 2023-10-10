@@ -37,7 +37,7 @@ check.phoneNumber = "8003214567";
 check.birthYear = "1997";
 check.ssnLast4 = "4321";
 
-ava.before((_t) => {
+ava.before(() => {
   ServicesContainer.configureService(config);
 });
 

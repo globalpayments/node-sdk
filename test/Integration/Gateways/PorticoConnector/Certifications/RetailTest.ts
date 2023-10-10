@@ -28,7 +28,7 @@ let masterCardToken = "";
 let discoverToken = "";
 let amexToken = "";
 
-ava.before((_t) => {
+ava.before(() => {
   ServicesContainer.configureService(config);
 });
 
@@ -1882,33 +1882,33 @@ test("057a - return mastercard swipe", (t) => {
     });
 });
 
-test("058 - return jcb transaction id", (_t) => {
+test("058 - return jcb transaction id", () => {
   // see test 14
 });
 
 /// ONLINE VOID / REVERSAL (Required)
 
-test("059 - reversal visa", (_t) => {
+test("059 - reversal visa", () => {
   // see test 10
 });
 
-test("060 - reversal mastercard", (_t) => {
+test("060 - reversal mastercard", () => {
   // see test case 17
 });
 
-test("061 - reversal mastercard", (_t) => {
+test("061 - reversal mastercard", () => {
   // see test case 23
 });
 
-test("062 - reversal mastercard", (_t) => {
+test("062 - reversal mastercard", () => {
   // see test case 42
 });
 
-test("063 - reversal visa partial", (_t) => {
+test("063 - reversal visa partial", () => {
   // see test case 15
 });
 
-test("064 - reversal discover partial", (_t) => {
+test("064 - reversal discover partial", () => {
   // see test 21
 });
 
@@ -1951,7 +1951,7 @@ test("066 - debit sale mastercard swipe", (t) => {
       t.is(response.responseCode, "00");
       return response;
     })
-    .then((_response) => {
+    .then(() => {
       // test case 71
       return (
         card
@@ -2048,7 +2048,7 @@ test("069 - debit sale visa partial approval", (t) => {
       t.is(response.authorizedAmount, "33.00");
       return response;
     })
-    .then((_response) => {
+    .then(() => {
       // test case 72
       return (
         card
@@ -2102,7 +2102,7 @@ test("070a - debit return visa swipe", (t) => {
       t.is(response.responseCode, "00");
       return response;
     })
-    .then((_response) => {
+    .then(() => {
       return (
         card
           .reverse(14.08)
@@ -2118,11 +2118,11 @@ test("070a - debit return visa swipe", (t) => {
 
 /// REVERSAL
 
-test("071 - debit reversal mastercard", (_t) => {
+test("071 - debit reversal mastercard", () => {
   // see test case 66
 });
 
-test("072 - debit reversal visa", (_t) => {
+test("072 - debit reversal visa", () => {
   // see test case 96
 });
 
@@ -2642,13 +2642,13 @@ test("106 - sale gift 2 reversal manual", (t) => {
 
 /// VOID
 
-test("107 - void gift", (_t) => {
+test("107 - void gift", () => {
   // see test case 105
 });
 
 /// REVERSAL
 
-test("108 - reversal gift", (_t) => {
+test("108 - reversal gift", () => {
   // see test case 106
 });
 
@@ -2670,7 +2670,7 @@ test("109 - deactivate gift 1", (t) => {
 
 /// RECEIPTS MESSAGING
 
-test("110 - receipts messaging", (_t) => {
+test("110 - receipts messaging", () => {
   /// PRINT AND SCAN RECEIPT FOR TEST 107
 });
 

@@ -28,7 +28,7 @@ track.value =
 track.encryptionData = new EncryptionData();
 track.encryptionData.version = "01";
 
-test.before((_t) => {
+test.before(() => {
   ServicesContainer.configureService(config);
 });
 

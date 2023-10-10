@@ -1,4 +1,4 @@
-import { GatewayConfig } from "../../src/ServiceConfigs";
+import { GpEcomConfig } from "../../src/ServiceConfigs";
 
 import {
   ApiError,
@@ -13,9 +13,9 @@ import {
 } from "../";
 
 export class HostedService {
-  protected config: GatewayConfig;
+  protected config: GpEcomConfig;
 
-  constructor(config: GatewayConfig, configName: string = 'default') {
+  constructor(config: GpEcomConfig, configName: string = 'default') {
     this.config = config;
     ServicesContainer.configureService(config, configName);
   }
@@ -55,7 +55,6 @@ export class HostedService {
         transactionId,
         authCode,
       ].join("."),
-      // @ts-ignore
       this.config.sharedSecret,
     );
 

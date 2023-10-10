@@ -19,7 +19,7 @@ const track = new GiftCard();
 track.trackData =
   "%B5022440000000000098^^391200081613?;5022440000000000098=391200081613?";
 
-ava.before((_t) => {
+ava.before(() => {
   ServicesContainer.configureService(config);
 });
 

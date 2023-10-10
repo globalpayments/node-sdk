@@ -97,7 +97,7 @@ export class GpEcomManagementRequestBuilder extends GpEcomRequestBuilder impleme
         );
         
         if (builder.transactionType == TransactionType.Confirm) {
-          let paymentMethodDetails = subElement(request, "paymentmethoddetails");
+          const paymentMethodDetails = subElement(request, "paymentmethoddetails");
           const apmResponse = builder.paymentMethod.alternativePaymentResponse;
           if (builder.alternativePaymentType == AlternativePaymentType.Paypal && apmResponse) {
             subElement(paymentMethodDetails, "Token").append(cData(apmResponse.sessionToken));  

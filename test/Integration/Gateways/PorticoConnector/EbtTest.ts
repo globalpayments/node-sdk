@@ -30,7 +30,7 @@ track.pinBlock = "32539F50C245A6A93D123412324000AA";
 track.encryptionData = new EncryptionData();
 track.encryptionData.version = "01";
 
-ava.before((_t) => {
+ava.before(() => {
   ServicesContainer.configureService(config);
 });
 
@@ -100,14 +100,14 @@ test("ebt track refund", async (t) => {
   t.is(response.responseCode, "00", response.responseMessage);
 });
 
-test("ebt refund fails from transaction id only", (t) => {
+test("ebt refund fails from transaction id only", async (t) => {
   t.plan(2);
 
-  const error = t.throws(() => {
-     Transaction.fromId("1234567890", PaymentMethodType.EBT)
+  const error = await t.throwsAsync(async () => {
+     await Transaction.fromId("1234567890", PaymentMethodType.EBT)
       .refund()
       .execute();
-  }, ApiError);
+  }, {instanceOf: ApiError});
 
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });

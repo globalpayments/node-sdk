@@ -15,7 +15,7 @@ export class RecurringBuilder<
     this.searchCriteria = {};
     if (entity) {
       this.entity = entity;
-      this.key = (entity as any).key;
+      this.key = (entity as unknown as IRecurringEntity).key;
     }
   }
 

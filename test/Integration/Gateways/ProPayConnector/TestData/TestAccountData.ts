@@ -18,7 +18,7 @@ import { OrderDevice } from "../../../../../src/Entities/ProFac/OrderDevice";
 
 export class TestAccountData {
     public static GetBankAccountData(): BankAccountData {
-        var bankAccountInformation = new BankAccountData();
+        const bankAccountInformation = new BankAccountData();
         bankAccountInformation.accountCountryCode = "USA";
         bankAccountInformation.accountName = "MyBankAccount";
         bankAccountInformation.accountNumber = "123456789";
@@ -28,7 +28,7 @@ export class TestAccountData {
     }
 
     public static GetOrderNewDeviceData(): OrderDevice {
-        var orderDevice = new OrderDevice();
+        const orderDevice = new OrderDevice();
         orderDevice.accountNum = 718581359;
         orderDevice.shipTo = "Test Company";
         orderDevice.shipToContact = "John Q. Public";
@@ -47,19 +47,19 @@ export class TestAccountData {
     }
     
     public static GetDeviceDataForOrderDevice(numDeviceTypes: number = 1, withAttributes: boolean = true): DeviceData {
-        var deviceTypes: Array<string> =  ["Secure Submit"];
+        const deviceTypes: Array<string> =  ["Secure Submit"];
 
-        var deviceData = new DeviceData();
+        const deviceData = new DeviceData();
         deviceData.devices = Array<DeviceInfo>();
 
         for (let i = 0; i < numDeviceTypes; i++) {
-            var deviceInfo = new DeviceInfo();
+            const deviceInfo = new DeviceInfo();
             if (i >= deviceTypes.length)
                 break;
             deviceInfo.name = deviceTypes[i];
             deviceInfo.quantity = 1;
             if (withAttributes) {
-                var deviceAtrributeInfo = new DeviceAttributeInfo();
+                const deviceAtrributeInfo = new DeviceAttributeInfo();
                 deviceAtrributeInfo.name = "Heartland.AMD.OfficeKey",
                     deviceAtrributeInfo.value = "123456"
                 deviceInfo.attributes = [deviceAtrributeInfo];
@@ -70,7 +70,7 @@ export class TestAccountData {
     }
 
     public static GetBusinessData(): BusinessData {
-        var businessData = new BusinessData();
+        const businessData = new BusinessData();
         businessData.businessLegalName = "Twain Enterprises";
         businessData.doingBusinessAs = "Twain Enterprises";
         businessData.employerIdentificationNumber = String(this.getRandomInt(100000000, 999999999));
@@ -81,7 +81,7 @@ export class TestAccountData {
         businessData.averageTicket = "100";
         businessData.highestTicket = "300";
         businessData.businessType = "D";
-        var businessAddress = new Address();
+        const businessAddress = new Address();
         businessAddress.streetAddress1 = "123 Main St.";
         businessAddress.city = "Downtown";
         businessAddress.state = "NJ";
@@ -92,7 +92,7 @@ export class TestAccountData {
     }
 
     public static GetUserPersonalData(): UserPersonalData {
-        var accountPersonalInformation = new UserPersonalData();
+        const accountPersonalInformation = new UserPersonalData();
         accountPersonalInformation.dayPhone = "4464464464";
         accountPersonalInformation.eveningPhone = "4464464464";
         accountPersonalInformation.externalID = String(this.getRandomInt(1000000, 999999999));
@@ -110,7 +110,7 @@ export class TestAccountData {
         accountPersonalInformation.termsAcceptanceTimeStamp = '2022-10-27 12:57:08.2021237';
         accountPersonalInformation.termsVersion = 1;
 
-        var userAddress = new Address();
+        const userAddress = new Address();
         userAddress.streetAddress1 = "123 Main St.";
         userAddress.city = "Downtown";
         userAddress.state = "NJ";
@@ -118,7 +118,7 @@ export class TestAccountData {
         userAddress.country = "USA";
         accountPersonalInformation.userAddress = userAddress;
 
-        var mailingAddress = new Address();
+        const mailingAddress = new Address();
         mailingAddress.streetAddress1 = "123 Main St.";
         mailingAddress.city = "Downtown";
         mailingAddress.state = "NJ";
@@ -129,7 +129,7 @@ export class TestAccountData {
     }
 
     public static GetThreatRiskData(): ThreatRiskData {
-        var threatRiskData = new ThreatRiskData();
+        const threatRiskData = new ThreatRiskData();
         threatRiskData.merchantSourceIP = "8.8.8.8";
         threatRiskData.threatMetrixPolicy = "Default";
         threatRiskData.threatMetrixSessionID = "dad889c1-1ca4-4fq71-8f6f-807eb4408bc7";
@@ -137,7 +137,7 @@ export class TestAccountData {
     }
 
     public static GetSignificantOwnerData(): SignificantOwnerData {
-        var significantOwnerData = new SignificantOwnerData();
+        const significantOwnerData = new SignificantOwnerData();
         significantOwnerData.authorizedSignerFirstName = "John";
         significantOwnerData.authorizedSignerLastName = "Doe";
         significantOwnerData.authorizedSignerTitle = "Director";
@@ -147,16 +147,16 @@ export class TestAccountData {
     }
 
     public static GetBeneficialOwnerData(): BeneficialOwnerData {
-        var ownersInformation = new BeneficialOwnerData();
+        const ownersInformation = new BeneficialOwnerData();
         ownersInformation.ownersCount = "2";
-        var firstOwner = new OwnersData();
+        const firstOwner = new OwnersData();
         firstOwner.firstName = "First1";
         firstOwner.lastName = "Last1";
         firstOwner.title = "CEO";
         firstOwner.email = "abc@qamail.com";
         firstOwner.DateOfBirth = "11-11-1988";
         firstOwner.sSN = "123545677";
-        var firstOwnerAddress = new Address();
+        const firstOwnerAddress = new Address();
         firstOwnerAddress.streetAddress1 = "123 Main St.";
         firstOwnerAddress.city = "Downtown";
         firstOwnerAddress.state = "NJ";
@@ -165,14 +165,14 @@ export class TestAccountData {
         firstOwner.ownerAddress = firstOwnerAddress;
 
         //Second Owner
-        var secondOwner = new OwnersData();
+        const secondOwner = new OwnersData();
         secondOwner.firstName = "First4";
         secondOwner.lastName = "Last4";
         secondOwner.title = "Director";
         secondOwner.email = "abc1@qamail.com";
         secondOwner.DateOfBirth = "11-11-1989";
         secondOwner.sSN = "123545677";
-        var secondOwnerAddress = new Address();
+        const secondOwnerAddress = new Address();
         secondOwnerAddress.streetAddress1 = "123 Main St.";
         secondOwnerAddress.city = "Downtown";
         secondOwnerAddress.state = "NJ";
@@ -185,7 +185,7 @@ export class TestAccountData {
     }
 
     public static GetCreditCardData(): CreditCardData {
-        var card = new CreditCardData();
+        const card = new CreditCardData();
         card.number = "4111111111111111";
         card.expMonth = "12";
         card.expYear = "2025";
@@ -195,7 +195,7 @@ export class TestAccountData {
     }
 
     public static GetACHData(): BankAccountData {
-        var bankAccountInformation = new BankAccountData();
+        const bankAccountInformation = new BankAccountData();
         bankAccountInformation.accountNumber = "123456789";
         bankAccountInformation.accountType = "C";
         bankAccountInformation.routingNumber = "102000076";
@@ -203,7 +203,7 @@ export class TestAccountData {
     }
 
     public static GetMailingAddress(): Address {
-        var address = new Address();
+        const address = new Address();
         address.streetAddress1 = "123 Main St.";
         address.city = "Downtown";
         address.state = "NJ";
@@ -213,7 +213,7 @@ export class TestAccountData {
     }
 
     public static GetSecondaryBankAccountData(): BankAccountData {
-        var bankAccountInformation = new BankAccountData();
+        const bankAccountInformation = new BankAccountData();
         bankAccountInformation.accountCountryCode = "USA",
             bankAccountInformation.accountName = "MyBankAccount",
             bankAccountInformation.accountNumber = "123456788",
@@ -225,8 +225,8 @@ export class TestAccountData {
     }
 
     public static GetGrossBillingSettleData(): GrossBillingInformation {
-        var grossBillingInformation = new GrossBillingInformation();
-        var grossSettleBankData = new BankAccountData();
+        const grossBillingInformation = new GrossBillingInformation();
+        const grossSettleBankData = new BankAccountData();
         grossSettleBankData.accountCountryCode = "USA";
         grossSettleBankData.accountName = "MyBankAccount";
         grossSettleBankData.accountNumber = "123456788";
@@ -235,14 +235,14 @@ export class TestAccountData {
         grossSettleBankData.routingNumber = "102000076";
         grossSettleBankData.accountHolderName = "John";
         grossBillingInformation.grossSettleBankData = grossSettleBankData;
-        var grossSettleAddress = new Address();
+        const grossSettleAddress = new Address();
         grossSettleAddress.streetAddress1 = "123 Main St.";
         grossSettleAddress.city = "Downtown";
         grossSettleAddress.state = "NJ";
         grossSettleAddress.postalCode = "12345";
         grossSettleAddress.country = "USA";
         grossBillingInformation.grossSettleAddress = grossSettleAddress;
-        var grossSettleCreditCardData = new CreditCardData();
+        const grossSettleCreditCardData = new CreditCardData();
         grossSettleCreditCardData.number = "4111111111111111";
         grossSettleCreditCardData.expMonth = "12";
         grossSettleCreditCardData.expYear = "2025";
@@ -253,13 +253,13 @@ export class TestAccountData {
     }
 
     public static GetAccountPermissions(): AccountPermissions {
-        var accountPermissions = new AccountPermissions();
+        const accountPermissions = new AccountPermissions();
         accountPermissions.cCProcessing = true;
         return accountPermissions;
     }
 
     public static GetRenewAccountDetails(): RenewAccountData {
-        var renewAccountData = new RenewAccountData();
+        const renewAccountData = new RenewAccountData();
         renewAccountData.tier = "TestEIN";
         renewAccountData.zipCode = "12345";
         renewAccountData.creditCard = new CreditCardData();
@@ -274,19 +274,19 @@ export class TestAccountData {
     }
 
     public static GetDeviceData(numDeviceTypes: number = 1, withAttributes: boolean = true): DeviceData {
-        var deviceTypes: Array<string> = ["PAX S500", "Secure Submit"];
+        const deviceTypes: Array<string> = ["PAX S500", "Secure Submit"];
 
-        var deviceData = new DeviceData();
+        const deviceData = new DeviceData();
         deviceData.devices = Array<DeviceInfo>();
 
         for (let i = 0; i < numDeviceTypes; i++) {
-            var deviceInfo = new DeviceInfo();
+            const deviceInfo = new DeviceInfo();
             if (i >= deviceTypes.length)
                 break;
             deviceInfo.name = deviceTypes[i];
             deviceInfo.quantity = 1;
             if (withAttributes) {
-                var deviceAtrributeInfo = new DeviceAttributeInfo();
+                const deviceAtrributeInfo = new DeviceAttributeInfo();
                 deviceAtrributeInfo.name = "Heartland.AMD.OfficeKey",
                     deviceAtrributeInfo.value = "123456"
                 deviceInfo.attributes = [deviceAtrributeInfo];
@@ -301,9 +301,9 @@ export class TestAccountData {
     }
 
     private static getByteArray(filePath: string) {
-        let fileData = fs.readFileSync(filePath);
-        let buff = Buffer.from(fileData);
-        let base64data = buff.toString('base64');
+        const fileData = fs.readFileSync(filePath);
+        const buff = Buffer.from(fileData);
+        const base64data = buff.toString('base64');
         return base64data;
     }
 

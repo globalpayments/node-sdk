@@ -40,7 +40,6 @@ test.beforeEach(async () => {
   await throttle();
 });
 
-// TODO
 test.skip("JAVA_Hold_Sample", async (t) => {
   t.plan(4);
 
@@ -500,10 +499,10 @@ test.skip("JAVA_Hold_007c", async (t) => {
   t.is("00", response.responseCode);
 });
 
-test.skip("JAVA_Hold_007d", async (t) => {
+test("JAVA_Hold_007d", async (t) => {
   t.plan(2);
 
-  const saleResponse = Transaction.fromId(undefined as any);
+  const saleResponse = Transaction.fromId(undefined as unknown as string);
 
   // request
   const error = t.throws(
@@ -512,15 +511,15 @@ test.skip("JAVA_Hold_007d", async (t) => {
         .hold()
         .withReasonCode(ReasonCode.Fraud)
         .execute("withoutChannel"),
-    BuilderError,
+    {instanceOf: BuilderError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
-test.skip("JAVA_Hold_007e", async (t) => {
+test("JAVA_Hold_007e", async (t) => {
   t.plan(2);
 
-  const saleResponse = Transaction.fromId(undefined as any);
+  const saleResponse = Transaction.fromId(undefined as unknown as string);
 
   // request
   const error = t.throws(
@@ -529,9 +528,9 @@ test.skip("JAVA_Hold_007e", async (t) => {
         .hold()
         .withReasonCode(ReasonCode.Fraud)
         .execute("withoutChannel"),
-    BuilderError,
+    {instanceOf: BuilderError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test.skip("JAVA_Hold_008a", async (t) => {
@@ -595,10 +594,10 @@ test.skip("JAVA_Hold_008b", async (t) => {
   t.is("00", response.responseCode);
 });
 
-test.skip("JAVA_Hold_008c", async (t) => {
+test("JAVA_Hold_008c", async (t) => {
   t.plan(2);
   
-  const saleResponse = Transaction.fromId(undefined as any);
+  const saleResponse = Transaction.fromId(undefined as unknown as string);
 
   // request
   const error = t.throws(
@@ -607,15 +606,15 @@ test.skip("JAVA_Hold_008c", async (t) => {
         .hold()
         .withReasonCode(ReasonCode.Fraud)
         .execute("withoutChannel"),
-    BuilderError,
+    {instanceOf: BuilderError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
-test.skip("JAVA_Hold_008d", async (t) => {
+test("JAVA_Hold_008d", async (t) => {
   t.plan(2);
 
-  const saleResponse = Transaction.fromId(undefined as any);
+  const saleResponse = Transaction.fromId(undefined as unknown as string);
 
   // request
   const error = t.throws(
@@ -624,15 +623,15 @@ test.skip("JAVA_Hold_008d", async (t) => {
         .hold()
         .withReasonCode(ReasonCode.Fraud)
         .execute("withoutChannel"),
-    BuilderError,
+    {instanceOf: BuilderError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
-test.skip("JAVA_Hold_008e", async (t) => {
+test("JAVA_Hold_008e", async (t) => {
   t.plan(2);
 
-  const saleResponse = Transaction.fromId(undefined as any);
+  const saleResponse = Transaction.fromId(undefined as unknown as string);
 
   // request
   const error = t.throws(
@@ -641,9 +640,9 @@ test.skip("JAVA_Hold_008e", async (t) => {
         .hold()
         .withReasonCode(ReasonCode.Fraud)
         .execute("withoutChannel"),
-    BuilderError,
+    {instanceOf: BuilderError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test.skip("JAVA_Hold_009c", async (t) => {
@@ -677,10 +676,10 @@ test.skip("JAVA_Hold_009c", async (t) => {
   t.is("00", response.responseCode);
 });
 
-test.skip("JAVA_Hold_009d", async (t) => {
+test("JAVA_Hold_009d", async (t) => {
   t.plan(2);
 
-  const saleResponse = Transaction.fromId(undefined as any);
+  const saleResponse = Transaction.fromId(undefined as unknown as string);
 
   // request
   const error = t.throws(
@@ -690,15 +689,15 @@ test.skip("JAVA_Hold_009d", async (t) => {
         .withReasonCode(ReasonCode.Fraud)
         .withDescription("SDK-JAVA-Query")
         .execute(),
-    BuilderError,
+    {instanceOf: BuilderError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
-test.skip("JAVA_Hold_009e", async (t) => {
+test("JAVA_Hold_009e", async (t) => {
   t.plan(2);
 
-  const saleResponse = Transaction.fromId(undefined as any);
+  const saleResponse = Transaction.fromId(undefined as unknown as string);
 
   // request
   const error = t.throws(
@@ -708,9 +707,9 @@ test.skip("JAVA_Hold_009e", async (t) => {
         .withReasonCode(ReasonCode.Fraud)
         .withDescription("SDK-JAVA-Query")
         .execute(),
-    BuilderError,
+    {instanceOf: BuilderError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test.skip("JAVA_Hold_010a", async (t) => {
@@ -774,10 +773,10 @@ test("JAVA_Hold_010b", async (t) => {
   t.is("00", response.responseCode);
 });
 
-test.skip("JAVA_Hold_010c", async (t) => {
+test("JAVA_Hold_010c", async (t) => {
   t.plan(2);
 
-  const saleResponse = Transaction.fromId(undefined as any);
+  const saleResponse = Transaction.fromId(undefined as unknown as string);
 
   // request
   const error = t.throws(
@@ -787,9 +786,9 @@ test.skip("JAVA_Hold_010c", async (t) => {
         .withReasonCode(ReasonCode.Fraud)
         .withDescription("JAVA-Hold")
         .execute(),
-    BuilderError,
+    {instanceOf: BuilderError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test.skip("JAVA_Hold_010d", async (t) => {
@@ -972,7 +971,7 @@ test("JAVA_Hold_012a", async (t) => {
   t.is("00", response.responseCode);
 });
 
-test.skip("JAVA_Hold_012b", async (t) => {
+test("JAVA_Hold_012b", async (t) => {
   t.plan(2);
   const config = new GpEcomConfig();
   config.merchantId = "heartlandgpsandbox";
@@ -1004,15 +1003,15 @@ test.skip("JAVA_Hold_012b", async (t) => {
   await throttle();
 
   // request
-  const error = await t.throws(
-    saleResponse
+  const error = await t.throwsAsync(
+    async () => await saleResponse
       .hold()
       .withReasonCode(ReasonCode.Fraud)
       .withDescription("SDK-JAVA-Query")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
 test("JAVA_Hold_013a", async (t) => {
@@ -1045,7 +1044,7 @@ test("JAVA_Hold_013a", async (t) => {
   t.is("00", response.responseCode);
 });
 
-test.skip("JAVA_Hold_013b", async (t) => {
+test("JAVA_Hold_013b", async (t) => {
   t.plan(2);
   const config = new GpEcomConfig();
   config.merchantId = "heartlandgpsandbox";
@@ -1077,18 +1076,18 @@ test.skip("JAVA_Hold_013b", async (t) => {
   await throttle();
 
   // request
-  const error = await t.throws(
-    saleResponse
+  const error = await t.throwsAsync(
+    async () => await saleResponse
       .hold()
       .withReasonCode(ReasonCode.Fraud)
       .withDescription("SDK-JAVA-Query")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
 
-test.skip("JAVA_Hold_013c", async (t) => {
+test("JAVA_Hold_013c", async (t) => {
   t.plan(2);
   const config = new GpEcomConfig();
   config.merchantId = "heartlandgpsandbox";
@@ -1120,13 +1119,13 @@ test.skip("JAVA_Hold_013c", async (t) => {
   await throttle();
 
   // request
-  const error = await t.throws(
-    saleResponse
+  const error = await t.throwsAsync(
+    async () => await saleResponse
       .hold()
       .withReasonCode(ReasonCode.Fraud)
       .withDescription("SDK-JAVA-Query")
       .execute(),
-    GatewayError,
+    {instanceOf: GatewayError},
   );
-  t.truthy(error.message);
+  t.truthy(error?.message);
 });
