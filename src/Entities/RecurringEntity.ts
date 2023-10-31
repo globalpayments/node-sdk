@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import {
   RecurringService,
   ServicesContainer,
@@ -10,7 +11,8 @@ export interface IRecurringEntity {
 }
 
 export class RecurringEntity<TResult extends IRecurringEntity>
-  implements IRecurringEntity {
+  implements IRecurringEntity
+{
   /// <summary>
   /// All resource should be supplied a merchant-/application-defined ID.
   /// </summary>
@@ -31,7 +33,7 @@ export class RecurringEntity<TResult extends IRecurringEntity>
   /// </exception>
   public static find<TResult extends IRecurringEntity>(
     id: string,
-    configName: string = 'default'
+    configName: string = "default",
   ): Promise<TResult | undefined> {
     const client = ServicesContainer.instance().getRecurringClient(configName);
     if (!client.supportsRetrieval) {
@@ -46,7 +48,7 @@ export class RecurringEntity<TResult extends IRecurringEntity>
         if (!response) {
           return;
         }
-        const entity = (response as any)[0] || response
+        const entity = (response as any)[0] || response;
         if (entity && entity?.length) {
           return RecurringService.get<TResult>(entity, configName);
         }
@@ -60,7 +62,9 @@ export class RecurringEntity<TResult extends IRecurringEntity>
   /// <exception cref="UnsupportedTransactionError">
   /// Thrown when gateway does not support retrieving recurring records.
   /// </exception>
-  public static findAll<TResult extends IRecurringEntity>(configName: string = 'default') {
+  public static findAll<TResult extends IRecurringEntity>(
+    configName: string = "default",
+  ) {
     const client = ServicesContainer.instance().getRecurringClient();
     if (client.supportsRetrieval) {
       return RecurringService.search<TResult>(this).execute(configName);
@@ -69,12 +73,12 @@ export class RecurringEntity<TResult extends IRecurringEntity>
   }
 
   private static getIdentifierName(fn: any) {
-    if (fn.name === 'Customer') {
-        return "customerIdentifier";
-    } else if (fn.name === 'RecurringPaymentMethod') {
-        return "paymentMethodIdentifier";
+    if (fn.name === "Customer") {
+      return "customerIdentifier";
+    } else if (fn.name === "RecurringPaymentMethod") {
+      return "paymentMethodIdentifier";
     }
-    
+
     return "scheduleIdentifier";
   }
 
@@ -83,7 +87,7 @@ export class RecurringEntity<TResult extends IRecurringEntity>
   /// </summary>
   /// <returns>TResult</returns>
   public create(configName: string = "default") {
-    return RecurringService.create((this as any) as TResult, configName);
+    return RecurringService.create(this as any as TResult, configName);
   }
 
   /// <summary>
@@ -92,7 +96,7 @@ export class RecurringEntity<TResult extends IRecurringEntity>
   /// <param name="force">Indicates if the deletion should be forced</summary>
   /// <exception cref="ApiException">Thrown when the record cannot be deleted.</exception>
   public delete(configName: string = "default") {
-    return RecurringService.delete((this as any) as TResult, configName);
+    return RecurringService.delete(this as unknown as TResult, configName);
   }
 
   /// <summary>
@@ -102,7 +106,7 @@ export class RecurringEntity<TResult extends IRecurringEntity>
   /// Any modified properties will be persisted with the gateway.
   /// </remarks>
   /// <exception cref="ApiException">Thrown when the record cannot be updated.</exception>
-  public saveChanges(configName: string = "default",) {
-    return RecurringService.edit((this as any) as TResult, configName);
+  public saveChanges(configName: string = "default") {
+    return RecurringService.edit(this as any as TResult, configName);
   }
 }

@@ -8,7 +8,7 @@ import {
 } from "../";
 
 export class DebitService {
-  constructor(config: GatewayConfig, configName: string = 'default') {
+  constructor(config: GatewayConfig, configName: string = "default") {
     ServicesContainer.configureService(config, configName);
   }
 

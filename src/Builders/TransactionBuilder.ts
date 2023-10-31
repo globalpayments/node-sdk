@@ -35,14 +35,20 @@ export abstract class TransactionBuilder<T> extends BaseBuilder<T> {
     return this;
   }
 
-  public withSupplementaryData(key: Record<string, string | string[]> | string, value?: string | string[]) {
-    if (key instanceof Object) { 
-      for(const supplementaryDataKey of Object.keys(key)) {
-          this.withSupplementaryData(supplementaryDataKey, key[supplementaryDataKey]);
+  public withSupplementaryData(
+    key: Record<string, string | string[]> | string,
+    value?: string | string[],
+  ) {
+    if (key instanceof Object) {
+      for (const supplementaryDataKey of Object.keys(key)) {
+        this.withSupplementaryData(
+          supplementaryDataKey,
+          key[supplementaryDataKey],
+        );
       }
     }
-    
-    if (key && typeof key === 'string' && !!value) {
+
+    if (key && typeof key === "string" && !!value) {
       this.supplementaryData[key] = value;
     }
 

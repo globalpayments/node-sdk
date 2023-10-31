@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import { ReportType, TransactionReportBuilder, TransactionSummary } from "../";
 
 export class ReportingService {
@@ -15,7 +16,9 @@ export class ReportingService {
     ).withTransactionId(transactionId);
   }
 
-  public static findTransactions(): TransactionReportBuilder<TransactionSummary[]> {
+  public static findTransactions(): TransactionReportBuilder<
+    TransactionSummary[]
+  > {
     return new TransactionReportBuilder<TransactionSummary[]>(
       ReportType.FindTransactions,
     );

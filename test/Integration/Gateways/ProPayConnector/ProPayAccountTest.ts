@@ -1,10 +1,6 @@
 import test from "ava";
 import { PayFacService } from "../../../../src/Services/PayFacService";
-import {
-  Address,
-  PorticoConfig,
-  ServicesContainer
-} from "../../../../src";
+import { Address, PorticoConfig, ServicesContainer } from "../../../../src";
 
 import { TestAccountData } from "./TestData/TestAccountData";
 import { UserPersonalData } from "../../../../src/Entities/ProFac/UserPersonalData";
@@ -16,7 +12,8 @@ const config = new PorticoConfig();
 config.serviceUrl = "https://xmltest.propay.com/API/PropayAPI.aspx";
 config.certificationStr = "5dbacb0fc504dd7bdc2eadeb7039dd";
 config.terminalId = "7039dd";
-config.selfSignedCertLocation = "test/Integration/Gateways/ProPayConnector/TestData/selfSignedCertificate.crt";
+config.selfSignedCertLocation =
+  "test/Integration/Gateways/ProPayConnector/TestData/selfSignedCertificate.crt";
 const _service = new PayFacService();
 
 test.before(() => {
@@ -33,10 +30,12 @@ test("create account", async (t) => {
   const ownersInfo = TestAccountData.GetBeneficialOwnerData();
   const creditCardInfo = TestAccountData.GetCreditCardData();
   const achInfo = TestAccountData.GetACHData();
-  const secondaryBankInformation = TestAccountData.GetSecondaryBankAccountData();
+  const secondaryBankInformation =
+    TestAccountData.GetSecondaryBankAccountData();
   const mailingAddressInfo = TestAccountData.GetMailingAddress();
   const deviceData = TestAccountData.GetDeviceData(1, false);
-  const response = await _service.createAccount()
+  const response = await _service
+    .createAccount()
     .withBankAccountData(bankAccountInfo)
     .withBusinessData(userBusinessInfo)
     .withUserPersonalData(accountPersonalInfo)
@@ -61,34 +60,37 @@ test("Order a new device", async (t) => {
   t.plan(2);
   const orderDeviceInfo = TestAccountData.GetOrderNewDeviceData();
   const deviceData = TestAccountData.GetDeviceDataForOrderDevice(1, false);
-  const response = await _service.orderDevice()
+  const response = await _service
+    .orderDevice()
     .withOrderDevice(orderDeviceInfo)
     .withOrderDeviceData(deviceData)
     .execute();
-  
+
   t.truthy(response);
   t.is("00", response.responseCode);
 });
 
 test("reset password", async (t) => {
-  const response = await _service.resetPassword()
-    .withAccountNumber('718150930')
-    .withNegativeLimit('1')
+  const response = await _service
+    .resetPassword()
+    .withAccountNumber("718150930")
+    .withNegativeLimit("1")
     .execute();
 
   t.truthy(response);
 });
 
 /* Note : This method may be used to add new beneficial owner information when the original account boarding call included OwnerCount,
- *  but did not include all owner data 
+ *  but did not include all owner data
  */
 test("update beneficial data", async (t) => {
   //Owners count shoud not be excedded 6
 
   const ownersInfo = TestAccountData.GetBeneficialOwnerData();
 
-  const response = await _service.updateBeneficialOwnershipInfo()
-    .withAccountNumber('718568507')
+  const response = await _service
+    .updateBeneficialOwnershipInfo()
+    .withAccountNumber("718568507")
     .withBeneficialOwnerData(ownersInfo)
     .execute();
 
@@ -106,10 +108,12 @@ test("edit account information", async (t) => {
   accountPersonalInfo.firstName = "John";
   accountPersonalInfo.lastName = "Doe";
   accountPersonalInfo.middleInitial = "A";
-  accountPersonalInfo.sourceEmail = 'user' + getRandomInt(1, 10000) + '@user.com';
-  accountPersonalInfo.sSN = '1234';
+  accountPersonalInfo.sourceEmail =
+    "user" + getRandomInt(1, 10000) + "@user.com";
+  accountPersonalInfo.sSN = "1234";
 
-  const response = await _service.editAccount()
+  const response = await _service
+    .editAccount()
     .withAccountNumber("718135662")
     .withUserPersonalData(accountPersonalInfo)
     .execute();
@@ -120,7 +124,8 @@ test("edit account information", async (t) => {
 
 test("edit account password", async (t) => {
   t.plan(2);
-  const response = await _service.editAccount()
+  const response = await _service
+    .editAccount()
     .withAccountNumber("718568506")
     .withPassword("testPwd_" + getRandomInt(1, 100))
     .execute();
@@ -132,21 +137,22 @@ test("edit account password", async (t) => {
 test("edit account address", async (t) => {
   t.plan(2);
   const personalInfo = new UserPersonalData();
- 
-  personalInfo.userAddress = new Address();
-  personalInfo.userAddress.streetAddress1 = '124 Main St.';
-  personalInfo.userAddress.city = 'Downtown';
-  personalInfo.userAddress.state = 'NJ';
-  personalInfo.userAddress.postalCode = '12345';
-  personalInfo.userAddress.country = 'USA';
-  
-  personalInfo.mailingAddress = new Address();
-  personalInfo.mailingAddress.streetAddress1 = '125 Main St.';
-  personalInfo.mailingAddress.city = 'Downtown';
-  personalInfo.mailingAddress.state = 'NJ';
-  personalInfo.mailingAddress.postalCode = '12345';
 
-  const response = await _service.editAccount()
+  personalInfo.userAddress = new Address();
+  personalInfo.userAddress.streetAddress1 = "124 Main St.";
+  personalInfo.userAddress.city = "Downtown";
+  personalInfo.userAddress.state = "NJ";
+  personalInfo.userAddress.postalCode = "12345";
+  personalInfo.userAddress.country = "USA";
+
+  personalInfo.mailingAddress = new Address();
+  personalInfo.mailingAddress.streetAddress1 = "125 Main St.";
+  personalInfo.mailingAddress.city = "Downtown";
+  personalInfo.mailingAddress.state = "NJ";
+  personalInfo.mailingAddress.postalCode = "12345";
+
+  const response = await _service
+    .editAccount()
     .withAccountNumber("718138433")
     .withUserPersonalData(personalInfo)
     .execute();
@@ -157,7 +163,8 @@ test("edit account address", async (t) => {
 
 test("edit account permissions", async (t) => {
   t.plan(2);
-  const response = await _service.editAccount()
+  const response = await _service
+    .editAccount()
     .withAccountNumber("718135662")
     .withAccountPermissions(TestAccountData.GetAccountPermissions())
     .execute();
@@ -167,10 +174,11 @@ test("edit account permissions", async (t) => {
 
 //#endregion
 
-//#region renew account 
+//#region renew account
 test("renew account", async (t) => {
   t.plan(2);
-  const response = await _service.renewAccount()
+  const response = await _service
+    .renewAccount()
     .withRenewalAccountData(TestAccountData.GetRenewAccountDetails())
     .withAccountNumber("718568507")
     .execute();
@@ -181,7 +189,8 @@ test("renew account", async (t) => {
 
 test("renew account by credit card", async (t) => {
   t.plan(2);
-  const response = await _service.renewAccount()
+  const response = await _service
+    .renewAccount()
     .withAccountNumber("718135662")
     .withRenewalAccountData(TestAccountData.GetRenewAccountDetails())
     .execute();
@@ -192,7 +201,8 @@ test("renew account by credit card", async (t) => {
 
 test.skip("renew account by bank account", async (t) => {
   t.plan(2);
-  const response = await _service.renewAccount()
+  const response = await _service
+    .renewAccount()
     .withAccountNumber("718151055")
     .withRenewalAccountData(TestAccountData.GetRenewAccountDetails())
     .execute();
@@ -205,7 +215,8 @@ test.skip("renew account by bank account", async (t) => {
 test.skip("update account beneficial ownership", async (t) => {
   t.plan(3);
   const beneficialOwners = TestAccountData.GetBeneficialOwnerData();
-  const response = await _service.updateBeneficialOwnershipInfo()
+  const response = await _service
+    .updateBeneficialOwnershipInfo()
     .withAccountNumber("718134589") // This account must have been created with a beneficial owner count specified, but no owner details passed
     .withBeneficialOwnerData(beneficialOwners)
     .execute();
@@ -217,7 +228,8 @@ test.skip("update account beneficial ownership", async (t) => {
 
 test.skip("disown account", async (t) => {
   t.plan(2);
-  const response = await _service.disownAccount()
+  const response = await _service
+    .disownAccount()
     .withAccountNumber("718134204") // The account being "disowned" needs to have another affiliation set. Contact propayimplementations@tsys.com and they will set one if necessary
     .execute();
 
@@ -231,9 +243,11 @@ test("upload document chargeback", async (t) => {
   const docUploadData = new DocumentUploadData();
   docUploadData.documentName = "TestDocCB_12345";
   docUploadData.transactionReference = "123456789";
-  docUploadData.documentPath = 'test/Integration/Gateways/ProPayConnector/TestData/TestDocChargeback.docx';
+  docUploadData.documentPath =
+    "test/Integration/Gateways/ProPayConnector/TestData/TestDocChargeback.docx";
   docUploadData.DocumentPath(docUploadData.documentPath);
-  const response = await _service.uploadDocumentChargeback()
+  const response = await _service
+    .uploadDocumentChargeback()
     .withAccountNumber("718567300")
     .withDocumentUploadData(docUploadData)
     .execute();
@@ -247,9 +261,11 @@ test("upload document", async (t) => {
   const docUploadData = new DocumentUploadData();
   docUploadData.documentName = "TestDoc_12345";
   docUploadData.docCategory = "Verification";
-  docUploadData.documentPath = 'test/Integration/Gateways/ProPayConnector/TestData/TestDoc.docx';
+  docUploadData.documentPath =
+    "test/Integration/Gateways/ProPayConnector/TestData/TestDoc.docx";
   docUploadData.DocumentPath(docUploadData.documentPath);
-  const response = await _service.uploadDocument()
+  const response = await _service
+    .uploadDocument()
     .withAccountNumber("718134204")
     .withDocumentUploadData(docUploadData)
     .execute();
@@ -263,10 +279,13 @@ test("upload document chargeback by document string", async (t) => {
   const docUploadData = new DocumentUploadData();
   docUploadData.documentName = "TestDocCB_12345";
   docUploadData.transactionReference = "123456789";
-  docUploadData.document = TestAccountData.GetDocumentBase64String('test/Integration/Gateways/ProPayConnector/TestData/TestDocChargeback.docx');
+  docUploadData.document = TestAccountData.GetDocumentBase64String(
+    "test/Integration/Gateways/ProPayConnector/TestData/TestDocChargeback.docx",
+  );
   docUploadData.docType = "docx";
 
-  const response = await _service.uploadDocumentChargeback()
+  const response = await _service
+    .uploadDocumentChargeback()
     .withAccountNumber("718134204")
     .withDocumentUploadData(docUploadData)
     .execute();
@@ -280,10 +299,13 @@ test("upload document by document string", async (t) => {
   const docUploadData = new DocumentUploadData();
   docUploadData.documentName = "TestDoc_12345";
   docUploadData.docCategory = "Verification";
-  docUploadData.document = TestAccountData.GetDocumentBase64String('test/Integration/Gateways/ProPayConnector/TestData/TestDoc.docx');
+  docUploadData.document = TestAccountData.GetDocumentBase64String(
+    "test/Integration/Gateways/ProPayConnector/TestData/TestDoc.docx",
+  );
   docUploadData.docType = "docx";
 
-  const response = await _service.uploadDocument()
+  const response = await _service
+    .uploadDocument()
     .withAccountNumber("718134204")
     .withDocumentUploadData(docUploadData)
     .execute();
@@ -299,7 +321,8 @@ test("obtain sSO key", async (t) => {
   ssoRequestData.iPAddress = "40.81.11.219";
   ssoRequestData.iPSubnetMask = "255.255.255.0";
 
-  const response = await _service.obtainSSOKey()
+  const response = await _service
+    .obtainSSOKey()
     .withAccountNumber("718150930")
     .withSSORequestData(ssoRequestData)
     .execute();
@@ -311,7 +334,8 @@ test("obtain sSO key", async (t) => {
 
 test("update bank account ownership info", async (t) => {
   t.plan(2);
-  config.selfSignedCertLocation = "test/Integration/Gateways/ProPayConnector/TestData/selfSignedCertificateCAN.crt";
+  config.selfSignedCertLocation =
+    "test/Integration/Gateways/ProPayConnector/TestData/selfSignedCertificateCAN.crt";
   config.serviceUrl = "https://xmltestcanada.propay.com/API/PropayAPI.aspx";
   config.certificationStr = "7c4ddcba7054a1d9e00bcac4743b98";
   config.terminalId = "3b98";
@@ -321,7 +345,7 @@ test("update bank account ownership info", async (t) => {
   primaryOwner.firstName = "Style";
   primaryOwner.lastName = "Stallone";
   primaryOwner.phoneNumber = "123456789";
-  const ownerAddress = new Address(); 
+  const ownerAddress = new Address();
 
   primaryOwner.ownerAddress = ownerAddress;
 
@@ -339,7 +363,8 @@ test("update bank account ownership info", async (t) => {
   secondaryOwnerAddress.country = "CAN";
   secondaryOwner.ownerAddress = secondaryOwnerAddress;
 
-  const response = await _service.updateBankAccountOwnershipInfo()
+  const response = await _service
+    .updateBankAccountOwnershipInfo()
     .withAccountNumber("716016890")
     .withPrimaryBankAccountOwner(primaryOwner)
     .withSecondaryBankAccountOwner(secondaryOwner)
@@ -350,12 +375,12 @@ test("update bank account ownership info", async (t) => {
 });
 
 function getRandomInt(min: number, max: number): number {
-  const floatRandom = Math.random()
+  const floatRandom = Math.random();
   const difference = max - min;
 
   // random between 0 and the difference
-  const random = Math.round(difference * floatRandom)
-  const randomWithinRange = random + min
+  const random = Math.round(difference * floatRandom);
+  const randomWithinRange = random + min;
 
   return randomWithinRange;
 }

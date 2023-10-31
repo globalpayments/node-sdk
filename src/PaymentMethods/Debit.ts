@@ -14,13 +14,16 @@ import {
 } from "./Interfaces";
 import { PaymentMethod } from "./PaymentMethod";
 
-export abstract class Debit extends PaymentMethod
-  implements IChargable,
+export abstract class Debit
+  extends PaymentMethod
+  implements
+    IChargable,
     IEncryptable,
     IRefundable,
     IReversable,
     IPrePayable,
-    IPinProtected {
+    IPinProtected
+{
   public encryptionData: EncryptionData;
   public paymentMethodType: PaymentMethodType = PaymentMethodType.Debit;
   public pinBlock: string;

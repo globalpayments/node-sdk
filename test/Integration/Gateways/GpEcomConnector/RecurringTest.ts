@@ -11,7 +11,6 @@ import {
 } from "../../../../src/";
 import { GpEcomConfig } from "../../../../src/ServiceConfigs";
 
-
 const config = new GpEcomConfig();
 config.merchantId = "heartlandgpsandbox";
 config.accountId = "api";
@@ -50,7 +49,6 @@ customer.fax = "+124546871258";
 customer.mobilePhone = "+25544778544";
 customer.email = "text@example.com";
 customer.comments = "Campaign Ref E7373G";
-
 
 test.before(() => {
   ServicesContainer.configureService(config);
@@ -135,10 +133,7 @@ test.skip("004b - verify stored card", async (t) => {
     customerId,
     paymentId("Credit"),
   );
-  const response = await paymentMethod
-    .verify()
-    .withCvn("123")
-    .execute();
+  const response = await paymentMethod.verify().withCvn("123").execute();
 
   t.truthy(response);
   t.is(response.responseCode, "00");

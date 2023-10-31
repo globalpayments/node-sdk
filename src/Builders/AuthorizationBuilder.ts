@@ -72,7 +72,7 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
    *
    * @returns Promise<Transaction>
    */
-  public execute(configName: string = 'default'): Promise<Transaction> {
+  public execute(configName: string = "default"): Promise<Transaction> {
     super.execute();
     return ServicesContainer.instance()
       .getClient(configName)
@@ -291,7 +291,10 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   /**
    * Sets Credential on File fields
    */
-  public withCardBrandStorage(transactionInitiator: StoredCredentialInitiator, value?: string) {
+  public withCardBrandStorage(
+    transactionInitiator: StoredCredentialInitiator,
+    value?: string,
+  ) {
     this.transactionInitiator = transactionInitiator;
     if (value !== undefined) {
       this.cardBrandTransactionId = value;
@@ -342,11 +345,13 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
     }
 
     if (!(this.paymentMethod instanceof TransactionReference)) {
-      this.paymentMethod = (new TransactionReference() as IPaymentMethod) as PaymentMethod;
+      this.paymentMethod =
+        new TransactionReference() as IPaymentMethod as PaymentMethod;
     }
 
-    ((this
-      .paymentMethod as IPaymentMethod) as TransactionReference).clientTransactionId = clientTransactionId;
+    (
+      this.paymentMethod as IPaymentMethod as TransactionReference
+    ).clientTransactionId = clientTransactionId;
     return this;
   }
 

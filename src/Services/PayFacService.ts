@@ -1,96 +1,97 @@
-import { PayFacBuilder } from  "../Builders/PayFacBuilder";
-import { TransactionType, 
-        TransactionModifier 
-} from "../Entities/Enums";
+import { PayFacBuilder } from "../Builders/PayFacBuilder";
+import { TransactionType, TransactionModifier } from "../Entities/Enums";
 
 export class PayFacService {
-    constructor() { }
-      
-    public createAccount() {
-        return new PayFacBuilder(TransactionType.CreateAccount);
-    }
+  constructor() {}
 
-    public editAccount() {
-        return new PayFacBuilder(TransactionType.EditAccount);
-    }
+  public createAccount() {
+    return new PayFacBuilder(TransactionType.CreateAccount);
+  }
 
-    public resetPassword() {
-        return new PayFacBuilder(TransactionType.ResetPassword);
-    }
+  public editAccount() {
+    return new PayFacBuilder(TransactionType.EditAccount);
+  }
 
-    public renewAccount() {
-        return new PayFacBuilder(TransactionType.RenewAccount);
-    }
+  public resetPassword() {
+    return new PayFacBuilder(TransactionType.ResetPassword);
+  }
 
-    public updateBeneficialOwnershipInfo() {
-        return new PayFacBuilder(TransactionType.UpdateBeneficialOwnership);
-    }
+  public renewAccount() {
+    return new PayFacBuilder(TransactionType.RenewAccount);
+  }
 
-    public disownAccount() {
-        return new PayFacBuilder(TransactionType.DisownAccount);
-    }
+  public updateBeneficialOwnershipInfo() {
+    return new PayFacBuilder(TransactionType.UpdateBeneficialOwnership);
+  }
 
-    public uploadDocumentChargeback() {
-        return new PayFacBuilder(TransactionType.UploadDocumentChargeback);
-    }
+  public disownAccount() {
+    return new PayFacBuilder(TransactionType.DisownAccount);
+  }
 
-    public uploadDocument() {
-        return new PayFacBuilder(TransactionType.UploadDocument);
-    }
+  public uploadDocumentChargeback() {
+    return new PayFacBuilder(TransactionType.UploadDocumentChargeback);
+  }
 
-    public obtainSSOKey() {
-        return new PayFacBuilder(TransactionType.ObtainSSOKey);
-    }
+  public uploadDocument() {
+    return new PayFacBuilder(TransactionType.UploadDocument);
+  }
 
-    public updateBankAccountOwnershipInfo() {
-        return new PayFacBuilder(TransactionType.UpdateBankAccountOwnership);
-    }
+  public obtainSSOKey() {
+    return new PayFacBuilder(TransactionType.ObtainSSOKey);
+  }
 
-    public addFunds() {
-        return new PayFacBuilder(TransactionType.AddFunds);
-    }
+  public updateBankAccountOwnershipInfo() {
+    return new PayFacBuilder(TransactionType.UpdateBankAccountOwnership);
+  }
 
-    public sweepFunds() {
-        return new PayFacBuilder(TransactionType.SweepFunds);
-    }
+  public addFunds() {
+    return new PayFacBuilder(TransactionType.AddFunds);
+  }
 
-    public addCardFlashFunds() {
-        return new PayFacBuilder(TransactionType.AddCardFlashFunds);
-    }
+  public sweepFunds() {
+    return new PayFacBuilder(TransactionType.SweepFunds);
+  }
 
-    public pushMoneyToFlashFundsCard() {
-        return new PayFacBuilder(TransactionType.PushMoneyFlashFunds);
-    }
+  public addCardFlashFunds() {
+    return new PayFacBuilder(TransactionType.AddCardFlashFunds);
+  }
 
-    public disburseFunds() {
-        return new PayFacBuilder(TransactionType.DisburseFunds);
-    }
+  public pushMoneyToFlashFundsCard() {
+    return new PayFacBuilder(TransactionType.PushMoneyFlashFunds);
+  }
 
-    public spendBack() {
-        return new PayFacBuilder(TransactionType.SpendBack);
-    }
+  public disburseFunds() {
+    return new PayFacBuilder(TransactionType.DisburseFunds);
+  }
 
-    public reverseSplitPay() {
-        return new PayFacBuilder(TransactionType.ReverseSplitPay);
-    }
+  public spendBack() {
+    return new PayFacBuilder(TransactionType.SpendBack);
+  }
 
-    public splitFunds() {
-        return new PayFacBuilder(TransactionType.SplitFunds);
-    }
+  public reverseSplitPay() {
+    return new PayFacBuilder(TransactionType.ReverseSplitPay);
+  }
 
-    public getAccountDetails() {
-        return new PayFacBuilder(TransactionType.GetAccountDetails);
-    }
+  public splitFunds() {
+    return new PayFacBuilder(TransactionType.SplitFunds);
+  }
 
-    public getAccountDetailsEnhanced() {
-        return new PayFacBuilder(TransactionType.GetAccountDetails, TransactionModifier.Additional);
-    }
+  public getAccountDetails() {
+    return new PayFacBuilder(TransactionType.GetAccountDetails);
+  }
 
-    public getAccountBalance() {
-        return new PayFacBuilder(TransactionType.GetAccountBalance);
-    }   
+  public getAccountDetailsEnhanced() {
+    return new PayFacBuilder(
+      TransactionType.GetAccountDetails,
+      TransactionModifier.Additional,
+    );
+  }
 
-    public orderDevice() {
-        return new PayFacBuilder(TransactionType.OrderDevice);
-    }
+  public getAccountBalance() {
+    return new PayFacBuilder(TransactionType.GetAccountBalance);
+  }
+
+  public orderDevice() {
+    return new PayFacBuilder(TransactionType.OrderDevice);
+  }
 }

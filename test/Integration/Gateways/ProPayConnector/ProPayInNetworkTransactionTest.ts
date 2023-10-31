@@ -1,15 +1,13 @@
 import test from "ava";
 import { PayFacService } from "../../../../src/Services/PayFacService";
-import {
-  PorticoConfig,
-  ServicesContainer
-} from "../../../../src";
+import { PorticoConfig, ServicesContainer } from "../../../../src";
 
 const config = new PorticoConfig();
 config.serviceUrl = "https://xmltest.propay.com/API/PropayAPI.aspx";
 config.certificationStr = "5dbacb0fc504dd7bdc2eadeb7039dd"; // other transactions except disburment based
 config.terminalId = "7039dd";
-config.selfSignedCertLocation = "test/Integration/Gateways/ProPayConnector/TestData/selfSignedCertificate.crt";
+config.selfSignedCertLocation =
+  "test/Integration/Gateways/ProPayConnector/TestData/selfSignedCertificate.crt";
 const _service = new PayFacService();
 
 test.before(() => {
@@ -21,10 +19,12 @@ test("disburse funds", async (t) => {
   config.serviceUrl = "https://xmltest.propay.com/API/PropayAPI.aspx";
   config.certificationStr = "C7277D317D1840F5ADEBE600CF47B9"; // disburment of fund only
   config.terminalId = "7039dd";
-  config.selfSignedCertLocation = "test/Integration/Gateways/ProPayConnector/TestData/selfSignedCertificate.crt";
+  config.selfSignedCertLocation =
+    "test/Integration/Gateways/ProPayConnector/TestData/selfSignedCertificate.crt";
   ServicesContainer.configureService(config);
 
-  const response = await _service.disburseFunds()
+  const response = await _service
+    .disburseFunds()
     .withReceivingAccountNumber("718136438")
     .withAmount("100")
     .execute();
@@ -38,7 +38,8 @@ test("spend back transaction", async (t) => {
   const config = new PorticoConfig();
   config.certificationStr = "5dbacb0fc504dd7bdc2eadeb7039dd";
 
-  const response = await _service.spendBack()
+  const response = await _service
+    .spendBack()
     .withAccountNumber("718136438")
     .withReceivingAccountNumber("718567304")
     .withAmount("100")
@@ -49,12 +50,13 @@ test("spend back transaction", async (t) => {
   t.is("00", response.responseCode);
 });
 
-/* before executing need to run Transaction Type 04 -> and from success response, 
+/* before executing need to run Transaction Type 04 -> and from success response,
  * the transNum value need to use here
-*/
+ */
 test("split funds", async (t) => {
   t.plan(2);
-  const response = await _service.splitFunds()
+  const response = await _service
+    .splitFunds()
     .withAccountNumber("718567304")
     .withReceivingAccountNumber("718136438")
     .withAmount("100")
@@ -67,7 +69,8 @@ test("split funds", async (t) => {
 
 test("reverse split pay", async (t) => {
   t.plan(5);
-  const response = await _service.reverseSplitPay()
+  const response = await _service
+    .reverseSplitPay()
     .withAccountNumber("718136438")
     .withAmount("1")
     .withCCAmount("10")

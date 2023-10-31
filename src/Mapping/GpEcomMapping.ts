@@ -1,55 +1,62 @@
-import {
-    Element,
-    XML as xml,
-  } from "@azz/elementtree";
+import { Element, XML as xml } from "@azz/elementtree";
 
-import { BaseBuilder, ManagementBuilder, TransactionReference } from "../../src";
-import { GatewayError, PaymentMethodType, Transaction, TransactionModifier, TransactionType, UnsupportedTransactionError } from "../../src/Entities";
-  
+import {
+  BaseBuilder,
+  ManagementBuilder,
+  TransactionReference,
+} from "../../src";
+import {
+  GatewayError,
+  PaymentMethodType,
+  Transaction,
+  TransactionModifier,
+  TransactionType,
+  UnsupportedTransactionError,
+} from "../../src/Entities";
+
 export class GpEcomMapping {
   public static mapAuthRequestType(builder: BaseBuilder<Transaction>): string {
-      switch (builder.transactionType) {
-        case TransactionType.Sale:
-        case TransactionType.Auth:
-          if (
-            builder.paymentMethod.paymentMethodType === PaymentMethodType.Credit
-          ) {
-            if (builder.transactionModifier === TransactionModifier.Offline) {
-              return "offline";
-            }
-            if (
-              builder.transactionModifier === TransactionModifier.EncryptedMobile
-            ) {
-              return "auth-mobile";
-            }
-            return "auth";
+    switch (builder.transactionType) {
+      case TransactionType.Sale:
+      case TransactionType.Auth:
+        if (
+          builder.paymentMethod.paymentMethodType === PaymentMethodType.Credit
+        ) {
+          if (builder.transactionModifier === TransactionModifier.Offline) {
+            return "offline";
           }
-          return "receipt-in";
-        case TransactionType.Capture:
-          return "settle";
-        case TransactionType.Verify:
           if (
-            builder.paymentMethod.paymentMethodType === PaymentMethodType.Credit
+            builder.transactionModifier === TransactionModifier.EncryptedMobile
           ) {
-            return "otb";
+            return "auth-mobile";
           }
-          return "receipt-in-otb";
-        case TransactionType.Refund:
-          if (
-            builder.paymentMethod.paymentMethodType === PaymentMethodType.Credit
-          ) {
-            return "credit";
-          }
-          return "payment-out";
-        case TransactionType.Reversal:
-          throw new UnsupportedTransactionError(
-            "The selected gateway does not support this transaction type.",
-          );
-        default:
-          return "unknown";
-      }
+          return "auth";
+        }
+        return "receipt-in";
+      case TransactionType.Capture:
+        return "settle";
+      case TransactionType.Verify:
+        if (
+          builder.paymentMethod.paymentMethodType === PaymentMethodType.Credit
+        ) {
+          return "otb";
+        }
+        return "receipt-in-otb";
+      case TransactionType.Refund:
+        if (
+          builder.paymentMethod.paymentMethodType === PaymentMethodType.Credit
+        ) {
+          return "credit";
+        }
+        return "payment-out";
+      case TransactionType.Reversal:
+        throw new UnsupportedTransactionError(
+          "The selected gateway does not support this transaction type.",
+        );
+      default:
+        return "unknown";
+    }
   }
-
 
   public static mapResponse(rawResponse: string, acceptedCodes: string[]) {
     const result = new Transaction();
@@ -71,7 +78,6 @@ export class GpEcomMapping {
     return result;
   }
 
-  
   protected static checkResponse(root: Element, acceptedCodes?: string[]) {
     if (!acceptedCodes) {
       acceptedCodes = ["00"];
@@ -82,8 +88,8 @@ export class GpEcomMapping {
 
     if (acceptedCodes.indexOf(responseCode) === -1) {
       throw new GatewayError(
-          `Unexpected Gateway Response: ${responseCode} - ${responseMessage}`,
-          responseCode
+        `Unexpected Gateway Response: ${responseCode} - ${responseMessage}`,
+        responseCode,
       );
     }
   }

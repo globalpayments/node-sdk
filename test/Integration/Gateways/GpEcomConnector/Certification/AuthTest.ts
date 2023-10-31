@@ -10,7 +10,8 @@ import {
 } from "../../../../../src/";
 import { GpEcomConfig } from "../../../../../src/ServiceConfigs";
 
-const throttle = (i: number) => new Promise((resolve) => setTimeout(resolve, i * 1500));
+const throttle = (i: number) =>
+  new Promise((resolve) => setTimeout(resolve, i * 1500));
 
 const config = new GpEcomConfig();
 config.merchantId = "heartlandgpsandbox";
@@ -25,7 +26,7 @@ config.timeout = 20000;
 
 test.before(() => {
   ServicesContainer.configureService(config);
-})
+});
 
 let i = 0;
 test.beforeEach(async () => {
@@ -256,7 +257,6 @@ test.beforeEach(async () => {
 // test("JAVA_Auth_006k", async (t) => {
 //   t.plan(2);
 
-
 //   // create card
 //   const card = new CreditCardData();
 //   card.number = "4263970000005262";
@@ -278,7 +278,6 @@ test.beforeEach(async () => {
 
 // test("JAVA_Auth_007a", async (t) => {
 //   t.plan(2);
-
 
 //   // create card
 //   const card = new CreditCardData();
@@ -324,7 +323,6 @@ test.beforeEach(async () => {
 // test("JAVA_Auth_007c", async (t) => {
 //   t.plan(2);
 
-
 //   // create card
 //   const card = new CreditCardData();
 //   card.number = "4263970000005262";
@@ -346,7 +344,6 @@ test.beforeEach(async () => {
 
 // test("JAVA_Auth_007d", async (t) => {
 //   t.plan(2);
-
 
 //   // create card
 //   const card = new CreditCardData();
@@ -370,7 +367,6 @@ test.beforeEach(async () => {
 // test("JAVA_Auth_007e", async (t) => {
 //   t.plan(2);
 
-
 //   // create card
 //   const card = new CreditCardData();
 //   card.number = "4263970000005262";
@@ -392,7 +388,6 @@ test.beforeEach(async () => {
 
 // test("JAVA_Auth_008a", async (t) => {
 //   t.plan(2);
-
 
 //   // create card
 //   const card = new CreditCardData();
@@ -561,13 +556,13 @@ test("JAVA_Auth_009b", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    () => card
+    () =>
+      card
         .charge(100.01)
         .withCurrency("USD")
         .withDescription("JAVA-Auth-009b")
-        .execute("withAnotherChannelEcom")
-    ,
-    {instanceOf: GatewayError},
+        .execute("withAnotherChannelEcom"),
+    { instanceOf: GatewayError },
   );
 
   t.truthy(error?.message);
@@ -586,7 +581,6 @@ test("JAVA_Auth_009c", async (t) => {
   config.timeout = 20000;
   config.channel = "ECOM";
 
-  
   ServicesContainer.configureService(config, "with3rdChannelEcom");
 
   // create card
@@ -600,10 +594,10 @@ test("JAVA_Auth_009c", async (t) => {
 
   // request
   const res = await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withDescription("JAVA-Auth-009c")
-      .execute("with3rdChannelEcom");
+    .charge(100.01)
+    .withCurrency("GBP")
+    .withDescription("JAVA-Auth-009c")
+    .execute("with3rdChannelEcom");
   t.truthy(res);
   t.is("00", res.responseCode);
 });
@@ -826,7 +820,7 @@ test("JAVA_Auth_011d", async (t) => {
         .withCurrency("EUR")
         .withDescription("JAVA-Auth-011d")
         .execute(),
-    {instanceOf: BuilderError},
+    { instanceOf: BuilderError },
   );
   t.truthy(error?.message);
 });
@@ -867,12 +861,13 @@ test("JAVA_Auth_012b", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    () => card
-      .charge(100.01)
-      .withCurrency("EURO")
-      .withDescription("JAVA-Auth-012b")
-      .execute(),
-    {instanceOf: GatewayError},
+    () =>
+      card
+        .charge(100.01)
+        .withCurrency("EURO")
+        .withDescription("JAVA-Auth-012b")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -891,12 +886,13 @@ test("JAVA_Auth_012c", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    () => card
-      .charge(100.01)
-      .withCurrency("EUR")
-      .withDescription("JAVA-Auth-012c")
-      .execute(),
-    {instanceOf: GatewayError},
+    () =>
+      card
+        .charge(100.01)
+        .withCurrency("EUR")
+        .withDescription("JAVA-Auth-012c")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -915,12 +911,8 @@ test("JAVA_Auth_012d", async (t) => {
 
   // request
   const error = t.throws(
-    () =>
-      card
-        .charge(100.01)
-        .withDescription("JAVA-Auth-012d")
-        .execute(),
-    {instanceOf: BuilderError},
+    () => card.charge(100.01).withDescription("JAVA-Auth-012d").execute(),
+    { instanceOf: BuilderError },
   );
   t.truthy(error?.message);
 });
@@ -961,12 +953,13 @@ test("JAVA_Auth_013b1", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("EUR")
-      .withDescription("JAVA-Auth-013b1")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("EUR")
+        .withDescription("JAVA-Auth-013b1")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -985,12 +978,13 @@ test("JAVA_Auth_013b2", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("USD")
-      .withDescription("JAVA-Auth-013b2")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("USD")
+        .withDescription("JAVA-Auth-013b2")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -1009,12 +1003,13 @@ test("JAVA_Auth_013c", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withDescription("JAVA-Auth-013c")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("GBP")
+        .withDescription("JAVA-Auth-013c")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -1054,12 +1049,13 @@ test("JAVA_Auth_014b", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("USD")
-      .withDescription("JAVA-Auth-014b")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("USD")
+        .withDescription("JAVA-Auth-014b")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -1079,12 +1075,13 @@ test("JAVA_Auth_014c", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withDescription("JAVA-Auth-014c")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("GBP")
+        .withDescription("JAVA-Auth-014c")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -1169,12 +1166,13 @@ test("JAVA_Auth_015c", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("EUR")
-      .withDescription("JAVA-Auth-015c")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("EUR")
+        .withDescription("JAVA-Auth-015c")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -1191,12 +1189,13 @@ test("JAVA_Auth_015d", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("USD")
-      .withDescription("JAVA-Auth-015d")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("USD")
+        .withDescription("JAVA-Auth-015d")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -1225,7 +1224,6 @@ test("JAVA_Auth_016a", async (t) => {
 
 test("JAVA_Auth_016b", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -1347,12 +1345,13 @@ test("JAVA_Auth_019b1", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withDescription("JAVA-Auth-019b1")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("GBP")
+        .withDescription("JAVA-Auth-019b1")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -1393,12 +1392,13 @@ test("JAVA_Auth_019c", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("EUR")
-      .withDescription("JAVA-Auth-019c")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("EUR")
+        .withDescription("JAVA-Auth-019c")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -1527,12 +1527,13 @@ test("JAVA_Auth_020b", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("EUR")
-      .withDescription("JAVA-Auth-020b")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("EUR")
+        .withDescription("JAVA-Auth-020b")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -1562,7 +1563,6 @@ test("JAVA_Auth_020c", async (t) => {
 test("JAVA_Auth_021a1", async (t) => {
   t.plan(2);
 
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -1584,7 +1584,6 @@ test("JAVA_Auth_021a1", async (t) => {
 
 test("JAVA_Auth_021a2", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -1608,7 +1607,6 @@ test("JAVA_Auth_021a2", async (t) => {
 test("JAVA_Auth_021a3", async (t) => {
   t.plan(2);
 
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -1630,7 +1628,6 @@ test("JAVA_Auth_021a3", async (t) => {
 
 test("JAVA_Auth_021b", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -1654,7 +1651,6 @@ test("JAVA_Auth_021b", async (t) => {
 test("JAVA_Auth_021c", async (t) => {
   t.plan(2);
 
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -1676,7 +1672,6 @@ test("JAVA_Auth_021c", async (t) => {
 
 test("JAVA_Auth_022a", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -1700,7 +1695,6 @@ test("JAVA_Auth_022a", async (t) => {
 test("JAVA_Auth_022b", async (t) => {
   t.plan(2);
 
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -1722,7 +1716,6 @@ test("JAVA_Auth_022b", async (t) => {
 
 test("JAVA_Auth_022c", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -1768,7 +1761,6 @@ test("JAVA_Auth_022d", async (t) => {
 test("JAVA_Auth_022e", async (t) => {
   t.plan(2);
 
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -1790,7 +1782,6 @@ test("JAVA_Auth_022e", async (t) => {
 
 test("JAVA_Auth_023a1", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -1814,7 +1805,6 @@ test("JAVA_Auth_023a1", async (t) => {
 test("JAVA_Auth_023a2", async (t) => {
   t.plan(2);
 
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -1836,7 +1826,6 @@ test("JAVA_Auth_023a2", async (t) => {
 
 test("JAVA_Auth_023b1", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -1860,7 +1849,6 @@ test("JAVA_Auth_023b1", async (t) => {
 test("JAVA_Auth_023c", async (t) => {
   t.plan(2);
 
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -1882,7 +1870,6 @@ test("JAVA_Auth_023c", async (t) => {
 
 test("JAVA_Auth_024a1", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -1906,7 +1893,6 @@ test("JAVA_Auth_024a1", async (t) => {
 test("JAVA_Auth_024a2", async (t) => {
   t.plan(2);
 
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -1928,7 +1914,6 @@ test("JAVA_Auth_024a2", async (t) => {
 
 test("JAVA_Auth_024a3", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -1952,7 +1937,6 @@ test("JAVA_Auth_024a3", async (t) => {
 test("JAVA_Auth_024b", async (t) => {
   t.plan(2);
 
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -1974,7 +1958,6 @@ test("JAVA_Auth_024b", async (t) => {
 
 test("JAVA_Auth_024c", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -1998,7 +1981,6 @@ test("JAVA_Auth_024c", async (t) => {
 test("JAVA_Auth_025", async (t) => {
   t.plan(2);
 
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -2020,7 +2002,6 @@ test("JAVA_Auth_025", async (t) => {
 
 test("JAVA_Auth_026a1", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -2044,7 +2025,6 @@ test("JAVA_Auth_026a1", async (t) => {
 test("JAVA_Auth_026a2", async (t) => {
   t.plan(2);
 
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -2055,10 +2035,7 @@ test("JAVA_Auth_026a2", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("EUR")
-    .execute();
+  const response = await card.charge(100.01).withCurrency("EUR").execute();
   t.truthy(response);
   t.is("00", response.responseCode);
 });
@@ -2066,7 +2043,6 @@ test("JAVA_Auth_026a2", async (t) => {
 test("JAVA_Auth_026b", async (t) => {
   t.plan(2);
 
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -2077,17 +2053,13 @@ test("JAVA_Auth_026b", async (t) => {
   card.cardHolderName = "James Mason";
 
   // request
-  const response = await card
-    .charge(100.01)
-    .withCurrency("USD")
-    .execute();
+  const response = await card.charge(100.01).withCurrency("USD").execute();
   t.truthy(response);
   t.is("00", response.responseCode);
 });
 
 test("JAVA_Auth_026c1", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -2102,11 +2074,11 @@ test("JAVA_Auth_026c1", async (t) => {
   const response = await card
     .charge(100.01)
     .withCurrency("GBP")
-    // tslint:disable:max-line-length
+    /* eslint-disable */
     .withDescription(
       "3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIep3uviSnW9XEB3a4wpIW9XEB3a",
     )
-    // tslint:enable:max-line-length
+    /* eslint-enable */
     .execute();
   t.truthy(response);
   t.is("00", response.responseCode);
@@ -2114,7 +2086,6 @@ test("JAVA_Auth_026c1", async (t) => {
 
 test("JAVA_Auth_026c2", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -2137,7 +2108,6 @@ test("JAVA_Auth_026c2", async (t) => {
 
 test("JAVA_Auth_027a", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -2162,7 +2132,6 @@ test("JAVA_Auth_027a", async (t) => {
 test("JAVA_Auth_028a", async (t) => {
   t.plan(2);
 
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -2185,7 +2154,6 @@ test("JAVA_Auth_028a", async (t) => {
 
 test("JAVA_Auth_028b", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -2220,15 +2188,15 @@ test("JAVA_Auth_028c", async (t) => {
 
   // request
   const res = await card
-      .charge(100.01)
-      .withCurrency("USD")
-      // tslint:disable:max-line-length
-      .withCustomerId(
-        "3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep33a4wpQQQQQQQQQ1",
-      )
-      // tslint:enable:max-line-length
-      .withDescription("JAVA-Auth-028c")
-      .execute();
+    .charge(100.01)
+    .withCurrency("USD")
+    // tslint:disable:max-line-length
+    .withCustomerId(
+      "3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep33a4wpQQQQQQQQQ1",
+    )
+    // tslint:enable:max-line-length
+    .withDescription("JAVA-Auth-028c")
+    .execute();
   t.truthy(res);
   t.is("00", res.responseCode);
 });
@@ -2247,11 +2215,11 @@ test("JAVA_Auth_028d", async (t) => {
 
   // request
   const res = await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withCustomerId("123456~")
-      .withDescription("JAVA-Auth-028d")
-      .execute();
+    .charge(100.01)
+    .withCurrency("GBP")
+    .withCustomerId("123456~")
+    .withDescription("JAVA-Auth-028d")
+    .execute();
   t.truthy(res);
   t.is("00", res.responseCode);
 });
@@ -2281,7 +2249,6 @@ test("JAVA_Auth_029a", async (t) => {
 
 test("JAVA_Auth_029b", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -2316,15 +2283,15 @@ test("JAVA_Auth_029c", async (t) => {
 
   // request
   const res = await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      // tslint:disable:max-line-length
-      .withProductId(
-        "3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep33a4wpQQQQQQQQQ1",
-      )
-      // tslint:enable:max-line-length
-      .withDescription("JAVA-Auth-029c")
-      .execute();
+    .charge(100.01)
+    .withCurrency("GBP")
+    // tslint:disable:max-line-length
+    .withProductId(
+      "3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep33a4wpQQQQQQQQQ1",
+    )
+    // tslint:enable:max-line-length
+    .withDescription("JAVA-Auth-029c")
+    .execute();
   t.truthy(res);
   t.is("00", res.responseCode);
 });
@@ -2343,18 +2310,17 @@ test("JAVA_Auth_029d", async (t) => {
 
   // request
   const res = await card
-      .charge(100.01)
-      .withCurrency("EUR")
-      .withProductId("123456~")
-      .withDescription("JAVA-Auth-029d")
-      .execute();
+    .charge(100.01)
+    .withCurrency("EUR")
+    .withProductId("123456~")
+    .withDescription("JAVA-Auth-029d")
+    .execute();
   t.truthy(res);
   t.is("00", res.responseCode);
 });
 
 test("JAVA_Auth_030a", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -2378,7 +2344,6 @@ test("JAVA_Auth_030a", async (t) => {
 
 test("JAVA_Auth_030b", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -2413,22 +2378,21 @@ test("JAVA_Auth_030c", async (t) => {
 
   // request
   const res = await card
-      .charge(100.01)
-      .withCurrency("EUR")
-      // tslint:disable:max-line-length
-      .withClientTransactionId(
-        "3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep33a4wpQQQQQQQQQ1",
-      )
-      // tslint:enable:max-line-length
-      .withDescription("JAVA-Auth-030c")
-      .execute();
+    .charge(100.01)
+    .withCurrency("EUR")
+    // tslint:disable:max-line-length
+    .withClientTransactionId(
+      "3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep3uviSnW9XEB3a4wpIwepeep3a4wpIwep3uviSnW9XEB3a4wpIwep33a4wpQQQQQQQQQ1",
+    )
+    // tslint:enable:max-line-length
+    .withDescription("JAVA-Auth-030c")
+    .execute();
   t.truthy(res);
   t.is("00", res.responseCode);
 });
 
 test("JAVA_Auth_030d", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -2441,11 +2405,11 @@ test("JAVA_Auth_030d", async (t) => {
 
   // request
   const res = await card
-      .charge(100.01)
-      .withCurrency("USD")
-      .withClientTransactionId("123456~")
-      .withDescription("JAVA-Auth-030d")
-      .execute();
+    .charge(100.01)
+    .withCurrency("USD")
+    .withClientTransactionId("123456~")
+    .withDescription("JAVA-Auth-030d")
+    .execute();
   t.truthy(res);
   t.is("00", res.responseCode);
 });
@@ -2476,7 +2440,6 @@ test("JAVA_Auth_031a", async (t) => {
 test("JAVA_Auth_031b", async (t) => {
   t.plan(2);
 
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -2498,7 +2461,6 @@ test("JAVA_Auth_031b", async (t) => {
 
 test("JAVA_Auth_031c1", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();
@@ -2523,7 +2485,6 @@ test("JAVA_Auth_031c1", async (t) => {
 test("JAVA_Auth_031c2", async (t) => {
   t.plan(2);
 
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -2546,7 +2507,6 @@ test("JAVA_Auth_031c2", async (t) => {
 
 test("JAVA_Auth_032a", async (t) => {
   t.plan(2);
-
 
   // billing address
   const billingAddress = new Address();
@@ -2582,7 +2542,6 @@ test("JAVA_Auth_032a", async (t) => {
 test("JAVA_Auth_033a", async (t) => {
   t.plan(2);
 
-
   // billing address
   const billingAddress = new Address();
   billingAddress.postalCode = "774|10";
@@ -2615,7 +2574,6 @@ test("JAVA_Auth_033a", async (t) => {
 test("JAVA_Auth_033b1", async (t) => {
   t.plan(2);
 
-
   // billing address
   const billingAddress = new Address();
   billingAddress.postalCode = "774|10";
@@ -2642,7 +2600,6 @@ test("JAVA_Auth_033b1", async (t) => {
 
 test("JAVA_Auth_033b2", async (t) => {
   t.plan(2);
-
 
   // shipping address
   const shippingAddress = new Address();
@@ -2671,7 +2628,6 @@ test("JAVA_Auth_033b2", async (t) => {
 test("JAVA_Auth_033c1", async (t) => {
   t.plan(2);
 
-
   // billing address
   const billingAddress = new Address();
   billingAddress.postalCode = "774|10";
@@ -2698,7 +2654,6 @@ test("JAVA_Auth_033c1", async (t) => {
 
 test("JAVA_Auth_033c2", async (t) => {
   t.plan(2);
-
 
   // shipping address
   const shippingAddress = new Address();
@@ -2727,7 +2682,6 @@ test("JAVA_Auth_033c2", async (t) => {
 
 test("JAVA_Auth_034a", async (t) => {
   t.plan(2);
-
 
   // billing address
   const billingAddress = new Address();
@@ -2761,7 +2715,6 @@ test("JAVA_Auth_034a", async (t) => {
 test("JAVA_Auth_034b1", async (t) => {
   t.plan(2);
 
-
   // shipping address
   const shippingAddress = new Address();
   shippingAddress.country = "GB";
@@ -2789,7 +2742,6 @@ test("JAVA_Auth_034b1", async (t) => {
 test("JAVA_Auth_034b2", async (t) => {
   t.plan(2);
 
-
   // billing address
   const billingAddress = new Address();
   billingAddress.country = "GB";
@@ -2816,7 +2768,6 @@ test("JAVA_Auth_034b2", async (t) => {
 
 test("JAVA_Auth_034c1", async (t) => {
   t.plan(2);
-
 
   // billing address
   const billingAddress = new Address();
@@ -2846,7 +2797,6 @@ test("JAVA_Auth_034c1", async (t) => {
 test("JAVA_Auth_034c2", async (t) => {
   t.plan(2);
 
-
   // shipping address
   const shippingAddress = new Address();
   shippingAddress.country =
@@ -2875,7 +2825,6 @@ test("JAVA_Auth_034c2", async (t) => {
 test("JAVA_Auth_035a", async (t) => {
   t.plan(2);
 
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -2897,7 +2846,6 @@ test("JAVA_Auth_035a", async (t) => {
 
 test("JAVA_Auth_035b", async (t) => {
   t.plan(2);
-
 
   // create card
   const card = new CreditCardData();

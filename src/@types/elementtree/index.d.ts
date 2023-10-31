@@ -49,7 +49,10 @@ declare module "@azz/elementtree" {
 
   export function XML(data: string): Element;
   export function parse(source: string, parser?: string): ElementTree;
-  export function tostring(element: Element, options: Record<string, unknown>): string;
+  export function tostring(
+    element: Element,
+    options: Record<string, unknown>,
+  ): string;
   export function register_namespace(prefix: string, uri: string): void;
   export function SubElement(
     parent: Element,
@@ -58,7 +61,7 @@ declare module "@azz/elementtree" {
   ): Element;
   export function Comment(text: string): Element;
   export function CData(text: string): Element;
-    
+
   export interface ProcessingInstruction {
     (target: string, text?: string): Element;
   }

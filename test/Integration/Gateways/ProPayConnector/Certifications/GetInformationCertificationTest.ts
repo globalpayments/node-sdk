@@ -1,9 +1,6 @@
 import test from "ava";
 import { PayFacService } from "../../../../../src/Services/PayFacService";
-import {
-  PorticoConfig,
-   ServicesContainer
-} from "../../../../../src";
+import { PorticoConfig, ServicesContainer } from "../../../../../src";
 
 const config = new PorticoConfig();
 config.serviceUrl = "https://xmltest.propay.com/API/PropayAPI.aspx";
@@ -17,7 +14,8 @@ test.before(() => {
 
 test("get account info", async (t) => {
   t.plan(2);
-  const response = await _service.getAccountDetails()
+  const response = await _service
+    .getAccountDetails()
     .withAccountNumber("718570752")
     .execute();
 
@@ -27,7 +25,8 @@ test("get account info", async (t) => {
 
 test("get account balance", async (t) => {
   t.plan(2);
-  const response = await _service.getAccountBalance()
+  const response = await _service
+    .getAccountBalance()
     .withAccountNumber("718570752")
     .execute();
 
@@ -37,7 +36,8 @@ test("get account balance", async (t) => {
 
 test("get account info enchance", async (t) => {
   t.plan(2);
-  const response = await _service.getAccountDetailsEnhanced()
+  const response = await _service
+    .getAccountDetailsEnhanced()
     .withAccountNumber("718570752")
     .execute();
 

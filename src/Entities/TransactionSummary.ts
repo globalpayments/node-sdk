@@ -13,7 +13,7 @@ export class TransactionSummary {
   public deviceId: string;
   public issuerResponseCode: string;
   public issuerResponseMessage: string;
-  public issuerTransactionId: string;  
+  public issuerTransactionId: string;
   public gatewayResponseCode: string;
   public gatewayResponseMessage: string;
   public gratuityAmount: string;

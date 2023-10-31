@@ -25,7 +25,8 @@ test("correctable postal code - hyphen", async (t) => {
   const address = new Address();
   address.postalCode = "12345-6789";
 
-  const response = await card.charge(10)
+  const response = await card
+    .charge(10)
     .withCurrency("USD")
     .withAddress(address)
     .withAllowDuplicates(true)
@@ -39,7 +40,8 @@ test("correctable postal code - space", async (t) => {
   const address = new Address();
   address.postalCode = "12345 6789";
 
-  const response = await card.charge(10)
+  const response = await card
+    .charge(10)
     .withCurrency("USD")
     .withAddress(address)
     .withAllowDuplicates(true)
@@ -53,45 +55,66 @@ test("invalid postal code - length", async (t) => {
   const address = new Address();
   address.postalCode = "1234567890";
 
-  const error = t.throws(() => {
-    return card.charge(10)
-      .withCurrency("USD")
-      .withAddress(address)
-      .withAllowDuplicates(true)
-      .execute();
-  }, {instanceOf: Error});
+  const error = t.throws(
+    () => {
+      return card
+        .charge(10)
+        .withCurrency("USD")
+        .withAddress(address)
+        .withAllowDuplicates(true)
+        .execute();
+    },
+    { instanceOf: Error },
+  );
 
-  t.is(error?.message, "Zip/postal code length greater than the configured gateway's maximum length");
+  t.is(
+    error?.message,
+    "Zip/postal code length greater than the configured gateway's maximum length",
+  );
 });
 
 test("invalid city - length", async (t) => {
   const address = new Address();
   address.city = "abcdefghijklmnopqrstuvwxyz";
 
-  const error = t.throws(() => {
-    return card.charge(10)
-      .withCurrency("USD")
-      .withAddress(address)
-      .withAllowDuplicates(true)
-      .execute();
-  }, {instanceOf: Error});
+  const error = t.throws(
+    () => {
+      return card
+        .charge(10)
+        .withCurrency("USD")
+        .withAddress(address)
+        .withAllowDuplicates(true)
+        .execute();
+    },
+    { instanceOf: Error },
+  );
 
-  t.is(error?.message, "City length greater than the configured gateway's maximum length");
+  t.is(
+    error?.message,
+    "City length greater than the configured gateway's maximum length",
+  );
 });
 
 test("invalid state - length", async (t) => {
   const address = new Address();
   address.state = "abcdefghijklmnopqrstuvwxyz";
 
-  const error = t.throws(() => {
-    return card.charge(10)
-      .withCurrency("USD")
-      .withAddress(address)
-      .withAllowDuplicates(true)
-      .execute();
-  }, {instanceOf: Error});
+  const error = t.throws(
+    () => {
+      return card
+        .charge(10)
+        .withCurrency("USD")
+        .withAddress(address)
+        .withAllowDuplicates(true)
+        .execute();
+    },
+    { instanceOf: Error },
+  );
 
-  t.is(error?.message, "State/province length greater than the configured gateway's maximum length");
+  t.is(
+    error?.message,
+    "State/province length greater than the configured gateway's maximum length",
+  );
 });
 
 test("invalid first name - length", async (t) => {
@@ -102,14 +125,21 @@ test("invalid first name - length", async (t) => {
   c.cvn = card.cvn;
   c.cardHolderName = "abcdefghijklmnopqrstuvwxyza smith";
 
-  const error = t.throws(() => {
-    return c.charge(10)
-      .withCurrency("USD")
-      .withAllowDuplicates(true)
-      .execute();
-  }, {instanceOf: Error});
+  const error = t.throws(
+    () => {
+      return c
+        .charge(10)
+        .withCurrency("USD")
+        .withAllowDuplicates(true)
+        .execute();
+    },
+    { instanceOf: Error },
+  );
 
-  t.is(error?.message, "First name length greater than the configured gateway's maximum length");
+  t.is(
+    error?.message,
+    "First name length greater than the configured gateway's maximum length",
+  );
 });
 
 test("invalid last name - length", async (t) => {
@@ -120,14 +150,21 @@ test("invalid last name - length", async (t) => {
   c.cvn = card.cvn;
   c.cardHolderName = "john abcdefghijklmnopqrstuvwxyza";
 
-  const error = t.throws(() => {
-    return c.charge(10)
-      .withCurrency("USD")
-      .withAllowDuplicates(true)
-      .execute();
-  }, {instanceOf: Error});
+  const error = t.throws(
+    () => {
+      return c
+        .charge(10)
+        .withCurrency("USD")
+        .withAllowDuplicates(true)
+        .execute();
+    },
+    { instanceOf: Error },
+  );
 
-  t.is(error?.message, "Last name length greater than the configured gateway's maximum length");
+  t.is(
+    error?.message,
+    "Last name length greater than the configured gateway's maximum length",
+  );
 });
 
 test("floating point math", async (t) => {

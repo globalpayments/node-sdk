@@ -96,7 +96,7 @@ test("reverse by transaction id fails", async (t) => {
       .withCurrency("USD")
       .withTransactionId(response.transactionId)
       .execute();
-  }, new UnsupportedTransactionError);
+  }, new UnsupportedTransactionError());
 
   t.truthy(error?.message);
 });

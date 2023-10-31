@@ -37,11 +37,11 @@ test("make PayPlan customer", async (t) => {
   customer.status = "Active";
   customer.email = "john.doe@email.com";
   customer.address = new Address();
-      customer.address.streetAddress1 = "123 Main St.";
-      customer.address.city = "Dallas";
-      customer.address.state = "TX";
-      customer.address.postalCode = "98765";
-      customer.address.country = "USA";
+  customer.address.streetAddress1 = "123 Main St.";
+  customer.address.city = "Dallas";
+  customer.address.state = "TX";
+  customer.address.postalCode = "98765";
+  customer.address.country = "USA";
   customer.workPhone = "5551112222";
   const createdCustomer = await customer.create();
 
@@ -53,7 +53,9 @@ test("attach CC payment method to customer", async (t) => {
 
   handleAuth();
 
-  const foundCustomer = await Customer.find("Customer" + timeForId) as Customer;
+  const foundCustomer = (await Customer.find(
+    "Customer" + timeForId,
+  )) as Customer;
 
   t.truthy(foundCustomer);
 
@@ -64,8 +66,8 @@ test("attach CC payment method to customer", async (t) => {
   card.cvn = "123";
 
   const ccPaymentMethod = await foundCustomer
-      .addPaymentMethod("Payment" + timeForId, card)
-      .create();
+    .addPaymentMethod("Payment" + timeForId, card)
+    .create();
 
   t.truthy(ccPaymentMethod);
 });
@@ -75,11 +77,13 @@ test("attach payment schedule to customer", async (t) => {
 
   handleAuth();
 
-  const foundCcPaymentMethod = await RecurringPaymentMethod.find("Payment" + timeForId) as RecurringPaymentMethod;
+  const foundCcPaymentMethod = (await RecurringPaymentMethod.find(
+    "Payment" + timeForId,
+  )) as RecurringPaymentMethod;
 
   t.truthy(foundCcPaymentMethod);
 
-  const paymentSchedule =  await foundCcPaymentMethod
+  const paymentSchedule = await foundCcPaymentMethod
     .addSchedule("Schedule" + timeForId)
     .withStartDate(new Date(2027, 1, 1))
     .withAmount(30.01)
@@ -97,7 +101,9 @@ test("edit/deactivate the schedule from above test", async (t) => {
 
   handleAuth();
 
-  const foundSchedule = await Schedule.find("Schedule" + timeForId) as Schedule;
+  const foundSchedule = (await Schedule.find(
+    "Schedule" + timeForId,
+  )) as Schedule;
 
   t.truthy(foundSchedule);
 
@@ -107,32 +113,37 @@ test("edit/deactivate the schedule from above test", async (t) => {
 });
 
 test("find and charge payment method", async (t) => {
-  t.plan(1)
+  t.plan(1);
 
   handleAuth();
 
-  const foundCcPaymentMethod = await RecurringPaymentMethod.find("Payment" + timeForId) as RecurringPaymentMethod;
+  const foundCcPaymentMethod = (await RecurringPaymentMethod.find(
+    "Payment" + timeForId,
+  )) as RecurringPaymentMethod;
 
-  const chargeResponse = await foundCcPaymentMethod.charge(12.34)
+  const chargeResponse = await foundCcPaymentMethod
+    .charge(12.34)
     .withCurrency("USD")
     .execute("auth");
 
-  t.true(chargeResponse.responseCode == '00')
-})
+  t.true(chargeResponse.responseCode == "00");
+});
 
 test("find transactions from this new payment method", async (t) => {
-  t.plan(1)
+  t.plan(1);
 
   handleAuth();
 
-  const foundCcPaymentMethod = await RecurringPaymentMethod.find("Payment" + timeForId) as RecurringPaymentMethod;
+  const foundCcPaymentMethod = (await RecurringPaymentMethod.find(
+    "Payment" + timeForId,
+  )) as RecurringPaymentMethod;
 
   const foundTransactions = await ReportingService.findTransactions()
     .where("PaymentMethodKey", foundCcPaymentMethod.key)
     .execute("auth");
 
   t.true(foundTransactions.length === 2); // one transaction was the CreditAccountVerify from creating the payment method
-})
+});
 
 function handleAuth() {
   const config = new PorticoConfig();

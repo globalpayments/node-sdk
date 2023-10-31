@@ -10,7 +10,7 @@ export abstract class ReportBuilder<T> extends BaseBuilder<T> {
     this.reportType = type;
   }
 
-  public execute(configName: string = 'default'): Promise<T> {
+  public execute(configName: string = "default"): Promise<T> {
     super.execute();
     return ServicesContainer.instance()
       .getClient(configName)

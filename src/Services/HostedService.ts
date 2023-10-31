@@ -15,7 +15,7 @@ import {
 export class HostedService {
   protected config: GpEcomConfig;
 
-  constructor(config: GpEcomConfig, configName: string = 'default') {
+  constructor(config: GpEcomConfig, configName: string = "default") {
     this.config = config;
     ServicesContainer.configureService(config, configName);
   }

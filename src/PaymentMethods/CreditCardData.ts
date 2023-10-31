@@ -42,11 +42,10 @@ export class CreditCardData extends Credit implements ICardData {
   }
 
   public getShortExpiry(): string {
-
     if (this.expMonth != null && this.expYear != null) {
       return this.expMonth + this.expYear.slice(-2);
     }
 
-    return '';
+    return "";
   }
 }

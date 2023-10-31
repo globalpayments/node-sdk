@@ -19,10 +19,10 @@ const card = TestCards.visaManual();
 card.tokenize();
 
 ava.before(() => {
-  ServicesContainer.configureService(config);  
+  ServicesContainer.configureService(config);
 });
- 
- test("ecom with moto", async (t) => {
+
+test("ecom with moto", async (t) => {
   t.plan(2);
 
   const ecom = new EcommerceInfo();
@@ -77,8 +77,8 @@ test("ecom with direct market invoice and ship date", async (t) => {
 
   const ecom = new EcommerceInfo();
   ecom.channel = EcommerceChannel.Moto;
-  ecom.shipDay="25";
-  ecom.shipMonth="12";
+  ecom.shipDay = "25";
+  ecom.shipMonth = "12";
 
   const response = await card
     .charge(9)
@@ -110,13 +110,13 @@ test("ecom with secure ecommerce", async (t) => {
 
   t.truthy(response);
   t.is(response.responseCode, "00");
-}); 
+});
 
 test.skip("ecom with walletdata", async (t) => {
-  t.plan(2);  
+  t.plan(2);
   card.mobileType = MobilePaymentMethodType.GOOGLEPAY;
   card.paymentSource = PaymentDataSourceType.GOOGLEPAYWEB;
-  card.token=`{
+  card.token = `{
     "signature": "MEQCICd1jRuaiWW5z9olPR+xBi6Z7CmW019Ys+EOKO2RIgy9AiA2d/hWKuRYtayJl//Cc1r2wifxv69lRrRHTTPbelKhzA==",
     "protocolVersion": "ECv1",
     "signedMessage": {
@@ -127,7 +127,7 @@ test.skip("ecom with walletdata", async (t) => {
   }`;
   const response = await card
     .charge(10)
-    .withCurrency("USD")    
+    .withCurrency("USD")
     .withInvoiceNumber("1234567890")
     .withAllowDuplicates(true)
     .execute();

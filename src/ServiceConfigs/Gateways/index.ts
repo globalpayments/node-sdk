@@ -1,3 +1,4 @@
-export * from './GatewayConfig';
-export * from './GpEcomConfig';
-export * from './PorticoConfig';
+export * from "./GatewayConfig";
+export * from "./GpApiConfig";
+export * from "./GpEcomConfig";
+export * from "./PorticoConfig";

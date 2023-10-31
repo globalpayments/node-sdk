@@ -10,9 +10,7 @@ import {
 } from "../";
 import { RecurringEntity } from "../Entities";
 
-export class RecurringPaymentMethod extends RecurringEntity<
-  RecurringPaymentMethod
-> {
+export class RecurringPaymentMethod extends RecurringEntity<RecurringPaymentMethod> {
   public address: Address;
   public commercialIndicator: string;
   public customerKey: string;
@@ -45,8 +43,8 @@ export class RecurringPaymentMethod extends RecurringEntity<
 
     if (
       customerIdOrPaymentMethod &&
-        (typeof customerIdOrPaymentMethod === "string" ||
-      customerIdOrPaymentMethod instanceof String)
+      (typeof customerIdOrPaymentMethod === "string" ||
+        customerIdOrPaymentMethod instanceof String)
     ) {
       this.paymentType = "Credit Card";
       this.customerKey = customerIdOrPaymentMethod as string;

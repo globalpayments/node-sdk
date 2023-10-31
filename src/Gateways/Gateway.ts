@@ -3,12 +3,14 @@ import * as url from "url";
 
 import { IDictionary } from "../Builders";
 import { request } from "./https-wrapper";
+import { GatewayResponse } from "./GatewayResponse";
 
 export abstract class Gateway {
   public headers: IDictionary<string>;
   public timeout: number;
   public serviceUrl: string;
-  private contentType: string;
+  protected contentType: string;
+  public maskedRequestData: string[];
 
   public constructor(contentType: string) {
     this.contentType = contentType;
@@ -21,7 +23,7 @@ export abstract class Gateway {
     endpoint: string,
     data?: string,
     queryStringParams?: IDictionary<string>,
-  ): Promise<string> {
+  ): Promise<GatewayResponse> {
     const uri = url.parse(this.serviceUrl);
     const queryString = this.buildQueryString(queryStringParams);
     const options: RequestOptions = {

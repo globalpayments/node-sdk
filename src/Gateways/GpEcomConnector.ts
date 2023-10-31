@@ -28,7 +28,6 @@ import {
   PaymentMethodType,
   RecurringBuilder,
   RecurringPaymentMethod,
-  ReportBuilder,
   RequestBuilderFactory,
   Schedule,
   StringUtils,
@@ -42,7 +41,10 @@ import { XmlGateway } from "./XmlGateway";
 import { GpEcomConfig } from "src/ServiceConfigs/Gateways/GpEcomConfig";
 import { GpEcomMapping } from "../../src";
 
-export class GpEcomConnector extends XmlGateway implements IPaymentGateway, IRecurringService {
+export class GpEcomConnector
+  extends XmlGateway
+  implements IPaymentGateway, IRecurringService
+{
   public merchantId: string;
   public accountId: string;
   public sharedSecret: string;
@@ -55,7 +57,7 @@ export class GpEcomConnector extends XmlGateway implements IPaymentGateway, IRec
   public hostedPaymentConfig: HostedPaymentConfig;
   public config: GpEcomConfig;
 
-  constructor (config: GpEcomConfig) {
+  constructor(config: GpEcomConfig) {
     super();
 
     this.config = config;
@@ -67,33 +69,37 @@ export class GpEcomConnector extends XmlGateway implements IPaymentGateway, IRec
     const transactionType = GpEcomMapping.mapAuthRequestType(builder);
     const acceptedResponseCodes = this.mapAcceptedCodes(transactionType);
 
-    return this.executeProcess(builder).then((response) => 
-      GpEcomMapping.mapResponse(response, acceptedResponseCodes)
+    return this.executeProcess(builder).then((response) =>
+      GpEcomMapping.mapResponse(response, acceptedResponseCodes),
     );
   }
-  
+
   public manageTransaction(builder: ManagementBuilder): Promise<Transaction> {
     const transactionType = GpEcomMapping.mapManageRequestType(builder);
 
-    return this.executeProcess(builder).then((response) => 
-      GpEcomMapping.mapResponse(response, this.mapAcceptedCodes(transactionType))
+    return this.executeProcess(builder).then((response) =>
+      GpEcomMapping.mapResponse(
+        response,
+        this.mapAcceptedCodes(transactionType),
+      ),
     );
   }
 
-  private executeProcess(
-    builder: BaseBuilder<Transaction>,
-  ): Promise<string> {
+  private executeProcess(builder: BaseBuilder<Transaction>): Promise<string> {
     const processFactory = new RequestBuilderFactory();
 
-    const requestBuilder = processFactory.getRequestBuilder(builder, this.config.gatewayProvider as GatewayProvider);
+    const requestBuilder = processFactory.getRequestBuilder(
+      builder,
+      this.config.gatewayProvider as GatewayProvider,
+    );
     if (!requestBuilder) {
-        throw new ApiError("Request builder not found!");
+      throw new ApiError("Request builder not found!");
     }
 
-    const request =  requestBuilder.buildRequest(builder, this.config);
+    const request = requestBuilder.buildRequest(builder, this.config);
 
     if (!request) {
-        throw new ApiError("Request was not generated!");
+      throw new ApiError("Request was not generated!");
     }
 
     return this.doTransaction(request.requestBody);
@@ -263,7 +269,9 @@ export class GpEcomConnector extends XmlGateway implements IPaymentGateway, IRec
     return JSON.stringify(request);
   }
 
-  public oldManageTransaction(builder: ManagementBuilder): Promise<Transaction> {
+  public oldManageTransaction(
+    builder: ManagementBuilder,
+  ): Promise<Transaction> {
     const timestamp = GenerationUtils.generateTimestamp();
     const orderId = builder.orderId || GenerationUtils.generateOrderId();
 
@@ -288,7 +296,8 @@ export class GpEcomConnector extends XmlGateway implements IPaymentGateway, IRec
     subElement(request, "orderid").append(cData(orderId));
 
     if (builder.paymentMethod) {
-      const ref = (builder.paymentMethod as IPaymentMethod) as TransactionReference;
+      const ref =
+        builder.paymentMethod as IPaymentMethod as TransactionReference;
       subElement(request, "pasref").append(cData(ref.transactionId));
     }
 
@@ -344,7 +353,7 @@ export class GpEcomConnector extends XmlGateway implements IPaymentGateway, IRec
     );
   }
 
-  public processReport<T>(_builder: ReportBuilder<T>): Promise<T> {
+  public processReport<T>(): Promise<T> {
     throw new UnsupportedTransactionError(
       "Reporting functionality is not supported through this gateway.",
     );
@@ -361,11 +370,10 @@ export class GpEcomConnector extends XmlGateway implements IPaymentGateway, IRec
       timestamp,
       type: this.mapRecurringRequestType(builder),
     });
-   
+
     if (this.config.merchantId) {
       subElement(request, "merchantid").append(cData(this.config.merchantId));
     }
-
 
     if (
       builder.transactionType === TransactionType.Create ||
@@ -385,9 +393,14 @@ export class GpEcomConnector extends XmlGateway implements IPaymentGateway, IRec
         subElement(request, "sha1hash").append(
           cData(
             GenerationUtils.generateHash(
-              [timestamp, this.config.merchantId, orderId, "", "", customer.key].join(
-                ".",
-              ),
+              [
+                timestamp,
+                this.config.merchantId,
+                orderId,
+                "",
+                "",
+                customer.key,
+              ].join("."),
               this.config.sharedSecret,
             ),
           ),
@@ -406,7 +419,9 @@ export class GpEcomConnector extends XmlGateway implements IPaymentGateway, IRec
           subElement(cardElement, "number").append(cData(card.number));
           subElement(cardElement, "expdate").append(cData(expiry));
           subElement(cardElement, "chname").append(cData(card.cardHolderName));
-          subElement(cardElement, "type").append(cData(card.getCardType().toUpperCase()));
+          subElement(cardElement, "type").append(
+            cData(card.getCardType().toUpperCase()),
+          );
 
           let sha1hash = "";
           if (builder.transactionType === TransactionType.Create) {
@@ -457,12 +472,18 @@ export class GpEcomConnector extends XmlGateway implements IPaymentGateway, IRec
     return new ElementTree(transaction).write();
   }
 
-  protected buildCustomer<T extends IRecurringEntity>(customer: Customer, builder: RecurringBuilder<T>) {
+  protected buildCustomer<T extends IRecurringEntity>(
+    customer: Customer,
+    builder: RecurringBuilder<T>,
+  ) {
     const payer = element("payer", {
       ref: customer.key || StringUtils.uuid(),
     });
 
-    const type = builder.transactionType === TransactionType.Edit ? 'Subscriber' : 'Retail';
+    const type =
+      builder.transactionType === TransactionType.Edit
+        ? "Subscriber"
+        : "Retail";
     subElement(payer, "type").append(cData(type));
 
     subElement(payer, "title").append(cData(customer.title));
@@ -607,8 +628,8 @@ export class GpEcomConnector extends XmlGateway implements IPaymentGateway, IRec
         return "payment-out";
       case TransactionType.Reversal:
         throw new UnsupportedTransactionError(
-          'The selected gateway does not support this transaction type.'
-      );
+          "The selected gateway does not support this transaction type.",
+        );
       default:
         return "unknown";
     }
@@ -660,11 +681,11 @@ export class GpEcomConnector extends XmlGateway implements IPaymentGateway, IRec
         return "card-cancel-card";
       case TransactionType.Fetch:
         if (entity instanceof Schedule) {
-            return "schedule-get";
+          return "schedule-get";
         }
       case TransactionType.Search:
         if (entity instanceof Schedule) {
-            return "schedule-search";
+          return "schedule-search";
         }
       default:
         throw new UnsupportedTransactionError();
@@ -676,16 +697,15 @@ export class GpEcomConnector extends XmlGateway implements IPaymentGateway, IRec
     return parseFloat(f.toFixed(2)).toString();
   }
 
-  private mapAcceptedCodes(paymentMethodType: string)
-  {
-      switch (paymentMethodType) {
-          case "3ds-verifysig":
-          case "3ds-verifyenrolled":
-              return ["00", "110"];
-          case "payment-set":
-              return ["01", "00"];
-          default:
-              return ["00"];
-      }
+  private mapAcceptedCodes(paymentMethodType: string) {
+    switch (paymentMethodType) {
+      case "3ds-verifysig":
+      case "3ds-verifyenrolled":
+        return ["00", "110"];
+      case "payment-set":
+        return ["01", "00"];
+      default:
+        return ["00"];
+    }
   }
 }

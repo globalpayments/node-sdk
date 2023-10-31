@@ -26,13 +26,14 @@ configWithoutChannel.accountId = "api";
 configWithoutChannel.sharedSecret = "secret";
 configWithoutChannel.refundPassword = "refund";
 configWithoutChannel.rebatePassword = "rebate";
-configWithoutChannel.serviceUrl = "https://api.sandbox.realexpayments.com/epage-remote.cgi";
+configWithoutChannel.serviceUrl =
+  "https://api.sandbox.realexpayments.com/epage-remote.cgi";
 configWithoutChannel.timeout = 5000;
 
 test.before(() => {
   ServicesContainer.configureService(config);
   ServicesContainer.configureService(configWithoutChannel, "withoutChannel");
-})
+});
 
 const throttle = () => new Promise((resolve) => setTimeout(resolve, 1500));
 
@@ -53,10 +54,7 @@ test.skip("JAVA_Hold_Sample", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -84,10 +82,7 @@ test("JAVA_Hold_006a", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -115,10 +110,7 @@ test("JAVA_Hold_006b", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -146,10 +138,7 @@ test("JAVA_Hold_006c", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -177,10 +166,7 @@ test("JAVA_Hold_006d", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -208,10 +194,7 @@ test("JAVA_Hold_006e", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -227,7 +210,6 @@ test("JAVA_Hold_006e", async (t) => {
 });
 
 test("JAVA_Hold_006f", async (t) => {
- 
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -238,10 +220,7 @@ test("JAVA_Hold_006f", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -257,7 +236,6 @@ test("JAVA_Hold_006f", async (t) => {
 });
 
 test("JAVA_Hold_006g", async (t) => {
- 
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -268,10 +246,7 @@ test("JAVA_Hold_006g", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -287,7 +262,6 @@ test("JAVA_Hold_006g", async (t) => {
 });
 
 test("JAVA_Hold_006h", async (t) => {
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -298,10 +272,7 @@ test("JAVA_Hold_006h", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -317,7 +288,6 @@ test("JAVA_Hold_006h", async (t) => {
 });
 
 test("JAVA_Hold_006i", async (t) => {
- 
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -328,10 +298,7 @@ test("JAVA_Hold_006i", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -347,7 +314,6 @@ test("JAVA_Hold_006i", async (t) => {
 });
 
 test.skip("JAVA_Hold_006k", async (t) => {
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -358,10 +324,7 @@ test.skip("JAVA_Hold_006k", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -377,7 +340,6 @@ test.skip("JAVA_Hold_006k", async (t) => {
 });
 
 test.skip("JAVA_Hold_006l", async (t) => {
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -388,10 +350,7 @@ test.skip("JAVA_Hold_006l", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -419,10 +378,7 @@ test.skip("JAVA_Hold_007a", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -450,10 +406,7 @@ test.skip("JAVA_Hold_007b", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -481,10 +434,7 @@ test.skip("JAVA_Hold_007c", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -511,7 +461,7 @@ test("JAVA_Hold_007d", async (t) => {
         .hold()
         .withReasonCode(ReasonCode.Fraud)
         .execute("withoutChannel"),
-    {instanceOf: BuilderError},
+    { instanceOf: BuilderError },
   );
   t.truthy(error?.message);
 });
@@ -528,7 +478,7 @@ test("JAVA_Hold_007e", async (t) => {
         .hold()
         .withReasonCode(ReasonCode.Fraud)
         .execute("withoutChannel"),
-    {instanceOf: BuilderError},
+    { instanceOf: BuilderError },
   );
   t.truthy(error?.message);
 });
@@ -545,10 +495,7 @@ test.skip("JAVA_Hold_008a", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -576,10 +523,7 @@ test.skip("JAVA_Hold_008b", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -596,7 +540,7 @@ test.skip("JAVA_Hold_008b", async (t) => {
 
 test("JAVA_Hold_008c", async (t) => {
   t.plan(2);
-  
+
   const saleResponse = Transaction.fromId(undefined as unknown as string);
 
   // request
@@ -606,7 +550,7 @@ test("JAVA_Hold_008c", async (t) => {
         .hold()
         .withReasonCode(ReasonCode.Fraud)
         .execute("withoutChannel"),
-    {instanceOf: BuilderError},
+    { instanceOf: BuilderError },
   );
   t.truthy(error?.message);
 });
@@ -623,7 +567,7 @@ test("JAVA_Hold_008d", async (t) => {
         .hold()
         .withReasonCode(ReasonCode.Fraud)
         .execute("withoutChannel"),
-    {instanceOf: BuilderError},
+    { instanceOf: BuilderError },
   );
   t.truthy(error?.message);
 });
@@ -640,7 +584,7 @@ test("JAVA_Hold_008e", async (t) => {
         .hold()
         .withReasonCode(ReasonCode.Fraud)
         .execute("withoutChannel"),
-    {instanceOf: BuilderError},
+    { instanceOf: BuilderError },
   );
   t.truthy(error?.message);
 });
@@ -658,10 +602,7 @@ test.skip("JAVA_Hold_009c", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -689,7 +630,7 @@ test("JAVA_Hold_009d", async (t) => {
         .withReasonCode(ReasonCode.Fraud)
         .withDescription("SDK-JAVA-Query")
         .execute(),
-    {instanceOf: BuilderError},
+    { instanceOf: BuilderError },
   );
   t.truthy(error?.message);
 });
@@ -707,7 +648,7 @@ test("JAVA_Hold_009e", async (t) => {
         .withReasonCode(ReasonCode.Fraud)
         .withDescription("SDK-JAVA-Query")
         .execute(),
-    {instanceOf: BuilderError},
+    { instanceOf: BuilderError },
   );
   t.truthy(error?.message);
 });
@@ -725,10 +666,7 @@ test.skip("JAVA_Hold_010a", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -744,7 +682,6 @@ test.skip("JAVA_Hold_010a", async (t) => {
 });
 
 test("JAVA_Hold_010b", async (t) => {
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -755,10 +692,7 @@ test("JAVA_Hold_010b", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -786,7 +720,7 @@ test("JAVA_Hold_010c", async (t) => {
         .withReasonCode(ReasonCode.Fraud)
         .withDescription("JAVA-Hold")
         .execute(),
-    {instanceOf: BuilderError},
+    { instanceOf: BuilderError },
   );
   t.truthy(error?.message);
 });
@@ -804,10 +738,7 @@ test.skip("JAVA_Hold_010d", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -823,7 +754,6 @@ test.skip("JAVA_Hold_010d", async (t) => {
 });
 
 test("JAVA_Hold_011a", async (t) => {
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -834,10 +764,7 @@ test("JAVA_Hold_011a", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -853,7 +780,6 @@ test("JAVA_Hold_011a", async (t) => {
 });
 
 test("JAVA_Hold_011b", async (t) => {
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -864,10 +790,7 @@ test("JAVA_Hold_011b", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -883,7 +806,6 @@ test("JAVA_Hold_011b", async (t) => {
 });
 
 test("JAVA_Hold_011c", async (t) => {
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -894,10 +816,7 @@ test("JAVA_Hold_011c", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -912,7 +831,6 @@ test("JAVA_Hold_011c", async (t) => {
 });
 
 test("JAVA_Hold_011d", async (t) => {
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -923,10 +841,7 @@ test("JAVA_Hold_011d", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -942,7 +857,6 @@ test("JAVA_Hold_011d", async (t) => {
 });
 
 test("JAVA_Hold_012a", async (t) => {
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -953,10 +867,7 @@ test("JAVA_Hold_012a", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -979,7 +890,7 @@ test("JAVA_Hold_012b", async (t) => {
   config.sharedSecret = "secreto";
   config.refundPassword = "refund";
   config.rebatePassword = "rebate";
-  
+
   config.timeout = 5000;
   config.channel = "ECOM";
   ServicesContainer.configureService(config);
@@ -994,28 +905,25 @@ test("JAVA_Hold_012b", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
 
   // request
   const error = await t.throwsAsync(
-    async () => await saleResponse
-      .hold()
-      .withReasonCode(ReasonCode.Fraud)
-      .withDescription("SDK-JAVA-Query")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await saleResponse
+        .hold()
+        .withReasonCode(ReasonCode.Fraud)
+        .withDescription("SDK-JAVA-Query")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
 
 test("JAVA_Hold_013a", async (t) => {
-
   // create card
   const card = new CreditCardData();
   card.number = "4263970000005262";
@@ -1026,10 +934,7 @@ test("JAVA_Hold_013a", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
@@ -1052,7 +957,7 @@ test("JAVA_Hold_013b", async (t) => {
   config.sharedSecret = "secret";
   config.refundPassword = "refund";
   config.rebatePassword = "rebate";
-  
+
   config.timeout = 5000;
   config.channel = "EC";
   ServicesContainer.configureService(config);
@@ -1067,22 +972,20 @@ test("JAVA_Hold_013b", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
 
   // request
   const error = await t.throwsAsync(
-    async () => await saleResponse
-      .hold()
-      .withReasonCode(ReasonCode.Fraud)
-      .withDescription("SDK-JAVA-Query")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await saleResponse
+        .hold()
+        .withReasonCode(ReasonCode.Fraud)
+        .withDescription("SDK-JAVA-Query")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -1095,7 +998,7 @@ test("JAVA_Hold_013c", async (t) => {
   config.sharedSecret = "secret";
   config.refundPassword = "refund";
   config.rebatePassword = "rebate";
-  
+
   config.timeout = 5000;
   config.channel = "ECOOOOOOOOM";
   ServicesContainer.configureService(config);
@@ -1110,22 +1013,20 @@ test("JAVA_Hold_013c", async (t) => {
   card.cardHolderName = "James Mason";
 
   // build transaction
-  const saleResponse = await card
-    .charge(10)
-    .withCurrency("EUR")
-    .execute();
+  const saleResponse = await card.charge(10).withCurrency("EUR").execute();
   t.truthy(saleResponse);
   t.is("00", saleResponse.responseCode);
   await throttle();
 
   // request
   const error = await t.throwsAsync(
-    async () => await saleResponse
-      .hold()
-      .withReasonCode(ReasonCode.Fraud)
-      .withDescription("SDK-JAVA-Query")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await saleResponse
+        .hold()
+        .withReasonCode(ReasonCode.Fraud)
+        .withDescription("SDK-JAVA-Query")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });

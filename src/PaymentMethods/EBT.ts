@@ -15,13 +15,16 @@ import {
 } from "./Interfaces";
 import { PaymentMethod } from "./PaymentMethod";
 
-export abstract class EBT extends PaymentMethod
-  implements IBalanceable,
+export abstract class EBT
+  extends PaymentMethod
+  implements
+    IBalanceable,
     IChargable,
     IRefundable,
     IReversable,
     IPrePayable,
-    IPinProtected {
+    IPinProtected
+{
   public paymentMethodType: PaymentMethodType = PaymentMethodType.EBT;
   public pinBlock: string;
 
@@ -90,7 +93,7 @@ export abstract class EBT extends PaymentMethod
    *
    * @return AuthorizationBuilder
    */
-  public reverse(_amount?: string | number): AuthorizationBuilder {
+  public reverse(): AuthorizationBuilder {
     throw new NotImplementedError();
   }
 }

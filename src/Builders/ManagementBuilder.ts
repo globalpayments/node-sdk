@@ -53,7 +53,7 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
    *
    * @returns Promise<Transaction>
    */
-  public execute(configName: string = 'default'): Promise<Transaction> {
+  public execute(configName: string = "default"): Promise<Transaction> {
     super.execute();
     return ServicesContainer.instance()
       .getClient(configName)

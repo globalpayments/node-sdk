@@ -1,15 +1,27 @@
 # Changelog
 
-## Latest (10/03/23)
+## Latest - v3.1.0 (10/31/23)
 
-#### Typescript upgrade to v5
+### Enhancements:
+
+- [GP-API] Generate Access Token for GP API users
+  - https://developer.globalpay.com/api/access-token
+
+### Bug Fixes:
+
+- Change tslint with eslint and fix existing lint errors
+
+## v3.0.0 (10/03/23)
+
+### Enhancements:
 
 - Upgrade Typescript to v5 to use latest functionalities
 
 ## v2.0.0 (09/21/23)
 
-#### Configuration via Service Containers
+### Enhancements:
 
+- [GP-ECOM] Add configuration and use it in existing functionality
 - From now on we are going to use containers in order to configure the services in Node SDK.
 
 ## v1.4.9 (05/17/23)

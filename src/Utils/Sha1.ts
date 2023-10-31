@@ -68,7 +68,7 @@ export function str_hmac_sha1(key: string, data: string): string {
  */
 function core_sha1(x: number[], len: number): number[] {
   /* append padding */
-  x[len >> 5] |= 0x80 << (24 - len % 32);
+  x[len >> 5] |= 0x80 << (24 - (len % 32));
   x[(((len + 64) >> 9) << 4) + 15] = len;
 
   const w = Array(80);
@@ -134,7 +134,11 @@ function sha1_ft(t: number, b: number, c: number, d: number): number {
 function sha1_kt(t: number): number {
   return t < 20
     ? 1518500249
-    : t < 40 ? 1859775393 : t < 60 ? -1894007588 : -899497514;
+    : t < 40
+    ? 1859775393
+    : t < 60
+    ? -1894007588
+    : -899497514;
 }
 
 /*
@@ -185,7 +189,8 @@ function str2binb(str: string): number[] {
   const bin: number[] = [];
   const mask = (1 << chrsz) - 1;
   for (let i = 0; i < str.length * chrsz; i += chrsz) {
-    bin[i >> 5] |= (str.charCodeAt(i / chrsz) & mask) << (32 - chrsz - i % 32);
+    bin[i >> 5] |=
+      (str.charCodeAt(i / chrsz) & mask) << (32 - chrsz - (i % 32));
   }
   return bin;
 }
@@ -197,7 +202,9 @@ function binb2str(bin: number[]): string {
   let str = "";
   const mask = (1 << chrsz) - 1;
   for (let i = 0; i < bin.length * 32; i += chrsz) {
-    str += String.fromCharCode((bin[i >> 5] >>> (32 - chrsz - i % 32)) & mask);
+    str += String.fromCharCode(
+      (bin[i >> 5] >>> (32 - chrsz - (i % 32))) & mask,
+    );
   }
   return str;
 }
@@ -210,8 +217,8 @@ function binb2hex(binarray: number[]): string {
   let str = "";
   for (let i = 0; i < binarray.length * 4; i++) {
     str +=
-      hex_tab.charAt((binarray[i >> 2] >> ((3 - i % 4) * 8 + 4)) & 0xf) +
-      hex_tab.charAt((binarray[i >> 2] >> ((3 - i % 4) * 8)) & 0xf);
+      hex_tab.charAt((binarray[i >> 2] >> ((3 - (i % 4)) * 8 + 4)) & 0xf) +
+      hex_tab.charAt((binarray[i >> 2] >> ((3 - (i % 4)) * 8)) & 0xf);
   }
   return str;
 }
@@ -225,9 +232,9 @@ function binb2b64(binarray: number[]): string {
   let str = "";
   for (let i = 0; i < binarray.length * 4; i += 3) {
     const triplet =
-      (((binarray[i >> 2] >> (8 * (3 - i % 4))) & 0xff) << 16) |
-      (((binarray[(i + 1) >> 2] >> (8 * (3 - (i + 1) % 4))) & 0xff) << 8) |
-      ((binarray[(i + 2) >> 2] >> (8 * (3 - (i + 2) % 4))) & 0xff);
+      (((binarray[i >> 2] >> (8 * (3 - (i % 4)))) & 0xff) << 16) |
+      (((binarray[(i + 1) >> 2] >> (8 * (3 - ((i + 1) % 4)))) & 0xff) << 8) |
+      ((binarray[(i + 2) >> 2] >> (8 * (3 - ((i + 2) % 4)))) & 0xff);
     for (let j = 0; j < 4; j++) {
       if (i * 8 + j * 6 > binarray.length * 32) {
         str += b64pad;

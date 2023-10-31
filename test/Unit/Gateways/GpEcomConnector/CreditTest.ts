@@ -6,7 +6,6 @@ import {
 } from "../../../../src";
 import { GpEcomConfig } from "../../../../src/ServiceConfigs/";
 
-
 const config = new GpEcomConfig();
 config.merchantId = "heartlandgpsandbox";
 config.accountId = "api";
@@ -29,13 +28,13 @@ test.before(() => {
 test("credit reverse", (t) => {
   t.plan(3);
 
-  const error = t.throws(() => {
-    return card
-      .reverse(15)
-    .withAllowDuplicates(true)
-    .execute();
-  }, {instanceOf: UnsupportedTransactionError});
-  
+  const error = t.throws(
+    () => {
+      return card.reverse(15).withAllowDuplicates(true).execute();
+    },
+    { instanceOf: UnsupportedTransactionError },
+  );
+
   t.is(error?.name, "UnsupportedTransactionError");
   t.true(
     -1 !==

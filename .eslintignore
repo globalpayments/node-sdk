@@ -1,0 +1,9 @@
+bin/
+config/
+examples/
+lib/
+netsuite/
+
+/**/node_modules/*
+node_modules/
+tsconfig.json

@@ -1,4 +1,5 @@
 export * from "./Gateway";
+export * from "./GpApiConnector";
 export * from "./GpEcomConnector";
 export * from "./IPaymentGateway";
 export * from "./IRecurringService";

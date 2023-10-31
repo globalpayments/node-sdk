@@ -3,14 +3,17 @@ import { TransactionBuilder } from "./TransactionBuilder";
 import { IDictionary } from "./BaseBuilder";
 
 export class RecurringBuilder<
-  T extends IRecurringEntity
+  T extends IRecurringEntity,
 > extends TransactionBuilder<T> {
   public key: string;
   public orderId: string;
   public entity: IRecurringEntity | Function;
   public searchCriteria: IDictionary<string>;
 
-  public constructor(type: TransactionType, entity?: IRecurringEntity | Function) {
+  public constructor(
+    type: TransactionType,
+    entity?: IRecurringEntity | Function,
+  ) {
     super(type);
     this.searchCriteria = {};
     if (entity) {
@@ -21,10 +24,10 @@ export class RecurringBuilder<
 
   public addSearchCriteria(key: string, value: string) {
     this.searchCriteria[key] = value;
-    return this
+    return this;
   }
 
-  public execute(configName: string = 'default'): Promise<T> {
+  public execute(configName: string = "default"): Promise<T> {
     super.execute();
     return ServicesContainer.instance()
       .getRecurringClient(configName)

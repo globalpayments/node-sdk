@@ -34,7 +34,7 @@ export class Transaction {
   public timestamp: string;
   public batchId: string;
   public batchSeqNbr: string;
-  public payFacData: PayFacResponseData; 
+  public payFacData: PayFacResponseData;
 
   get transactionId(): string {
     return this.transactionReference.transactionId;

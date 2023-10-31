@@ -18,8 +18,10 @@ import {
 } from "./Interfaces";
 import { PaymentMethod } from "./PaymentMethod";
 
-export abstract class Credit extends PaymentMethod
-  implements IEncryptable,
+export abstract class Credit
+  extends PaymentMethod
+  implements
+    IEncryptable,
     ITokenizable,
     IChargable,
     IAuthable,
@@ -27,7 +29,8 @@ export abstract class Credit extends PaymentMethod
     IReversable,
     IVerifyable,
     IPrePayable,
-    IBalanceable {
+    IBalanceable
+{
   public encryptionData: EncryptionData;
   public paymentMethodType = PaymentMethodType.Credit;
 

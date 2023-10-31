@@ -9,7 +9,6 @@ import {
 } from "../../../../../src/";
 import { GpEcomConfig } from "../../../../../src/ServiceConfigs";
 
-
 const config = new GpEcomConfig();
 config.merchantId = "heartlandgpsandbox";
 config.accountId = "api";
@@ -22,7 +21,7 @@ config.channel = "ECOM";
 
 test.before(() => {
   ServicesContainer.configureService(config);
-})
+});
 
 const throttle = () => new Promise((resolve) => setTimeout(resolve, 1500));
 
@@ -54,18 +53,19 @@ test("JAVA_AVS_001a", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withCustomerId("100")
-      .withProductId("999")
-      .withClientTransactionId("test")
-      .withCustomerIpAddress("123.123.123.123")
-      .withAddress(billingAddress)
-      .withAddress(shippingAddress, AddressType.Shipping)
-      .withDescription("JAVA-AVS-001a")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("GBP")
+        .withCustomerId("100")
+        .withProductId("999")
+        .withClientTransactionId("test")
+        .withCustomerIpAddress("123.123.123.123")
+        .withAddress(billingAddress)
+        .withAddress(shippingAddress, AddressType.Shipping)
+        .withDescription("JAVA-AVS-001a")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -94,25 +94,25 @@ test("JAVA_AVS_001b", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withCustomerId("100")
-      .withProductId("999")
-      .withClientTransactionId("test")
-      .withCustomerIpAddress("123.123.123.123")
-      .withAddress(billingAddress)
-      .withAddress(shippingAddress, AddressType.Shipping)
-      .withDescription("JAVA-AVS-001b")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("GBP")
+        .withCustomerId("100")
+        .withProductId("999")
+        .withClientTransactionId("test")
+        .withCustomerIpAddress("123.123.123.123")
+        .withAddress(billingAddress)
+        .withAddress(shippingAddress, AddressType.Shipping)
+        .withDescription("JAVA-AVS-001b")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
 
 test("JAVA_AVS_001c", async (t) => {
   t.plan(2);
-
 
   // billing address
   const billingAddress = new Address();
@@ -135,18 +135,19 @@ test("JAVA_AVS_001c", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withCustomerId("100")
-      .withProductId("999")
-      .withClientTransactionId("test")
-      .withCustomerIpAddress("123.123.123.123")
-      .withAddress(billingAddress)
-      .withAddress(shippingAddress, AddressType.Shipping)
-      .withDescription("JAVA-AVS-001c")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("GBP")
+        .withCustomerId("100")
+        .withProductId("999")
+        .withClientTransactionId("test")
+        .withCustomerIpAddress("123.123.123.123")
+        .withAddress(billingAddress)
+        .withAddress(shippingAddress, AddressType.Shipping)
+        .withDescription("JAVA-AVS-001c")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -173,18 +174,19 @@ test("JAVA_AVS_001d", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withCustomerId("100")
-      .withProductId("999")
-      .withClientTransactionId("test")
-      .withCustomerIpAddress("123.123.123.123")
-      .withAddress(billingAddress)
-      .withAddress(shippingAddress, AddressType.Shipping)
-      .withDescription("JAVA-AVS-001d")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("GBP")
+        .withCustomerId("100")
+        .withProductId("999")
+        .withClientTransactionId("test")
+        .withCustomerIpAddress("123.123.123.123")
+        .withAddress(billingAddress)
+        .withAddress(shippingAddress, AddressType.Shipping)
+        .withDescription("JAVA-AVS-001d")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -194,12 +196,12 @@ test("JAVA_AVS_001e", async (t) => {
 
   // billing address
   const billingAddress = new Address();
-  // tslint:disable:max-line-length
+  /* eslint-disable */
   billingAddress.streetAddress1 =
     "Lorem ipsum dolor sit 1amet; consectetur adipiscing elit. Aenean ali2quam tellus in elit hendrerit; non 3porttE77 4QJitor lorem venenatis. Pellentesque dictum eu nunc ac fringilla. In vitae quam eu odio sollicitudin rhoncus. Praesent ullamcorper eros vitae consequat tempus. In gravida viverra iaculis. Morbi dignissim orci et ipsum accumsan";
   billingAddress.postalCode =
     "Lorem ipsum dolo1r sit amet; consectetur adipiscing elit. Aenean aliquam tellus in elit hendrerit; non porttE77 4QJitor lorem venenatis. Pellentesque dictum eu2 nunc ac fringilla. In vitae quam eu 3odio sollicitudin rhoncus. Praesent ullamcorper eros vitae consequat tempus. In gravida viverra iaculis. Morbi dignissim orci et ipsum accumsan";
-  // tslint:enable:max-line-length
+  /* eslint-enable */
   billingAddress.country = "GB";
 
   // shipping address
@@ -217,18 +219,19 @@ test("JAVA_AVS_001e", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withCustomerId("100")
-      .withProductId("999")
-      .withClientTransactionId("test")
-      .withCustomerIpAddress("123.123.123.123")
-      .withAddress(billingAddress)
-      .withAddress(shippingAddress, AddressType.Shipping)
-      .withDescription("JAVA-AVS-001e")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("GBP")
+        .withCustomerId("100")
+        .withProductId("999")
+        .withClientTransactionId("test")
+        .withCustomerIpAddress("123.123.123.123")
+        .withAddress(billingAddress)
+        .withAddress(shippingAddress, AddressType.Shipping)
+        .withDescription("JAVA-AVS-001e")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -257,18 +260,19 @@ test("JAVA_AVS_001f", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withCustomerId("100")
-      .withProductId("999")
-      .withClientTransactionId("test")
-      .withCustomerIpAddress("123.123.123.123")
-      .withAddress(billingAddress)
-      .withAddress(shippingAddress, AddressType.Shipping)
-      .withDescription("JAVA-AVS-001f")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("GBP")
+        .withCustomerId("100")
+        .withProductId("999")
+        .withClientTransactionId("test")
+        .withCustomerIpAddress("123.123.123.123")
+        .withAddress(billingAddress)
+        .withAddress(shippingAddress, AddressType.Shipping)
+        .withDescription("JAVA-AVS-001f")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -278,12 +282,12 @@ test("JAVA_AVS_001g", async (t) => {
 
   // billing address
   const billingAddress = new Address();
-  // tslint:disable:max-line-length
+  /* eslint-disable */
   billingAddress.streetAddress1 =
     "Lorem ipsum dolor sit amet; consectetur adipiscing elit. Aenean aliquam tellus in elit hendrerit; non porttE77 4QJitor lorem venenatis. Pellentesque dictum eu nunc ac fringilla. In vitae quam eu odio sollicitudin rhoncus. Praesent ullamcorper eros vitae consequat tempus. In gravida viverra iaculis. Morbi dignissim orci et ipsum accumsan";
   billingAddress.postalCode =
     "Lorem ipsum dolor sit amet; consectetur adipiscing elit. Aenean aliquam tellus in elit hendrerit; non porttE77 4QJitor lorem venenatis. Pellentesque dictum eu nunc ac fringilla. In vitae quam eu odio sollicitudin rhoncus. Praesent ullamcorper eros vitae consequat tempus. In gravida viverra iaculis. Morbi dignissim orci et ipsum accumsan";
-  // tslint:enable:max-line-length
+  /* eslint-enable */
   billingAddress.country = "GB";
 
   // shipping address
@@ -301,18 +305,19 @@ test("JAVA_AVS_001g", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withCustomerId("100")
-      .withProductId("999")
-      .withClientTransactionId("test")
-      .withCustomerIpAddress("123.123.123.123")
-      .withAddress(billingAddress)
-      .withAddress(shippingAddress, AddressType.Shipping)
-      .withDescription("JAVA-AVS-001g")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("GBP")
+        .withCustomerId("100")
+        .withProductId("999")
+        .withClientTransactionId("test")
+        .withCustomerIpAddress("123.123.123.123")
+        .withAddress(billingAddress)
+        .withAddress(shippingAddress, AddressType.Shipping)
+        .withDescription("JAVA-AVS-001g")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -341,18 +346,19 @@ test("JAVA_AVS_003a", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withCustomerId("100")
-      .withProductId("999")
-      .withClientTransactionId("test")
-      .withCustomerIpAddress("123.123.123.123")
-      .withAddress(billingAddress)
-      .withAddress(shippingAddress, AddressType.Shipping)
-      .withDescription("JAVA-AVS-003a")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("GBP")
+        .withCustomerId("100")
+        .withProductId("999")
+        .withClientTransactionId("test")
+        .withCustomerIpAddress("123.123.123.123")
+        .withAddress(billingAddress)
+        .withAddress(shippingAddress, AddressType.Shipping)
+        .withDescription("JAVA-AVS-003a")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -381,18 +387,19 @@ test("JAVA_AVS_003b", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withCustomerId("100")
-      .withProductId("999")
-      .withClientTransactionId("test")
-      .withCustomerIpAddress("123.123.123.123")
-      .withAddress(billingAddress)
-      .withAddress(shippingAddress, AddressType.Shipping)
-      .withDescription("JAVA-AVS-003b")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("GBP")
+        .withCustomerId("100")
+        .withProductId("999")
+        .withClientTransactionId("test")
+        .withCustomerIpAddress("123.123.123.123")
+        .withAddress(billingAddress)
+        .withAddress(shippingAddress, AddressType.Shipping)
+        .withDescription("JAVA-AVS-003b")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -421,18 +428,19 @@ test("JAVA_AVS_003c", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withCustomerId("100")
-      .withProductId("999")
-      .withClientTransactionId("test")
-      .withCustomerIpAddress("123.123.123.123")
-      .withAddress(billingAddress)
-      .withAddress(shippingAddress, AddressType.Shipping)
-      .withDescription("JAVA-AVS-003c")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("GBP")
+        .withCustomerId("100")
+        .withProductId("999")
+        .withClientTransactionId("test")
+        .withCustomerIpAddress("123.123.123.123")
+        .withAddress(billingAddress)
+        .withAddress(shippingAddress, AddressType.Shipping)
+        .withDescription("JAVA-AVS-003c")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -461,18 +469,19 @@ test("JAVA_AVS_003d", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withCustomerId("100")
-      .withProductId("999")
-      .withClientTransactionId("test")
-      .withCustomerIpAddress("123.123.123.123")
-      .withAddress(billingAddress)
-      .withAddress(shippingAddress, AddressType.Shipping)
-      .withDescription("JAVA-AVS-003d")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("GBP")
+        .withCustomerId("100")
+        .withProductId("999")
+        .withClientTransactionId("test")
+        .withCustomerIpAddress("123.123.123.123")
+        .withAddress(billingAddress)
+        .withAddress(shippingAddress, AddressType.Shipping)
+        .withDescription("JAVA-AVS-003d")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -501,18 +510,19 @@ test("JAVA_AVS_003e", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withCustomerId("100")
-      .withProductId("999")
-      .withClientTransactionId("test")
-      .withCustomerIpAddress("123.123.123.123")
-      .withAddress(billingAddress)
-      .withAddress(shippingAddress, AddressType.Shipping)
-      .withDescription("JAVA-AVS-003e")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("GBP")
+        .withCustomerId("100")
+        .withProductId("999")
+        .withClientTransactionId("test")
+        .withCustomerIpAddress("123.123.123.123")
+        .withAddress(billingAddress)
+        .withAddress(shippingAddress, AddressType.Shipping)
+        .withDescription("JAVA-AVS-003e")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -541,18 +551,19 @@ test("JAVA_AVS_003f", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withCustomerId("100")
-      .withProductId("999")
-      .withClientTransactionId("test")
-      .withCustomerIpAddress("123.123.123.123")
-      .withAddress(billingAddress)
-      .withAddress(shippingAddress, AddressType.Shipping)
-      .withDescription("JAVA-AVS-003f")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("GBP")
+        .withCustomerId("100")
+        .withProductId("999")
+        .withClientTransactionId("test")
+        .withCustomerIpAddress("123.123.123.123")
+        .withAddress(billingAddress)
+        .withAddress(shippingAddress, AddressType.Shipping)
+        .withDescription("JAVA-AVS-003f")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -579,18 +590,19 @@ test("JAVA_AVS_003g", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withCustomerId("100")
-      .withProductId("999")
-      .withClientTransactionId("test")
-      .withCustomerIpAddress("123.123.123.123")
-      .withAddress(billingAddress)
-      .withAddress(shippingAddress, AddressType.Shipping)
-      .withDescription("JAVA-AVS-003e")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("GBP")
+        .withCustomerId("100")
+        .withProductId("999")
+        .withClientTransactionId("test")
+        .withCustomerIpAddress("123.123.123.123")
+        .withAddress(billingAddress)
+        .withAddress(shippingAddress, AddressType.Shipping)
+        .withDescription("JAVA-AVS-003e")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -617,18 +629,19 @@ test("JAVA_AVS_003h", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .charge(100.01)
-      .withCurrency("GBP")
-      .withCustomerId("100")
-      .withProductId("999")
-      .withClientTransactionId("test")
-      .withCustomerIpAddress("123.123.123.123")
-      .withAddress(billingAddress)
-      .withAddress(shippingAddress, AddressType.Shipping)
-      .withDescription("JAVA-AVS-003f")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .charge(100.01)
+        .withCurrency("GBP")
+        .withCustomerId("100")
+        .withProductId("999")
+        .withClientTransactionId("test")
+        .withCustomerIpAddress("123.123.123.123")
+        .withAddress(billingAddress)
+        .withAddress(shippingAddress, AddressType.Shipping)
+        .withDescription("JAVA-AVS-003f")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });

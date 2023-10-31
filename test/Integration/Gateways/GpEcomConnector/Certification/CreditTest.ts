@@ -19,9 +19,8 @@ config.timeout = 5000;
 config.channel = "ECOM";
 
 test.before(() => {
-  
   ServicesContainer.configureService(config);
-})
+});
 
 const throttle = () => new Promise((resolve) => setTimeout(resolve, 1500));
 
@@ -478,11 +477,10 @@ test("JAVA_Credit_009b", async (t) => {
   config.sharedSecret = "secret";
   config.refundPassword = "refund";
   config.rebatePassword = "rebate";
-  
+
   config.timeout = 20000;
   config.channel = "EC";
 
-  
   ServicesContainer.configureService(config, "withChannelEC");
 
   // create card
@@ -513,12 +511,14 @@ test("JAVA_Credit_009c", async (t) => {
   config.sharedSecret = "secret";
   config.refundPassword = "refund";
   config.rebatePassword = "rebate";
-  
+
   config.timeout = 20000;
   config.channel = "ECOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOM";
 
-  
-  ServicesContainer.configureService(config, "withChannelECOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOM");
+  ServicesContainer.configureService(
+    config,
+    "withChannelECOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOM",
+  );
 
   // create card
   const card = new CreditCardData();
@@ -548,9 +548,9 @@ test("JAVA_Credit_009d", async (t) => {
   config.sharedSecret = "secret";
   config.refundPassword = "refund";
   config.rebatePassword = "rebate";
-  
+
   config.timeout = 5000;
-  
+
   ServicesContainer.configureService(config, "noChannel");
 
   // create card
@@ -761,12 +761,13 @@ test("JAVA_Credit_013b", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .refund(1)
-      .withCurrency("EUR")
-      .withDescription("JAVA-Credit")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .refund(1)
+        .withCurrency("EUR")
+        .withDescription("JAVA-Credit")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -781,19 +782,20 @@ test("JAVA_Credit_013c", async (t) => {
   card.expYear = "2018";
   card.cvn = "123";
   card.cvnPresenceIndicator = CvnPresenceIndicator.Present;
-  // tslint:disable:max-line-length
+  /* eslint-disable */
   card.cardHolderName =
     "Peter Watermelooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo";
-  // tslint:enable:max-line-length
+  /* eslint-enable */
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .refund(1)
-      .withCurrency("EUR")
-      .withDescription("JAVA-Credit")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .refund(1)
+        .withCurrency("EUR")
+        .withDescription("JAVA-Credit")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -876,12 +878,13 @@ test("JAVA_Credit_014d", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .refund(1)
-      .withCurrency("EUR")
-      .withDescription("JAVA-Credit")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .refund(1)
+        .withCurrency("EUR")
+        .withDescription("JAVA-Credit")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -1032,12 +1035,13 @@ test("JAVA_Credit_017c", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .refund(1)
-      .withCurrency("EUR")
-      .withDescription("JAVA-Credit")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .refund(1)
+        .withCurrency("EUR")
+        .withDescription("JAVA-Credit")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -1078,12 +1082,13 @@ test("JAVA_Credit_017f", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .refund(1)
-      .withCurrency("EUR")
-      .withDescription("JAVA-Credit")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .refund(1)
+        .withCurrency("EUR")
+        .withDescription("JAVA-Credit")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -1102,12 +1107,13 @@ test("JAVA_Credit_017g", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .refund(1)
-      .withCurrency("EUR")
-      .withDescription("JAVA-Credit")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .refund(1)
+        .withCurrency("EUR")
+        .withDescription("JAVA-Credit")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -1297,11 +1303,10 @@ test("JAVA_Credit_020b", async (t) => {
   config.sharedSecret = "secreto";
   config.refundPassword = "refund";
   config.rebatePassword = "rebate";
-  
+
   config.timeout = 5000;
   config.channel = "ECOM";
 
-  
   ServicesContainer.configureService(config, "withSecreto");
 
   // create card
@@ -1315,12 +1320,13 @@ test("JAVA_Credit_020b", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .refund(1)
-      .withCurrency("EUR")
-      .withDescription("JAVA-Credit")
-      .execute("withSecreto"),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .refund(1)
+        .withCurrency("EUR")
+        .withDescription("JAVA-Credit")
+        .execute("withSecreto"),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -1389,7 +1395,7 @@ test("JAVA_Credit_021c", async (t) => {
         .withCurrency("EUR")
         .withDescription("JAVA-Credit")
         .execute(),
-    {instanceOf: BuilderError},
+    { instanceOf: BuilderError },
   );
   t.truthy(error?.message);
 });
@@ -1414,7 +1420,7 @@ test("JAVA_Credit_021d", async (t) => {
         .withCurrency("EUR")
         .withDescription("JAVA-Credit")
         .execute(),
-    {instanceOf: BuilderError},
+    { instanceOf: BuilderError },
   );
   t.truthy(error?.message);
 });
@@ -1461,7 +1467,7 @@ test("JAVA_Credit_021f", async (t) => {
         .withCurrency("EUR")
         .withDescription("JAVA-Credit")
         .execute(),
-    {instanceOf: BuilderError},
+    { instanceOf: BuilderError },
   );
   t.truthy(error?.message);
 });
@@ -1502,12 +1508,13 @@ test("JAVA_Credit_022b", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .refund(1)
-      .withCurrency("EURO")
-      .withDescription("JAVA-Credit")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .refund(1)
+        .withCurrency("EURO")
+        .withDescription("JAVA-Credit")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -1526,12 +1533,13 @@ test("JAVA_Credit_022c", async (t) => {
 
   // request
   const error = await t.throwsAsync(
-    async () => await card
-      .refund(1)
-      .withCurrency("EU#")
-      .withDescription("JAVA-Credit")
-      .execute(),
-    {instanceOf: GatewayError},
+    async () =>
+      await card
+        .refund(1)
+        .withCurrency("EU#")
+        .withDescription("JAVA-Credit")
+        .execute(),
+    { instanceOf: GatewayError },
   );
   t.truthy(error?.message);
 });
@@ -1550,12 +1558,8 @@ test("JAVA_Credit_022d", async (t) => {
 
   // request
   const error = t.throws(
-    () =>
-      card
-        .refund(1)
-        .withDescription("JAVA-Credit")
-        .execute(),
-    {instanceOf: BuilderError},
+    () => card.refund(1).withDescription("JAVA-Credit").execute(),
+    { instanceOf: BuilderError },
   );
   t.truthy(error?.message);
 });

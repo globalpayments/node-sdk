@@ -3,36 +3,36 @@ import { AcceptorConfig } from "../AcceptorConfig";
 import { Configuration } from "../Configuration";
 
 export abstract class GatewayConfig extends Configuration {
-    public acceptorConfig: AcceptorConfig;
+  public acceptorConfig: AcceptorConfig;
 
-    protected _gatewayProvider: GatewayProvider;
+  protected _gatewayProvider: GatewayProvider;
 
-    public dataClientId: string;
+  public dataClientId: string;
 
-    public dataClientSecret: string;
+  public dataClientSecret: string;
 
-    public dataClientUserId: string;
+  public dataClientUserId: string;
 
-    public dataClientSeviceUrl: string;
+  public dataClientSeviceUrl: string;
 
-    constructor(provider: GatewayProvider) {
-        super();
-        this._gatewayProvider = provider;
-    }
+  constructor(provider: GatewayProvider) {
+    super();
+    this._gatewayProvider = provider;
+  }
 
-    // public configureContainer(services)
-    // {
-    //     // need to implement dataServicesConnector
-    // }
+  // public configureContainer(services)
+  // {
+  //     // need to implement dataServicesConnector
+  // }
 
-    public validate() {
-        super.validate();
+  public validate() {
+    super.validate();
 
-        return;
-        // data client validations go here when enabled
-    }
+    return;
+    // data client validations go here when enabled
+  }
 
-    get gatewayProvider() {
-        return this._gatewayProvider;
-    }
+  get gatewayProvider() {
+    return this._gatewayProvider;
+  }
 }

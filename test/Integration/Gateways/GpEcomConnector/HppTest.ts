@@ -15,7 +15,6 @@ config.sharedSecret = "secret";
 config.rebatePassword = "rebate";
 config.refundPassword = "refund";
 
-
 config.hostedPaymentConfig = new HostedPaymentConfig();
 config.hostedPaymentConfig.language = "GB";
 config.hostedPaymentConfig.responseUrl = "http://requestb.in/10q2bjb1";
@@ -74,11 +73,8 @@ test("auth no amount", (t) => {
   t.plan(2);
 
   const error = t.throws(() => {
-    service
-      .authorize(undefined)
-      .withCurrency("USD")
-      .serialize();
-  }, new BuilderError('amount cannot be null for this transaction type.'));
+    service.authorize(undefined).withCurrency("USD").serialize();
+  }, new BuilderError("amount cannot be null for this transaction type."));
 
   t.truthy(error?.message);
 });
@@ -88,7 +84,7 @@ test("auth no currency", (t) => {
 
   const error = t.throws(() => {
     service.authorize(10).serialize();
-  }, new BuilderError('currency cannot be null for this transaction type.'));
+  }, new BuilderError("currency cannot be null for this transaction type."));
 
   t.truthy(error?.message);
 });
@@ -97,11 +93,8 @@ test("sale no amount", (t) => {
   t.plan(2);
 
   const error = t.throws(() => {
-    service
-      .charge(undefined)
-      .withCurrency("USD")
-      .serialize();
-  }, new BuilderError('amount cannot be null for this transaction type.'));
+    service.charge(undefined).withCurrency("USD").serialize();
+  }, new BuilderError("amount cannot be null for this transaction type."));
 
   t.truthy(error?.message);
 });
@@ -111,7 +104,7 @@ test("sale no currency", (t) => {
 
   const error = t.throws(() => {
     service.authorize(10).serialize();
-  }, new BuilderError('currency cannot be null for this transaction type.'));
+  }, new BuilderError("currency cannot be null for this transaction type."));
 
   t.truthy(error?.message);
 });
@@ -121,7 +114,7 @@ test("verify no currency", (t) => {
 
   const error = t.throws(() => {
     service.verify().serialize();
-  }, new BuilderError('amount cannot be null for this transaction type.'));
+  }, new BuilderError("amount cannot be null for this transaction type."));
 
   t.truthy(error?.message);
 });
@@ -130,11 +123,8 @@ test("verify with amount", (t) => {
   t.plan(2);
 
   const error = t.throws(() => {
-    service
-      .verify()
-      .withAmount(10)
-      .serialize();
-  }, new BuilderError('currency cannot be null for this transaction type.'));
+    service.verify().withAmount(10).serialize();
+  }, new BuilderError("currency cannot be null for this transaction type."));
 
   t.truthy(error?.message);
 });

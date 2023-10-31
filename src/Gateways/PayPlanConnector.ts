@@ -130,7 +130,8 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     let result: any;
 
     if (
-      (builder.entity instanceof Customer || ((builder.entity as any) as Function).name === 'Customer') &&
+      (builder.entity instanceof Customer ||
+        (builder.entity as any as Function).name === "Customer") &&
       builder.transactionType === TransactionType.Search
     ) {
       result = response.results.map((customer: object) =>
@@ -141,7 +142,9 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     }
 
     if (
-      (builder.entity instanceof RecurringPaymentMethod || ((builder.entity as any) as Function).name === 'RecurringPaymentMethod') &&
+      (builder.entity instanceof RecurringPaymentMethod ||
+        (builder.entity as any as Function).name ===
+          "RecurringPaymentMethod") &&
       builder.transactionType === TransactionType.Search
     ) {
       result = response.results.map((paymentMethod: object) =>
@@ -152,7 +155,8 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     }
 
     if (
-      (builder.entity instanceof Schedule || ((builder.entity as any) as Function).name === 'Schedule') &&
+      (builder.entity instanceof Schedule ||
+        (builder.entity as any as Function).name === "Schedule") &&
       builder.transactionType === TransactionType.Search
     ) {
       result = response.results.map((schedule: object) =>
@@ -201,7 +205,7 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
         const { hasToken, tokenValue } = this.hasToken(entity.paymentMethod);
         const paymentInfo: any = {};
         if ((entity.paymentMethod as PaymentMethod).isCardData) {
-          const method = (entity.paymentMethod as any) as ICardData;
+          const method = entity.paymentMethod as any as ICardData;
           paymentInfo.type = hasToken ? "SINGLEUSETOKEN" : null;
           paymentInfo[hasToken ? "token" : "number"] = hasToken
             ? tokenValue
@@ -211,7 +215,7 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
           request.cardVerificationValue = method.cvn;
           request[hasToken ? "alternateIdentity" : "card"] = paymentInfo;
         } else if ((entity.paymentMethod as PaymentMethod).isTrackData) {
-          const method = (entity.paymentMethod as any) as ITrackData;
+          const method = entity.paymentMethod as any as ITrackData;
           paymentInfo.data = method.value;
           paymentInfo.dataEntryMode = method.entryMethod
             .toString()
@@ -235,7 +239,7 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
         }
 
         if ((entity.paymentMethod as PaymentMethod).isEncryptable) {
-          const enc = ((entity.paymentMethod as any) as IEncryptable)
+          const enc = (entity.paymentMethod as any as IEncryptable)
             .encryptionData;
           if (enc) {
             paymentInfo.trackNumber = enc.trackNumber;
@@ -435,7 +439,7 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
 
   protected buildDate(request: any, name: string, date: Date, force = false) {
     const getDateValue = (d: Date) => {
-      if (typeof(date) === 'string' && (date as string).length === 8) {
+      if (typeof date === "string" && (date as string).length === 8) {
         return d;
       }
 
@@ -480,7 +484,10 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
       suffix = "/" + (builder.entity as any).key;
     }
 
-    if (builder.entity instanceof Customer || ((builder.entity as any) as Function).name === 'Customer') {
+    if (
+      builder.entity instanceof Customer ||
+      (builder.entity as any as Function).name === "Customer"
+    ) {
       return (
         (builder.transactionType === TransactionType.Search
           ? "searchCustomers"
@@ -488,11 +495,16 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
       );
     }
 
-    if (builder.entity instanceof RecurringPaymentMethod || ((builder.entity as any) as Function).name === 'RecurringPaymentMethod') {
+    if (
+      builder.entity instanceof RecurringPaymentMethod ||
+      (builder.entity as any as Function).name === "RecurringPaymentMethod"
+    ) {
       let paymentMethod = "";
       if (builder.transactionType === TransactionType.Create) {
         paymentMethod =
-          (builder.entity as any).paymentMethod instanceof Credit ? "CreditCard" : "ACH";
+          (builder.entity as any).paymentMethod instanceof Credit
+            ? "CreditCard"
+            : "ACH";
       } else if (builder.transactionType === TransactionType.Edit) {
         paymentMethod = (builder.entity as any).paymentType.replace(" ", "");
       }
@@ -506,7 +518,10 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
       );
     }
 
-    if (builder.entity instanceof Schedule || ((builder.entity as any) as Function).name === 'Schedule') {
+    if (
+      builder.entity instanceof Schedule ||
+      (builder.entity as any as Function).name === "Schedule"
+    ) {
       return (
         (builder.transactionType === TransactionType.Search
           ? "searchSchedules"
@@ -577,13 +592,15 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
 
     if (response.subtotalAmount) {
       const subtotal = response.subtotalAmount;
-      schedule.amount = subtotal.value.slice(0, -2) + '.' + subtotal.value.slice(-2); // add the decimal back in
+      schedule.amount =
+        subtotal.value.slice(0, -2) + "." + subtotal.value.slice(-2); // add the decimal back in
       schedule.currency = subtotal.currency;
     }
 
     if (response.taxAmount) {
       const taxAmount = response.taxAmount;
-      schedule.taxAmount = taxAmount.value.slice(0, -2) + '.' + taxAmount.value.slice(-2); // add the decimal back in
+      schedule.taxAmount =
+        taxAmount.value.slice(0, -2) + "." + taxAmount.value.slice(-2); // add the decimal back in
     }
 
     schedule.deviceId = response.deviceId;
@@ -613,13 +630,15 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     schedule.poNumber = response.poNumber;
     schedule.description = response.description;
     // statusSetDate
-    schedule.nextProcessingDate = response.nextProcessingDate === "" ? null : response.nextProcessingDate;
+    schedule.nextProcessingDate =
+      response.nextProcessingDate === "" ? null : response.nextProcessingDate;
     // previousProcessingDate
     // approvedTransactionCount
     // failureCount
     // totalApprovedAmountToDate
     // numberOfPaymentsRemaining
-    schedule.cancellationDate = response.cancellationDate === "" ? null : response.cancellationDate;
+    schedule.cancellationDate =
+      response.cancellationDate === "" ? null : response.cancellationDate;
     // creationDate
     // lastChangeDate
     schedule.hasStarted = response.scheduleStarted as boolean;
@@ -627,7 +646,7 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
   }
 
   protected hasToken(paymentMethod: IPaymentMethod) {
-    const tokenizable = (paymentMethod as any) as ITokenizable;
+    const tokenizable = paymentMethod as any as ITokenizable;
 
     if (tokenizable.token) {
       return {
@@ -643,7 +662,7 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
   }
 
   protected setAuthorizationHeader(value: string) {
-    const buffer = (Buffer.from ? Buffer.from(value) : new Buffer(value));
+    const buffer = Buffer.from ? Buffer.from(value) : new Buffer(value);
     const auth = `Basic ${buffer.toString("base64")}`;
     this.headers[RestGateway.AUTHORIZATION_HEADER] = auth;
   }
@@ -664,13 +683,15 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     }
 
     if (identity.length > 0) {
-      this.headers['HPS-Identity'] = identity.join(',');
+      this.headers["HPS-Identity"] = identity.join(",");
     }
   }
 
   protected maybeSetIntegrationHeader() {
     if (this.versionNumber || this.developerId) {
-      this.headers['HPS-Integration'] = `DeveloperId=${this.developerId},VersionNbr=${this.versionNumber}`;
+      this.headers[
+        "HPS-Integration"
+      ] = `DeveloperId=${this.developerId},VersionNbr=${this.versionNumber}`;
     }
   }
 }

@@ -12,7 +12,7 @@ import {
 } from "../";
 
 export class GiftService {
-  constructor(config: GatewayConfig, configName: string = 'default') {
+  constructor(config: GatewayConfig, configName: string = "default") {
     ServicesContainer.configureService(config, configName);
   }
 

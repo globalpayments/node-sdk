@@ -67,7 +67,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
   public uniqueDeviceId: string;
   public config: PorticoConfig;
 
-  constructor (config: PorticoConfig) {
+  constructor(config: PorticoConfig) {
     super();
     this.config = config;
   }
@@ -105,7 +105,9 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     }
 
     if (builder.amount !== undefined && builder.amount !== "") {
-      subElement(block1, "Amt").append(cData(validateAmount("portico", builder.amount)));
+      subElement(block1, "Amt").append(
+        cData(validateAmount("portico", builder.amount)),
+      );
     }
     if (builder.gratuity) {
       subElement(block1, "GratuityAmtInfo").append(
@@ -149,7 +151,10 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     const isCheck =
       builder.paymentMethod.paymentMethodType === PaymentMethodType.ACH;
     const property = isCheck ? "checkHolderName" : "cardHolderName";
-    if (builder.transactionType !== TransactionType.Reversal && (isCheck || builder.billingAddress || builder.paymentMethod[property])) {
+    if (
+      builder.transactionType !== TransactionType.Reversal &&
+      (isCheck || builder.billingAddress || builder.paymentMethod[property])
+    ) {
       const holder = subElement(
         block1,
         isCheck ? "ConsumerInfo" : "CardHolderData",
@@ -158,9 +163,15 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       const pm = builder.paymentMethod;
       if (pm[property]) {
         const names = pm[property].split(" ", 2);
-        subElement(holder, isCheck ? "FirstName" : "CardHolderFirstName").append(cData(validateInput("portico", "firstName", names[0])));
+        subElement(
+          holder,
+          isCheck ? "FirstName" : "CardHolderFirstName",
+        ).append(cData(validateInput("portico", "firstName", names[0])));
         if (names[1]) {
-          subElement(holder, isCheck ? "LastName" : "CardHolderLastName").append(cData(validateInput("portico", "lastName", names[1])));
+          subElement(
+            holder,
+            isCheck ? "LastName" : "CardHolderLastName",
+          ).append(cData(validateInput("portico", "lastName", names[1])));
         }
       }
 
@@ -173,11 +184,21 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         );
         subElement(holder, isCheck ? "State" : "CardHolderState").append(
           cData(
-            validateInput("portico", "province", builder.billingAddress.province || builder.billingAddress.state),
+            validateInput(
+              "portico",
+              "province",
+              builder.billingAddress.province || builder.billingAddress.state,
+            ),
           ),
         );
         subElement(holder, isCheck ? "Zip" : "CardHolderZip").append(
-          cData(validateInput("portico", "postalCode", builder.billingAddress.postalCode)),
+          cData(
+            validateInput(
+              "portico",
+              "postalCode",
+              builder.billingAddress.postalCode,
+            ),
+          ),
         );
       }
 
@@ -187,7 +208,9 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         subElement(holder, "CheckName").append(
           cData(check.checkName || check.checkHolderName),
         );
-        subElement(holder, "PhoneNumber").append(cData(validateInput("portico", "phoneNumber", check.phoneNumber)));
+        subElement(holder, "PhoneNumber").append(
+          cData(validateInput("portico", "phoneNumber", check.phoneNumber)),
+        );
         subElement(holder, "DLNumber").append(
           cData(check.driversLicenseNumber),
         );
@@ -214,14 +237,17 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     }
 
     if (builder.paymentMethod.isCardData) {
-      const card = (builder.paymentMethod as any) as ICardData;
+      const card = builder.paymentMethod as any as ICardData;
 
       const manualEntry = subElement(
         cardData,
         hasToken ? "TokenData" : "ManualEntry",
       );
 
-      if (this.shouldIncludeCredentialOnFile(builder) && (builder.cardBrandTransactionId || builder.transactionInitiator)) {
+      if (
+        this.shouldIncludeCredentialOnFile(builder) &&
+        (builder.cardBrandTransactionId || builder.transactionInitiator)
+      ) {
         block1.append(this.hydrateCredentialOnFile(builder));
       }
 
@@ -254,18 +280,20 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
 
         //  WalletData Element
         if (
-          (
-            creditCardData.mobileType == MobilePaymentMethodType.APPLEPAY
-            || creditCardData.mobileType == MobilePaymentMethodType.GOOGLEPAY
-          )
-          && typeof creditCardData.paymentSource != "undefined"
-          && this.isAppleOrGooglePay(creditCardData.paymentSource)
-        ) {            
+          (creditCardData.mobileType == MobilePaymentMethodType.APPLEPAY ||
+            creditCardData.mobileType == MobilePaymentMethodType.GOOGLEPAY) &&
+          typeof creditCardData.paymentSource != "undefined" &&
+          this.isAppleOrGooglePay(creditCardData.paymentSource)
+        ) {
           const walletData = subElement(block1, "WalletData");
-          subElement(walletData, "PaymentSource").append(cData(creditCardData.paymentSource.trim()));
+          subElement(walletData, "PaymentSource").append(
+            cData(creditCardData.paymentSource.trim()),
+          );
 
           if (typeof creditCardData.mobileType != "undefined") {
-            subElement(walletData, "DigitalPaymentToken").append(cData(creditCardData.token));
+            subElement(walletData, "DigitalPaymentToken").append(
+              cData(creditCardData.token),
+            );
             block1.remove(cardData);
           }
         }
@@ -279,7 +307,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         );
       }
     } else if (builder.paymentMethod.isTrackData) {
-      const track = (builder.paymentMethod as any) as ITrackData;
+      const track = builder.paymentMethod as any as ITrackData;
 
       const trackData = subElement(
         cardData,
@@ -402,7 +430,10 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         subElement(data, "ExpYear").append(cData(card.expYear));
         subElement(data, "CVV2").append(cData(card.cvn));
 
-        if (this.shouldIncludeCredentialOnFile(builder) && (builder.cardBrandTransactionId || builder.transactionInitiator)) {
+        if (
+          this.shouldIncludeCredentialOnFile(builder) &&
+          (builder.cardBrandTransactionId || builder.transactionInitiator)
+        ) {
           block1.append(this.hydrateCredentialOnFile(builder));
         }
       }
@@ -419,12 +450,12 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       builder.transactionType !== TransactionType.Reversal
     ) {
       subElement(block1, "PinBlock").append(
-        cData(((builder.paymentMethod as any) as IPinProtected).pinBlock),
+        cData((builder.paymentMethod as any as IPinProtected).pinBlock),
       );
     }
 
     if (builder.paymentMethod.isEncryptable) {
-      const encryptionData = ((builder.paymentMethod as any) as IEncryptable)
+      const encryptionData = (builder.paymentMethod as any as IEncryptable)
         .encryptionData;
 
       if (encryptionData) {
@@ -525,7 +556,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     ).then((response) => this.mapResponse(response, builder));
   }
 
-  public serializeRequest(_builder: AuthorizationBuilder): string {
+  public serializeRequest(): string {
     throw new UnsupportedTransactionError(
       "Portico does not support hosted payments.",
     );
@@ -576,10 +607,9 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       // transaction ID
       if (
         builder.paymentMethod &&
-        ((builder.paymentMethod as object) as TransactionReference)
-          .transactionId
+        (builder.paymentMethod as object as TransactionReference).transactionId
       ) {
-        const ref = (builder.paymentMethod as object) as TransactionReference;
+        const ref = builder.paymentMethod as object as TransactionReference;
         subElement(root, "GatewayTxnId").append(cData(ref.transactionId));
       }
 
@@ -653,7 +683,9 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         const criteriaNode = element("Criteria");
 
         for (const property in trb.searchCriteria) {
-          subElement(criteriaNode, property).append(cData(trb.searchCriteria[property]));
+          subElement(criteriaNode, property).append(
+            cData(trb.searchCriteria[property]),
+          );
         }
 
         transaction.append(criteriaNode);
@@ -706,11 +738,12 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     if (clientTransactionId) {
       subElement(header, "ClientTxnId").append(cData(clientTransactionId));
     }
-    if (this.sdkNameVersion) {      
+    if (this.sdkNameVersion) {
       subElement(header, "SDKNameVersion").append(cData(this.sdkNameVersion));
-    }
-    else{      
-      subElement(header, "SDKNameVersion").append(cData("nodejs-version:" + process.env.npm_package_version));
+    } else {
+      subElement(header, "SDKNameVersion").append(
+        cData("nodejs-version:" + process.env.npm_package_version),
+      );
     }
 
     // transaction
@@ -1050,10 +1083,11 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       result = doc
         .findall(".//Details")
         .map(this.hydrateTransactionSummary.bind(this));
-    } if (builder.reportType === ReportType.FindTransactions) {
+    }
+    if (builder.reportType === ReportType.FindTransactions) {
       result = doc
-      .findall(".//Transactions")
-      .map(this.hydrateTransactionSummary.bind(this));
+        .findall(".//Transactions")
+        .map(this.hydrateTransactionSummary.bind(this));
     } else if (builder.reportType === ReportType.TransactionDetail) {
       result = this.hydrateTransactionSummary(doc);
     }
@@ -1070,7 +1104,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
   }
 
   protected hasToken(paymentMethod: IPaymentMethod) {
-    const tokenizable = (paymentMethod as object) as ITokenizable;
+    const tokenizable = paymentMethod as object as ITokenizable;
 
     if (tokenizable.token) {
       return {
@@ -1117,7 +1151,9 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     }
 
     if (builder.cardBrandTransactionId) {
-      subElement(cof, "CardBrandTxnId").append(cData(builder.cardBrandTransactionId));
+      subElement(cof, "CardBrandTxnId").append(
+        cData(builder.cardBrandTransactionId),
+      );
     }
 
     return cof;
@@ -1125,7 +1161,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
 
   protected hydrateEncryptionData(builder: TransactionBuilder<Transaction>) {
     const enc = new Element("EncryptionData");
-    const data = ((builder.paymentMethod as object) as IEncryptable)
+    const data = (builder.paymentMethod as object as IEncryptable)
       .encryptionData;
 
     if (data.version) {
@@ -1369,14 +1405,14 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     );
     result.issuerResponseMessage = root.findtext(".//IssuerRspText");
     result.issuerTransactionId = root.findtext(".//IssTxnId");
-    result.maskedCardNumber = root.findtext(".//MaskedCardNbr");    
+    result.maskedCardNumber = root.findtext(".//MaskedCardNbr");
     result.gatewayResponseCode = this.normalizeResponse(
       root.findtext(".//GatewayRspCode"),
     );
     result.gatewayResponseMessage = root.findtext(".//GatewayRspMsg");
     result.originalTransactionId = root.findtext(".//OriginalGatewayTxnId");
     result.paymentType = root.findtext(".//PaymentType");
-    result.poNumber = root.findtext(".//CardHolderPONbr");    
+    result.poNumber = root.findtext(".//CardHolderPONbr");
     result.referenceNumber = root.findtext(".//RefNbr");
     result.responseDate = new Date(root.findtext(".//RspDT"));
     result.serviceName = root.findtext(".//ServiceName");
@@ -1419,13 +1455,17 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     return result;
   }
 
-  protected shouldIncludeCredentialOnFile(builder: TransactionBuilder<Transaction>) {
-    if ([
-      TransactionType.Auth,
-      TransactionType.Refund,
-      TransactionType.Sale,
-      TransactionType.Verify,
-    ].indexOf(builder.transactionType) !== -1) {
+  protected shouldIncludeCredentialOnFile(
+    builder: TransactionBuilder<Transaction>,
+  ) {
+    if (
+      [
+        TransactionType.Auth,
+        TransactionType.Refund,
+        TransactionType.Sale,
+        TransactionType.Verify,
+      ].indexOf(builder.transactionType) !== -1
+    ) {
       return true;
     }
 
@@ -1433,10 +1473,12 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
   }
 
   protected isAppleOrGooglePay(paymentDataSource: string) {
-    return paymentDataSource == PaymentDataSourceType.APPLEPAY
-      || paymentDataSource == PaymentDataSourceType.APPLEPAYAPP
-      || paymentDataSource == PaymentDataSourceType.APPLEPAYWEB
-      || paymentDataSource == PaymentDataSourceType.GOOGLEPAYAPP
-      || paymentDataSource == PaymentDataSourceType.GOOGLEPAYWEB;
+    return (
+      paymentDataSource == PaymentDataSourceType.APPLEPAY ||
+      paymentDataSource == PaymentDataSourceType.APPLEPAYAPP ||
+      paymentDataSource == PaymentDataSourceType.APPLEPAYWEB ||
+      paymentDataSource == PaymentDataSourceType.GOOGLEPAYAPP ||
+      paymentDataSource == PaymentDataSourceType.GOOGLEPAYWEB
+    );
   }
 }

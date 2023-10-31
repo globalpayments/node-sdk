@@ -1,13 +1,13 @@
 import { GatewayConfig } from "./Gateways/GatewayConfig";
 
 export class ServicesConfigs {
-    public gatewayConfig: GatewayConfig;
+  public gatewayConfig: GatewayConfig;
 
-    public timeout: number;
+  public timeout: number;
 
-    public validate() {
-        if (this.gatewayConfig !== undefined) {
-            this.gatewayConfig.validate();
-        }
+  public validate() {
+    if (this.gatewayConfig !== undefined) {
+      this.gatewayConfig.validate();
     }
+  }
 }

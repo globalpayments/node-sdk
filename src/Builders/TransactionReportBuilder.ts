@@ -7,7 +7,7 @@ export class TransactionReportBuilder<T> extends ReportBuilder<T> {
   public endDate: Date;
   public startDate: Date;
   public transactionId: string;
-  public searchCriteria: IDictionary<string>;  
+  public searchCriteria: IDictionary<string>;
 
   public setupValidations() {
     this.validations

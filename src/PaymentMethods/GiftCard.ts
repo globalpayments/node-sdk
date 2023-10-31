@@ -14,8 +14,10 @@ import {
 } from "./Interfaces";
 import { PaymentMethod } from "./PaymentMethod";
 
-export class GiftCard extends PaymentMethod
-  implements IPrePayable, IBalanceable, IReversable, IChargable {
+export class GiftCard
+  extends PaymentMethod
+  implements IPrePayable, IBalanceable, IReversable, IChargable
+{
   /**
    * Payment method value types
    *

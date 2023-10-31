@@ -1,4 +1,5 @@
 import { Gateway } from "./Gateway";
+import { GatewayResponse } from "./GatewayResponse";
 
 export abstract class XmlGateway extends Gateway {
   public constructor() {
@@ -6,6 +7,8 @@ export abstract class XmlGateway extends Gateway {
   }
 
   public doTransaction(requestData: string): Promise<string> {
-    return this.sendRequest("POST", "", requestData);
-  }  
+    return this.sendRequest("POST", "", requestData).then(
+      (response: GatewayResponse) => response.rawResponse,
+    );
+  }
 }

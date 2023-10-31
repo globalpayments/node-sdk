@@ -1,1 +1,2 @@
-export * from './GpEcomMapping';
+export * from "./GpApiMapping";
+export * from "./GpEcomMapping";

@@ -9,7 +9,7 @@ import {
 } from "../";
 
 export class EBTService {
-  constructor(config: GatewayConfig, configName: string = 'default') {
+  constructor(config: GatewayConfig, configName: string = "default") {
     ServicesContainer.configureService(config, configName);
   }
 

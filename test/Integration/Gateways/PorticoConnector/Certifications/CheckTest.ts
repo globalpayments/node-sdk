@@ -254,7 +254,6 @@ test("008 - corporate business savings", (t) => {
   });
 });
 
-
 test("010 - egold business checking", (t) => {
   t.plan(2);
 

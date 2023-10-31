@@ -15,52 +15,77 @@ export enum AliasAction {
 }
 
 export enum AlternativePaymentType {
-  Paypal = 'paypal',
-  PayByBankApp = 'paybybankapp',
+  Paypal = "paypal",
+  PayByBankApp = "paybybankapp",
+}
+
+export enum BankPaymentType {
+  FASTERPAYMENTS = "FASTERPAYMENTS",
+  SEPA = "SEPA",
 }
 
 export enum CardDataInputCapability {
-  Unknown = 'UNKNOWN',
-  NoTerminalManual = 'NO_TERMINAL_MANUAL',
-  MagstripeReadOnly = 'MAGSTRIPE_READ_ONLY',
-  Ocr = 'OCR',
-  IccChipReadOnly = 'ICC_CHIP_READ_ONLY',
-  KeyedEntryOnly = 'KEYED_ENTRY_ONLY',
-  MagstripeContactlessOnly = 'MAGSTRIPE_CONTACTLESS_ONLY',
-  MagstripeKeyedEntryOnly = 'MAGSTRIPE_KEYED_ENTRY_ONLY',
-  MagstripeIccKeyedEntryOnly = 'MAGSTRIPE_ICC_KEYED_ENTRY_ONLY',
-  MagstripeIccOnly = 'MAGSTRIPE_ICC_ONLY',
-  IccKeyedEntryOnly = 'ICC_KEYED_ENTRY_ONLY',
-  IccChipConctactContactless = 'ICC_CHIP_CONTACT_CONTACTLESS',
-  IccContactlessOnly = 'ICC_CONTACTLESS_ONLY',
-  OtherCapabilityForMastercard = 'OTHER_CAPABILITY_FOR_MASTERCARD',
-  MagstripeSignatureForAmexOnly = 'MAGSTRIPE_SIGNATURE_FOR_AMEX_ONLY',
+  Unknown = "UNKNOWN",
+  NoTerminalManual = "NO_TERMINAL_MANUAL",
+  MagstripeReadOnly = "MAGSTRIPE_READ_ONLY",
+  Ocr = "OCR",
+  IccChipReadOnly = "ICC_CHIP_READ_ONLY",
+  KeyedEntryOnly = "KEYED_ENTRY_ONLY",
+  MagstripeContactlessOnly = "MAGSTRIPE_CONTACTLESS_ONLY",
+  MagstripeKeyedEntryOnly = "MAGSTRIPE_KEYED_ENTRY_ONLY",
+  MagstripeIccKeyedEntryOnly = "MAGSTRIPE_ICC_KEYED_ENTRY_ONLY",
+  MagstripeIccOnly = "MAGSTRIPE_ICC_ONLY",
+  IccKeyedEntryOnly = "ICC_KEYED_ENTRY_ONLY",
+  IccChipConctactContactless = "ICC_CHIP_CONTACT_CONTACTLESS",
+  IccContactlessOnly = "ICC_CONTACTLESS_ONLY",
+  OtherCapabilityForMastercard = "OTHER_CAPABILITY_FOR_MASTERCARD",
+  MagstripeSignatureForAmexOnly = "MAGSTRIPE_SIGNATURE_FOR_AMEX_ONLY",
 }
 
 export enum CardDataOutputCapability {
-  None = 'NONE',
-  MagneticStripeWrite = 'MAGNETIC_STRIPE_WRITE',
-  Icc = 'ICC',
-  Other = 'OTHER',
+  None = "NONE",
+  MagneticStripeWrite = "MAGNETIC_STRIPE_WRITE",
+  Icc = "ICC",
+  Other = "OTHER",
 }
 
 export enum CardHolderAuthenticationCapability {
-  NoCapability = 'NO_CAPABILITY',
-  PinEntry = 'PIN_ENTRY',
-  SignatureAnalysis = 'SIGNATURE_ANALYSIS',
-  SignatureAnalysisInoperative = 'SIGNATURE_ANALYSIS_INOPERATIVE',
-  MposSoftwareBasedPinEntryCapability = 'MPOS_SOFTWARE_BASED_PIN_ENTRY_CAPABILITY',
-  Other = 'OTHER',
-  Unknown = 'UNKNOWN',
+  NoCapability = "NO_CAPABILITY",
+  PinEntry = "PIN_ENTRY",
+  SignatureAnalysis = "SIGNATURE_ANALYSIS",
+  SignatureAnalysisInoperative = "SIGNATURE_ANALYSIS_INOPERATIVE",
+  MposSoftwareBasedPinEntryCapability = "MPOS_SOFTWARE_BASED_PIN_ENTRY_CAPABILITY",
+  Other = "OTHER",
+  Unknown = "UNKNOWN",
 }
 
 export enum CardHolderAuthenticationEntity {
-  NotAuthenticated = 'NOT_AUTHENTICATED',
-  IccOfflinePin = 'ICC_OFFLINE_PIN',
-  CardAcceptanceDevice = 'CARD_ACCEPTANCE_DEVICE',
-  AuthorizingAgentOnlinePin = 'AUTHORIZING_AGENT_ONLINE_PIN',
-  MerchantCardAcceptorSignature = 'MERCHANT_CARD_ACCEPTOR_SIGNATURE',
-  Other = 'OTHER',
+  NotAuthenticated = "NOT_AUTHENTICATED",
+  IccOfflinePin = "ICC_OFFLINE_PIN",
+  CardAcceptanceDevice = "CARD_ACCEPTANCE_DEVICE",
+  AuthorizingAgentOnlinePin = "AUTHORIZING_AGENT_ONLINE_PIN",
+  MerchantCardAcceptorSignature = "MERCHANT_CARD_ACCEPTOR_SIGNATURE",
+  Other = "OTHER",
+}
+
+export enum CardType {
+  VISA = "VISA",
+  MASTERCARD = "MASTERCARD",
+  DISCOVER = "DISCOVER",
+  AMEX = "AMEX",
+  JCB = "JCB",
+  DINERS = "DINERS",
+}
+
+export enum CaptureMode {
+  AUTO = "AUTO",
+  LATER = "LATER",
+  MULTIPLE = "MULTIPLE",
+}
+
+export enum Channel {
+  CardNotPresent = "CNP",
+  CardPresent = "CP",
 }
 
 export enum CheckType {
@@ -74,11 +99,26 @@ export enum CurrencyType {
   POINTS,
 }
 
+export enum CustomerDocumentType {
+  NATIONAL = "NATIONAL",
+  CPF = "CPF",
+  CPNJ = "CPNJ",
+  CURP = "CURP",
+  SSN = "SSN",
+  DRIVER_LICENSE = "DRIVER_LICENSE",
+  PASSPORT = "PASSPORT",
+}
+
 export enum CvnPresenceIndicator {
   Present = 1,
   Illegible = 2,
   NotOnCard = 3,
   NotRequested = 4,
+}
+
+export enum DigitalWalletTokenFormat {
+  CARD_NUMBER = "CARD_NUMBER",
+  CARD_TOKEN = "CARD_TOKEN",
 }
 
 export enum EcommerceChannel {
@@ -94,9 +134,9 @@ export enum EmailReceipt {
 }
 
 export enum EncyptedMobileType {
-  ApplePay = 'apple-pay',
-  GooglePay = 'pay-with-google',
-  ClickToPay = 'click-to-pay',
+  ApplePay = "apple-pay",
+  GooglePay = "pay-with-google",
+  ClickToPay = "click-to-pay",
 }
 
 export enum EntryMethod {
@@ -108,7 +148,7 @@ export enum EntryMethod {
 export enum Environment {
   Test = "TEST",
   Production = "PRODUCTION",
-  Qa = 'QA',
+  Qa = "QA",
 }
 
 export enum ExceptionCodes {
@@ -168,8 +208,9 @@ export enum FraudFilterMode {
 }
 
 export enum GatewayProvider {
-    GpEcom = 'GP_ECOM',
-    Portico = 'PORTICO',
+  GpApi = "GP-API",
+  GpEcom = "GP_ECOM",
+  Portico = "PORTICO",
 }
 
 export enum GiftEntryMethod {
@@ -190,6 +231,46 @@ export enum InquiryType {
   Points = "POINTS",
 }
 
+export enum IntervalToExpire {
+  WEEK = "WEEK",
+  DAY = "DAY",
+  TWELVE_HOURS = "12_HOURS",
+  SIX_HOURS = "6_HOURS",
+  THREE_HOURS = "3_HOURS",
+  ONE_HOUR = "1_HOUR",
+  THIRTY_MINUTES = "30_MINUTES",
+  TEN_MINUTES = "10_MINUTES",
+  FIVE_MINUTES = "5_MINUTES",
+}
+
+export enum ManualEntryMethod {
+  MOTO = 0,
+  MAIL = 1,
+  PHONE = 2,
+  KEYED = 3,
+}
+
+export enum PayByLinkStatus {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  CLOSED = "CLOSED",
+  EXPIRED = "EXPIRED",
+  PAID = "PAID",
+}
+
+export enum PaymentEntryMode {
+  MOTO = "MOTO",
+  ECOM = "ECOM",
+  IN_APP = "IN_APP",
+  CHIP = "CHIP",
+  SWIPE = "SWIPE",
+  MANUAL = "MANUAL",
+  CONTACTLESS_CHIP = "CONTACTLESS_CHIP",
+  CONTACTLESS_SWIPE = "CONTACTLESS_SWIPE",
+  PHONE = "PHONE",
+  MAIL = "MAIL",
+}
+
 export enum PaymentMethodType {
   Reference = 1 << 0,
   Credit = 1 << 1,
@@ -201,10 +282,26 @@ export enum PaymentMethodType {
   Recurring = 1 << 7,
 }
 
+export enum PaymentProvider {
+  OPEN_BANKING = "OPEN_BANKING",
+}
+
 export enum PaymentSchedule {
   Dynamic,
   FirstDayOfTheMonth,
   LastDayOfTheMonth,
+}
+
+export enum PaymentType {
+  REFUND = "REFUND",
+  SALE = "SALE",
+}
+
+export enum PhoneNumberType {
+  HOME = "HOME",
+  WORK = "WORK",
+  SHIPPING = "SHIPPING",
+  MOBILE = "MOBILE",
 }
 
 export enum ReasonCode {
@@ -256,6 +353,13 @@ export enum SecCode {
   WEB = "WEB",
   TEL = "TEL",
   EBronze = "EBronze",
+}
+
+export enum Secure3dVersion {
+  NONE = "NONE",
+  ONE = "ONE",
+  TWO = "TWO",
+  ANY = "ANY",
 }
 
 export enum ShaHashType {
@@ -324,7 +428,7 @@ export enum TransactionType {
   Release = 1 << 23,
   VerifySignature = 1 << 25,
   /// <summary>
-  /// 
+  ///
   /// ProPay: Create Account
   /// </summary>
   CreateAccount = 1 << 40,
@@ -431,12 +535,12 @@ export enum TransactionType {
   Reauth = 1 << 60,
 
   /// <summary>
-  /// 
+  ///
   /// </summary>
   SiteConfig = 1 << 61,
 
   /// <summary>
-  /// 
+  ///
   /// </summary>
   TimeRequest = 1 << 62,
 
@@ -446,7 +550,7 @@ export enum TransactionType {
   GetTokenInfo = 1 << 63,
 
   PayLinkUpdate = 1 << 63,
-  OrderDevice = 1 << 64
+  OrderDevice = 1 << 64,
 }
 
 export enum ProPayAccountStatus {
@@ -457,7 +561,7 @@ export enum ProPayAccountStatus {
   Canceled,
   FraudVictim,
   ClosedEula,
-  ClosedExcessiveChargeback
+  ClosedExcessiveChargeback,
 }
 
 export enum MobilePaymentMethodType {
@@ -471,7 +575,7 @@ export enum PaymentDataSourceType {
   APPLEPAYWEB = "ApplePayWeb",
   GOOGLEPAYAPP = "GooglePayApp",
   GOOGLEPAYWEB = "GooglePayWeb",
-  DISCOVER3DSECURE = "Discover 3DSecure"
+  DISCOVER3DSECURE = "Discover 3DSecure",
 }
 
 export enum PropayTermsVersion {
@@ -479,5 +583,5 @@ export enum PropayTermsVersion {
   paymentUS = 2,
   merchantCA = 3,
   merchantUK = 4,
-  merchantAU = 5
+  merchantAU = 5,
 }

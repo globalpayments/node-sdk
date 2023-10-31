@@ -21,10 +21,10 @@ card.cvn = "123";
 card.cardHolderName = "Joe Smith";
 
 const track = new CreditTrackData();
-// tslint:disable:max-line-length
+/* eslint-disable */
 track.value =
   "<E1050711%B4012001000000016^VI TEST CREDIT^251200000000000000000000?|LO04K0WFOmdkDz0um+GwUkILL8ZZOP6Zc4rCpZ9+kg2T3JBT4AEOilWTI|+++++++Dbbn04ekG|11;4012001000000016=25120000000000000000?|1u2F/aEhbdoPixyAPGyIDv3gBfF|+++++++Dbbn04ekG|00|||/wECAQECAoFGAgEH2wYcShV78RZwb3NAc2VjdXJlZXhjaGFuZ2UubmV0PX50qfj4dt0lu9oFBESQQNkpoxEVpCW3ZKmoIV3T93zphPS3XKP4+DiVlM8VIOOmAuRrpzxNi0TN/DWXWSjUC8m/PI2dACGdl/hVJ/imfqIs68wYDnp8j0ZfgvM26MlnDbTVRrSx68Nzj2QAgpBCHcaBb/FZm9T7pfMr2Mlh2YcAt6gGG1i2bJgiEJn8IiSDX5M2ybzqRT86PCbKle/XCTwFFe1X|>;";
-// tslint:enable:max-line-length
+/* eslint-enable */
 track.encryptionData = new EncryptionData();
 track.encryptionData.version = "01";
 
@@ -113,11 +113,14 @@ test("credit auth with cof", async (t) => {
     .authorize(15)
     .withCurrency("USD")
     .withAllowDuplicates(true)
-    .withCardBrandStorage(StoredCredentialInitiator.Merchant, response.cardBrandTransactionId)
+    .withCardBrandStorage(
+      StoredCredentialInitiator.Merchant,
+      response.cardBrandTransactionId,
+    )
     .execute();
 
-    t.truthy(cofResponse);
-    t.is(cofResponse.responseCode, "00");
+  t.truthy(cofResponse);
+  t.is(cofResponse.responseCode, "00");
 
   const capture = await cofResponse.capture().execute();
 
@@ -171,7 +174,7 @@ test("credit sale with shipping", async (t) => {
 
   t.truthy(response);
   t.is(response.responseCode, "00");
-  
+
   const report = await ReportingService.transactionDetail(
     response.transactionId,
   ).execute();
@@ -198,11 +201,14 @@ test("credit sale with cof", async (t) => {
     .charge(15)
     .withCurrency("USD")
     .withAllowDuplicates(true)
-    .withCardBrandStorage(StoredCredentialInitiator.Merchant, response.cardBrandTransactionId)
+    .withCardBrandStorage(
+      StoredCredentialInitiator.Merchant,
+      response.cardBrandTransactionId,
+    )
     .execute();
 
-    t.truthy(cofResponse);
-    t.is(cofResponse.responseCode, "00");
+  t.truthy(cofResponse);
+  t.is(cofResponse.responseCode, "00");
 });
 
 test("credit offline authorization", async (t) => {
@@ -359,7 +365,6 @@ test("credit verify", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00");
 });
-
 
 test("credit verify with cof", async (t) => {
   t.plan(3);

@@ -1,5 +1,5 @@
 import ava from "ava";
-import { Address, CheckService, PorticoConfig,  } from "../../../src/";
+import { Address, CheckService, PorticoConfig } from "../../../src/";
 import { TestChecks } from "../../Data";
 
 const config = new PorticoConfig();
