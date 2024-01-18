@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v3.1.0 (10/31/23)
+## Latest - v3.2.0 (01/18/24): 
+
+### Enhancements:
+
+- [UPA-MIC] Add MiC connector for UPA via GP-API
+
+## v3.1.0 (10/31/23)
 
 ### Enhancements:
 

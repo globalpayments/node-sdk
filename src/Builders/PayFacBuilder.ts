@@ -1,4 +1,3 @@
-import { BaseBuilder } from "./";
 import { CreditCardData } from "../PaymentMethods";
 import { DocumentUploadData } from "../Entities/DocumentUploadData";
 import { AccountPermissions } from "../Entities/ProFac/AccountPermissions";
@@ -17,6 +16,7 @@ import { SSORequestData } from "../Entities/SSORequestData";
 
 import {
   Address,
+  BaseBuilder,
   ServicesContainer,
   Transaction,
   TransactionModifier,

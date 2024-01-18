@@ -15,3 +15,4 @@ export * from "./Schedule";
 export * from "./ServiceEndpoints";
 export * from "./Transaction";
 export * from "./TransactionSummary";
+export * from "./UPA";

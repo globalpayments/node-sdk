@@ -19,6 +19,11 @@ export enum AlternativePaymentType {
   PayByBankApp = "paybybankapp",
 }
 
+export enum ApplicationCryptogramType {
+  TC,
+  ARQC,
+}
+
 export enum BankPaymentType {
   FASTERPAYMENTS = "FASTERPAYMENTS",
   SEPA = "SEPA",
@@ -97,6 +102,9 @@ export enum CheckType {
 export enum CurrencyType {
   CURRENCY,
   POINTS,
+  CASH_BENEFITS,
+  FOODSTAMPS,
+  VOUCHER,
 }
 
 export enum CustomerDocumentType {
@@ -114,6 +122,60 @@ export enum CvnPresenceIndicator {
   Illegible = 2,
   NotOnCard = 3,
   NotRequested = 4,
+}
+
+export enum DeviceType {
+  /// <summary>
+  /// Indicates PAX device.
+  /// </summary>
+  PAX_DEVICE,
+  /// <summary>
+  /// Indicates PAX D200 device.
+  /// </summary>
+  PAX_D200,
+  /// <summary>
+  /// INdicates PAX D210 device.
+  /// </summary>
+  PAX_D210,
+  /// <summary>
+  /// Indicates a Pax S300 device.
+  /// </summary>
+  PAX_S300,
+  /// <summary>
+  /// Indicates PAX PX5 device.
+  /// </summary>
+  PAX_PX5,
+  /// <summary>
+  /// Indicates PAX PX7 device.
+  /// </summary>
+  PAX_PX7,
+
+  /// <summary>
+  /// Indicates a HeeartSIP iSC250 device.
+  /// </summary>
+  HPA_ISC250,
+
+  /// <summary>
+  /// Indicates a HeartSIP Lane 3000 device
+  /// </summary>
+  HPA_LANE3000,
+  /// <summary>
+  /// Indicates a UPA device
+  /// </summary>
+  UPA_DEVICE,
+  /// <summary>
+  /// Indicates a genius terminal
+  /// </summary>
+  GENIUS,
+
+  /// <summary>
+  /// Indicates a Nucleus terminal
+  /// </summary>
+  NUCLEUS_SATURN_1000,
+  /// <summary>
+  /// Indicates a genius verifone P400
+  /// </summary>
+  GENIUS_VERIFONE_P400,
 }
 
 export enum DigitalWalletTokenFormat {
@@ -280,6 +342,12 @@ export enum PaymentMethodType {
   ACH = 1 << 5,
   Gift = 1 << 6,
   Recurring = 1 << 7,
+  Other = 1 << 8,
+  APM = 1 << 9,
+  Ewic = 1 << 10,
+  BankPayment = 1 << 11,
+  BNPL = 1 << 12,
+  Account_Funds = 1 << 13,
 }
 
 export enum PaymentProvider {
@@ -362,6 +430,11 @@ export enum Secure3dVersion {
   ANY = "ANY",
 }
 
+export enum SendFileType {
+  Banner,
+  Logo,
+}
+
 export enum ShaHashType {
   SHA1 = "SHA1",
   SHA256 = "SHA256",
@@ -427,6 +500,7 @@ export enum TransactionType {
   Hold = 1 << 21,
   Release = 1 << 23,
   VerifySignature = 1 << 25,
+  Tokenize = 1 << 33,
   /// <summary>
   ///
   /// ProPay: Create Account

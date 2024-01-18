@@ -72,4 +72,40 @@ export class ValidationClause {
       .of(this.target.enumName, this.target.type)
       .with(this.target.constraintProperty, this.target.constraint);
   }
+
+  public isNotEqualTo(expected: unknown, message?: string): ValidationTarget {
+    this.callback = <T>(builder: BaseBuilder<T>) => {
+      const value = builder[this.target.property];
+      return expected !== value;
+    };
+    this.message = message
+      ? message
+      : `${this.target.property} cannot be ${expected} for this transaction type.`;
+
+    if (this.precondition) {
+      return this.target;
+    }
+
+    return this.parent
+      .of(this.target.enumName, this.target.type)
+      .with(this.target.constraintProperty, this.target.constraint);
+  }
+
+  public isEqualTo(expected: unknown, message?: string): ValidationTarget {
+    this.callback = <T>(builder: BaseBuilder<T>) => {
+      const value = builder[this.target.property];
+      return expected === value;
+    };
+    this.message = message
+      ? message
+      : `${this.target.property} cannot be different than ${expected} for this transaction type.`;
+
+    if (this.precondition) {
+      return this.target;
+    }
+
+    return this.parent
+      .of(this.target.enumName, this.target.type)
+      .with(this.target.constraintProperty, this.target.constraint);
+  }
 }

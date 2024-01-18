@@ -1,6 +1,6 @@
 {
   "name": "globalpayments-api",
-  "version" : "3.1.0",
+  "version" : "3.2.0",
   "description": "Global Payments SDK for NodeJS for Heartland and Global Payments eCommerce gateways",
   "author": "Heartland Payment Systems",
   "license": "GPL-2.0",
@@ -21,8 +21,9 @@
     "format": "prettier --write --config .prettierrc 'src/**/*.ts' 'test/**/*.ts' '*.md'",
     "prebuild": "npm-run-all test:lint",
     "prepublish": "npm-run-all build",
+    "prepublishOnly": "npm-run-all build",
     "pretest": "npm-run-all build:clean test:lint build",
-    "test:without-report": "ava",
+    "test:without-report": "npm-run-all build:clean test:lint build && ava",
     "test": "ava --tap | npx tap-nyan",
     "test:lint": "eslint \"src/**/*.ts*\" \"test/**/*.ts\""
   },

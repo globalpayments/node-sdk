@@ -1,8 +1,13 @@
-import { IPaymentGateway, IRecurringService } from "./";
+import {
+  Configuration,
+  IDeviceInterface,
+  IPaymentGateway,
+  IRecurringService,
+} from "./";
 import { ConfiguredServices } from "./ConfiguredServices";
 import { IPayFacProvider } from "./Gateways/IPayFacProvider";
-import { GatewayConfig } from "./ServiceConfigs/Gateways/GatewayConfig";
 import { ServicesConfigs } from "./ServiceConfigs/ServicesConfigs";
+import { DeviceController } from "./Terminals/DeviceController";
 
 export class ServicesContainer {
   private static _instance: ServicesContainer;
@@ -28,6 +33,14 @@ export class ServicesContainer {
     return this._configs[configName].getPayFacProvider();
   }
 
+  public getDeviceInterface(configName: string = "default"): IDeviceInterface {
+    return this._configs[configName].deviceInterface;
+  }
+
+  public getDeviceController(configName: string = "default"): DeviceController {
+    return this._configs[configName].deviceController;
+  }
+
   public static configure(
     config: ServicesConfigs,
     configName: string = "default",
@@ -37,8 +50,8 @@ export class ServicesContainer {
     ServicesContainer.configureService(config.gatewayConfig, configName);
   }
 
-  public static configureService(
-    config: GatewayConfig,
+  public static configureService<T extends Configuration>(
+    config: T,
     configName: string = "default",
   ) {
     if (config != null) {

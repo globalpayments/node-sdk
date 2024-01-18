@@ -16,4 +16,5 @@ export * from "./Mapping";
 export * from "./PaymentMethods";
 export * from "./Services";
 export * from "./ServiceConfigs";
+export * from "./Terminals";
 export * from "./Utils";

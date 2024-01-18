@@ -5,6 +5,7 @@ import { RestGateway } from "./RestGateway";
 import {
   AccessTokenInfo,
   ApiError,
+  GatewayError,
   GpApiRequest,
   GpApiTokenResponse,
   NotImplementedError,
@@ -17,6 +18,7 @@ import {
   BaseBuilder,
   GpApiConfig,
   GpApiMapping,
+  GpApiMiCRequestBuilder,
   GpApiSessionInfo,
   IDictionary,
   ManagementBuilder,
@@ -101,7 +103,7 @@ export class GpApiConnector
   public async signIn() {
     let accessTokenInfo = this.gpApiConfig.accessTokenInfo;
     if (accessTokenInfo && accessTokenInfo.accessToken) {
-      this.headers["Authorization"] = `Bearer {accessTokenInfo.accessToken}`;
+      this.headers["Authorization"] = `Bearer ${accessTokenInfo.accessToken}`;
       return;
     }
 
@@ -252,7 +254,7 @@ export class GpApiConnector
     idempotencyKey?: string,
   ) {
     if (!this.accessToken) {
-      this.signIn();
+      await this.signIn();
     }
     if (idempotencyKey) {
       this.headers[GpApiConnector.IDEMPOTENCY_HEADER] = idempotencyKey;
@@ -278,13 +280,18 @@ export class GpApiConnector
       );
     } catch (exception) {
       if (
-        exception.getMessage().indexOf("NOT_AUTHENTICATED") !== -1 &&
+        exception.message.indexOf("NOT_AUTHENTICATED") !== -1 &&
         this.gpApiConfig.appKey &&
         this.gpApiConfig.appKey
       ) {
         this.accessToken = "";
-        this.signIn();
-        return super.doTransaction(verb, endpoint, data, queryStringParams);
+        await this.signIn();
+        return await super.doTransaction(
+          verb,
+          endpoint,
+          data,
+          queryStringParams,
+        );
       }
 
       throw exception;
@@ -293,5 +300,26 @@ export class GpApiConnector
     }
 
     return JSON.parse(response);
+  }
+
+  public processPassThrough(jsonRequest: string): Promise<string> {
+    if (!this.accessToken) {
+      this.signIn();
+    }
+    const requestBuilder = new GpApiMiCRequestBuilder();
+    const request = requestBuilder.buildRequestFromJson(
+      jsonRequest,
+      this.gpApiConfig,
+    );
+    if (!request) {
+      throw new GatewayError("Request was not generated!");
+    }
+    request.endpoint = this.getMerchantUrl(request) + request.endpoint;
+
+    return this.doTransaction(
+      request.httpVerb,
+      request.endpoint,
+      request.requestBody,
+    );
   }
 }

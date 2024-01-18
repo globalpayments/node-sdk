@@ -1,4 +1,3 @@
-import { Transaction } from "../";
 import { PayFacBuilder } from "../../src/Builders/PayFacBuilder";
 import { TransactionModifier, TransactionType } from "../Entities/Enums";
 import { IPayFacProvider } from "./IPayFacProvider";
@@ -22,7 +21,7 @@ import { GrossBillingInformation } from "../Entities/ProFac/GrossBillingInformat
 import { RenewAccountData } from "../Entities/ProFac/RenewAccountData";
 import { FlashFundsPaymentCardData } from "../Entities/ProFac/FlashFundsPaymentCardData";
 import { SSORequestData } from "../Entities/SSORequestData";
-import { Address } from "../Entities";
+import { Address, Transaction } from "../Entities";
 import { DocumentUploadData } from "../Entities/DocumentUploadData";
 import { PayFacResponseData } from "../Entities/ProFac/PayFacResponseData";
 import { BankAccountData } from "../Entities/ProFac/BankAccountData";

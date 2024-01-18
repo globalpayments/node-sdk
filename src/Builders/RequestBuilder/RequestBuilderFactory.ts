@@ -1,6 +1,7 @@
 import { GpApiAuthorizationRequestBuilder } from ".";
 import { GatewayProvider, IRequestBuilder, Transaction } from "../../Entities/";
 import { BaseBuilder } from "../BaseBuilder";
+import { GpApiMiCRequestBuilder } from "./GpApi/GpApiMiCRequestBuilder";
 import { GpEcomAuthorizationRequestBuilder } from "./GpEcom/GpEcomAuthorizationRequestBuilder";
 import { GpEcomManagementRequestBuilder } from "./GpEcom/GpEcomManagementRequestBuilder";
 
@@ -8,7 +9,10 @@ export class RequestBuilderFactory {
   public supplementaryData: Record<string, string | string[]>;
 
   private static processes: Record<GatewayProvider, IRequestBuilder[]> = {
-    [GatewayProvider.GpApi]: [new GpApiAuthorizationRequestBuilder()],
+    [GatewayProvider.GpApi]: [
+      new GpApiAuthorizationRequestBuilder(),
+      new GpApiMiCRequestBuilder(),
+    ],
     [GatewayProvider.GpEcom]: [
       new GpEcomAuthorizationRequestBuilder(),
       new GpEcomManagementRequestBuilder(),
