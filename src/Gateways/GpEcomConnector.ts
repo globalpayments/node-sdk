@@ -28,6 +28,7 @@ import {
   PaymentMethodType,
   RecurringBuilder,
   RecurringPaymentMethod,
+  Request,
   RequestBuilderFactory,
   Schedule,
   StringUtils,
@@ -100,6 +101,10 @@ export class GpEcomConnector
 
     if (!request) {
       throw new ApiError("Request was not generated!");
+    }
+
+    if (Request.maskedValues) {
+      this.maskedRequestData = Request.maskedValues;
     }
 
     return this.doTransaction(request.requestBody);

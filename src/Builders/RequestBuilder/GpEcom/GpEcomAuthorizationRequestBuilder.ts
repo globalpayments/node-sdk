@@ -7,6 +7,7 @@ import {
   GpEcomConfig,
   GpEcomMapping,
   IRequestBuilder,
+  ProtectSensitiveData,
   Request,
   StringUtils,
   Transaction,
@@ -24,6 +25,7 @@ export class GpEcomAuthorizationRequestBuilder
   extends GpEcomRequestBuilder
   implements IRequestBuilder
 {
+  private maskedValues: Record<string, string> = {};
   /***
    * @param AuthorizationBuilder builder
    *
@@ -120,10 +122,24 @@ export class GpEcomAuthorizationRequestBuilder
           StringUtils.leftPad(card.expMonth, 2, "0") +
           StringUtils.leftPad((card.expYear || "").substr(2, 2), 2, "0");
         subElement(cardElement, "expdate").append(cData(date));
+        subElement(cardElement, "chname").append(cData(card.cardHolderName));
+        this.maskedValues = {
+          ...this.maskedValues,
+          ...ProtectSensitiveData.hideValue(
+            "card.expdate",
+            card.getShortExpiry() || "",
+          ),
+        };
+
         subElement(cardElement, "type").append(
           cData(card.getCardType().toUpperCase()),
         );
-        subElement(cardElement, "chname").append(cData(card.cardHolderName));
+        if (card.number) {
+          this.maskedValues = {
+            ...this.maskedValues,
+            ...ProtectSensitiveData.hideValue("card.number", card.number, 4, 6),
+          };
+        }
 
         if (card.cvn) {
           const cvnElement = subElement(cardElement, "cvn");
@@ -131,6 +147,13 @@ export class GpEcomAuthorizationRequestBuilder
           subElement(cvnElement, "presind").append(
             cData(card.cvnPresenceIndicator.toString()),
           );
+          this.maskedValues = {
+            ...this.maskedValues,
+            ...ProtectSensitiveData.hideValue(
+              "card.cvn.number",
+              card.cvn || "",
+            ),
+          };
         }
         // issueno
       }
@@ -169,6 +192,9 @@ export class GpEcomAuthorizationRequestBuilder
     if (Object.keys(builder.supplementaryData).length) {
       this.buildSupplementaryData(builder.supplementaryData, request);
     }
+
+    Request.maskedValues = this.maskedValues;
+
     return new Request(config.serviceUrl, "POST", this.buildEnvelope(request));
   }
 }

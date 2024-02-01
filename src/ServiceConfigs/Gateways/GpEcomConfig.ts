@@ -45,6 +45,7 @@ export class GpEcomConfig extends GatewayConfig {
     gateway.hostedPaymentConfig = this.hostedPaymentConfig;
 
     gateway.serviceUrl = this.serviceUrl;
+    gateway.requestLogger = this.requestLogger;
 
     services.gatewayConnector = gateway;
     services.recurringConnector = gateway;

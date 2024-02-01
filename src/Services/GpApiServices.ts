@@ -16,7 +16,7 @@ export class GpApiService {
           : ServiceEndpoints.GP_API_TEST;
     }
     // TODO to be backfilled when implemented
-    // gateway.requestLogger = config.requestLogger;
+    gateway.requestLogger = config.requestLogger;
     // gateway.webProxy = config.webProxy;
     // gateway.dynamicHeaders = config.dynamicHeaders;
 

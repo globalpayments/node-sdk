@@ -4,13 +4,16 @@ import * as url from "url";
 import { IDictionary } from "../Builders";
 import { request } from "./https-wrapper";
 import { GatewayResponse } from "./GatewayResponse";
+import { Environment, IRequestLogger } from "../../src";
 
 export abstract class Gateway {
   public headers: IDictionary<string>;
   public timeout: number;
   public serviceUrl: string;
   protected contentType: string;
-  public maskedRequestData: string[];
+  public maskedRequestData: Record<string, string>;
+  public requestLogger: IRequestLogger;
+  public environment: Environment;
 
   public constructor(contentType: string) {
     this.contentType = contentType;
@@ -18,9 +21,10 @@ export abstract class Gateway {
     this.headers["Content-Type"] = this.contentType;
   }
 
-  public sendRequest(
+  public async sendRequest(
     httpMethod: string,
     endpoint: string,
+    requestId: number,
     data?: string,
     queryStringParams?: IDictionary<string>,
   ): Promise<GatewayResponse> {
@@ -39,7 +43,45 @@ export abstract class Gateway {
       options.headers["Content-Length"] = data.length;
     }
 
-    return request(data, options);
+    if (this.requestLogger) {
+      const environment = this.environment;
+      this.environment = Environment.Production;
+      const dataLogged =
+        data &&
+        this.maskedRequestData &&
+        this.environment === Environment.Production
+          ? this.maskSensitiveData(data)
+          : data;
+      this.environment = environment;
+
+      this.requestLogger.requestSent(
+        httpMethod,
+        this.serviceUrl + endpoint + (queryStringParams || ""),
+        requestId,
+        this.headers,
+        dataLogged,
+      );
+    }
+    try {
+      const response = await request(data, options);
+
+      if (this.requestLogger) {
+        this.requestLogger.responseReceived(response, requestId);
+      }
+
+      return response;
+    } catch (e) {
+      if (this.requestLogger) {
+        this.requestLogger.responseError(e, requestId, e.headers);
+      }
+
+      throw e;
+    }
+  }
+
+  maskSensitiveData(data: string) {
+    // overriden in XmlGateway and RestGateway
+    data;
   }
 
   protected buildQueryString(queryStringParams?: IDictionary<string>) {

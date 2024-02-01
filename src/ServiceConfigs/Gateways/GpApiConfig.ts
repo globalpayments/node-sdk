@@ -51,6 +51,7 @@ export class GpApiConfig extends GatewayConfig {
 
     const gateway = new GpApiConnector(this);
     gateway.serviceUrl = this.serviceUrl;
+    gateway.requestLogger = this.requestLogger;
 
     services.gatewayConnector = gateway;
     services.reportingService = gateway;

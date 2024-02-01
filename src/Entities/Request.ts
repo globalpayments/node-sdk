@@ -9,7 +9,7 @@ export class Request {
 
   public queryParams: ParsedUrlQuery | undefined;
 
-  static maskedValues: string[];
+  static maskedValues: Record<string, string> = {};
 
   constructor(
     endpoint: string,

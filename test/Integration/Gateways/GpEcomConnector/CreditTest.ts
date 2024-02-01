@@ -2,8 +2,10 @@ import test from "ava";
 import {
   CreditCardData,
   GatewayError,
+  Logger,
   RecurringSequence,
   RecurringType,
+  SampleRequestLogger,
   ServicesContainer,
   TransactionModifier,
 } from "../../../../src";
@@ -15,6 +17,7 @@ config.accountId = "api";
 config.sharedSecret = "secret";
 config.rebatePassword = "rebate";
 config.refundPassword = "refund";
+config.requestLogger = new SampleRequestLogger(new Logger("logs"));
 
 const card = new CreditCardData();
 card.number = "4111111111111111";

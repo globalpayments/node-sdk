@@ -1,4 +1,10 @@
-import { Environment, GpApiConfig, ServicesContainer } from "../../src";
+import {
+  Environment,
+  GpApiConfig,
+  Logger,
+  SampleRequestLogger,
+  ServicesContainer,
+} from "../../src";
 
 export class BaseGpApiTestConfig {
   public static PARTNER_SOLUTION_APP_ID: string =
@@ -14,6 +20,8 @@ export class BaseGpApiTestConfig {
 
   private static dynamicHeaderEnabled: boolean = false;
   private static permissionsEnabled: boolean = false;
+
+  private static logEnabled: boolean = true;
 
   public static gpApiSetupConfig(channel: string): GpApiConfig {
     const config = new GpApiConfig();
@@ -36,6 +44,10 @@ export class BaseGpApiTestConfig {
 
     if (BaseGpApiTestConfig.permissionsEnabled) {
       config.permissions = ["TRN_POST_Authorize"];
+    }
+
+    if (BaseGpApiTestConfig.logEnabled) {
+      config.requestLogger = new SampleRequestLogger(new Logger("logs"));
     }
 
     return config;

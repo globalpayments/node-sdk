@@ -9,7 +9,6 @@ import {
   GpApiRequest,
   GpApiTokenResponse,
   NotImplementedError,
-  Request,
   Secure3dVersion,
   Transaction,
 } from "../../src/Entities";
@@ -223,10 +222,6 @@ export class GpApiConnector
     }
 
     const idempotencyKey = builder.idempotencyKey || null;
-
-    if (Request.maskedValues) {
-      this.maskedRequestData = Request.maskedValues;
-    }
 
     return this.doTransaction(
       request.httpVerb,

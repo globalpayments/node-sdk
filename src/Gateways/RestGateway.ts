@@ -1,3 +1,4 @@
+import { RequestIdProvider } from "../../test/Integration/Gateways/Terminals/RequestIdProvider";
 import { GatewayError, GpApiConnector, IDictionary } from "../../src";
 import { Gateway } from "./Gateway";
 
@@ -14,9 +15,12 @@ export abstract class RestGateway extends Gateway {
     requestData?: string,
     queryStringParams?: IDictionary<string>,
   ): Promise<string> {
+    const requestId = new RequestIdProvider().getRequestId();
+
     const response = await this.sendRequest(
       verb,
       endpoint,
+      requestId,
       requestData,
       queryStringParams,
     );
@@ -31,7 +35,7 @@ export abstract class RestGateway extends Gateway {
       }
 
       if (this.isGpApi()) {
-        throw new GatewayError(
+        const gatewayException = new GatewayError(
           `Status Code: ${error.error_code} - ` +
             `${
               error.detailed_error_description ||
@@ -40,6 +44,16 @@ export abstract class RestGateway extends Gateway {
             }`,
           error.detailed_error_code || null,
         );
+
+        if (this.requestLogger) {
+          this.requestLogger.responseError(
+            gatewayException,
+            requestId,
+            response.headers,
+          );
+        }
+
+        throw gatewayException;
       } else {
         const errMsgProperty = [
           "error_description",
@@ -62,6 +76,11 @@ export abstract class RestGateway extends Gateway {
     }
 
     return response.rawResponse;
+  }
+
+  public override maskSensitiveData(data: string) {
+    data;
+    // TODO handle JSON masked data
   }
 
   private isGpApi() {

@@ -1,12 +1,12 @@
 import { ConfiguredServices } from "src/ConfiguredServices";
-import { Environment } from "../../src/Entities/";
+import { Environment, IRequestLogger } from "../../src/Entities/";
 
 export abstract class Configuration {
   public timeout: number = 65000;
 
   public environment: Environment = Environment.Test;
 
-  public requestLogger: unknown;
+  public requestLogger: IRequestLogger;
 
   public serviceUrl: string;
 

@@ -9,6 +9,8 @@ export * from "./Errors";
 export * from "./GpApi";
 export * from "./HostedPaymentData";
 export * from "./IRequestBuilder";
+export * from "./IRequestLogger";
+export * from "./MaskedValueCollection";
 export * from "./RecurringEntity";
 export * from "./Request";
 export * from "./Schedule";

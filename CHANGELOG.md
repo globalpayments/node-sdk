@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v3.2.0 (01/18/24): 
+## Latest - v3.3.0 (01/31/24):
+
+### Enhancements:
+
+- [RequestLogger] Add request logger implementation on GpEcom and GpApi
+
+## v3.2.0 (01/18/24):
 
 ### Enhancements:
 
