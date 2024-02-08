@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v3.3.0 (01/31/24):
+## Latest - v3.3.1 (02/08/24):
+
+### Enhancements:
+
+- [RequestLogger] Backfill request logger on missing places
+
+## v3.3.0 (01/31/24):
 
 ### Enhancements:
 

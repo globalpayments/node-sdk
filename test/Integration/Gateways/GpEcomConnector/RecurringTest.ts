@@ -4,9 +4,11 @@ import {
   CreditCardData,
   Customer,
   GenerationUtils,
+  Logger,
   RecurringPaymentMethod,
   RecurringSequence,
   RecurringType,
+  SampleRequestLogger,
   ServicesContainer,
 } from "../../../../src/";
 import { GpEcomConfig } from "../../../../src/ServiceConfigs";
@@ -17,6 +19,7 @@ config.accountId = "api";
 config.sharedSecret = "secret";
 config.rebatePassword = "rebate";
 config.refundPassword = "refund";
+config.requestLogger = new SampleRequestLogger(new Logger("logs"));
 const test = ava.serial;
 
 const card = new CreditCardData();

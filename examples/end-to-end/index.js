@@ -4,7 +4,7 @@ const { promisify } = require('util');
 const {
   Address,
   CreditCardData,
-  ServicesConfig,
+  PorticoConfig,
   ServicesContainer,
 } = require('globalpayments-api');
 
@@ -26,15 +26,15 @@ const showError = async (res) => {
 };
 
 const configure = () => {
-  const config = new ServicesConfig();
-  config.secretApiKey = 'skapi_cert_MYl2AQAowiQAbLp5JesGKh7QFkcizOP2jcX9BrEMqQ';
-  config.serviceUrl = 'https://cert.api2-c.heartlandportico.com';
+  const config = new PorticoConfig();
+  config.secretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A";
+  config.serviceUrl = "https://cert.api2.heartlandportico.com";
 
   // The following variables will be provided to your during certification.
   config.versionNumber = '0000';
   config.developerId = '000000';
 
-  ServicesContainer.configure(config);
+  ServicesContainer.configureService(config);
 }
 
 module.exports = async (req, res) => {

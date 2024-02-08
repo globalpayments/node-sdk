@@ -51,6 +51,8 @@ export class Logger {
     if (!this.fileHandleSync) {
       throw new Error("The file could not be opened. Check permissions.");
     }
+
+    this.closeFileHandleSync();
   }
 
   setLogToStdOut(stdOutPath: string): void {
@@ -83,8 +85,16 @@ export class Logger {
     this.fileHandleSync = fs.openSync(this.logFilePath, writeMode);
   }
 
+  closeFileHandleSync() {
+    fs.closeSync(this.fileHandleSync);
+  }
+
   async setFileHandle(writeMode: fs.Mode) {
     this.fileHandle = await fsPromises.open(this.logFilePath, writeMode);
+  }
+
+  async closeFileHandle() {
+    await this.fileHandle.close();
   }
 
   setDateFormat(dateFormat: string): void {
@@ -132,6 +142,8 @@ export class Logger {
         ) {
           await this.fileHandle.datasync();
         }
+
+        await this.closeFileHandle();
       } catch (error) {
         throw new Error(
           "The file could not be written to. Check that appropriate permissions have been set.",

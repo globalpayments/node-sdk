@@ -71,6 +71,7 @@ export class PorticoConfig extends GatewayConfig {
     gateway.serviceUrl =
       this.serviceUrl + "/Hps.Exchange.PosGateway/PosGatewayService.asmx";
     gateway.uniqueDeviceId = this.uniqueDeviceId;
+    gateway.requestLogger = this.requestLogger;
 
     services.gatewayConnector = gateway;
 

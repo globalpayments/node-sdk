@@ -1,15 +1,18 @@
 const {
-  ServicesConfig,
+  PorticoConfig,
   ServicesContainer,
   CreditCardData,
   Address,
+  SampleRequestLogger,
+  Logger
 } = require("../../lib/src");
 
-const config = new ServicesConfig();
+const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A";
 config.serviceUrl = "https://cert.api2.heartlandportico.com";
+config.requestLogger = new SampleRequestLogger(new Logger("logs"));
 
-ServicesContainer.configure(config);
+ServicesContainer.configureService(config);
 
 const card = new CreditCardData();
 card.number = "4111111111111111";

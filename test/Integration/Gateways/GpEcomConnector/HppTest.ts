@@ -4,6 +4,8 @@ import {
   BuilderError,
   HostedPaymentConfig,
   HostedService,
+  Logger,
+  SampleRequestLogger,
   ServicesContainer,
 } from "../../../../src/";
 import { GpEcomConfig } from "../../../../src/ServiceConfigs";
@@ -14,6 +16,7 @@ config.accountId = "api";
 config.sharedSecret = "secret";
 config.rebatePassword = "rebate";
 config.refundPassword = "refund";
+config.requestLogger = new SampleRequestLogger(new Logger("logs"));
 
 config.hostedPaymentConfig = new HostedPaymentConfig();
 config.hostedPaymentConfig.language = "GB";

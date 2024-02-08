@@ -4,9 +4,11 @@ const {promisify} = require('util');
 const {
   Address,
   CreditCardData,
-  ServicesConfig,
+  GpEcomConfig,
   ServicesContainer,
   TransactionModifier,
+  SampleRequestLogger,
+  Logger,
 } = require('globalpayments-api');
 
 const readFileAsync = promisify(fs.readFile);
@@ -17,12 +19,14 @@ const showIndex = async (res) => {
 };
 
 const configure = () => {
-  const config = new ServicesConfig();
+  const config = new GpEcomConfig();
+
   config.merchantId = 'heartlandgpsandbox';
   config.accountId = 'apitest';
   config.sharedSecret = 'secret';
   config.serviceUrl = 'https://api.sandbox.realexpayments.com/epage-remote.cgi';
-  ServicesContainer.configure(config);
+  config.requestLogger = new SampleRequestLogger(new Logger("logs"));
+  ServicesContainer.configureService(config);
 }
 
 module.exports = async (req, res) => {

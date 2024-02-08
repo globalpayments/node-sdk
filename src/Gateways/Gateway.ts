@@ -44,15 +44,12 @@ export abstract class Gateway {
     }
 
     if (this.requestLogger) {
-      const environment = this.environment;
-      this.environment = Environment.Production;
       const dataLogged =
         data &&
         this.maskedRequestData &&
         this.environment === Environment.Production
           ? this.maskSensitiveData(data)
           : data;
-      this.environment = environment;
 
       this.requestLogger.requestSent(
         httpMethod,
