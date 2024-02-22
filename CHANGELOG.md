@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v3.3.1 (02/08/24):
+## Latest - v3.3.2 (02/22/24):
+
+### Enhancements:
+
+- Code cleanup
+
+## v3.3.1 (02/08/24):
 
 ### Enhancements:
 

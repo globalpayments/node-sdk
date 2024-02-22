@@ -5,7 +5,7 @@
   "license": "GPL-2.0",
   "scripts": {
     "deploy": "now",
-    "develop": "micro-dev",
+    "develop": "micro",
     "start": "micro"
   },
   "dependencies": {
@@ -14,7 +14,6 @@
     "urlencoded-body-parser": "^2.0.1"
   },
   "devDependencies": {
-    "micro-dev": "^2.2.0",
     "now": "^9.2.7"
   }
 }
