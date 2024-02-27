@@ -16,8 +16,8 @@ import {
   PaymentSchedule,
   RecurringBuilder,
   RecurringPaymentMethod,
-  Schedule,
   SecCode,
+  Schedule,
   StringUtils,
   TransactionType,
   UnsupportedTransactionError,
@@ -226,12 +226,14 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
           request.achType = this.prepareAccountType(check.accountType);
           request.accountType = this.prepareCheckType(check.checkType);
           request.telephoneIndicator =
-            check.secCode === SecCode.CCD || check.SecCode === SecCode.PPD
+            check.secCode == SecCode.CCD || check.secCode == SecCode.PPD
               ? false
               : true;
           request.routingNumber = check.routingNumber;
           request.accountNumber = check.accountNumber;
-          request.accountHolderYob = check.birthYear.toString();
+          if (check.birthYear) {
+            request.accountHolderYob = check.birthYear.toString();
+          }
           request.driversLicenseState = check.driversLicenseState;
           request.driversLicenseNumber = check.driversLicenseNumber;
           request.socialSecurityNumberLast4 = check.ssnLast4;
@@ -251,8 +253,9 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
         // edit fields
         delete request.customerKey;
         request.paymentStatus = entity.status;
-        request.cpcTaxType = entity.taxType;
-        request.expirationDate = entity.expirationDate;
+        delete request.cpcTaxType;
+        delete request.expirationDate;
+        delete request.country;
       }
     }
 
@@ -554,6 +557,13 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     customer.address.province = response.stateProvince;
     customer.address.postalCode = response.zipPostalCode;
     customer.address.country = response.country;
+    customer.paymentMethods = new Array<RecurringPaymentMethod>();
+    if (response.paymentMethods) {
+      response.paymentMethods.forEach((element: any) => {
+        const paymentMethod = this.hydrateRecurringPaymentMethod(element);
+        customer.paymentMethods.push(paymentMethod);
+      });
+    }
     return customer;
   }
 
@@ -571,13 +581,16 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     paymentMethod.commercialIndicator = response.cpcInd;
     paymentMethod.taxType = response.cpcTaxType;
     paymentMethod.expirationDate = response.expirationDate;
-    paymentMethod.address = new Address();
-    paymentMethod.address.streetAddress1 = response.addressLine1;
-    paymentMethod.address.streetAddress2 = response.addressLine2;
-    paymentMethod.address.city = response.city;
-    paymentMethod.address.state = response.stateProvince;
-    paymentMethod.address.postalCode = response.zipPostalCode;
-    paymentMethod.address.country = response.country;
+    const address = new Address();
+    address.streetAddress1 = response.addressLine1;
+    address.streetAddress2 = response.addressLine2;
+    address.city = response.city;
+    address.state = response.stateProvince;
+    address.postalCode = response.zipPostalCode;
+    address.country = response.country;
+    paymentMethod.address = address;
+    paymentMethod.lastFour = response.accountNumberLast4;
+    paymentMethod.cardType = response.cardBrand;
     return paymentMethod;
   }
 

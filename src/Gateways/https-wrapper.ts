@@ -17,6 +17,7 @@ export const request = (
     const req = https.request(options, (res) => {
       let responseData = "";
       const buffer: string[] = [];
+      const successCodes: string[] = ["200", "204"];
 
       if (res.headers["content-encoding"] == "gzip") {
         const gunzip = createGunzip();
@@ -42,9 +43,19 @@ export const request = (
 
       res.on("data", (d: string) => (responseData += d));
       res.on("end", () => {
-        if (res.statusCode !== 200) {
+        if (
+          res.statusCode != null &&
+          !successCodes.includes(res.statusCode.toString())
+        ) {
+          const er = JSON.stringify(responseData);
+          const parsedError = JSON.parse(er);
+
           reject(
-            new GatewayError(`Unexpected HTTP status code [${res.statusCode}]`),
+            new GatewayError(
+              `Unexpected HTTP status code [${res.statusCode}]`,
+              res.statusMessage,
+              parsedError,
+            ),
           );
         }
         resolve(new GatewayResponse(res.headers, responseData, res.statusCode));

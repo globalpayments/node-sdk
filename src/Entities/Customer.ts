@@ -68,6 +68,16 @@ export class Customer extends RecurringEntity<Customer> {
   public status: string;
 
   /**
+   * Customer's existing payment methods
+   */
+  public paymentMethods: Array<RecurringPaymentMethod>;
+
+  public constructor() {
+    super();
+    this.paymentMethods = new Array<RecurringPaymentMethod>();
+    this.address = new Address();
+  }
+  /**
    * Adds a payment method to the customer
    *
    * @param paymentId An application derived ID for the payment method

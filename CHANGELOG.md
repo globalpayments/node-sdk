@@ -1,4 +1,11 @@
 # Changelog
+## Latest - v3.3.3 (02/27/24):
+
+### Enhancements:
+- PayPlan Enhancements: - Added payment methods to customer response
+                        - Cardtype, NameOnAccount , and Last4 of both credit card and ACH are included in payment response 
+                        - Fix for Processor Configuration error response message
+                        - Added 204 as a success code when Request is successful; but response contains no data
 
 ## Latest - v3.3.2 (02/22/24):
 

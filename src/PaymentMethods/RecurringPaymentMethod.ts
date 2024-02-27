@@ -21,7 +21,9 @@ export class RecurringPaymentMethod extends RecurringEntity<RecurringPaymentMeth
   public preferredPayment: boolean;
   public status: string;
   public taxType: string;
-  private _paymentMethod: IPaymentMethod;
+  public lastFour: string;
+  public cardType: string;
+  public _paymentMethod: IPaymentMethod;
 
   public get paymentMethod() {
     return this._paymentMethod;
@@ -40,6 +42,7 @@ export class RecurringPaymentMethod extends RecurringEntity<RecurringPaymentMeth
     paymentId?: string,
   ) {
     super();
+    this.address = new Address();
 
     if (
       customerIdOrPaymentMethod &&

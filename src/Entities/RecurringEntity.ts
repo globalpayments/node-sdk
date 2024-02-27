@@ -45,11 +45,11 @@ export class RecurringEntity<TResult extends IRecurringEntity>
       .addSearchCriteria(identifier, id)
       .execute(configName)
       .then((response: any[] | TResult) => {
-        if (!response) {
+        if (!response || (response as any).length === 0) {
           return;
         }
         const entity = (response as any)[0] || response;
-        if (entity && entity?.length) {
+        if (entity) {
           return RecurringService.get<TResult>(entity, configName);
         }
         return;
