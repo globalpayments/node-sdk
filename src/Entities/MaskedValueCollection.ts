@@ -7,7 +7,7 @@ export class MaskedValueCollection {
 
   public hideValue(
     key: string,
-    value: string,
+    value: string | null,
     unmaskedLastChars: number = 0,
     unmaskedFirstChars: number = 0,
   ): { [key: string]: string } {
@@ -18,11 +18,11 @@ export class MaskedValueCollection {
 
   protected addValue(
     key: string,
-    value: string,
+    value: string | null,
     unmaskedLastChars: number = 0,
     unmaskedFirstChars: number = 0,
   ): boolean {
-    if (!this.validateValue(value) || this.maskValues[value]) {
+    if (!this.validateValue(value) || this.maskValues[key] === value) {
       return false;
     }
     this.maskValues[key] = this.disguise(
@@ -34,7 +34,7 @@ export class MaskedValueCollection {
     return true;
   }
 
-  protected validateValue(value: string): boolean {
+  protected validateValue(value: string | null): boolean {
     if (!value || Array.isArray(value) || typeof value === "object") {
       return false;
     }
@@ -43,7 +43,7 @@ export class MaskedValueCollection {
   }
 
   private disguise(
-    value: string,
+    value: string | null,
     unmaskedLastChars: number = 0,
     unmaskedFirstChars: number = 0,
     maskSymbol: string = "X",

@@ -1,9 +1,15 @@
-import { ReportType, ServicesContainer, TimeZoneConversion } from "../";
+import {
+  ReportType,
+  SearchCriteriaBuilder,
+  ServicesContainer,
+  TimeZoneConversion,
+} from "../";
 import { BaseBuilder } from "./BaseBuilder";
 
 export abstract class ReportBuilder<T> extends BaseBuilder<T> {
   public reportType: ReportType;
   public timeZoneConversion: TimeZoneConversion;
+  public searchBuilder: SearchCriteriaBuilder<T>;
 
   public constructor(type: ReportType) {
     super();
@@ -14,6 +20,13 @@ export abstract class ReportBuilder<T> extends BaseBuilder<T> {
     super.execute();
     return ServicesContainer.instance()
       .getClient(configName)
-      .processReport(this);
+      .processReport<T>(this);
+  }
+
+  withPaging(page: number, pageSize: number) {
+    this.page = page;
+    this.pageSize = pageSize;
+
+    return this;
   }
 }

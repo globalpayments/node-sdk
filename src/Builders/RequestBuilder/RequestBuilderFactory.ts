@@ -1,9 +1,17 @@
+import { ReportBuilder } from "src";
 import { GpApiAuthorizationRequestBuilder } from ".";
-import { GatewayProvider, IRequestBuilder, Transaction } from "../../Entities/";
+import {
+  GatewayProvider,
+  IRequestBuilder,
+  Transaction,
+  TransactionSummary,
+} from "../../Entities/";
 import { BaseBuilder } from "../BaseBuilder";
+import { GpApiManagementRequestBuilder } from "./GpApi/GpApiManagementRequestBuilder";
 import { GpApiMiCRequestBuilder } from "./GpApi/GpApiMiCRequestBuilder";
 import { GpEcomAuthorizationRequestBuilder } from "./GpEcom/GpEcomAuthorizationRequestBuilder";
 import { GpEcomManagementRequestBuilder } from "./GpEcom/GpEcomManagementRequestBuilder";
+import { GpApiReportRequestBuilder } from "./GpApi/GpApiReportRequestBuilder";
 
 export class RequestBuilderFactory {
   public supplementaryData: Record<string, string | string[]>;
@@ -11,6 +19,8 @@ export class RequestBuilderFactory {
   private static processes: Record<GatewayProvider, IRequestBuilder[]> = {
     [GatewayProvider.GpApi]: [
       new GpApiAuthorizationRequestBuilder(),
+      new GpApiManagementRequestBuilder(),
+      new GpApiReportRequestBuilder(),
       new GpApiMiCRequestBuilder(),
     ],
     [GatewayProvider.GpEcom]: [
@@ -21,7 +31,7 @@ export class RequestBuilderFactory {
   };
 
   public getRequestBuilder(
-    builder: BaseBuilder<Transaction>,
+    builder: BaseBuilder<Transaction> | ReportBuilder<TransactionSummary>,
     gatewayProvider: GatewayProvider,
   ) {
     if (!RequestBuilderFactory.processes[gatewayProvider]) {

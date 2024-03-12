@@ -1,8 +1,11 @@
 import {
   AuthorizationBuilder,
+  Card,
   GiftCard,
   ManagementBuilder,
+  PayerDetails,
   PaymentMethodType,
+  PaymentMethodUsageMode,
   TransactionModifier,
   TransactionReference,
   TransactionType,
@@ -22,6 +25,7 @@ export class Transaction {
   public cvnResponseMessage: string;
   public cvnResponseCode: string;
   public cavvResponseCode: string;
+  public multiCapture: boolean;
   public cardLast4: string;
   public cardType: string;
   public avsResponseMessage: string;
@@ -35,9 +39,14 @@ export class Transaction {
   public batchId: string;
   public batchSeqNbr: string;
   public payFacData: PayFacResponseData;
+  public payerDetails: PayerDetails;
+  public fingerprint: string;
+  public fingerprintIndicator: string;
+  public tokenUsageMode: PaymentMethodUsageMode;
+  public cardDetails: Card;
 
   get transactionId(): string {
-    return this.transactionReference.transactionId;
+    return this.transactionReference?.transactionId;
   }
 
   public static fromId(

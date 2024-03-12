@@ -1,5 +1,12 @@
 # Changelog
-## Latest - v3.3.3 (02/27/24):
+
+## Latest - v3.4.0 (03/12/24):
+
+### Enhancements:
+
+- [GP-API] Add stored payments and reports for stored payments
+
+## v3.3.3 (02/27/24):
 
 ### Enhancements:
 - PayPlan Enhancements: - Added payment methods to customer response
@@ -7,7 +14,7 @@
                         - Fix for Processor Configuration error response message
                         - Added 204 as a success code when Request is successful; but response contains no data
 
-## Latest - v3.3.2 (02/22/24):
+## v3.3.2 (02/22/24):
 
 ### Enhancements:
 

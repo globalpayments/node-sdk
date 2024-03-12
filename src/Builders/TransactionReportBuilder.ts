@@ -1,4 +1,10 @@
-import { ReportType } from "../";
+import {
+  NotImplementedError,
+  ReportType,
+  SearchCriteriaBuilder,
+  SortDirection,
+  StoredPaymentMethodSortProperty,
+} from "../";
 import { ReportBuilder } from "./ReportBuilder";
 import { IDictionary } from "./BaseBuilder";
 
@@ -8,6 +14,11 @@ export class TransactionReportBuilder<T> extends ReportBuilder<T> {
   public startDate: Date;
   public transactionId: string;
   public searchCriteria: IDictionary<string>;
+
+  constructor(type: ReportType) {
+    super(type);
+    this.searchBuilder = new SearchCriteriaBuilder(this);
+  }
 
   public setupValidations() {
     this.validations
@@ -50,6 +61,13 @@ export class TransactionReportBuilder<T> extends ReportBuilder<T> {
     return this;
   }
 
+  public withStoredPaymentMethodId(storedPaymentMethodId?: string) {
+    if (storedPaymentMethodId !== undefined) {
+      this.searchBuilder.storedPaymentMethodId = storedPaymentMethodId;
+    }
+    return this;
+  }
+
   public withTransactionId(transactionId?: string) {
     if (transactionId !== undefined) {
       this.transactionId = transactionId;
@@ -57,13 +75,34 @@ export class TransactionReportBuilder<T> extends ReportBuilder<T> {
     return this;
   }
 
-  public where(criteria: string, value: string) {
+  public where(criteria: string, value: any) {
     if (criteria !== undefined && value !== undefined) {
       if (this.searchCriteria == undefined) {
         this.searchCriteria = {};
       }
       this.searchCriteria[criteria] = value;
+      this.searchBuilder.andWith(
+        criteria as keyof SearchCriteriaBuilder<T>,
+        value,
+      );
     }
+    return this.searchBuilder;
+  }
+
+  public orderBy(
+    sortProperty: StoredPaymentMethodSortProperty,
+    sortDirection: SortDirection,
+  ) {
+    this.order = sortDirection;
+
+    switch (this.reportType) {
+      case ReportType.FindStoredPaymentMethodsPaged:
+        this.storedPaymentMethodOrderBy = sortProperty;
+        break;
+      default:
+        throw new NotImplementedError();
+    }
+
     return this;
   }
 }

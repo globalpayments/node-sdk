@@ -43,6 +43,7 @@ export abstract class RestGateway extends Gateway {
               JSON.stringify(error)
             }`,
           error.detailed_error_code || null,
+          error.detailed_error_description || "",
         );
 
         if (this.requestLogger) {
@@ -75,12 +76,34 @@ export abstract class RestGateway extends Gateway {
       }
     }
 
+    if (this.requestLogger) {
+      this.requestLogger.responseReceived(response, requestId);
+    }
+
     return response.rawResponse;
   }
 
   public override maskSensitiveData(data: string) {
-    data;
-    // TODO handle JSON masked data
+    const requestData = JSON.parse(data);
+    for (const maskedKey in this.maskedRequestData) {
+      if (this.maskedRequestData.hasOwnProperty(maskedKey)) {
+        const keys = maskedKey.split(".");
+        let currentObject = requestData;
+
+        for (let i = 0; i < keys.length - 1; i++) {
+          const key = keys[i];
+          if (!currentObject[key]) {
+            currentObject[key] = {};
+          }
+          currentObject = currentObject[key];
+        }
+
+        const lastKey = keys[keys.length - 1];
+        currentObject[lastKey] = this.maskedRequestData[maskedKey];
+      }
+    }
+
+    return JSON.stringify(requestData);
   }
 
   private isGpApi() {

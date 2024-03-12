@@ -11,7 +11,12 @@ export abstract class XmlGateway extends Gateway {
     const requestId = new RequestIdProvider().getRequestId();
 
     return this.sendRequest("POST", "", requestId, requestData).then(
-      (response: GatewayResponse) => response.rawResponse,
+      (response: GatewayResponse) => {
+        if (this.requestLogger) {
+          this.requestLogger.responseReceived(response, requestId);
+        }
+        return response.rawResponse;
+      },
     );
   }
 

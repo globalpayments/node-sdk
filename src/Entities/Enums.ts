@@ -1,6 +1,7 @@
 export enum AccountType {
   Checking = "CHECKING",
   Savings = "SAVINGS",
+  Credit = "Credit",
 }
 
 export enum AddressType {
@@ -213,6 +214,13 @@ export enum Environment {
   Qa = "QA",
 }
 
+export enum EmvLastChipRead {
+  SUCCESSFUL = "Successful",
+  FAILED = "Failed",
+  NOT_A_CHIP_TRANSACTION = "NotAChipTransaction",
+  UNKNOWN = "Unknown",
+}
+
 export enum ExceptionCodes {
   // general codes
   AuthenticationError,
@@ -332,6 +340,21 @@ export enum PaymentEntryMode {
   PHONE = "PHONE",
   MAIL = "MAIL",
 }
+export enum PaymentMethodName {
+  APM = "APM",
+  DIGITAL_WALLET = "DIGITAL WALLET",
+  CARD = "CARD",
+  /**
+   * ACH transaction
+   */
+  BANK_TRANSFER = "BANK TRANSFER",
+
+  /** Open Banking transaction */
+  BANK_PAYMENT = "BANK PAYMENT",
+
+  /** @var Buy Now Pay Later (BNPL) transaction */
+  BNPL = "BNPL",
+}
 
 export enum PaymentMethodType {
   Reference = 1 << 0,
@@ -348,6 +371,11 @@ export enum PaymentMethodType {
   BankPayment = 1 << 11,
   BNPL = 1 << 12,
   Account_Funds = 1 << 13,
+}
+
+export enum PaymentMethodUsageMode {
+  SINGLE = "SINGLE",
+  MULTIPLE = "MULTIPLE",
 }
 
 export enum PaymentProvider {
@@ -401,6 +429,12 @@ export enum ReportType {
   OpenAuths = 1 << 5,
   Search = 1 << 6,
   TransactionDetail = 1 << 7,
+  DepositDetail = 1 << 11,
+  FindTransactionsPaged = 1 << 15,
+  FindSettlementTransactionsPaged = 1 << 16,
+  FindDepositsPaged = 1 << 17,
+  FindStoredPaymentMethodsPaged = 1 << 20,
+  StoredPaymentMethodDetail = 1 << 21,
 }
 
 export enum ScheduleFrequency {
@@ -412,6 +446,89 @@ export enum ScheduleFrequency {
   Quarterly = "Quarterly",
   SemiAnnually = "Semi-Annually",
   Annually = "Annually",
+}
+
+export enum SearchCriteria {
+  AccountName = "accountName",
+  AccountNumberLastFour = "accountNumberLastFour",
+  AltPaymentStatus = "altPaymentStatus",
+  AquirerReferenceNumber = "aquirerReferenceNumber",
+  AuthCode = "authCode",
+  BankRoutingNumber = "bankRoutingNumber",
+  BatchId = "batchId",
+  BatchSequenceNumber = "batchSequenceNumber",
+  BrandReference = "brandReference",
+  BuyerEmailAddress = "buyerEmailAddress",
+  CardBrand = "cardBrand",
+  CardHolderFirstName = "cardHolderFirstName",
+  CardHolderLastName = "cardHolderLastName",
+  CardHolderPoNumber = "cardHolderPoNumber",
+  CardNumberFirstSix = "cardNumberFirstSix",
+  CardNumberLastFour = "cardNumberLastFour",
+  Channel = "channel",
+  CheckFirstName = "checkFirstName",
+  CheckLastName = "checkLastName",
+  CheckName = "checkName",
+  CheckNumber = "checkNumber",
+  ClerkId = "clerkId",
+  ClientTransactionId = "clientTransactionId",
+  CustomerId = "customerId",
+  DepositStatus = "depositStatus",
+  DisplayName = "displayName",
+  EndDate = "endDate",
+  FullyCaptured = "fullyCaptured",
+  GiftCurrency = "giftCurrency",
+  GiftMaskedAlias = "giftMaskedAlias",
+  InvoiceNumber = "invoiceNumber",
+  IssuerResult = "issuerResult",
+  IssuerTransactionId = "issuerTransactionId",
+  OneTime = "oneTime",
+  PaymentEntryMode = "paymentEntryMode",
+  PaymentMethodKey = "paymentMethodKey",
+  PaymentMethodType = "paymentMethodType",
+  PaymentType = "paymentType",
+  PaymentMethod = "paymentMethod",
+  PaymentMethodName = "paymentMethodName",
+  PaymentMethodUsageMode = "paymentMethodUsageMode",
+  PaymentProvider = "paymentProvider",
+  ReferenceNumber = "referenceNumber",
+  SettlementAmount = "settlementAmount",
+  ScheduleId = "scheduleId",
+  SiteTrace = "siteTrace",
+  StartDate = "startDate",
+  TokenFirstSix = "tokenFirstSix",
+  TokenLastFour = "tokenLastFour",
+  TransactionStatus = "transactionStatus",
+  DisputeStage = "disputeStage",
+  DisputeStatus = "disputeStatus",
+  DisputeDocumentId = "disputeDocumentId",
+  UniqueDeviceId = "uniqueDeviceId",
+  UserName = "username",
+  CardholderName = "name",
+  DepositId = "depositId",
+  FromTimeLastUpdated = "fromTimeLastUpdated",
+  ToTimeLastUpdated = "toTimeLastUpdated",
+  StoredPaymentMethodId = "storedPaymentMethodId",
+  StoredPaymentMethodStatus = "storedPaymentMethodStatus",
+  ActionType = "actionType",
+  ActionId = "actionId",
+  Resource = "resource",
+  ResourceStatus = "resourceStatus",
+  ResourceId = "resourceId",
+  MerchantName = "merchantName",
+  AppName = "appName",
+  Version = "version",
+  ResponseCode = "responseCode",
+  HttpResponseCode = "httpResponseCode",
+  ReturnPii = "returnPii",
+  RiskAssessmentMode = "riskAssessmentMode",
+  RiskAssessmentResult = "riskAssessmentResult",
+  RiskAssessmentReasonCode = "riskAssessmentReasonCode",
+  PayByLinkStatus = "payByLinkStatus",
+  Description = "description",
+  ExpirationDate = "expirationDate",
+  AccountStatus = "accountStatus",
+  Address = "address",
 }
 
 export enum SecCode {
@@ -441,9 +558,19 @@ export enum ShaHashType {
   SHA512 = "SHA512",
 }
 
+export enum SortDirection {
+  Asc = "ASC",
+  Desc = "DESC",
+}
+
 export enum StoredCredentialInitiator {
   CardHolder = "C",
   Merchant = "M",
+  Payer = "Payer",
+}
+
+export enum StoredPaymentMethodSortProperty {
+  TimeCreated = "TIME_CREATED",
 }
 
 export enum TaxType {
@@ -472,6 +599,8 @@ export enum TransactionModifier {
   HostedRequest = 1 << 10,
   Recurring = 1 << 11,
   EncryptedMobile = 1 << 12,
+  AlternativePaymentMethod = 1 << 13,
+  DecryptedMobile = 1 << 14,
 }
 
 export enum TransactionType {
@@ -487,9 +616,11 @@ export enum TransactionType {
   AddValue = 1 << 9,
   Balance = 1 << 10,
   Activate = 1 << 11,
+  EncryptedMobile = 1 << 11,
   Alias = 1 << 12,
   Replace = 1 << 13,
   Reward = 1 << 14,
+  DecryptedMobile = 1 << 14,
   Deactivate = 1 << 15,
   BatchClose = 1 << 16,
   Create = 1 << 17,
@@ -500,6 +631,8 @@ export enum TransactionType {
   Hold = 1 << 21,
   Release = 1 << 23,
   VerifySignature = 1 << 25,
+  TokenDelete = 1 << 26,
+  TokenUpdate = 1 << 31,
   Tokenize = 1 << 33,
   /// <summary>
   ///
@@ -566,6 +699,7 @@ export enum TransactionType {
   /// ProPay: Add a card for Flash Funds
   /// </summary>
   AddCardFlashFunds = 1 << 52,
+  Detokenize = 1 << 52,
 
   /// <summary>
   /// ProPay: Move money out via Flash Funds

@@ -1,3 +1,4 @@
+export * from "./AlternativePaymentMethod";
 export * from "./Cash";
 export * from "./Credit";
 export * from "./CreditCardData";
@@ -9,6 +10,7 @@ export * from "./EBTCardData";
 export * from "./EBTTrackData";
 export * from "./ECheck";
 export * from "./GiftCard";
+export * from "./Interfaces";
 export * from "./PaymentMethod";
 export * from "./RecurringPaymentMethod";
 export * from "./Interfaces";

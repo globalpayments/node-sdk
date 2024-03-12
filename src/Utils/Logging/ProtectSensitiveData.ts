@@ -5,7 +5,7 @@ export class ProtectSensitiveData {
 
   public static hideValue(
     key: string,
-    value: string,
+    value: string | null,
     unmaskedLastChars: number = 0,
     unmaskedFirstChars: number = 0,
   ): { [key: string]: string } {

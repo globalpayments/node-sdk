@@ -11,6 +11,7 @@ import {
   NotImplementedError,
   Secure3dVersion,
   Transaction,
+  TransactionSummary,
 } from "../../src/Entities";
 import {
   AuthorizationBuilder,
@@ -129,8 +130,6 @@ export class GpApiConnector
     ) {
       accessTokenInfo.tokenizationAccountID =
         response.getTokenizationAccountID();
-      accessTokenInfo.tokenizationAccountName =
-        response.getTokenizationAccountName();
     }
 
     if (
@@ -184,12 +183,24 @@ export class GpApiConnector
   }
 
   async manageTransaction(builder: ManagementBuilder): Promise<Transaction> {
-    builder; // avoid lint error
-    throw new NotImplementedError();
+    if (!this.accessToken) {
+      await this.signIn();
+    }
+    return this.executeProcess(builder).then((response: string) =>
+      GpApiMapping.mapResponse(response),
+    );
   }
   async processReport<T>(builder: ReportBuilder<T>): Promise<T> {
-    builder; // avoid lint error
-    throw new NotImplementedError();
+    if (!this.accessToken) {
+      await this.signIn();
+    }
+
+    return this.executeProcess(
+      builder as ReportBuilder<TransactionSummary>,
+    ).then(
+      (response: string) =>
+        GpApiMapping.mapReportResponse(response, builder.reportType) as T,
+    );
   }
   serializeRequest(builder: AuthorizationBuilder): string {
     builder; // avoid lint error
@@ -201,7 +212,9 @@ export class GpApiConnector
     throw new NotImplementedError();
   }
 
-  private executeProcess(builder: BaseBuilder<Transaction>) {
+  private executeProcess(
+    builder: BaseBuilder<Transaction> | ReportBuilder<TransactionSummary>,
+  ) {
     const processFactory = new RequestBuilderFactory();
 
     const requestBuilder = processFactory.getRequestBuilder(
@@ -222,6 +235,10 @@ export class GpApiConnector
     }
 
     const idempotencyKey = builder.idempotencyKey || null;
+
+    if (GpApiRequest.maskedValues) {
+      this.maskedRequestData = GpApiRequest.maskedValues;
+    }
 
     return this.doTransaction(
       request.httpVerb,

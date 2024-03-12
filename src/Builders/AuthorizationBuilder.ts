@@ -2,6 +2,7 @@ import {
   Address,
   AddressType,
   AliasAction,
+  Customer,
   EcommerceInfo,
   GiftCard,
   HostedPaymentData,
@@ -9,6 +10,7 @@ import {
   IPaymentMethod,
   PaymentMethod,
   PaymentMethodType,
+  PaymentMethodUsageMode,
   RecurringSequence,
   RecurringType,
   ServicesContainer,
@@ -34,6 +36,7 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public cashBackAmount: string | number;
   public clientTransactionId: string;
   public currency: string;
+  public customerData: Customer;
   public customerId: string;
   public customerIpAddress: string;
   public cvn: string;
@@ -49,6 +52,7 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public offlineAuthCode: string;
   public oneTimePayment: boolean;
   public orderId: string;
+  public paymentMethodUsageMode: PaymentMethodUsageMode;
   public productId: string;
   public recurringSequence: RecurringSequence;
   public recurringType: RecurringType;
@@ -58,6 +62,7 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public shippingAddress: Address;
   public timestamp: string;
   public transactionInitiator: StoredCredentialInitiator;
+  public idempotencyKey: string;
 
   public constructor(type: number, paymentMethod?: IPaymentMethod) {
     super(type, paymentMethod);
@@ -372,6 +377,22 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   }
 
   /**
+   * Sets the transaction's currency; where applicable.
+   *
+   * The formatting for the supplied value will currently depend on
+   * the configured gateway's requirements.
+   *
+   * @param currency The currency
+   * @returns AuthorizationBuilder
+   */
+  public withCustomerData(customerData: Customer) {
+    if (customerData !== undefined) {
+      this.customerData = customerData;
+    }
+    return this;
+  }
+
+  /**
    * Sets the customer ID; where applicable.
    *
    * This is an application/merchant generated value.
@@ -656,6 +677,13 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
     return this;
   }
 
+  public withPaymentMethodUsageMode(
+    paymentMethodUsageMode: PaymentMethodUsageMode,
+  ) {
+    this.paymentMethodUsageMode = paymentMethodUsageMode;
+    return this;
+  }
+
   public withReplacementCard(replacementCard?: GiftCard) {
     if (replacementCard !== undefined) {
       this.replacementCard = replacementCard;
@@ -704,6 +732,13 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public withTimestamp(timestamp?: string) {
     if (timestamp !== undefined) {
       this.timestamp = timestamp;
+    }
+    return this;
+  }
+
+  public withIdempotencyKey(idempotencyKey?: string) {
+    if (idempotencyKey !== undefined) {
+      this.idempotencyKey = idempotencyKey;
     }
     return this;
   }

@@ -10,6 +10,7 @@ export class Address {
   public province: string;
   public postalCode: string;
   public country: string;
+  public countryCode: string;
 
   get state(): string {
     return this.province;

@@ -6,6 +6,7 @@ import {
   InquiryType,
   ManagementBuilder,
   PaymentMethodType,
+  Transaction,
 } from "../";
 
 export interface IAuthable {
@@ -62,6 +63,10 @@ export interface IReversable {
 export interface ITokenizable {
   token: string;
   tokenize(): AuthorizationBuilder;
+  updateTokenExpiry(): Promise<boolean>;
+  deleteToken(): Promise<boolean>;
+  detokenize(): Promise<Transaction>;
+  updateToken(): ManagementBuilder;
 }
 
 export interface ITrackData {

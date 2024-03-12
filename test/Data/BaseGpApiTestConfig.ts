@@ -1,4 +1,6 @@
 import {
+  AccessTokenInfo,
+  Channel,
   Environment,
   GpApiConfig,
   Logger,
@@ -23,13 +25,17 @@ export class BaseGpApiTestConfig {
 
   private static logEnabled: boolean = true;
 
-  public static gpApiSetupConfig(channel: string): GpApiConfig {
+  public static gpApiSetupConfig(channel: Channel): GpApiConfig {
     const config = new GpApiConfig();
     config.appId = BaseGpApiTestConfig.appId;
     config.appKey = BaseGpApiTestConfig.appKey;
     config.environment = Environment.Test;
     config.channel = channel;
     config.country = "US";
+    config.accessTokenInfo = new AccessTokenInfo();
+    config.accessTokenInfo.transactionProcessingAccountName =
+      "transaction_processing";
+    config.accessTokenInfo.riskAssessmentAccountName = "EOS_RiskAssessment";
 
     config.challengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/";
     config.methodNotificationUrl = "https://ensi808o85za.x.pipedream.net/";

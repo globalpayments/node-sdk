@@ -1,4 +1,6 @@
 import {
+  PaymentMethod,
+  PaymentMethodUsageMode,
   ReasonCode,
   ServicesContainer,
   TaxType,
@@ -44,8 +46,9 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
     return undefined;
   }
 
-  public constructor(type: number) {
-    super(type);
+  public constructor(type: number, paymentMethod?: PaymentMethod) {
+    super(type, paymentMethod);
+    this.supplementaryData = {};
   }
 
   /**
@@ -225,6 +228,32 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
 
   public withDynamicDescriptor(dynamicDescriptor: string) {
     this.dynamicDescriptor = dynamicDescriptor;
+
+    return this;
+  }
+
+  /**
+   * Sets the idempotency key
+   *
+   * @param idempotencyKey string
+   * @returns {this}
+   */
+  public withIdempotencyKey(idempotencyKey: string) {
+    this.idempotencyKey = idempotencyKey;
+
+    return this;
+  }
+
+  /**
+   * Sets the idempotency key
+   *
+   * @param idempotencyKey string
+   * @returns {this}
+   */
+  public withPaymentMethodUsageMode(
+    paymentMethodUsageMode: PaymentMethodUsageMode,
+  ) {
+    this.paymentMethodUsageMode = paymentMethodUsageMode;
 
     return this;
   }

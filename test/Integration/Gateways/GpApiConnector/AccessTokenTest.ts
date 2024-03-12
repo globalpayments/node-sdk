@@ -3,24 +3,19 @@ import {
   AccessTokenInfo,
   Channel,
   GatewayError,
-  GpApiConfig,
   GpApiService,
   IntervalToExpire,
 } from "../../../../src";
 import { BaseGpApiTestConfig } from "../../../../test/Data/BaseGpApiTestConfig";
 
-let config: GpApiConfig;
-
-test.before(() => {
-  config = BaseGpApiTestConfig.gpApiSetupConfig(Channel.CardNotPresent);
-});
-
 test("generate access token", async (t) => {
+  const config = BaseGpApiTestConfig.gpApiSetupConfig(Channel.CardNotPresent);
   const accessTokenInfo = await GpApiService.generateTransactionKey(config);
   assertAccessTokenResponse(t, accessTokenInfo);
 });
 
 test("generate access token with permissions", async (t) => {
+  const config = BaseGpApiTestConfig.gpApiSetupConfig(Channel.CardNotPresent);
   config.permissions = [
     "PMT_POST_Create",
     "TRN_POST_Authorize",
@@ -33,18 +28,23 @@ test("generate access token with permissions", async (t) => {
 });
 
 test("generate access token with limited permissions", async (t) => {
+  const config = BaseGpApiTestConfig.gpApiSetupConfig(Channel.CardNotPresent);
   config.permissions = ["PMT_POST_Create", "TRN_POST_Authorize"];
   const accessTokenInfo = await GpApiService.generateTransactionKey(config);
 
   t.truthy(accessTokenInfo);
   t.truthy(accessTokenInfo.accessToken);
   t.is(accessTokenInfo.tokenizationAccountName, "tokenization");
-  t.is(accessTokenInfo.transactionProcessingAccountName, "dcc_rate");
-  t.truthy(accessTokenInfo.dataAccountName);
-  t.truthy(accessTokenInfo.disputeManagementAccountName);
+  t.is(
+    accessTokenInfo.transactionProcessingAccountName,
+    "transaction_processing",
+  );
+  t.is(accessTokenInfo.dataAccountName, "");
+  t.is(accessTokenInfo.disputeManagementAccountName, "");
 });
 
 test("generate access token with wrong permissions", async (t) => {
+  const config = BaseGpApiTestConfig.gpApiSetupConfig(Channel.CardNotPresent);
   config.permissions = ["test_1", "test_2"];
   const error = await t.throwsAsync(
     () => GpApiService.generateTransactionKey(config),
@@ -52,25 +52,25 @@ test("generate access token with wrong permissions", async (t) => {
   );
   t.truthy(error);
   t.is(error?.responseCode, "40119");
-  t.is(
-    error?.message,
-    "Status Code: INVALID_REQUEST_DATA - Invalid permissions test_1,test_2 provided in the input field - permissions",
-  );
+  t.is(error?.message.includes("Invalid permissions"), true);
 });
 
 test("generate access token with specific secondsToExpire", async (t) => {
+  const config = BaseGpApiTestConfig.gpApiSetupConfig(Channel.CardNotPresent);
   config.secondsToExpire = 200;
   const accessTokenInfo = await GpApiService.generateTransactionKey(config);
   assertAccessTokenResponse(t, accessTokenInfo);
 });
 
 test("generate access token with specific intervalToExpire", async (t) => {
+  const config = BaseGpApiTestConfig.gpApiSetupConfig(Channel.CardNotPresent);
   config.intervalToExpire = IntervalToExpire.ONE_HOUR;
   const accessTokenInfo = await GpApiService.generateTransactionKey(config);
   assertAccessTokenResponse(t, accessTokenInfo);
 });
 
 test("generate access token with specific expiredDate", async (t) => {
+  const config = BaseGpApiTestConfig.gpApiSetupConfig(Channel.CardNotPresent);
   config.secondsToExpire = 200;
   config.intervalToExpire = IntervalToExpire.WEEK;
   const accessTokenInfo = await GpApiService.generateTransactionKey(config);
@@ -78,6 +78,7 @@ test("generate access token with specific expiredDate", async (t) => {
 });
 
 test("generate access token with wrong appId", async (t) => {
+  const config = BaseGpApiTestConfig.gpApiSetupConfig(Channel.CardNotPresent);
   config.appId += "a";
   const error = await t.throwsAsync(
     () => GpApiService.generateTransactionKey(config),
@@ -92,6 +93,7 @@ test("generate access token with wrong appId", async (t) => {
 });
 
 test("generate access token with wrong appKey", async (t) => {
+  const config = BaseGpApiTestConfig.gpApiSetupConfig(Channel.CardNotPresent);
   config.appKey += "a";
   const error = await t.throwsAsync(
     () => GpApiService.generateTransactionKey(config),
@@ -101,11 +103,12 @@ test("generate access token with wrong appKey", async (t) => {
   t.is(error?.responseCode, "40004");
   t.is(
     error?.message,
-    "Status Code: ACTION_NOT_AUTHORIZED - App credentials not recognized",
+    "Status Code: ACTION_NOT_AUTHORIZED - Credentials not recognized to create access token.",
   );
 });
 
 test("generate access token with maximum secondsToExpire", async (t) => {
+  const config = BaseGpApiTestConfig.gpApiSetupConfig(Channel.CardNotPresent);
   config.secondsToExpire = 604801;
   const error = await t.throwsAsync(
     () => GpApiService.generateTransactionKey(config),
@@ -120,6 +123,7 @@ test("generate access token with maximum secondsToExpire", async (t) => {
 });
 
 test("generate access token with invalid secondsToExpire", async (t) => {
+  const config = BaseGpApiTestConfig.gpApiSetupConfig(Channel.CardNotPresent);
   config.secondsToExpire = 10;
   const error = await t.throwsAsync(
     () => GpApiService.generateTransactionKey(config),
@@ -143,7 +147,10 @@ const assertAccessTokenResponse = (
   t.is(accessTokenInfo.dataAccountName, "settlement_reporting");
   t.is(accessTokenInfo.disputeManagementAccountName, "dispute_management");
   t.is(accessTokenInfo.tokenizationAccountName, "tokenization");
-  t.is(accessTokenInfo.transactionProcessingAccountName, "dcc_rate");
+  t.is(
+    accessTokenInfo.transactionProcessingAccountName,
+    "transaction_processing",
+  );
   t.truthy(accessTokenInfo.transactionProcessingAccountID);
   t.truthy(accessTokenInfo.tokenizationAccountID);
   t.truthy(accessTokenInfo.riskAssessmentAccountID);

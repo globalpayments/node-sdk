@@ -23,4 +23,21 @@ export class ReportingService {
       ReportType.FindTransactions,
     );
   }
+
+  public static findStoredPaymentMethodsPaged(
+    page: number,
+    pageSize: number,
+  ): TransactionReportBuilder<TransactionSummary[]> {
+    return new TransactionReportBuilder<TransactionSummary[]>(
+      ReportType.FindStoredPaymentMethodsPaged,
+    ).withPaging(page, pageSize);
+  }
+
+  public static storedPaymentMethodDetail(
+    paymentMethodId: string,
+  ): TransactionReportBuilder<TransactionSummary> {
+    return new TransactionReportBuilder<TransactionSummary>(
+      ReportType.StoredPaymentMethodDetail,
+    ).withStoredPaymentMethodId(paymentMethodId);
+  }
 }

@@ -1,5 +1,6 @@
 import {
   AccessTokenInfo,
+  Channel,
   ConfigurationError,
   Environment,
   GatewayProvider,
@@ -19,7 +20,7 @@ export class GpApiConfig extends GatewayConfig {
 
   public country: string = "US";
 
-  public channel: string;
+  public channel: Channel;
 
   public secondsToExpire: number;
 
@@ -60,7 +61,7 @@ export class GpApiConfig extends GatewayConfig {
   public validate() {
     super.validate();
 
-    if (!this.accessTokenInfo && (!this.appId || this.appKey)) {
+    if (!this.accessTokenInfo && (!this.appId || !this.appKey)) {
       throw new ConfigurationError(
         "AccessTokenInfo or AppId and AppKey cannot be null",
       );

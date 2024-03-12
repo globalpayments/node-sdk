@@ -17,7 +17,7 @@ import {
   PaymentMethodType,
 } from "../";
 
-export abstract class PaymentMethod implements IPaymentMethod {
+export class PaymentMethod implements IPaymentMethod {
   public paymentMethodType: PaymentMethodType;
   [key: string]: any;
 

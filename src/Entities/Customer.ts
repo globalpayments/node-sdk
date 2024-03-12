@@ -22,6 +22,13 @@ export class Customer extends RecurringEntity<Customer> {
    */
   public company: string;
 
+  public dateOfBirth: string;
+
+  /**
+   * Customer's device finger print
+   */
+  public deviceFingerPrint: string;
+
   /**
    * Customer's address
    */

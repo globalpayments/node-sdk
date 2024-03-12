@@ -21,7 +21,7 @@ export class GpApiSessionInfo {
     appKey: string,
     secondsToExpire: number = 0,
     intervalToExpire: IntervalToExpire | null = null,
-    permissions: string[] = [],
+    permissions: string[],
   ) {
     const nonce = GpApiSessionInfo.generateNonce();
 

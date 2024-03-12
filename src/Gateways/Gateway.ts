@@ -53,7 +53,7 @@ export abstract class Gateway {
 
       this.requestLogger.requestSent(
         httpMethod,
-        this.serviceUrl + endpoint + (queryStringParams || ""),
+        this.serviceUrl + endpoint + (queryString || ""),
         requestId,
         this.headers,
         dataLogged,
@@ -61,10 +61,6 @@ export abstract class Gateway {
     }
     try {
       const response = await request(data, options);
-
-      if (this.requestLogger) {
-        this.requestLogger.responseReceived(response, requestId);
-      }
 
       return response;
     } catch (e) {
@@ -87,7 +83,7 @@ export abstract class Gateway {
     }
     const params: string[] = [];
     for (const param in queryStringParams) {
-      if (queryStringParams.hasOwnProperty(param)) {
+      if (queryStringParams.hasOwnProperty(param) && queryStringParams[param]) {
         params.push(
           `${encodeURIComponent(param)}=${encodeURIComponent(
             queryStringParams[param],
