@@ -4,6 +4,7 @@ import {
   AliasAction,
   Customer,
   EcommerceInfo,
+  EmvLastChipRead,
   GiftCard,
   HostedPaymentData,
   InquiryType,
@@ -14,6 +15,7 @@ import {
   RecurringSequence,
   RecurringType,
   ServicesContainer,
+  StoredCredential,
   StoredCredentialInitiator,
   Transaction,
   TransactionModifier,
@@ -30,6 +32,7 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public allowPartialAuth: boolean;
   public amount: string | number;
   public authAmount: string | number;
+  public amountEstimated: boolean;
   public balanceInquiryType: InquiryType;
   public billingAddress: Address;
   public cardBrandTransactionId: string;
@@ -63,6 +66,8 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public timestamp: string;
   public transactionInitiator: StoredCredentialInitiator;
   public idempotencyKey: string;
+  public emvChipCondition: EmvLastChipRead;
+  public storedCredential: StoredCredential;
 
   public constructor(type: number, paymentMethod?: IPaymentMethod) {
     super(type, paymentMethod);
@@ -740,6 +745,31 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
     if (idempotencyKey !== undefined) {
       this.idempotencyKey = idempotencyKey;
     }
+    return this;
+  }
+
+  public withMultiCapture(multiCapture: boolean = false) {
+    this.multiCapture = multiCapture;
+    return this;
+  }
+
+  public withStoredCredentials(storedCredential: StoredCredential) {
+    this.storedCredential = storedCredential;
+    return this;
+  }
+
+  public withChipCondition(value: EmvLastChipRead) {
+    this.emvChipCondition = value;
+    return this;
+  }
+
+  public withTagData(value: string) {
+    this.tagData = value;
+    return this;
+  }
+
+  public withAmountEstimated(value: boolean) {
+    this.amountEstimated = value;
     return this;
   }
 }

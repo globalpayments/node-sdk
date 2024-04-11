@@ -8,6 +8,7 @@ import {
   CardIssuerResponse,
   PagedResult,
   PayerDetails,
+  PaymentMethodName,
   PaymentMethodType,
   PaymentProvider,
   ReportType,
@@ -33,6 +34,7 @@ export class GpApiMapping {
     transaction.responseCode = response.action.result_code;
     transaction.responseMessage = response.status;
 
+    transaction.transactionId = response.id;
     transaction.clientTransactionId = response.reference || null;
     transaction.timestamp = response.time_created || "";
     transaction.referenceNumber = response.reference || null;
@@ -63,10 +65,6 @@ export class GpApiMapping {
         transaction,
         response.payment_method,
       );
-      GpApiMapping.mapPaymentMethodTransactionDetails(
-        transaction,
-        response.payment_method,
-      );
     }
 
     if (response.card) {
@@ -82,9 +80,6 @@ export class GpApiMapping {
       transaction.cardBrandTransactionId =
         response.card.brand_reference || null;
     }
-
-    transaction.multiCapture =
-      response.capture_mode && response.capture_mode === CaptureMode.MULTIPLE;
 
     return transaction;
   }
@@ -203,6 +198,9 @@ export class GpApiMapping {
     let report: any;
 
     switch (reportType) {
+      case ReportType.TransactionDetail:
+        report = GpApiMapping.mapTransactionSummary(response);
+        break;
       case ReportType.FindStoredPaymentMethodsPaged:
         report = this.setPagingInfo(response);
         response.payment_methods.forEach((spm: any) => {
@@ -212,12 +210,124 @@ export class GpApiMapping {
       case ReportType.StoredPaymentMethodDetail:
         report = this.mapStoredPaymentMethodSummary(response);
         break;
+      case ReportType.FindTransactionsPaged:
+      case ReportType.FindSettlementTransactionsPaged:
+        report = this.setPagingInfo(response);
+        report.result = response.transactions.map((transaction: any) =>
+          GpApiMapping.mapTransactionSummary(transaction),
+        );
+        break;
       default:
         throw new ApiError("Report type not supported!");
     }
 
     return report;
   }
+
+  static mapTransactionSummary(response: any): TransactionSummary {
+    const summary: TransactionSummary = this.createTransactionSummary(response);
+    let card;
+    if (response.time_created_reference) {
+      summary.transactionLocalDate = new Date(response.time_created_reference);
+    }
+    summary.batchSequenceNumber = response.batch_id;
+    summary.country = response.country ?? null;
+    summary.originalTransactionId = response.parent_resource_id ?? null;
+    summary.depositReference = response.deposit_id ?? "";
+    summary.depositStatus = response.deposit_status ?? "";
+    summary.depositTimeCreated = response.deposit_time_created
+      ? new Date(response.deposit_time_created)
+      : null;
+    summary.orderId = response.order_reference ?? null;
+
+    if (response.system) {
+      this.mapSystemResponse(summary, response.system);
+    }
+
+    if (response.payment_method) {
+      const paymentMethod = response.payment_method;
+      card = paymentMethod.card;
+
+      summary.gatewayResponseMessage = paymentMethod.message ?? null;
+      summary.entryMode = paymentMethod.entry_mode ?? null;
+      summary.cardHolderName = paymentMethod.name ?? "";
+
+      if (paymentMethod.card) {
+        const card = paymentMethod.card;
+        summary.aquirerReferenceNumber = card.arn ?? null;
+        summary.maskedCardNumber = card.masked_number_first6last4 ?? null;
+        summary.paymentType = PaymentMethodName.CARD;
+      } else if (paymentMethod.digital_wallet) {
+        const digitalWallet = paymentMethod.digital_wallet;
+        summary.maskedCardNumber =
+          digitalWallet.masked_token_first6last4 ?? null;
+        summary.paymentType = PaymentMethodName.DIGITAL_WALLET;
+      } else if (paymentMethod.bank_transfer && !paymentMethod.apm) {
+        summary.paymentType = PaymentMethodName.BANK_TRANSFER;
+        const bankTransfer = paymentMethod.bank_transfer;
+        summary.accountNumberLast4 =
+          bankTransfer.masked_account_number_last4 ?? null;
+        summary.accountType = bankTransfer.account_type ?? null;
+      }
+
+      if (paymentMethod.card) {
+        summary.cardType = card.brand ?? null;
+        summary.authCode = card.authcode ?? null;
+        summary.brandReference = card.brand_reference ?? null;
+      }
+    }
+
+    return summary;
+  }
+
+  private static createTransactionSummary(response: any): TransactionSummary {
+    const transaction: TransactionSummary = new TransactionSummary();
+    transaction.transactionId = response.id ? response.id : null;
+    const timeCreated: string | null = this.validateStringDate(
+      response.time_created,
+    );
+    if (timeCreated) {
+      transaction.transactionDate = new Date(timeCreated);
+    }
+    transaction.transactionStatus = response.status;
+    transaction.transactionType = response.type;
+    transaction.channel = response.channel ? response.channel : null;
+    transaction.amount = StringUtils.toAmount(response.amount);
+    transaction.currency = response.currency;
+    transaction.referenceNumber = transaction.clientTransactionId =
+      response.reference;
+    transaction.description = response.description ?? null;
+    transaction.fingerprint = response.payment_method?.fingerprint ?? null;
+    transaction.fingerprintIndicator =
+      response.payment_method?.fingerprint_presence_indicator ?? null;
+
+    return transaction;
+  }
+
+  private static validateStringDate(date: string): string {
+    try {
+      new Date(date);
+    } catch (error) {
+      return "";
+    }
+
+    return date;
+  }
+
+  private static mapSystemResponse(
+    summary: TransactionSummary,
+    system: any,
+  ): void {
+    if (!system) {
+      return;
+    }
+
+    summary.merchantId = system.mid ?? null;
+    summary.merchantHierarchy = system.hierarchy ?? null;
+    summary.merchantName = system.name ?? null;
+    summary.merchantDbaName = system.dba ?? null;
+  }
+
   public static mapStoredPaymentMethodSummary(
     response: any,
   ): StoredPaymentMethodSummary {

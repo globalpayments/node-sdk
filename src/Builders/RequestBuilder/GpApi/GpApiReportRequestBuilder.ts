@@ -7,6 +7,7 @@ import {
   NotImplementedError,
   ReportBuilder,
   ReportType,
+  StringUtils,
   TransactionSummary,
 } from "../../../../src";
 
@@ -24,6 +25,10 @@ export class GpApiReportRequestBuilder implements IRequestBuilder {
     let endpoint: string;
     let verb: string;
     switch (builder.reportType) {
+      case ReportType.TransactionDetail:
+        endpoint = `${GpApiRequest.TRANSACTION_ENDPOINT}/${builder.transactionId}`;
+        verb = "GET";
+        break;
       case ReportType.FindStoredPaymentMethodsPaged:
         if (builder?.searchBuilder?.paymentMethod instanceof CreditCardData) {
           endpoint = `${GpApiRequest.PAYMENT_METHODS_ENDPOINT}/search`;
@@ -85,6 +90,61 @@ export class GpApiReportRequestBuilder implements IRequestBuilder {
           builder.searchBuilder.storedPaymentMethodId;
         verb = "GET";
         break;
+      case ReportType.FindTransactionsPaged:
+        endpoint = GpApiRequest.TRANSACTION_ENDPOINT;
+        verb = "GET";
+        queryParams = {
+          ...queryParams,
+          id: builder.transactionId,
+          type: builder.searchBuilder.paymentType,
+          channel: builder.searchBuilder.channel,
+          amount: StringUtils.toNumeric(
+            builder.searchBuilder.amount?.toString() || null,
+          ),
+          currency: builder.searchBuilder.currency,
+          token_first6: builder.searchBuilder.tokenFirstSix,
+          token_last4: builder.searchBuilder.tokenLastFour,
+          account_name: builder.searchBuilder.accountName,
+          country: builder.searchBuilder.country,
+          batch_id: builder.searchBuilder.batchId,
+          entry_mode: builder.searchBuilder.paymentEntryMode,
+          name: builder.searchBuilder.name,
+          payment_method: builder.searchBuilder.paymentMethodName,
+        };
+
+        Object.assign(queryParams, this.getTransactionParams(builder));
+
+        break;
+      case ReportType.FindSettlementTransactionsPaged:
+        endpoint = GpApiRequest.SETTLEMENT_TRANSACTIONS_ENDPOINT;
+        verb = "GET";
+        queryParams["account_name"] = config.accessTokenInfo.dataAccountName;
+        queryParams["account_id"] = config.accessTokenInfo.dataAccountID;
+        queryParams["deposit_status"] = builder.searchBuilder.depositStatus;
+        queryParams["arn"] = builder.searchBuilder.aquirerReferenceNumber;
+        queryParams["deposit_id"] =
+          builder.searchBuilder.depositId ||
+          builder.searchBuilder.depositReference;
+        queryParams["from_deposit_time_created"] = builder.searchBuilder
+          .startDepositDate
+          ? builder.searchBuilder.startDepositDate.toISOString().split("T")[0]
+          : undefined;
+        queryParams["to_deposit_time_created"] = builder.searchBuilder
+          .endDepositDate
+          ? builder.searchBuilder.endDepositDate.toISOString().split("T")[0]
+          : undefined;
+        queryParams["from_batch_time_created"] = builder.searchBuilder
+          .startBatchDate
+          ? builder.searchBuilder.startBatchDate.toISOString().split("T")[0]
+          : undefined;
+        queryParams["to_batch_time_created"] = builder.searchBuilder
+          .endBatchDate
+          ? builder.searchBuilder.endBatchDate.toISOString().split("T")[0]
+          : undefined;
+        queryParams["system.mid"] = builder.searchBuilder.merchantId;
+        queryParams["system.hierarchy"] = builder.searchBuilder.systemHierarchy;
+        queryParams = { ...queryParams, ...this.getTransactionParams(builder) };
+        break;
       default:
         throw new NotImplementedError();
     }
@@ -95,6 +155,27 @@ export class GpApiReportRequestBuilder implements IRequestBuilder {
       JSON.stringify(payload),
       queryParams,
     );
+  }
+
+  private getTransactionParams(builder: any): any {
+    const queryParams: { [key: string]: any } = {};
+    queryParams["order_by"] = builder.transactionOrderBy;
+    queryParams["order"] = builder.order;
+    queryParams["number_first6"] = builder.searchBuilder.cardNumberFirstSix;
+    queryParams["number_last4"] = builder.searchBuilder.cardNumberLastFour;
+    queryParams["brand"] = builder.searchBuilder.cardBrand;
+    queryParams["brand_reference"] = builder.searchBuilder.brandReference;
+    queryParams["authcode"] = builder.searchBuilder.authCode;
+    queryParams["reference"] = builder.searchBuilder.referenceNumber;
+    queryParams["status"] = builder.searchBuilder.transactionStatus;
+    queryParams["from_time_created"] = builder.searchBuilder.startDate
+      ? builder.searchBuilder.startDate.toISOString().split("T")[0]
+      : null;
+    queryParams["to_time_created"] = builder.searchBuilder.endDate
+      ? builder.searchBuilder.endDate.toISOString().split("T")[0]
+      : null;
+
+    return queryParams;
   }
 
   public buildRequestFromJson(jsonRequest: string, config: GpApiConfig) {

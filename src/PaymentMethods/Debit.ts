@@ -79,4 +79,16 @@ export abstract class Debit
       amount,
     );
   }
+  /**
+   * Authorizes the payment method
+   *
+   * @param string|number amount Amount to reverse
+   *
+   * @return AuthorizationBuilder
+   */
+  public authorize(amount?: string | number) {
+    return new AuthorizationBuilder(TransactionType.Auth, this)
+      .withAmount(amount)
+      .withAmountEstimated(true);
+  }
 }

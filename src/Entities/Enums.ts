@@ -125,6 +125,31 @@ export enum CvnPresenceIndicator {
   NotRequested = 4,
 }
 
+export enum DataServiceCriteria {
+  Amount = "amount",
+  BankAccountNumber = "bankAccountNumber",
+  CaseId = "caseId",
+  CardNumberFirstSix = "cardNumberFirstSix",
+  CardNumberLastFour = "cardNumberLastFour",
+  CaseNumber = "caseNumber",
+  Country = "country",
+  Currency = "currency",
+  DepositReference = "depositReference",
+  EndDepositDate = "endDepositDate",
+  EndStageDate = "endStageDate",
+  Hierarchy = "hierarchy",
+  LocalTransactionEndTime = "localTransactionEndTime",
+  LocalTransactionStartTime = "localTransactionStartTime",
+  MerchantId = "merchantId",
+  OrderId = "orderId",
+  StartDepositDate = "startDepositDate",
+  StartStageDate = "startStageDate",
+  SystemHierarchy = "systemHierarchy",
+  Timezone = "timezone",
+  StartBatchDate = "startBatchDate",
+  EndBatchDate = "endBatchDate",
+}
+
 export enum DeviceType {
   /// <summary>
   /// Indicates PAX device.
@@ -313,6 +338,16 @@ export enum IntervalToExpire {
   FIVE_MINUTES = "5_MINUTES",
 }
 
+export enum LodgingItemType {
+  RESTAURANT = "RESTAURANT",
+  GIFT_SHOP = "GIFT_SHOP",
+  MINI_BAR = "MINI_BAR",
+  PHONE = "PHONE",
+  LAUNDRY = "LAUNDRY",
+  OTHER = "OTHER",
+  NO_SHOW = "NO_SHOW",
+}
+
 export enum ManualEntryMethod {
   MOTO = 0,
   MAIL = 1,
@@ -354,6 +389,13 @@ export enum PaymentMethodName {
 
   /** @var Buy Now Pay Later (BNPL) transaction */
   BNPL = "BNPL",
+}
+
+export enum PaymentMethodProgram {
+  ASSURED_RESERVATION = "ASSURED_RESERVATION",
+  CARD_DEPOSIT = "CARD_DEPOSIT",
+  PURCHASE = "PURCHASE",
+  OTHER = "OTHER",
 }
 
 export enum PaymentMethodType {
@@ -473,6 +515,7 @@ export enum SearchCriteria {
   ClerkId = "clerkId",
   ClientTransactionId = "clientTransactionId",
   CustomerId = "customerId",
+  DepositReference = "",
   DepositStatus = "depositStatus",
   DisplayName = "displayName",
   EndDate = "endDate",
@@ -504,7 +547,7 @@ export enum SearchCriteria {
   DisputeDocumentId = "disputeDocumentId",
   UniqueDeviceId = "uniqueDeviceId",
   UserName = "username",
-  CardholderName = "name",
+  Name = "name",
   DepositId = "depositId",
   FromTimeLastUpdated = "fromTimeLastUpdated",
   ToTimeLastUpdated = "toTimeLastUpdated",
@@ -569,6 +612,38 @@ export enum StoredCredentialInitiator {
   Payer = "Payer",
 }
 
+export enum StoredCredentialReason {
+  INCREMENTAL = "INCREMENTAL",
+  RESUBMISSION = "RESUBMISSION",
+  REAUTHORIZATION = "REAUTHORIZATION",
+  DELAYED = "DELAYED",
+  NO_SHOW = "NO_SHOW",
+}
+
+export enum StoredCredentialSequence {
+  FIRST = "first",
+  SUBSEQUENT = "subsequent",
+  LAST = "last",
+}
+
+export enum StoredCredentialType {
+  ONEOFF = "oneoff",
+  INSTALLMENT = "installment",
+  RECURRING = "recurring",
+  UNSCHEDULED = "UNSCHEDULED",
+  SUBSCRIPTION = "SUBSCRIPTION",
+  MAINTAIN_PAYMENT_METHOD = "MAINTAIN_PAYMENT_METHOD",
+  MAINTAIN_PAYMENT_VERIFICATION = "MAINTAIN_PAYMENT_VERIFICATION",
+  ADD_PAYMENT_METHOD = "ADD_PAYMENT_METHOD",
+  SPLIT_OR_DELAYED_SHIPMENT = "SPLIT_OR_DELAYED_SHIPMENT",
+  TOP_UP = "TOP_UP",
+  MAIL_ORDER = "MAIL_ORDER",
+  TELEPHONE_ORDER = "TELEPHONE_ORDER",
+  WHITELIST_STATUS_CHECK = "WHITELIST_STATUS_CHECK",
+  OTHER_PAYMENT = "OTHER_PAYMENT",
+  BILLING_AGREEMENT = "BILLING_AGREEMENT",
+}
+
 export enum StoredPaymentMethodSortProperty {
   TimeCreated = "TIME_CREATED",
 }
@@ -583,6 +658,12 @@ export enum TimeZoneConversion {
   UTC,
   Merchant,
   Datacenter,
+}
+export enum TrackNumber {
+  UNKNOWN,
+  TRACK_ONE,
+  TRACK_TWO,
+  BOTH_ONE_AND_TWO,
 }
 
 export enum TransactionModifier {
@@ -601,6 +682,14 @@ export enum TransactionModifier {
   EncryptedMobile = 1 << 12,
   AlternativePaymentMethod = 1 << 13,
   DecryptedMobile = 1 << 14,
+}
+
+export enum TransactionSortProperty {
+  TIME_CREATED = "TIME_CREATED",
+  STATUS = "STATUS",
+  TYPE = "TYPE",
+  DEPOSIT_ID = "DEPOSIT_ID",
+  ID = "ID",
 }
 
 export enum TransactionType {

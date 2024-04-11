@@ -9,7 +9,7 @@ export class Card {
   public track?: string;
   public tag?: string;
   public funding?: string;
-  public chip_condition?: string;
+  public chip_condition?: string | null;
   public pin_block?: string;
   public brand_reference?: string;
   public authcode?: string;

@@ -4,6 +4,7 @@ import {
   SearchCriteriaBuilder,
   SortDirection,
   StoredPaymentMethodSortProperty,
+  TransactionSortProperty,
 } from "../";
 import { ReportBuilder } from "./ReportBuilder";
 import { IDictionary } from "./BaseBuilder";
@@ -90,14 +91,19 @@ export class TransactionReportBuilder<T> extends ReportBuilder<T> {
   }
 
   public orderBy(
-    sortProperty: StoredPaymentMethodSortProperty,
-    sortDirection: SortDirection,
+    sortProperty: StoredPaymentMethodSortProperty | TransactionSortProperty,
+    sortDirection: SortDirection = SortDirection.Desc,
   ) {
     this.order = sortDirection;
 
     switch (this.reportType) {
       case ReportType.FindStoredPaymentMethodsPaged:
         this.storedPaymentMethodOrderBy = sortProperty;
+        break;
+      case ReportType.FindTransactions:
+      case ReportType.FindTransactionsPaged:
+      case ReportType.FindSettlementTransactionsPaged:
+        this.transactionOrderBy = sortProperty;
         break;
       default:
         throw new NotImplementedError();

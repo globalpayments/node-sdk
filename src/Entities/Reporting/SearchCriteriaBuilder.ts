@@ -50,7 +50,9 @@ export class SearchCriteriaBuilder<T> {
   public country?: string;
   public currency?: string;
   public customerId?: string;
-
+  public depositId?: string;
+  public depositReference?: string;
+  public depositStatus?: string;
   public displayName?: string;
   public disputeId?: string;
   public disputeDocumentId?: string;

@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v3.4.0 (03/12/24):
+## Latest - v3.5.0 (04/10/24):
+
+### Enhancements:
+
+- [GP-API] Add Transaction API methods
+
+## v3.4.0 (03/12/24):
 
 ### Enhancements:
 

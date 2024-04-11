@@ -29,6 +29,9 @@ import {
   StringUtils,
   PhoneNumberType,
   PhoneNumber,
+  CardUtils,
+  StoredCredential,
+  EntryMethod,
 } from "../../../../src";
 
 type FraudManagement = {
@@ -151,6 +154,10 @@ export class GpApiAuthorizationRequestBuilder implements IRequestBuilder {
       payment_method: this.createPaymentMethodParam(builder, config),
     };
 
+    if (builder.storedCredential) {
+      this.setRequestStoredCredentials(builder.storedCredential, requestBody);
+    }
+
     return requestBody;
   }
 
@@ -260,6 +267,14 @@ export class GpApiAuthorizationRequestBuilder implements IRequestBuilder {
         paymentMethodContainer.token
       ) {
         paymentMethod.id = paymentMethodContainer.token;
+      }
+
+      if (!paymentMethod.id) {
+        paymentMethod.card = CardUtils.generateCard(
+          builder,
+          GatewayProvider.GpApi,
+          this.maskedValues,
+        );
       }
     } else {
       /* digital wallet */
@@ -374,7 +389,34 @@ export class GpApiAuthorizationRequestBuilder implements IRequestBuilder {
       requestBody.currency_conversion = { id: builder.dccRateData.dccId };
     }
 
+    if (builder.storedCredential) {
+      this.setRequestStoredCredentials(builder.storedCredential, requestBody);
+    }
+
     return requestBody;
+  }
+
+  private setRequestStoredCredentials(
+    storedCredential: StoredCredential,
+    request: any,
+  ) {
+    request.initiator = null;
+
+    if (storedCredential.initiator) {
+      request.initiator = EnumMapping.mapStoredCredentialInitiator(
+        GatewayProvider.GpApi,
+        storedCredential.initiator,
+      );
+    }
+    request.stored_credential = {
+      model: storedCredential.type ? storedCredential.type.toUpperCase() : null,
+      reason: storedCredential.reason
+        ? storedCredential.reason.toUpperCase()
+        : null,
+      sequence: storedCredential.sequence
+        ? storedCredential.sequence.toUpperCase()
+        : null,
+    };
   }
 
   private setPayerInformation(builder: AuthorizationBuilder): any {
@@ -468,6 +510,25 @@ export class GpApiAuthorizationRequestBuilder implements IRequestBuilder {
     channel: Channel,
   ): PaymentEntryMode {
     if (channel === Channel.CardPresent) {
+      if (builder.paymentMethod.isTrackData) {
+        if (builder.tagData) {
+          if (builder.paymentMethod.entryMethod === EntryMethod.Proximity) {
+            return PaymentEntryMode.CONTACTLESS_CHIP;
+          }
+          return PaymentEntryMode.CHIP;
+        }
+
+        if (builder.paymentMethod.entryMethod === PaymentEntryMode.SWIPE) {
+          return PaymentEntryMode.SWIPE;
+        }
+      }
+
+      if (
+        builder.paymentMethod.isCardData &&
+        builder.paymentMethod.cardPresent
+      ) {
+        return PaymentEntryMode.MANUAL;
+      }
       return PaymentEntryMode.SWIPE;
     } else if (channel === Channel.CardNotPresent) {
       if (builder.paymentMethod.isCardData) {
@@ -513,7 +574,6 @@ export class GpApiAuthorizationRequestBuilder implements IRequestBuilder {
     if (builder.transactionType === TransactionType.Auth) {
       return CaptureMode.LATER;
     }
-
     return CaptureMode.AUTO;
   }
 

@@ -54,4 +54,10 @@ export abstract class TransactionBuilder<T> extends BaseBuilder<T> {
 
     return this;
   }
+
+  public withAllowDuplicates(allowDuplicates: boolean) {
+    this.allowDupplicates = allowDuplicates;
+
+    return this;
+  }
 }

@@ -1,8 +1,10 @@
 import {
+  LodgingData,
   PaymentMethod,
   PaymentMethodUsageMode,
   ReasonCode,
   ServicesContainer,
+  StoredCredentialSequence,
   TaxType,
   Transaction,
   TransactionModifier,
@@ -12,7 +14,7 @@ import {
 import { TransactionBuilder } from "./TransactionBuilder";
 
 export class ManagementBuilder extends TransactionBuilder<Transaction> {
-  public amount: string | number;
+  public amount: string | number | null;
   public authAmount: string | number;
   public get authorizationCode() {
     if (this.paymentMethod instanceof TransactionReference) {
@@ -28,7 +30,8 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
   }
   public currency: string;
   public description: string;
-  public gratuity: string | number;
+  public gratuity: string | number | null;
+  public lodgingData: LodgingData;
   public get orderId() {
     if (this.paymentMethod instanceof TransactionReference) {
       return this.paymentMethod.orderId;
@@ -97,7 +100,7 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
    * @param amount The amount
    * @returns ManagementBuilder
    */
-  public withAmount(amount?: string | number) {
+  public withAmount(amount?: string | number | null) {
     if (amount !== undefined) {
       this.amount = amount;
     }
@@ -158,7 +161,7 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
    * @param gratuity The gratuity amount
    * @returns ManagementBuilder
    */
-  public withGratuity(gratuity?: string | number) {
+  public withGratuity(gratuity: string | number | null = null) {
     if (gratuity !== undefined) {
       this.gratuity = gratuity;
     }
@@ -254,6 +257,28 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
     paymentMethodUsageMode: PaymentMethodUsageMode,
   ) {
     this.paymentMethodUsageMode = paymentMethodUsageMode;
+
+    return this;
+  }
+
+  public withMultiCapture(
+    sequence: StoredCredentialSequence = StoredCredentialSequence.FIRST,
+    paymentCount: number = 1,
+  ) {
+    this.multiCapture = true;
+    this.multiCaptureSequence = sequence;
+    this.multiCapturePaymentCount = paymentCount;
+
+    return this;
+  }
+
+  public withTagData(tagData: string) {
+    this.tagData = tagData;
+    return this;
+  }
+
+  public withLodgingData(value: LodgingData) {
+    this.lodgingData = value;
 
     return this;
   }

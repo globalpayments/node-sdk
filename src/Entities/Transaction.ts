@@ -1,11 +1,11 @@
 import {
-  AuthorizationBuilder,
   Card,
   GiftCard,
   ManagementBuilder,
   PayerDetails,
   PaymentMethodType,
   PaymentMethodUsageMode,
+  StoredCredentialSequence,
   TransactionModifier,
   TransactionReference,
   TransactionType,
@@ -26,6 +26,8 @@ export class Transaction {
   public cvnResponseCode: string;
   public cavvResponseCode: string;
   public multiCapture: boolean;
+  public multiCapturePaymentCount: number;
+  public multiCaptureSequence: StoredCredentialSequence;
   public cardLast4: string;
   public cardType: string;
   public avsResponseMessage: string;
@@ -47,6 +49,13 @@ export class Transaction {
 
   get transactionId(): string {
     return this.transactionReference?.transactionId;
+  }
+
+  set transactionId(id: string) {
+    if (!this.transactionReference) {
+      this.transactionReference = new TransactionReference();
+    }
+    this.transactionReference.transactionId = id;
   }
 
   public static fromId(
@@ -80,10 +89,9 @@ export class Transaction {
    * @return AuthorizationBuilder
    */
   public additionalAuth(amount?: string | number) {
-    return new AuthorizationBuilder(TransactionType.Auth)
+    return new ManagementBuilder(TransactionType.Auth)
       .withPaymentMethod(this.transactionReference)
-      .withAmount(amount)
-      .withModifier(TransactionModifier.Additional);
+      .withAmount(amount);
   }
 
   /**
@@ -94,9 +102,18 @@ export class Transaction {
    * @return ManagementBuilder
    */
   public capture(amount?: string | number) {
-    return new ManagementBuilder(TransactionType.Capture)
+    const builder = new ManagementBuilder(TransactionType.Capture)
       .withPaymentMethod(this.transactionReference)
       .withAmount(amount);
+
+    if (this.multiCapture) {
+      builder.withMultiCapture(
+        this.multiCaptureSequence,
+        this.multiCapturePaymentCount,
+      );
+    }
+
+    return builder;
   }
 
   /**
@@ -125,11 +142,11 @@ export class Transaction {
   /**
    * Allows for a follow-up request to refund the transaction
    *
-   * @param string|number amount Amount to refund
+   * @param {string|number} amount Amount to refund
    *
    * @return ManagementBuilder
    */
-  public refund(amount?: string | number) {
+  public refund(amount: string | number | null = null) {
     return new ManagementBuilder(TransactionType.Refund)
       .withPaymentMethod(this.transactionReference)
       .withAmount(amount);
@@ -142,13 +159,27 @@ export class Transaction {
   }
 
   /**
+   * Refresh the authorization associated with a transaction to get a more recent authcode or
+   * reauthorize a transaction reversed in error.
+   *
+   * @param {string|number|null} amount Amount to reverse
+   *
+   * @return ManagementBuilder
+   */
+  public reauthorized(amount: string | number | null = null) {
+    return new ManagementBuilder(TransactionType.Reauth)
+      .withPaymentMethod(this.transactionReference)
+      .withAmount(amount);
+  }
+
+  /**
    * Allows for a follow-up request to reverse the transaction
    *
    * @param string|number amount Amount to reverse
    *
    * @return ManagementBuilder
    */
-  public reverse(amount?: string | number) {
+  public reverse(amount: string | number | null = null) {
     return new ManagementBuilder(TransactionType.Reversal)
       .withPaymentMethod(this.transactionReference)
       .withAmount(amount);

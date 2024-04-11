@@ -1,5 +1,10 @@
 /* eslint-disable indent */
-import { ReportType, TransactionReportBuilder, TransactionSummary } from "../";
+import {
+  PagedResult,
+  ReportType,
+  TransactionReportBuilder,
+  TransactionSummary,
+} from "../";
 
 export class ReportingService {
   public static activity(): TransactionReportBuilder<TransactionSummary[]> {
@@ -24,6 +29,18 @@ export class ReportingService {
     );
   }
 
+  public static findTransactionsPaged(
+    page: number,
+    pageSize: number,
+    transactionId?: string,
+  ): TransactionReportBuilder<PagedResult> {
+    return new TransactionReportBuilder<PagedResult>(
+      ReportType.FindTransactionsPaged,
+    )
+      .withTransactionId(transactionId)
+      .withPaging(page, pageSize);
+  }
+
   public static findStoredPaymentMethodsPaged(
     page: number,
     pageSize: number,
@@ -39,5 +56,17 @@ export class ReportingService {
     return new TransactionReportBuilder<TransactionSummary>(
       ReportType.StoredPaymentMethodDetail,
     ).withStoredPaymentMethodId(paymentMethodId);
+  }
+
+  public static findSettlementTransactionsPaged(
+    page: number,
+    pageSize: number,
+    transactionId?: string,
+  ): TransactionReportBuilder<PagedResult> {
+    return new TransactionReportBuilder<PagedResult>(
+      ReportType.FindSettlementTransactionsPaged,
+    )
+      .withTransactionId(transactionId)
+      .withPaging(page, pageSize);
   }
 }

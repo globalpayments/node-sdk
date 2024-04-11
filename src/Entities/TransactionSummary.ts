@@ -1,16 +1,28 @@
-export class TransactionSummary {
+import { BaseSummary, PaymentEntryMode } from ".";
+
+export class TransactionSummary extends BaseSummary {
   public accountDataSource: string;
-  public amount: string;
+  public accountNumberLast4: string;
+  public accountType: string;
+  public aquirerReferenceNumber: string;
   public authCode: string;
   public authorizedAmount: string;
   public batchCloseDate: Date;
   public batchSequenceNumber: string;
+  public brandReference: string;
+  public cardHolderName: string;
   public cardSwiped: string;
   public cardType: string;
+  public channel: string;
   public clerkId: string;
   public clientTransactionId: string;
   public convenienceAmt: string;
+  public country: string;
   public deviceId: string;
+  public depositStatus: string;
+  public depositReference: string;
+  public depositTimeCreated: Date | null;
+  public entryMode: PaymentEntryMode;
   public issuerResponseCode: string;
   public issuerResponseMessage: string;
   public issuerTransactionId: string;
@@ -19,6 +31,7 @@ export class TransactionSummary {
   public gratuityAmount: string;
   public maskedCardNumber: string;
   public originalTransactionId: string;
+  public orderId: string | null;
   public paymentType: string;
   public poNumber: string;
   public referenceNumber: string;
@@ -31,7 +44,10 @@ export class TransactionSummary {
   public taxAmount: string;
   public taxType: string;
   public transactionDate: Date;
+  public transactionLocalDate: Date;
   public transactionId: string;
+  public transactionStatus: string;
+  public transactionType: string;
   public username: string;
 
   public description: string;
@@ -59,4 +75,6 @@ export class TransactionSummary {
   public debtRepaymentIndicator: string;
   public captureAmount: string;
   public fullyCaptured: string;
+  public fingerprint: string;
+  public fingerprintIndicator: string;
 }
