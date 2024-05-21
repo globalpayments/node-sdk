@@ -895,9 +895,6 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         } else if (
           builder.paymentMethod.paymentMethodType === PaymentMethodType.Debit
         ) {
-          if (builder.paymentMethod instanceof TransactionReference) {
-            throw new UnsupportedTransactionError();
-          }
           return "DebitReversal";
         } else if (
           builder.paymentMethod.paymentMethodType === PaymentMethodType.Gift

@@ -1,6 +1,14 @@
 # Changelog
 
+
+## Latest - v3.5.2 (05/21/24):
+
+### Enhancements:
+
+- [Portico] Added DebitReversal portico support with fromId.
+
 ## Latest - v3.5.0 (04/10/24):
+
 
 ### Enhancements:
 

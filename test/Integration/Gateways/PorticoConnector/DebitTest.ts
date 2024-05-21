@@ -92,14 +92,24 @@ test("debit cannot refund from transaction id only", (t) => {
   t.truthy(error?.message);
 });
 
-test("debit cannot reverse from transaction id only", (t) => {
+test("Debit Reversal with fromId method", async (t) => {
   t.plan(2);
 
-  const error = t.throws(() => {
-    Transaction.fromId("1234567890", PaymentMethodType.Debit)
-      .reverse()
-      .execute();
-  }, new UnsupportedTransactionError());
+  const response = await track
+    .charge(17.01)
+    .withCurrency("USD")
+    .withAllowDuplicates(true)
+    .execute();
 
-  t.truthy(error?.message);
+  t.truthy(response);
+  t.is(response.responseCode, "00", response.responseMessage);
+
+
+
+  const reversalResponse = Transaction.fromId(response.transactionId, PaymentMethodType.Debit)
+    .reverse()
+    .execute();
+
+  t.truthy(reversalResponse);
+  t.is(reversalResponse.responseCode,"00", reversalResponse.responseMessage);
 });
