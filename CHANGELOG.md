@@ -1,14 +1,25 @@
 # Changelog
 
+## Latest - v3.5.3 (05/23/24):
 
-## Latest - v3.5.2 (05/21/24):
+### Fix:
+
+- [Portico] Handle async response for debit reversal testcase.
+- [Package.json]  Added files configuration to be included in npm publish due to a change.
+
+##  v3.5.2 (05/21/24):
 
 ### Enhancements:
 
 - [Portico] Added DebitReversal portico support with fromId.
 
-## Latest - v3.5.0 (04/10/24):
+## v3.5.1-fix-4 (04/26/24):
 
+### Fix:
+
+- Fix issue on Npm registry with missing lib folder.
+
+## v3.5.0 (04/10/24):
 
 ### Enhancements:
 

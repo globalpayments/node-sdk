@@ -1,6 +1,6 @@
 {
   "name": "globalpayments-api",
-  "version" : "3.5.2",
+  "version" : "3.5.3",
   "description": "Global Payments SDK for NodeJS for Heartland and Global Payments eCommerce gateways",
   "author": "Heartland Payment Systems",
   "license": "GPL-2.0",
@@ -62,5 +62,10 @@
     "source": [
       "lib/src/**/*.js"
     ]
-  }
+  },
+  "files": [
+    "lib/src/**",
+    "appsec.properties",
+    "CHANGELOG.md"
+  ]
 }

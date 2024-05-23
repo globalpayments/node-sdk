@@ -106,7 +106,7 @@ test("Debit Reversal with fromId method", async (t) => {
 
 
 
-  const reversalResponse = Transaction.fromId(response.transactionId, PaymentMethodType.Debit)
+  const reversalResponse = await Transaction.fromId(response.transactionId, PaymentMethodType.Debit)
     .reverse()
     .execute();
 
