@@ -18,6 +18,17 @@ module.exports = {
         "@typescript-eslint/tslint/config": ["off"],
       },
     },
+    {
+      files: ["*.js", "*.jsx", "*.ts", "*.tsx", "*.json", "*.css", "*.scss"],
+      rules: {
+        "prettier/prettier": [
+          "error",
+          {
+            endOfLine: "auto",
+          },
+        ],
+      },
+    },
   ],
   rules: {
     "@typescript-eslint/ban-types": "off",

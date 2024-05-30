@@ -9,7 +9,7 @@ import {
 } from "../../../src/Entities";
 import { GatewayConfig } from "./GatewayConfig";
 import { ConfiguredServices } from "../../../src/ConfiguredServices";
-import { GpApiConnector } from "../../../src";
+import { GpApiConnector, Secure3dVersion } from "../../../src";
 
 export class GpApiConfig extends GatewayConfig {
   public appId: string;
@@ -56,6 +56,8 @@ export class GpApiConfig extends GatewayConfig {
 
     services.gatewayConnector = gateway;
     services.reportingService = gateway;
+    services.setSecure3dProvider(Secure3dVersion.ONE, gateway);
+    services.setSecure3dProvider(Secure3dVersion.TWO, gateway);
   }
 
   public validate() {

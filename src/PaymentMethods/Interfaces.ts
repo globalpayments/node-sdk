@@ -81,3 +81,7 @@ export interface IVerifyable {
 export interface IVoidable {
   void(): ManagementBuilder;
 }
+
+export interface ISecure3d {}
+
+export interface ISecureCheck {}

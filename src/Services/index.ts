@@ -8,3 +8,4 @@ export * from "./GpApiServices";
 export * from "./HostedService";
 export * from "./RecurringService";
 export * from "./ReportingService";
+export * from "./Secure3dService";

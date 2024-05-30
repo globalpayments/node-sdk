@@ -1,4 +1,4 @@
-import { ReportBuilder } from "src";
+import { ReportBuilder, Secure3dBuilder } from "src";
 import { GpApiAuthorizationRequestBuilder } from ".";
 import {
   GatewayProvider,
@@ -12,6 +12,7 @@ import { GpApiMiCRequestBuilder } from "./GpApi/GpApiMiCRequestBuilder";
 import { GpEcomAuthorizationRequestBuilder } from "./GpEcom/GpEcomAuthorizationRequestBuilder";
 import { GpEcomManagementRequestBuilder } from "./GpEcom/GpEcomManagementRequestBuilder";
 import { GpApiReportRequestBuilder } from "./GpApi/GpApiReportRequestBuilder";
+import { GpApiSecureRequestBuilder } from "./GpApi/GpApiSecureRequestBuilder";
 
 export class RequestBuilderFactory {
   public supplementaryData: Record<string, string | string[]>;
@@ -21,6 +22,7 @@ export class RequestBuilderFactory {
       new GpApiAuthorizationRequestBuilder(),
       new GpApiManagementRequestBuilder(),
       new GpApiReportRequestBuilder(),
+      new GpApiSecureRequestBuilder(),
       new GpApiMiCRequestBuilder(),
     ],
     [GatewayProvider.GpEcom]: [
@@ -31,7 +33,10 @@ export class RequestBuilderFactory {
   };
 
   public getRequestBuilder(
-    builder: BaseBuilder<Transaction> | ReportBuilder<TransactionSummary>,
+    builder:
+      | BaseBuilder<Transaction>
+      | ReportBuilder<TransactionSummary>
+      | Secure3dBuilder,
     gatewayProvider: GatewayProvider,
   ) {
     if (!RequestBuilderFactory.processes[gatewayProvider]) {

@@ -10,6 +10,8 @@ import {
   IPrePayable,
   IRefundable,
   IReversable,
+  ISecure3d,
+  ISecureCheck,
   ITokenizable,
   ITrackData,
   IVerifyable,
@@ -85,5 +87,13 @@ export class PaymentMethod implements IPaymentMethod {
 
   get isVoidable() {
     return (this as object as IVoidable).void !== undefined;
+  }
+
+  get isSecure3d() {
+    return (this as object as ISecure3d) !== undefined;
+  }
+
+  get isSecureCheck() {
+    return (this as object as ISecureCheck) !== undefined;
   }
 }

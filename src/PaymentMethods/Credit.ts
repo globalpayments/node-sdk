@@ -17,6 +17,7 @@ import {
   IPrePayable,
   IRefundable,
   IReversable,
+  ISecure3d,
   ITokenizable,
   IVerifyable,
 } from "./Interfaces";
@@ -33,7 +34,8 @@ export abstract class Credit
     IReversable,
     IVerifyable,
     IPrePayable,
-    IBalanceable
+    IBalanceable,
+    ISecure3d
 {
   public encryptionData: EncryptionData;
   public paymentMethodType = PaymentMethodType.Credit;

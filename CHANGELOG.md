@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v3.5.3 (05/23/24):
+## Latest - v3.6.0 (05/30/24):
+
+### Enhancements:
+
+- [GP-API] Add 3D Secure features
+
+## v3.5.3 (05/23/24):
 
 ### Fix:
 

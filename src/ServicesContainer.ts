@@ -1,8 +1,10 @@
 import {
   Configuration,
+  ConfigurationError,
   IDeviceInterface,
   IPaymentGateway,
   IRecurringService,
+  Secure3dVersion,
 } from "./";
 import { ConfiguredServices } from "./ConfiguredServices";
 import { IPayFacProvider } from "./Gateways/IPayFacProvider";
@@ -39,6 +41,23 @@ export class ServicesContainer {
 
   public getDeviceController(configName: string = "default"): DeviceController {
     return this._configs[configName].deviceController;
+  }
+
+  getSecure3d(configName: string, version: Secure3dVersion): any {
+    if (this._configs[configName]) {
+      const provider = this._configs[configName].getSecure3dProvider(version);
+      if (provider !== null) {
+        return provider;
+      } else {
+        throw new ConfigurationError(
+          `Secure 3d is not configured for version ${version}.`,
+        );
+      }
+    } else {
+      throw new ConfigurationError(
+        "Secure 3d is not configured on the connector.",
+      );
+    }
   }
 
   public static configure(

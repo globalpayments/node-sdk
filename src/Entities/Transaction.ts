@@ -6,6 +6,7 @@ import {
   PaymentMethodType,
   PaymentMethodUsageMode,
   StoredCredentialSequence,
+  ThreeDSecure,
   TransactionModifier,
   TransactionReference,
   TransactionType,
@@ -46,6 +47,7 @@ export class Transaction {
   public fingerprintIndicator: string;
   public tokenUsageMode: PaymentMethodUsageMode;
   public cardDetails: Card;
+  public threeDSecure: ThreeDSecure;
 
   get transactionId(): string {
     return this.transactionReference?.transactionId;

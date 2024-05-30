@@ -4,6 +4,8 @@ import {
   EmvLastChipRead,
   EncyptedMobileType,
   GatewayProvider,
+  MessageCategory,
+  SdkUiType,
   // ScheduleFrequency,
   StoredCredentialInitiator,
 } from "../../src";
@@ -95,6 +97,40 @@ export class EnumMapping {
         switch (value) {
           case "DinersClub":
             return CardType.DINERS;
+          default:
+            return value;
+        }
+      default:
+        return value;
+    }
+  }
+
+  static mapSdkUiType(
+    gateway: GatewayProvider,
+    value: SdkUiType[],
+  ): string[] | SdkUiType[] {
+    switch (gateway) {
+      case GatewayProvider.GpApi:
+        switch (value) {
+          case [SdkUiType.Oob]:
+            return ["OUT_OF_BAND"];
+          default:
+            return value;
+        }
+      default:
+        return value;
+    }
+  }
+
+  static mapMessageCategory(
+    gateway: GatewayProvider,
+    value: MessageCategory,
+  ): string | MessageCategory {
+    switch (gateway) {
+      case GatewayProvider.GpApi:
+        switch (value) {
+          case MessageCategory.PaymentAuthentication:
+            return "PAYMENT";
           default:
             return value;
         }

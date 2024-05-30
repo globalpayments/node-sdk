@@ -1,3 +1,4 @@
+import { BuilderError } from "../../Entities";
 import { BaseBuilder } from "../";
 import { Validations } from "./Validations";
 import { ValidationTarget } from "./ValidationTarget";
@@ -21,7 +22,13 @@ export class ValidationClause {
 
   public isNotNull(message?: string): ValidationTarget {
     this.callback = <T>(builder: BaseBuilder<T>) => {
-      const value = builder[this.target.property];
+      let value = builder[this.target.property];
+      if (this.target.property.includes(".")) {
+        const keys = this.target.property.split(".");
+        for (const key of keys) {
+          value = value ? value[key] : builder[key];
+        }
+      }
       return undefined !== value && null !== value;
     };
     this.message = message
@@ -107,5 +114,28 @@ export class ValidationClause {
     return this.parent
       .of(this.target.enumName, this.target.type)
       .with(this.target.constraintProperty, this.target.constraint);
+  }
+
+  isInstanceOf(clazz: any, message: string | null = null): ValidationTarget {
+    this.callback = (builder: any) => {
+      // this will result in checking isInterfaceRequired (e.g paymentMethod.isSecure3d)
+      if (!builder[this.target.property]["is" + clazz]) {
+        throw new BuilderError(
+          `${this.target.property} must be an instance of the ${clazz.name} class.`,
+        );
+      }
+      return true;
+    };
+
+    this.message =
+      message !== null
+        ? message
+        : `${this.target.property} must be an instance of the ${clazz.name} class.`;
+
+    if (this.precondition) {
+      return this.target;
+    }
+
+    return this.parent.of(this.target.enumName, this.target.type);
   }
 }

@@ -89,4 +89,21 @@ export class StringUtils {
     const f = parseFloat(value.toString()) * 100;
     return parseFloat(f.toFixed(2)).toString();
   }
+
+  static boolToString(value: boolean): string | undefined {
+    if (typeof value !== "boolean") {
+      return;
+    }
+
+    return JSON.stringify(value);
+  }
+
+  public static isJson(string: string): boolean {
+    try {
+      JSON.parse(string);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }

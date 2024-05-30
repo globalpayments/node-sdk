@@ -24,6 +24,7 @@ import {
   ManagementBuilder,
   ReportBuilder,
   RequestBuilderFactory,
+  Secure3dBuilder,
 } from "../../src";
 import { PayFacBuilder } from "src/Builders/PayFacBuilder";
 
@@ -213,7 +214,10 @@ export class GpApiConnector
   }
 
   private executeProcess(
-    builder: BaseBuilder<Transaction> | ReportBuilder<TransactionSummary>,
+    builder:
+      | BaseBuilder<Transaction>
+      | ReportBuilder<TransactionSummary>
+      | Secure3dBuilder,
   ) {
     const processFactory = new RequestBuilderFactory();
 
@@ -333,5 +337,14 @@ export class GpApiConnector
       request.endpoint,
       request.requestBody,
     );
+  }
+
+  async processSecure3d(builder: Secure3dBuilder): Promise<Transaction> {
+    if (!this.accessToken) {
+      await this.signIn();
+    }
+    const response = await this.executeProcess(builder);
+
+    return GpApiMapping.mapResponseSecure3D(response);
   }
 }

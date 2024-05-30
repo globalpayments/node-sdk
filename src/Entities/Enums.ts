@@ -9,6 +9,15 @@ export enum AddressType {
   Shipping,
 }
 
+export enum AgeIndicator {
+  NoAccount = "NO_ACCOUNT",
+  NoChange = "NO_CHANGE",
+  ThisTransaction = "THIS_TRANSACTION",
+  LessThanThirtyDays = "LESS_THAN_THIRTY_DAYS",
+  ThirtyToSixtyDays = "THIRTY_TO_SIXTY_DAYS",
+  MoreThanSixtyDays = "MORE_THAN_SIXTY_DAYS",
+}
+
 export enum AliasAction {
   Create = "CREATE",
   Add = "ADD",
@@ -23,6 +32,22 @@ export enum AlternativePaymentType {
 export enum ApplicationCryptogramType {
   TC,
   ARQC,
+}
+
+export enum AuthenticationRequestType {
+  PaymentTransaction = "PAYMENT_TRANSACTION",
+  RecurringTransaction = "RECURRING_TRANSACTION",
+  InstalmentTransaction = "INSTALMENT_TRANSACTION",
+  AddCard = "ADD_CARD",
+  MaintainCard = "MAINTAIN_CARD",
+  CardholderVerification = "CARDHOLDER_VERIFICATION",
+}
+
+export enum AuthenticationSource {
+  Browser = "BROWSER",
+  StoredRecurring = "STORED_RECURRING",
+  MobileSdk = "MOBILE_SDK",
+  MerchantInitiated = "MERCHANT_INITIATED",
 }
 
 export enum BankPaymentType {
@@ -89,6 +114,26 @@ export enum CaptureMode {
   MULTIPLE = "MULTIPLE",
 }
 
+export enum ChallengeRequestIndicator {
+  NoPreference = "NO_PREFERENCE",
+  NoChallengeRequested = "NO_CHALLENGE_REQUESTED",
+  ChallengePreferred = "CHALLENGE_PREFERRED",
+  ChallengeMandated = "CHALLENGE_MANDATED",
+  NoChallengeRequestedTransactionRiskAnalysisPerformed = "NO_CHALLENGE_REQUESTED_TRANSACTION_RISK_ANALYSIS_PERFORMED",
+  NoChallengeRequestedDataShareOnly = "NO_CHALLENGE_REQUESTED_DATA_SHARE_ONLY",
+  NoChallengeRequestedScaAlreadyPerformed = "NO_CHALLENGE_REQUESTED_SCA_ALREADY_PERFORMED",
+  NoChallengeRequestedWhitelist = "NO_CHALLENGE_REQUESTED_WHITELIST",
+  ChallengeRequestedPromptForWhitelist = "CHALLENGE_REQUESTED_PROMPT_FOR_WHITELIST",
+}
+
+export enum ChallengeWindowSize {
+  Windowed250x400 = "WINDOWED_250X400",
+  Windowed390x400 = "WINDOWED_390X400",
+  Windowed500x600 = "WINDOWED_500X600",
+  Windowed600x400 = "WINDOWED_600X400",
+  FullScreen = "FULL_SCREEN",
+}
+
 export enum Channel {
   CardNotPresent = "CNP",
   CardPresent = "CP",
@@ -99,13 +144,32 @@ export enum CheckType {
   Business = "BUSINESS",
   Payroll = "PAYROLL",
 }
-
+export enum ColorDepth {
+  OneBit = "ONE_BIT",
+  TwoBits = "TWO_BITS",
+  FourBits = "FOUR_BITS",
+  EightBits = "EIGHT_BITS",
+  FifteenBits = "FIFTEEN_BITS",
+  SixteenBits = "SIXTEEN_BITS",
+  TwentyFourBits = "TWENTY_FOUR_BITS",
+  ThirtyTwoBits = "THIRTY_TWO_BITS",
+  FortyEightBits = "FORTY_EIGHT_BITS",
+}
 export enum CurrencyType {
   CURRENCY,
   POINTS,
   CASH_BENEFITS,
   FOODSTAMPS,
   VOUCHER,
+}
+
+export enum CustomerAuthenticationMethod {
+  NotAuthenticated = "NOT_AUTHENTICATED",
+  MerchantSystem = "MERCHANT_SYSTEM_AUTHENTICATION",
+  FederatedId = "FEDERATED_ID_AUTHENTICATION",
+  IssuerCredential = "ISSUER_CREDENTIAL_AUTHENTICATION",
+  ThirdParty = "THIRD_PARTY_AUTHENTICATION",
+  Fido = "FIDO_AUTHENTICATION",
 }
 
 export enum CustomerDocumentType {
@@ -148,6 +212,18 @@ export enum DataServiceCriteria {
   Timezone = "timezone",
   StartBatchDate = "startBatchDate",
   EndBatchDate = "endBatchDate",
+}
+
+export enum DecoupledFlowRequest {
+  DecoupledPreferred = "DECOUPLED_PREFERRED",
+  DoNotUseDecoupled = "DO_NOT_USE_DECOUPLED",
+}
+
+export enum DeliveryTimeFrame {
+  ElectronicDelivery = "ELECTRONIC_DELIVERY",
+  SameDay = "SAME_DAY",
+  Overnight = "OVERNIGHT",
+  TwoDaysOrMore = "TWO_DAYS_OR_MORE",
 }
 
 export enum DeviceType {
@@ -295,6 +371,21 @@ export enum ExceptionCodes {
   PartialApproval,
 }
 
+export enum ExemptionReason {
+  ApplyExemption = "APPLY_EXEMPTION",
+  EosContinue = "CONTINUE",
+  ForceSecure = "FORCE_SECURE",
+  Block = "BLOCK",
+}
+
+export enum ExemptStatus {
+  LowValue = "LOW_VALUE",
+  TransactionRiskAnalysis = "TRANSACTION_RISK_ANALYSIS",
+  TrustedMerchant = "TRUSTED_MERCHANT",
+  SecureCorporatePayment = "SECURE_CORPORATE_PAYMENT",
+  ScaDelegation = "SCA_DELEGATION",
+}
+
 export enum FraudFilterMode {
   None = "NONE",
   Off = "OFF",
@@ -353,6 +444,29 @@ export enum ManualEntryMethod {
   MAIL = 1,
   PHONE = 2,
   KEYED = 3,
+}
+
+export enum MessageCategory {
+  PaymentAuthentication = "PAYMENT_AUTHENTICATION",
+  NonPaymentAuthentication = "NON_PAYMENT_AUTHENTICATION",
+}
+
+export enum MessageVersion {
+  Version210 = "2.1.0",
+}
+
+export enum MethodUrlCompletion {
+  Yes = "YES",
+  No = "NO",
+  Unavailable = "UNAVAILABLE",
+}
+
+export enum OrderTransactionType {
+  GoodsServicePurchase = "GOODS_SERVICE_PURCHASE",
+  CheckAcceptance = "CHECK_ACCEPTANCE",
+  AccountFunding = "ACCOUNT_FUNDING",
+  QuasiCashTransaction = "QUASI_CASH_TRANSACTION",
+  PrepaidActivationAndLoad = "PREPAID_ACTIVATION_AND_LOAD",
 }
 
 export enum PayByLinkStatus {
@@ -442,6 +556,18 @@ export enum PhoneNumberType {
   MOBILE = "MOBILE",
 }
 
+export enum PreOrderIndicator {
+  MerchandiseAvailable = "MERCHANDISE_AVAILABLE",
+  FutureAvailability = "FUTURE_AVAILABILITY",
+}
+
+export enum PriorAuthenticationMethod {
+  FrictionlessAuthentication = "FRICTIONLESS_AUTHENTICATION",
+  ChallengeOccurred = "CHALLENGE_OCCURRED",
+  AvsVerified = "AVS_VERIFIED",
+  OtherIssuerMethod = "OTHER_ISSUER_METHOD",
+}
+
 export enum ReasonCode {
   Fraud = "FRAUD",
   FalsePositive = "FALSEPOSITIVE",
@@ -460,6 +586,11 @@ export enum RecurringSequence {
 export enum RecurringType {
   Fixed,
   Variable,
+}
+
+export enum ReorderIndicator {
+  FirstTimeOrder = "FIRST_TIME_ORDER",
+  Reorder = "REORDER",
 }
 
 export enum ReportType {
@@ -488,6 +619,20 @@ export enum ScheduleFrequency {
   Quarterly = "Quarterly",
   SemiAnnually = "Semi-Annually",
   Annually = "Annually",
+}
+
+export enum SdkInterface {
+  Native = "NATIVE",
+  Browser = "BROWSER",
+  Both = "BOTH",
+}
+
+export enum SdkUiType {
+  Text = "TEXT",
+  SingleSelect = "SINGLE_SELECT",
+  MultiSelect = "MULTI_SELECT",
+  Oob = "OOB",
+  HtmlOther = "HTML_OTHER",
 }
 
 export enum SearchCriteria {
@@ -583,6 +728,17 @@ export enum SecCode {
   EBronze = "EBronze",
 }
 
+export enum Secure3dStatus {
+  SuccessAuthenticated = "SUCCESS_AUTHENTICATED",
+  SuccessAttemptMade = "SUCCESS_ATTEMPT_MADE",
+  NotAuthenticated = "NOT_AUTHENTICATED",
+  Failed = "FAILED",
+  NotEnrolled = "NOT_ENROLLED",
+  Available = "AVAILABLE",
+  Enrolled = "ENROLLED",
+  ChallengeRequired = "CHALLENGE_REQUIRED",
+}
+
 export enum Secure3dVersion {
   NONE = "NONE",
   ONE = "ONE",
@@ -599,6 +755,16 @@ export enum ShaHashType {
   SHA1 = "SHA1",
   SHA256 = "SHA256",
   SHA512 = "SHA512",
+}
+
+export enum ShippingMethod {
+  BillingAddress = "BILLING_ADDRESS",
+  VerifiedAddress = "ANOTHER_VERIFIED_ADDRESS",
+  UnverifiedAddress = "UNVERIFIED_ADDRESS",
+  ShipToStore = "SHIP_TO_STORE",
+  DigitalGoods = "DIGITAL_GOODS",
+  TravelAndEventTickets = "TRAVEL_AND_EVENT_TICKETS",
+  Other = "OTHER",
 }
 
 export enum SortDirection {
@@ -719,8 +885,11 @@ export enum TransactionType {
   Search = 1 << 20,
   Hold = 1 << 21,
   Release = 1 << 23,
+  VerifyEnrolled = 1 << 24,
   VerifySignature = 1 << 25,
   TokenDelete = 1 << 26,
+  RiskAssess = 1 << 27,
+  InitiateAuthentication = 1 << 28,
   TokenUpdate = 1 << 31,
   Tokenize = 1 << 33,
   /// <summary>

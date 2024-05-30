@@ -1,4 +1,11 @@
-import { StringUtils } from "../../src";
+import {
+  AuthenticationSource,
+  MessageExtension,
+  Secure3dStatus,
+  Secure3dVersion,
+  StringUtils,
+  ThreeDSecure,
+} from "../../src";
 import {
   Address,
   AddressType,
@@ -367,5 +374,112 @@ export class GpApiMapping {
       : null;
 
     return pageInfo;
+  }
+
+  static mapResponseSecure3D(response: any): Transaction {
+    const transaction = new Transaction();
+    const threeDSecure = new ThreeDSecure();
+    threeDSecure.serverTransactionId = response.id;
+
+    if (response.three_ds && response.three_ds.message_version) {
+      const messageVersion = response.three_ds.message_version;
+      let version: Secure3dVersion;
+      switch (messageVersion.substring(0, 2)) {
+        case "1.":
+          version = Secure3dVersion.ONE;
+          break;
+        case "2.":
+          version = Secure3dVersion.TWO;
+          break;
+        default:
+          version = Secure3dVersion.ANY;
+      }
+      threeDSecure.messageVersion = messageVersion;
+      threeDSecure.setVersion(version);
+    }
+    threeDSecure.status = response.status;
+    threeDSecure.directoryServerStartVersion =
+      response.three_ds?.ds_protocol_version_start || null;
+    threeDSecure.directoryServerEndVersion =
+      response.three_ds?.ds_protocol_version_end || null;
+    threeDSecure.acsStartVersion =
+      response.three_ds?.acs_protocol_version_start || null;
+    threeDSecure.acsEndVersion =
+      response.three_ds?.acs_protocol_version_end || null;
+    threeDSecure.enrolled = response.three_ds?.enrolled_status || null;
+    threeDSecure.eci = response.three_ds?.eci || null;
+    threeDSecure.acsInfoIndicator =
+      response.three_ds?.acs_info_indicator || null;
+    threeDSecure.acsReferenceNumber =
+      response.three_ds?.acs_reference_number || null;
+    threeDSecure.providerServerTransRef =
+      response.three_ds?.server_trans_ref || null;
+    threeDSecure.challengeMandated =
+      response.three_ds?.challenge_status === "MANDATED";
+    threeDSecure.payerAuthenticationRequest =
+      response.three_ds?.method_data?.encoded_method_data || null;
+    threeDSecure.issuerAcsUrl = response.three_ds?.method_url || null;
+    threeDSecure.authenticationSource =
+      response.three_ds?.authentication_source || null;
+
+    if (
+      response.three_ds?.acs_challenge_request_url &&
+      threeDSecure.status === Secure3dStatus.ChallengeRequired
+    ) {
+      threeDSecure.issuerAcsUrl = response.three_ds.acs_challenge_request_url;
+      threeDSecure.payerAuthenticationRequest =
+        response.three_ds?.challenge_value || null;
+    }
+    if (
+      threeDSecure.authenticationSource === AuthenticationSource.MobileSdk &&
+      response.three_ds?.mobile_data
+    ) {
+      const mobileData = response.three_ds.mobile_data;
+      threeDSecure.payerAuthenticationRequest =
+        mobileData?.acs_signed_content || null;
+      threeDSecure.acsInterface =
+        mobileData?.acs_rendering_type?.acs_interface || null;
+      threeDSecure.acsUiTemplate =
+        mobileData?.acs_rendering_type?.acs_ui_template || null;
+    }
+
+    threeDSecure.setCurrency(response.currency);
+    threeDSecure.setAmount(StringUtils.toAmount(response.amount));
+    threeDSecure.authenticationValue =
+      response.three_ds?.authentication_value || null;
+    threeDSecure.directoryServerTransactionId =
+      response.three_ds?.ds_trans_ref || null;
+    threeDSecure.acsTransactionId = response.three_ds?.acs_trans_ref || null;
+    threeDSecure.statusReason = response.three_ds?.status_reason || null;
+    threeDSecure.messageCategory = response.three_ds?.message_category || null;
+    threeDSecure.messageType = response.three_ds?.message_type || null;
+    threeDSecure.sessionDataFieldName =
+      response.three_ds?.session_data_field_name || null;
+    threeDSecure.challengeReturnUrl =
+      response.notifications?.challenge_return_url || null;
+    threeDSecure.liabilityShift = response.three_ds?.liability_shift || null;
+    threeDSecure.authenticationType =
+      response.three_ds?.authentication_request_type || null;
+    threeDSecure.decoupledResponseIndicator =
+      response.three_ds?.acs_decoupled_response_indicator || null;
+    threeDSecure.whitelistStatus = response.three_ds?.whitelist_status || null;
+
+    if (response.three_ds?.message_extension) {
+      for (const messageExtension of response.three_ds.message_extension) {
+        const msgItem = new MessageExtension();
+        msgItem.criticalityIndicator =
+          messageExtension.criticality_indicator || null;
+        msgItem.messageExtensionData = messageExtension.data
+          ? JSON.stringify(messageExtension.data)
+          : "";
+        msgItem.messageExtensionId = messageExtension.id || null;
+        msgItem.messageExtensionName = messageExtension.name || null;
+        threeDSecure.messageExtension.push(msgItem);
+      }
+    }
+
+    transaction.threeDSecure = threeDSecure;
+
+    return transaction;
   }
 }
