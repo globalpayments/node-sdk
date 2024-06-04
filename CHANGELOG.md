@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v3.6.0 (05/30/24):
+## Latest - v3.6.1 (06/04/24):
+
+### Enhancements:
+
+- [Portico] Add 'update token expiry' and 'delete token' functionality.
+
+## v3.6.0 (05/30/24):
 
 ### Enhancements:
 

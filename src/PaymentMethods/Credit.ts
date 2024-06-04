@@ -209,7 +209,7 @@ export abstract class Credit
       throw new BuilderError("Token cannot be null");
     }
 
-    await new ManagementBuilder(TransactionType.TokenUpdate)
+    await new ManagementBuilder(TransactionType.TokenDelete)
       .withPaymentMethod(this)
       .execute();
 

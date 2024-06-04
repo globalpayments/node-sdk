@@ -632,6 +632,24 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         }
       }
 
+     // Token Management
+     const tokenActions = subElement(root, "TokenActions");
+     if(builder.paymentMethod && builder.paymentMethod.isTokenizable && builder.transactionType === TransactionType.TokenUpdate) {
+        subElement(root,"TokenValue").append(cData(builder.paymentMethod.token));
+        const set = subElement(tokenActions, "Set");
+        const expMonth = subElement(set, "Attribute");
+        subElement(expMonth,"Name").append(cData("expmonth"));
+        subElement(expMonth,"Value").append(cData(builder.paymentMethod.expMonth));
+        const expYear = subElement(set,"Attribute");
+        subElement(expYear,"Name").append(cData("expyear"));
+        subElement(expYear,"Value").append(cData(builder.paymentMethod.expYear));
+
+     }
+     else if(builder.paymentMethod && builder.paymentMethod.isTokenizable && builder.transactionType === TransactionType.TokenDelete) {
+      subElement(root,"TokenValue").append(cData(builder.paymentMethod.token));
+      subElement(tokenActions, "Delete");
+     }
+
       if (
         builder.transactionType === TransactionType.Reversal ||
         builder.transactionType === TransactionType.Refund ||
@@ -963,7 +981,12 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       case TransactionType.Replace:
         return "GiftCardReplace";
       case TransactionType.Reward:
-        return "GiftCardReward";
+        return "GiftCardReward";      
+      case TransactionType.Tokenize:
+        return "Tokenize";
+      case TransactionType.TokenUpdate:
+      case TransactionType.TokenDelete:   
+        return "ManageTokens";
       default:
         break;
     }
