@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v3.6.1 (06/04/24):
+## Latest - v3.6.2 (06/07/24):
+
+### Enhancements:
+
+- [Portico] Fix code to conform to linting rules.
+
+## v3.6.1 (06/04/24):
 
 ### Enhancements:
 

@@ -15,44 +15,44 @@ ava.before(() => {
 });
 
 test("Should Update tokenized card expiry date", async (t) => {
-    t.plan(1);
+  t.plan(1);
 
-    const card = new CreditCardData();
-    card.number = "4263970000005262";
-    card.expMonth = "10";
-    card.expYear = "2020"
-    card.cvn = "131";
-    card.cardHolderName = "Megatron";
-    const response = await card.tokenize().execute();
-    const tokenId = response.token;
-  
-    const tokenizedCard = new CreditCardData();
-    tokenizedCard.token = tokenId;
-    const mdate = new Date();
-    tokenizedCard.expMonth = (mdate.getMonth() + 2).toString().padStart(2, "0");
-    tokenizedCard.expYear = (mdate.getFullYear() + 2).toString();
-  
-    const isTokenUpdated = await tokenizedCard.updateTokenExpiry();
+  const card = new CreditCardData();
+  card.number = "4263970000005262";
+  card.expMonth = "10";
+  card.expYear = "2020";
+  card.cvn = "131";
+  card.cardHolderName = "Megatron";
+  const response = await card.tokenize().execute();
+  const tokenId = response.token;
 
-   t.true(isTokenUpdated);
-  });
+  const tokenizedCard = new CreditCardData();
+  tokenizedCard.token = tokenId;
+  const mdate = new Date();
+  tokenizedCard.expMonth = (mdate.getMonth() + 2).toString().padStart(2, "0");
+  tokenizedCard.expYear = (mdate.getFullYear() + 2).toString();
 
-  test("Should delete tokenized card token", async (t) => {
-    t.plan(1);
+  const isTokenUpdated = await tokenizedCard.updateTokenExpiry();
 
-    const card = new CreditCardData();
-    card.number = "4263970000005262";
-    card.expMonth = "10";
-    card.expYear = "2020"
-    card.cvn = "131";
-    card.cardHolderName = "Tron";
-    const response = await card.tokenize().execute();
-    const tokenId = response.token;
-  
-    const tokenizedCard = new CreditCardData();
-    tokenizedCard.token = tokenId;
-  
-    const isTokenDeleted = await tokenizedCard.deleteToken();
+  t.true(isTokenUpdated);
+});
 
-    t.true(isTokenDeleted);
-  });
+test("Should delete tokenized card token", async (t) => {
+  t.plan(1);
+
+  const card = new CreditCardData();
+  card.number = "4263970000005262";
+  card.expMonth = "10";
+  card.expYear = "2020";
+  card.cvn = "131";
+  card.cardHolderName = "Tron";
+  const response = await card.tokenize().execute();
+  const tokenId = response.token;
+
+  const tokenizedCard = new CreditCardData();
+  tokenizedCard.token = tokenId;
+
+  const isTokenDeleted = await tokenizedCard.deleteToken();
+
+  t.true(isTokenDeleted);
+});

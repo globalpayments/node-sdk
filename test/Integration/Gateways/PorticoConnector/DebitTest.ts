@@ -104,12 +104,13 @@ test("Debit Reversal with fromId method", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00", response.responseMessage);
 
-
-
-  const reversalResponse = await Transaction.fromId(response.transactionId, PaymentMethodType.Debit)
+  const reversalResponse = await Transaction.fromId(
+    response.transactionId,
+    PaymentMethodType.Debit,
+  )
     .reverse()
     .execute();
 
   t.truthy(reversalResponse);
-  t.is(reversalResponse.responseCode,"00", reversalResponse.responseMessage);
+  t.is(reversalResponse.responseCode, "00", reversalResponse.responseMessage);
 });
