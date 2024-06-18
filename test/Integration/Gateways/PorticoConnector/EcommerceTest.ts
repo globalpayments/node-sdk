@@ -134,3 +134,41 @@ test.skip("ecom with walletdata", async (t) => {
   t.truthy(response);
   t.is(response.responseCode, "00");
 });
+
+/**
+ * This test demonstrates and tests behavior around requesting unique
+ * Multi-Use Tokens
+ *
+ * @return void
+ * @throws ApiException
+ * @throws InvalidArgumentException
+ * @throws ExpectationFailedException
+ */
+test("Should return a unique MUT token upon request", async (t) => {
+  t.plan(8);
+  const response1 = await card
+    .verify()
+    .withRequestMultiUseToken(true)
+    .execute();
+
+  t.truthy(response1);
+  t.truthy(response1.token);
+
+  const response2 = await card
+    .verify()
+    .withRequestMultiUseToken(true)
+    .execute();
+
+  t.truthy(response2);
+  t.truthy(response2.token);
+  t.is(response1.token, response2.token);
+
+  const response3 = await card
+    .verify()
+    .withRequestMultiUseToken(true, true)
+    .execute();
+
+  t.truthy(response3);
+  t.truthy(response3.token);
+  t.not(response1.token, response2.token);
+});

@@ -375,15 +375,17 @@ test("card holder enrolled challenge required v2 - with tokenized card", async (
 });
 
 test("card holder enrolled challenge required v2 - all preference value", async (t) => {
-  for (const value of Object.values(ChallengeRequestIndicator)) {
-    const secureEcom = await Secure3dService.checkEnrollment(card)
-      .withCurrency(currency)
-      .withAmount(amount)
-      .withChallengeRequestIndicator(value)
-      .execute();
+  Promise.all(
+    Object.values(ChallengeRequestIndicator).map(async (value) => {
+      const secureEcom = await Secure3dService.checkEnrollment(card)
+        .withCurrency(currency)
+        .withAmount(amount)
+        .withChallengeRequestIndicator(value)
+        .execute();
 
-    assertCheckEnrollment3DSV2(t, secureEcom);
-  }
+      assertCheckEnrollment3DSV2(t, secureEcom);
+    }),
+  );
 });
 
 test("card holder enrolled challenge required v2 - stored credentials", async (t) => {
@@ -406,15 +408,17 @@ test("card holder enrolled challenge required v2 - stored credentials", async (t
 });
 
 test("card holder enrolled challenge required v2 - all sources", async (t) => {
-  for (const value of Object.values(AuthenticationSource)) {
-    const secureEcom = await Secure3dService.checkEnrollment(card)
-      .withCurrency(currency)
-      .withAmount(amount)
-      .withAuthenticationSource(value)
-      .execute();
+  Promise.all(
+    Object.values(AuthenticationSource).map(async (value) => {
+      const secureEcom = await Secure3dService.checkEnrollment(card)
+        .withCurrency(currency)
+        .withAmount(amount)
+        .withAuthenticationSource(value)
+        .execute();
 
-    assertCheckEnrollment3DSV2(t, secureEcom);
-  }
+      assertCheckEnrollment3DSV2(t, secureEcom);
+    }),
+  );
 });
 
 test("card holder enrolled challenge required v2 - with null payment method", async (t) => {
@@ -516,15 +520,17 @@ test("card holder enrolled frictionless v2 - with tokenized card", async (t) => 
 test("card holder enrolled frictionless v2 - all preference values", async (t) => {
   card.number = GpApi3DSTestCards.CARD_AUTH_SUCCESSFUL_V2_2;
 
-  for (const value of Object.values(ChallengeRequestIndicator)) {
-    const secureEcom = await Secure3dService.checkEnrollment(card)
-      .withCurrency(currency)
-      .withAmount(amount)
-      .withChallengeRequestIndicator(value)
-      .execute();
+  Promise.all(
+    Object.values(ChallengeRequestIndicator).map(async (value) => {
+      const secureEcom = await Secure3dService.checkEnrollment(card)
+        .withCurrency(currency)
+        .withAmount(amount)
+        .withChallengeRequestIndicator(value)
+        .execute();
 
-    assertCheckEnrollment3DSV2(t, secureEcom);
-  }
+      assertCheckEnrollment3DSV2(t, secureEcom);
+    }),
+  );
 });
 
 test("card holder enrolled frictionless v2 - stored credentials", async (t) => {
@@ -549,15 +555,17 @@ test("card holder enrolled frictionless v2 - stored credentials", async (t) => {
 });
 
 test("card holder enrolled frictionless v2 - all sources", async (t) => {
-  for (const value of Object.values(AuthenticationSource)) {
-    const secureEcom = await Secure3dService.checkEnrollment(card)
-      .withCurrency(currency)
-      .withAmount(amount)
-      .withAuthenticationSource(value)
-      .execute();
+  Promise.all(
+    Object.values(AuthenticationSource).map(async (value) => {
+      const secureEcom = await Secure3dService.checkEnrollment(card)
+        .withCurrency(currency)
+        .withAmount(amount)
+        .withAuthenticationSource(value)
+        .execute();
 
-    assertCheckEnrollment3DSV2(t, secureEcom);
-  }
+      assertCheckEnrollment3DSV2(t, secureEcom);
+    }),
+  );
 });
 
 test("card holder challenge required - post result", async (t) => {
@@ -1055,85 +1063,89 @@ test("card holder challenge required - v2 initiate with delivery email", async (
 });
 
 test("card holder challenge required - v2 initiate all preference values", async (t) => {
-  for (const value of Object.values(ChallengeRequestIndicator)) {
-    const secureEcom = await Secure3dService.checkEnrollment(card)
-      .withCurrency(currency)
-      .withAmount(amount)
-      .execute();
-
-    assertCheckEnrollment3DSV2(t, secureEcom);
-
-    if (secureEcom instanceof ThreeDSecure) {
-      const formatedDate = `${date.getFullYear()}-${
-        date.getMonth() + 1
-      }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-
-      const response = await Secure3dService.initiateAuthentication(
-        card,
-        secureEcom,
-      )
-        .withAmount(amount)
+  Promise.all(
+    Object.values(ChallengeRequestIndicator).map(async (value) => {
+      const secureEcom = await Secure3dService.checkEnrollment(card)
         .withCurrency(currency)
-        .withAuthenticationSource(AuthenticationSource.Browser)
-        .withBrowserData(browserData)
-        .withMethodUrlCompletion(MethodUrlCompletion.Yes)
-        .withAddress(shippingAddress, AddressType.Shipping)
-        .withChallengeRequestIndicator(value)
-        .withOrderCreateDate(formatedDate)
+        .withAmount(amount)
         .execute();
 
-      t.truthy(response);
+      assertCheckEnrollment3DSV2(t, secureEcom);
 
-      assertInitiate3DSV2(t, response);
-    }
-  }
+      if (secureEcom instanceof ThreeDSecure) {
+        const formatedDate = `${date.getFullYear()}-${
+          date.getMonth() + 1
+        }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+
+        const response = await Secure3dService.initiateAuthentication(
+          card,
+          secureEcom,
+        )
+          .withAmount(amount)
+          .withCurrency(currency)
+          .withAuthenticationSource(AuthenticationSource.Browser)
+          .withBrowserData(browserData)
+          .withMethodUrlCompletion(MethodUrlCompletion.Yes)
+          .withAddress(shippingAddress, AddressType.Shipping)
+          .withChallengeRequestIndicator(value)
+          .withOrderCreateDate(formatedDate)
+          .execute();
+
+        t.truthy(response);
+
+        assertInitiate3DSV2(t, response);
+      }
+    }),
+  );
 });
 
 test("card holder challenge required - v2 initiate all source values", async (t) => {
   // fails 'MERCHANT_INITIATED and STORED_RECURRING failing, issue raised with UCP team.'
-  for (const value of Object.values(AuthenticationSource)) {
-    const storedCredentials = new StoredCredential();
-    storedCredentials.initiator = EnumMapping.mapStoredCredentialInitiator(
-      gatewayProvider,
-      StoredCredentialInitiator.Payer,
-    ) as StoredCredentialInitiator;
-    storedCredentials.type = StoredCredentialType.SPLIT_OR_DELAYED_SHIPMENT;
-    storedCredentials.sequence = StoredCredentialSequence.FIRST;
-    storedCredentials.reason = StoredCredentialReason.INCREMENTAL;
+  Promise.all(
+    Object.values(AuthenticationSource).map(async (value) => {
+      const storedCredentials = new StoredCredential();
+      storedCredentials.initiator = EnumMapping.mapStoredCredentialInitiator(
+        gatewayProvider,
+        StoredCredentialInitiator.Payer,
+      ) as StoredCredentialInitiator;
+      storedCredentials.type = StoredCredentialType.SPLIT_OR_DELAYED_SHIPMENT;
+      storedCredentials.sequence = StoredCredentialSequence.FIRST;
+      storedCredentials.reason = StoredCredentialReason.INCREMENTAL;
 
-    const secureEcom = await Secure3dService.checkEnrollment(card)
-      .withCurrency(currency)
-      .withAmount(amount)
-      .withAuthenticationSource(value)
-      .withStoredCredential(storedCredentials)
-      .execute();
-
-    assertCheckEnrollment3DSV2(t, secureEcom);
-
-    if (secureEcom instanceof ThreeDSecure) {
-      const formatedDate = `${date.getFullYear()}-${
-        date.getMonth() + 1
-      }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-
-      const response = await Secure3dService.initiateAuthentication(
-        card,
-        secureEcom,
-      )
-        .withAmount(amount)
+      const secureEcom = await Secure3dService.checkEnrollment(card)
         .withCurrency(currency)
+        .withAmount(amount)
         .withAuthenticationSource(value)
-        .withBrowserData(browserData)
-        .withMethodUrlCompletion(MethodUrlCompletion.Yes)
-        .withAddress(shippingAddress, AddressType.Shipping)
-        .withOrderCreateDate(formatedDate)
         .withStoredCredential(storedCredentials)
         .execute();
 
-      t.truthy(response);
+      assertCheckEnrollment3DSV2(t, secureEcom);
 
-      assertInitiate3DSV2(t, response);
-    }
-  }
+      if (secureEcom instanceof ThreeDSecure) {
+        const formatedDate = `${date.getFullYear()}-${
+          date.getMonth() + 1
+        }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+
+        const response = await Secure3dService.initiateAuthentication(
+          card,
+          secureEcom,
+        )
+          .withAmount(amount)
+          .withCurrency(currency)
+          .withAuthenticationSource(value)
+          .withBrowserData(browserData)
+          .withMethodUrlCompletion(MethodUrlCompletion.Yes)
+          .withAddress(shippingAddress, AddressType.Shipping)
+          .withOrderCreateDate(formatedDate)
+          .withStoredCredential(storedCredentials)
+          .execute();
+
+        t.truthy(response);
+
+        assertInitiate3DSV2(t, response);
+      }
+    }),
+  );
 });
 
 test("card holder enrolled challenge required - frictionless - v2 initiate", async (t) => {

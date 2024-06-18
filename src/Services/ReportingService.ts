@@ -1,5 +1,6 @@
 /* eslint-disable indent */
 import {
+  DepositSummary,
   PagedResult,
   ReportType,
   TransactionReportBuilder,
@@ -68,5 +69,22 @@ export class ReportingService {
     )
       .withTransactionId(transactionId)
       .withPaging(page, pageSize);
+  }
+
+  public static findDepositsPaged(
+    page: number,
+    pageSize: number,
+  ): TransactionReportBuilder<PagedResult> {
+    return new TransactionReportBuilder<PagedResult>(
+      ReportType.FindDepositsPaged,
+    ).withPaging(page, pageSize);
+  }
+
+  public static depositDetail(
+    depositId: string,
+  ): TransactionReportBuilder<DepositSummary> {
+    return new TransactionReportBuilder<DepositSummary>(
+      ReportType.DepositDetail,
+    ).withDepositId(depositId);
   }
 }

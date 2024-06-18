@@ -1,4 +1,5 @@
 import {
+  DepositSortProperty,
   NotImplementedError,
   ReportType,
   SearchCriteriaBuilder,
@@ -15,6 +16,7 @@ export class TransactionReportBuilder<T> extends ReportBuilder<T> {
   public startDate: Date;
   public transactionId: string;
   public searchCriteria: IDictionary<string>;
+  public depositOrderBy: DepositSortProperty;
 
   constructor(type: ReportType) {
     super(type);
@@ -76,6 +78,11 @@ export class TransactionReportBuilder<T> extends ReportBuilder<T> {
     return this;
   }
 
+  public withDepositId(depositId: string) {
+    this.searchBuilder.depositId = depositId;
+    return this;
+  }
+
   public where(criteria: string, value: any) {
     if (criteria !== undefined && value !== undefined) {
       if (this.searchCriteria == undefined) {
@@ -91,7 +98,10 @@ export class TransactionReportBuilder<T> extends ReportBuilder<T> {
   }
 
   public orderBy(
-    sortProperty: StoredPaymentMethodSortProperty | TransactionSortProperty,
+    sortProperty:
+      | StoredPaymentMethodSortProperty
+      | TransactionSortProperty
+      | DepositSortProperty,
     sortDirection: SortDirection = SortDirection.Desc,
   ) {
     this.order = sortDirection;
@@ -104,6 +114,10 @@ export class TransactionReportBuilder<T> extends ReportBuilder<T> {
       case ReportType.FindTransactionsPaged:
       case ReportType.FindSettlementTransactionsPaged:
         this.transactionOrderBy = sortProperty;
+        break;
+      case ReportType.FindDeposits:
+      case ReportType.FindDepositsPaged:
+        this.depositOrderBy = sortProperty as DepositSortProperty;
         break;
       default:
         throw new NotImplementedError();

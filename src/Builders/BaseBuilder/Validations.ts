@@ -2,7 +2,9 @@ import { BaseBuilder, BuilderError, TransactionBuilder } from "../../";
 import { ValidationTarget } from "./ValidationTarget";
 
 export interface IRuleSet {
-  [key: string]: ValidationTarget[][];
+  [key: string]: {
+    [key: string]: ValidationTarget[];
+  };
 }
 
 export class Validations {
@@ -14,11 +16,11 @@ export class Validations {
 
   public of(enumProperty: string, type: number): ValidationTarget {
     if (!this.rules.hasOwnProperty(enumProperty)) {
-      this.rules[enumProperty] = [];
+      this.rules[enumProperty] = {};
     }
 
     if (!this.rules[enumProperty].hasOwnProperty(type.toString())) {
-      this.rules[enumProperty][type] = [];
+      this.rules[enumProperty][type.toString()] = [];
     }
 
     const target = new ValidationTarget(this, enumProperty, type);
@@ -28,7 +30,7 @@ export class Validations {
 
   public validate<T>(builder: BaseBuilder<T>): void {
     Object.keys(this.rules).forEach((enumName) => {
-      this.rules[enumName].forEach((rules, iKey) => {
+      Object.keys(this.rules[enumName]).forEach((ruleType) => {
         let value: number = builder[enumName];
 
         if (
@@ -42,11 +44,11 @@ export class Validations {
           }
         }
 
-        if ((iKey & value) !== value) {
+        if ((Number(ruleType) & value) !== value) {
           return;
         }
 
-        for (const validation of rules) {
+        for (const validation of this.rules[enumName][ruleType]) {
           if (!validation.clause) {
             continue;
           }

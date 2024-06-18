@@ -60,6 +60,14 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public recurringSequence: RecurringSequence;
   public recurringType: RecurringType;
   public requestMultiUseToken: boolean;
+  /**
+   * Used in conjunction with requestMultiUseToken to request a unique token
+   * For use with Portico Gateway only
+   *
+   * @internal
+   * @var bool
+   */
+  public requestUniqueToken: boolean;
   public replacementCard: GiftCard;
   public scheduleId: string;
   public shippingAddress: Address;
@@ -675,10 +683,14 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
    * @param requestMultiUseToken The request flag
    * @returns AuthorizationBuilder
    */
-  public withRequestMultiUseToken(requestMultiUseToken?: boolean) {
+  public withRequestMultiUseToken(
+    requestMultiUseToken?: boolean,
+    requestUniqueToken: boolean = false,
+  ): AuthorizationBuilder {
     if (requestMultiUseToken !== undefined) {
       this.requestMultiUseToken = requestMultiUseToken;
     }
+    this.requestUniqueToken = requestUniqueToken;
     return this;
   }
 

@@ -484,6 +484,12 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       subElement(cardData, "TokenRequest").append(
         cData(builder.requestMultiUseToken ? "Y" : "N"),
       );
+
+      if (builder.requestUniqueToken) {
+        const tokenParameters = subElement(cardData, "TokenParameters");
+        const tokenMapping = subElement(tokenParameters, "Mapping");
+        tokenMapping.append(cData("UNIQUE"));
+      }
     }
 
     if (builder.paymentMethod.isBalanceable && builder.balanceInquiryType) {

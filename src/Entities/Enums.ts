@@ -602,6 +602,7 @@ export enum ReportType {
   OpenAuths = 1 << 5,
   Search = 1 << 6,
   TransactionDetail = 1 << 7,
+  FindDeposits = 1 << 8,
   DepositDetail = 1 << 11,
   FindTransactionsPaged = 1 << 15,
   FindSettlementTransactionsPaged = 1 << 16,

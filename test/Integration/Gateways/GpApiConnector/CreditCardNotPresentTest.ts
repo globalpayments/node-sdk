@@ -40,12 +40,6 @@ card.expYear = (date.getFullYear() + 1).toString();
 card.cvn = "131";
 card.cardHolderName = "James Mason";
 
-test.before(() => {
-  ServicesContainer.configureService(
-    BaseGpApiTestConfig.gpApiSetupConfig(Channel.CardNotPresent),
-  );
-});
-
 test.beforeEach(() => {
   ServicesContainer.configureService(
     BaseGpApiTestConfig.gpApiSetupConfig(Channel.CardNotPresent),
@@ -71,6 +65,7 @@ test("credit sale", async (t) => {
   t.is("SUCCESS", response.responseCode);
   t.is(TransactionStatus.CAPTURED as string, response.responseMessage);
   t.falsy(response.payerDetails);
+  t.is("123456", response.authorizationCode as string);
 });
 
 test("credit sale with fingerprint", async (t) => {
@@ -97,6 +92,7 @@ test("credit sale with fingerprint", async (t) => {
   t.is(TransactionStatus.CAPTURED as string, response.responseMessage);
   t.truthy(response.fingerprint);
   t.truthy(response.fingerprintIndicator);
+  t.is("123456", response.authorizationCode as string);
 });
 
 test("credit sale with fingerprint success", async (t) => {
@@ -114,6 +110,7 @@ test("credit sale with fingerprint success", async (t) => {
   t.is(TransactionStatus.CAPTURED as string, response.responseMessage);
   t.truthy(response.fingerprint);
   t.truthy(response.fingerprintIndicator);
+  t.is("00", response.cardIssuerResponse.result);
 });
 
 test("credit authorization", async (t) => {
@@ -140,12 +137,14 @@ test("credit authorization then capture", async (t) => {
   t.truthy(transaction);
   t.is("SUCCESS", transaction.responseCode);
   t.is(TransactionStatus.PREAUTHORIZED as string, transaction.responseMessage);
+  t.is("123456", transaction.authorizationCode as string);
 
   const capture = await transaction.capture(30).withGratuity(12).execute();
 
   t.truthy(capture);
   t.is("SUCCESS", capture.responseCode);
   t.is(TransactionStatus.CAPTURED as string, capture.responseMessage);
+  t.is("000000", capture.authorizationCode as string);
 });
 
 test("credit authorization then capture with fingerprint", async (t) => {
@@ -858,7 +857,7 @@ test("transaction then refund", async (t) => {
   );
 });
 
-test("transaction then reverersal", async (t) => {
+test("transaction then reversal", async (t) => {
   const transaction = await card
     .charge(20)
     .withCurrency(currency)
@@ -876,7 +875,7 @@ test("transaction then reverersal", async (t) => {
   t.is(TransactionStatus.REVERSED as string, reverse.responseMessage);
 });
 
-test("transaction then default reverersal", async (t) => {
+test("transaction then default reversal", async (t) => {
   const transaction = await card
     .charge(20)
     .withCurrency(currency)
@@ -894,7 +893,7 @@ test("transaction then default reverersal", async (t) => {
   t.is(TransactionStatus.REVERSED as string, reverse.responseMessage);
 });
 
-test("transaction then reverersal with idempotency key", async (t) => {
+test("transaction then reversal with idempotency key", async (t) => {
   const idempotencyKey = GenerationUtils.getGuuid();
   const transaction = await card
     .charge(20)
@@ -919,7 +918,7 @@ test("transaction then reverersal with idempotency key", async (t) => {
   t.true(error?.message.includes("Idempotency Key seen before"));
 });
 
-test("transaction then partial reverersal", async (t) => {
+test("transaction then partial reversal", async (t) => {
   const transaction = await card
     .charge(20)
     .withCurrency(currency)

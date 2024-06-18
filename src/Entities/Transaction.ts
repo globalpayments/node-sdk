@@ -1,5 +1,6 @@
 import {
   Card,
+  CardIssuerResponse,
   GiftCard,
   ManagementBuilder,
   PayerDetails,
@@ -14,6 +15,10 @@ import {
 import { PayFacResponseData } from "./ProFac/PayFacResponseData";
 export class Transaction {
   public authorizedAmount: string;
+  /**
+   * The address verification service (AVS) address response code.
+   */
+  public avsAddressResponse: string;
   public balanceAmount: string;
   public pointsBalanceAmount: string;
   public cardBrandTransactionId: string;
@@ -49,6 +54,14 @@ export class Transaction {
   public cardDetails: Card;
   public threeDSecure: ThreeDSecure;
 
+  /**
+   * Used for ACH transactions
+   */
+  public accountNumberLast4: string;
+  public accountType: string;
+
+  public cardIssuerResponse: CardIssuerResponse;
+
   get transactionId(): string {
     return this.transactionReference?.transactionId;
   }
@@ -58,6 +71,38 @@ export class Transaction {
       this.transactionReference = new TransactionReference();
     }
     this.transactionReference.transactionId = id;
+  }
+
+  get paymentMethodType(): PaymentMethodType {
+    if (this.transactionReference) {
+      return this.transactionReference.paymentMethodType;
+    }
+
+    return PaymentMethodType.Credit;
+  }
+
+  set paymentMethodType(paymentMethodType: PaymentMethodType) {
+    if (!(this.transactionReference instanceof TransactionReference)) {
+      this.transactionReference = new TransactionReference();
+    }
+
+    this.transactionReference.paymentMethodType = paymentMethodType;
+  }
+
+  get authorizationCode(): string | null {
+    if (this.transactionReference) {
+      return this.transactionReference.authCode;
+    }
+
+    return null;
+  }
+
+  set authorizationCode(authCode: string) {
+    if (!(this.transactionReference instanceof TransactionReference)) {
+      this.transactionReference = new TransactionReference();
+    }
+
+    this.transactionReference.authCode = authCode;
   }
 
   public static fromId(

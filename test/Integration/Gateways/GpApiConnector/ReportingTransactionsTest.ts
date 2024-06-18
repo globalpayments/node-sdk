@@ -23,6 +23,8 @@ startDate.setHours(0);
 startDate.setMinutes(0);
 startDate.setSeconds(0);
 
+endDate.setDate(endDate.getDate() - 30);
+
 let batchId: string;
 
 let amount: number;

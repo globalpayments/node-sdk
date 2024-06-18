@@ -98,76 +98,78 @@ test("frictionless full cycle v2", async (t) => {
     ],
   };
 
-  for (const testCase of Object.keys(frictionlessSuccessfull3DSV2CardTests)) {
-    card.number = frictionlessSuccessfull3DSV2CardTests[testCase][0];
+  Promise.all(
+    Object.keys(frictionlessSuccessfull3DSV2CardTests).map(async (testCase) => {
+      card.number = frictionlessSuccessfull3DSV2CardTests[testCase][0];
 
-    const secureEcom = await Secure3dService.checkEnrollment(card)
-      .withCurrency(currency)
-      .withAmount(amount)
-      .execute();
-
-    t.truthy(secureEcom);
-
-    if (!(secureEcom instanceof Transaction)) {
-      t.is(Secure3dStatus.Enrolled, secureEcom?.enrolled);
-      t.is(Secure3dVersion.TWO, secureEcom.getVersion());
-      t.is(Secure3dStatus.Available, secureEcom.status);
-
-      const formatedDate = `${date.getFullYear()}-${
-        date.getMonth() + 1
-      }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-
-      const initAuth = await Secure3dService.initiateAuthentication(
-        card,
-        secureEcom,
-      )
-        .withAmount(amount)
+      const secureEcom = await Secure3dService.checkEnrollment(card)
         .withCurrency(currency)
-        .withAuthenticationSource(AuthenticationSource.Browser)
-        .withMethodUrlCompletion(MethodUrlCompletion.Yes)
-        .withOrderCreateDate(formatedDate)
-        .withAddress(shippingAddress, AddressType.Shipping)
-        .withOrderTransactionType(OrderTransactionType.GoodsServicePurchase)
-        .withBrowserData(browserData)
-        .execute();
-
-      t.truthy(initAuth);
-      t.is(
-        frictionlessSuccessfull3DSV2CardTests[testCase][1],
-        initAuth instanceof ThreeDSecure && initAuth.status,
-      );
-
-      const secureEcom2 = await Secure3dService.getAuthenticationData()
-        .withServerTransactionId(secureEcom.serverTransactionId)
         .withAmount(amount)
         .execute();
 
-      card.threeDSecure = secureEcom2;
+      t.truthy(secureEcom);
 
-      if (secureEcom2 instanceof ThreeDSecure) {
+      if (!(secureEcom instanceof Transaction)) {
+        t.is(Secure3dStatus.Enrolled, secureEcom?.enrolled);
+        t.is(Secure3dVersion.TWO, secureEcom.getVersion());
+        t.is(Secure3dStatus.Available, secureEcom.status);
+
+        const formatedDate = `${date.getFullYear()}-${
+          date.getMonth() + 1
+        }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+
+        const initAuth = await Secure3dService.initiateAuthentication(
+          card,
+          secureEcom,
+        )
+          .withAmount(amount)
+          .withCurrency(currency)
+          .withAuthenticationSource(AuthenticationSource.Browser)
+          .withMethodUrlCompletion(MethodUrlCompletion.Yes)
+          .withOrderCreateDate(formatedDate)
+          .withAddress(shippingAddress, AddressType.Shipping)
+          .withOrderTransactionType(OrderTransactionType.GoodsServicePurchase)
+          .withBrowserData(browserData)
+          .execute();
+
+        t.truthy(initAuth);
         t.is(
           frictionlessSuccessfull3DSV2CardTests[testCase][1],
-          secureEcom2.status,
+          initAuth instanceof ThreeDSecure && initAuth.status,
         );
-        t.is("YES", secureEcom2.liabilityShift);
+
+        const secureEcom2 = await Secure3dService.getAuthenticationData()
+          .withServerTransactionId(secureEcom.serverTransactionId)
+          .withAmount(amount)
+          .execute();
+
+        card.threeDSecure = secureEcom2;
+
+        if (secureEcom2 instanceof ThreeDSecure) {
+          t.is(
+            frictionlessSuccessfull3DSV2CardTests[testCase][1],
+            secureEcom2.status,
+          );
+          t.is("YES", secureEcom2.liabilityShift);
+        }
+
+        const response = await card.verify().withCurrency(currency).execute();
+
+        t.truthy(response);
+        t.is("SUCCESS", response.responseCode);
+        t.is("VERIFIED", response.responseMessage);
+
+        const transaction = await card
+          .charge(amount)
+          .withCurrency(currency)
+          .execute();
+
+        t.truthy(transaction);
+        t.is("SUCCESS", transaction.responseCode);
+        t.is(TransactionStatus.CAPTURED, transaction.responseMessage);
       }
-
-      const response = await card.verify().withCurrency(currency).execute();
-
-      t.truthy(response);
-      t.is("SUCCESS", response.responseCode);
-      t.is("VERIFIED", response.responseMessage);
-
-      const transaction = await card
-        .charge(amount)
-        .withCurrency(currency)
-        .execute();
-
-      t.truthy(transaction);
-      t.is("SUCCESS", transaction.responseCode);
-      t.is(TransactionStatus.CAPTURED, transaction.responseMessage);
-    }
-  }
+    }),
+  );
 });
 
 test("frictionless full cycle v2 - failed", async (t) => {
@@ -209,74 +211,76 @@ test("frictionless full cycle v2 - failed", async (t) => {
     ],
   };
 
-  for (const testCase of Object.keys(frictionlessSuccessfull3DSV2CardTests)) {
-    card.number = frictionlessSuccessfull3DSV2CardTests[testCase][0];
+  Promise.all(
+    Object.keys(frictionlessSuccessfull3DSV2CardTests).map(async (testCase) => {
+      card.number = frictionlessSuccessfull3DSV2CardTests[testCase][0];
 
-    const secureEcom = await Secure3dService.checkEnrollment(card)
-      .withCurrency(currency)
-      .withAmount(amount)
-      .execute();
-
-    t.truthy(secureEcom);
-
-    if (!(secureEcom instanceof Transaction)) {
-      t.is(Secure3dStatus.Enrolled, secureEcom?.enrolled);
-      t.is(Secure3dVersion.TWO, secureEcom.getVersion());
-      t.is(Secure3dStatus.Available, secureEcom.status);
-
-      const formatedDate = `${date.getFullYear()}-${
-        date.getMonth() + 1
-      }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-
-      const initAuth = await Secure3dService.initiateAuthentication(
-        card,
-        secureEcom,
-      )
-        .withAmount(amount)
+      const secureEcom = await Secure3dService.checkEnrollment(card)
         .withCurrency(currency)
-        .withAuthenticationSource(AuthenticationSource.Browser)
-        .withMethodUrlCompletion(MethodUrlCompletion.Yes)
-        .withOrderCreateDate(formatedDate)
-        .withAddress(shippingAddress, AddressType.Shipping)
-        .withBrowserData(browserData)
-        .execute();
-
-      t.truthy(initAuth);
-      t.is(
-        frictionlessSuccessfull3DSV2CardTests[testCase][1],
-        initAuth instanceof ThreeDSecure && initAuth.status,
-      );
-
-      const secureEcom2 = await Secure3dService.getAuthenticationData()
-        .withServerTransactionId(secureEcom.serverTransactionId)
         .withAmount(amount)
         .execute();
 
-      const liabilityShift =
-        frictionlessSuccessfull3DSV2CardTests[testCase][1] ==
-        Secure3dStatus.SuccessAttemptMade
-          ? "YES"
-          : "NO";
-      card.threeDSecure = secureEcom2;
+      t.truthy(secureEcom);
 
-      if (secureEcom2 instanceof ThreeDSecure) {
+      if (!(secureEcom instanceof Transaction)) {
+        t.is(Secure3dStatus.Enrolled, secureEcom?.enrolled);
+        t.is(Secure3dVersion.TWO, secureEcom.getVersion());
+        t.is(Secure3dStatus.Available, secureEcom.status);
+
+        const formatedDate = `${date.getFullYear()}-${
+          date.getMonth() + 1
+        }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+
+        const initAuth = await Secure3dService.initiateAuthentication(
+          card,
+          secureEcom,
+        )
+          .withAmount(amount)
+          .withCurrency(currency)
+          .withAuthenticationSource(AuthenticationSource.Browser)
+          .withMethodUrlCompletion(MethodUrlCompletion.Yes)
+          .withOrderCreateDate(formatedDate)
+          .withAddress(shippingAddress, AddressType.Shipping)
+          .withBrowserData(browserData)
+          .execute();
+
+        t.truthy(initAuth);
         t.is(
           frictionlessSuccessfull3DSV2CardTests[testCase][1],
-          secureEcom2.status,
+          initAuth instanceof ThreeDSecure && initAuth.status,
         );
-        t.is(liabilityShift, secureEcom2.liabilityShift);
+
+        const secureEcom2 = await Secure3dService.getAuthenticationData()
+          .withServerTransactionId(secureEcom.serverTransactionId)
+          .withAmount(amount)
+          .execute();
+
+        const liabilityShift =
+          frictionlessSuccessfull3DSV2CardTests[testCase][1] ==
+          Secure3dStatus.SuccessAttemptMade
+            ? "YES"
+            : "NO";
+        card.threeDSecure = secureEcom2;
+
+        if (secureEcom2 instanceof ThreeDSecure) {
+          t.is(
+            frictionlessSuccessfull3DSV2CardTests[testCase][1],
+            secureEcom2.status,
+          );
+          t.is(liabilityShift, secureEcom2.liabilityShift);
+        }
+
+        const transaction = await card
+          .charge(amount)
+          .withCurrency(currency)
+          .execute();
+
+        t.truthy(transaction);
+        t.is("SUCCESS", transaction.responseCode);
+        t.is(TransactionStatus.CAPTURED, transaction.responseMessage);
       }
-
-      const transaction = await card
-        .charge(amount)
-        .withCurrency(currency)
-        .execute();
-
-      t.truthy(transaction);
-      t.is("SUCCESS", transaction.responseCode);
-      t.is(TransactionStatus.CAPTURED, transaction.responseMessage);
-    }
-  }
+    }),
+  );
 });
 
 test("card holder enrolled - challenge required - v2", async (t) => {
@@ -294,76 +298,78 @@ test("card holder enrolled - challenge required - v2", async (t) => {
     ],
   };
 
-  for (const testCase of Object.keys(challengeSuccessful3DSV2CardTests)) {
-    card.number = challengeSuccessful3DSV2CardTests[testCase][0];
+  Promise.all(
+    Object.keys(challengeSuccessful3DSV2CardTests).map(async (testCase) => {
+      card.number = challengeSuccessful3DSV2CardTests[testCase][0];
 
-    const secureEcom = await Secure3dService.checkEnrollment(card)
-      .withCurrency(currency)
-      .withAmount(amount)
-      .execute();
-
-    t.truthy(secureEcom);
-
-    if (!(secureEcom instanceof Transaction)) {
-      t.is(Secure3dStatus.Enrolled, secureEcom?.enrolled);
-      t.is(Secure3dVersion.TWO, secureEcom.getVersion());
-      t.is(Secure3dStatus.Available, secureEcom.status);
-
-      const formatedDate = `${date.getFullYear()}-${
-        date.getMonth() + 1
-      }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-
-      const initAuth = await Secure3dService.initiateAuthentication(
-        card,
-        secureEcom,
-      )
-        .withAmount(amount)
+      const secureEcom = await Secure3dService.checkEnrollment(card)
         .withCurrency(currency)
-        .withAuthenticationSource(AuthenticationSource.Browser)
-        .withMethodUrlCompletion(MethodUrlCompletion.Yes)
-        .withOrderCreateDate(formatedDate)
-        .withAddress(shippingAddress, AddressType.Shipping)
-        .withBrowserData(browserData)
+        .withAmount(amount)
         .execute();
 
-      t.truthy(initAuth);
-      if (initAuth instanceof ThreeDSecure) {
-        t.is(Secure3dStatus.ChallengeRequired, initAuth.status);
-        t.truthy(initAuth.issuerAcsUrl);
-        t.truthy(initAuth.payerAuthenticationRequest);
+      t.truthy(secureEcom);
 
-        const authClient = new ThreeDSecureAcsClient(secureEcom.issuerAcsUrl);
-        authClient.setGatewayProvider(gatewayProvider);
-        const authResponse = await authClient.authenticate_v2(initAuth);
-        if (authResponse instanceof AcsResponse) {
-          t.true(authResponse.getStatus());
-          t.truthy(authResponse.getMerchantData());
+      if (!(secureEcom instanceof Transaction)) {
+        t.is(Secure3dStatus.Enrolled, secureEcom?.enrolled);
+        t.is(Secure3dVersion.TWO, secureEcom.getVersion());
+        t.is(Secure3dStatus.Available, secureEcom.status);
 
-          const secureEcom2 = await Secure3dService.getAuthenticationData()
-            .withServerTransactionId(authResponse.getMerchantData())
-            .withAmount(amount)
-            .execute();
-          card.threeDSecure = secureEcom2;
-          if (secureEcom2 instanceof ThreeDSecure) {
-            t.is(
-              challengeSuccessful3DSV2CardTests[testCase][1],
-              secureEcom2.status,
-            );
-            t.is("YES", secureEcom2.liabilityShift);
+        const formatedDate = `${date.getFullYear()}-${
+          date.getMonth() + 1
+        }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+
+        const initAuth = await Secure3dService.initiateAuthentication(
+          card,
+          secureEcom,
+        )
+          .withAmount(amount)
+          .withCurrency(currency)
+          .withAuthenticationSource(AuthenticationSource.Browser)
+          .withMethodUrlCompletion(MethodUrlCompletion.Yes)
+          .withOrderCreateDate(formatedDate)
+          .withAddress(shippingAddress, AddressType.Shipping)
+          .withBrowserData(browserData)
+          .execute();
+
+        t.truthy(initAuth);
+        if (initAuth instanceof ThreeDSecure) {
+          t.is(Secure3dStatus.ChallengeRequired, initAuth.status);
+          t.truthy(initAuth.issuerAcsUrl);
+          t.truthy(initAuth.payerAuthenticationRequest);
+
+          const authClient = new ThreeDSecureAcsClient(secureEcom.issuerAcsUrl);
+          authClient.setGatewayProvider(gatewayProvider);
+          const authResponse = await authClient.authenticate_v2(initAuth);
+          if (authResponse instanceof AcsResponse) {
+            t.true(authResponse.getStatus());
+            t.truthy(authResponse.getMerchantData());
+
+            const secureEcom2 = await Secure3dService.getAuthenticationData()
+              .withServerTransactionId(authResponse.getMerchantData())
+              .withAmount(amount)
+              .execute();
+            card.threeDSecure = secureEcom2;
+            if (secureEcom2 instanceof ThreeDSecure) {
+              t.is(
+                challengeSuccessful3DSV2CardTests[testCase][1],
+                secureEcom2.status,
+              );
+              t.is("YES", secureEcom2.liabilityShift);
+            }
+
+            const transaction = await card
+              .charge(amount)
+              .withCurrency(currency)
+              .execute();
+
+            t.truthy(transaction);
+            t.is("SUCCESS", transaction.responseCode);
+            t.is(TransactionStatus.CAPTURED, transaction.responseMessage);
           }
-
-          const transaction = await card
-            .charge(amount)
-            .withCurrency(currency)
-            .execute();
-
-          t.truthy(transaction);
-          t.is("SUCCESS", transaction.responseCode);
-          t.is(TransactionStatus.CAPTURED, transaction.responseMessage);
         }
       }
-    }
-  }
+    }),
+  );
 });
 
 test("card holder enrolled - challenge required - get results failed - v2", async (t) => {

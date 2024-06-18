@@ -8,6 +8,7 @@ export * from "./CustomerDocument";
 export * from "./EcommerceInfo";
 export * from "./EncryptionData";
 export * from "./Enums";
+export * from "./Enums/DepositSortProperty";
 export * from "./Enums/IsoCountries";
 export * from "./Errors";
 export * from "./FraudRule";

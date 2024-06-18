@@ -1,5 +1,6 @@
 import {
   AuthenticationSource,
+  DepositSummary,
   MessageExtension,
   Secure3dStatus,
   Secure3dVersion,
@@ -92,10 +93,11 @@ export class GpApiMapping {
   }
 
   private static mapPaymentMethodTransactionDetails(
-    transaction: any,
+    transaction: Transaction,
     paymentMethodResponse: any,
   ): void {
-    transaction.authorizationCode = paymentMethodResponse.result ?? null;
+    let cardIssuerResponse = new CardIssuerResponse();
+    cardIssuerResponse.result = paymentMethodResponse.result ?? null;
 
     if (paymentMethodResponse.id) {
       transaction.token = paymentMethodResponse.id;
@@ -120,11 +122,14 @@ export class GpApiMapping {
       transaction.avsResponseCode = card.avs_postal_code_result ?? null;
       transaction.avsAddressResponse = card.avs_address_result ?? null;
       transaction.avsResponseMessage = card.avs_action ?? null;
+      transaction.authorizationCode = card.authcode ?? null;
 
       if (card.provider) {
-        GpApiMapping.mapCardIssuerResponse(transaction, card.provider);
+        cardIssuerResponse = GpApiMapping.mapCardIssuerResponse(card.provider);
       }
     }
+
+    transaction.cardIssuerResponse = cardIssuerResponse;
 
     if (
       paymentMethodResponse.apm &&
@@ -163,20 +168,17 @@ export class GpApiMapping {
     }
   }
 
-  private static mapCardIssuerResponse(
-    transaction: any,
-    cardIssuerResponse: any,
-  ): void {
-    transaction.cardIssuerResponse = new CardIssuerResponse();
-    transaction.cardIssuerResponse.result = cardIssuerResponse.result ?? null;
-    transaction.cardIssuerResponse.avsResult =
-      cardIssuerResponse.avs_result ?? null;
-    transaction.cardIssuerResponse.cvvResult =
-      cardIssuerResponse.cvv_result ?? null;
-    transaction.cardIssuerResponse.avsAddressResult =
-      cardIssuerResponse.avs_address_result ?? null;
-    transaction.cardIssuerResponse.avsPostalCodeResult =
-      cardIssuerResponse.avs_postal_code_result ?? null;
+  private static mapCardIssuerResponse(cardProvider: any): CardIssuerResponse {
+    const cardIssuerResponse = new CardIssuerResponse();
+    cardIssuerResponse.result = cardProvider.result ?? null;
+    cardIssuerResponse.avsResult = cardProvider.avs_result ?? null;
+    cardIssuerResponse.cvvResult = cardProvider.cvv_result ?? null;
+    cardIssuerResponse.avsAddressResult =
+      cardProvider.avs_address_result ?? null;
+    cardIssuerResponse.avsPostalCodeResult =
+      cardProvider.avs_postal_code_result ?? null;
+
+    return cardIssuerResponse;
   }
 
   private static mapAddressObject(address: any, type: any = null): Address {
@@ -222,6 +224,15 @@ export class GpApiMapping {
         report = this.setPagingInfo(response);
         report.result = response.transactions.map((transaction: any) =>
           GpApiMapping.mapTransactionSummary(transaction),
+        );
+        break;
+      case ReportType.DepositDetail:
+        report = this.mapDepositSummary(response);
+        break;
+      case ReportType.FindDepositsPaged:
+        report = this.setPagingInfo(response);
+        report.result = response.deposits.map((deposit: any) =>
+          this.mapDepositSummary(deposit),
         );
         break;
       default:
@@ -322,7 +333,7 @@ export class GpApiMapping {
   }
 
   private static mapSystemResponse(
-    summary: TransactionSummary,
+    summary: TransactionSummary | DepositSummary,
     system: any,
   ): void {
     if (!system) {
@@ -481,5 +492,50 @@ export class GpApiMapping {
     transaction.threeDSecure = threeDSecure;
 
     return transaction;
+  }
+
+  public static mapDepositSummary(response: any): DepositSummary {
+    const summary = new DepositSummary();
+    summary.depositId = response.id;
+    summary.depositDate = new Date(response.time_created);
+    summary.status = response.status;
+    summary.type = response.funding_type;
+    summary.amount = StringUtils.toAmount(response.amount);
+    summary.currency = response.currency;
+
+    if (response.system) {
+      this.mapSystemResponse(summary, response.system);
+    }
+
+    if (response.sales) {
+      const sales = response.sales;
+      summary.salesTotalCount = sales.count || 0;
+      summary.salesTotalAmount = StringUtils.toAmount(sales.amount);
+    }
+
+    if (response.refunds) {
+      const refunds = response.refunds;
+      summary.refundsTotalCount = refunds.count || 0;
+      summary.refundsTotalAmount = StringUtils.toAmount(refunds.amount);
+    }
+
+    if (response.disputes) {
+      const disputes = response.disputes;
+      summary.chargebackTotalCount = disputes.chargebacks?.count || 0;
+      summary.chargebackTotalAmount = StringUtils.toAmount(
+        disputes.chargebacks.amount,
+      );
+
+      summary.adjustmentTotalCount = disputes.reversals?.count || 0;
+      summary.adjustmentTotalAmount = StringUtils.toAmount(
+        disputes.reversals.amount,
+      );
+    }
+
+    // if (response.fees) {
+    summary.feesTotalAmount = StringUtils.toAmount(response?.fees?.amount);
+    // }
+
+    return summary;
   }
 }

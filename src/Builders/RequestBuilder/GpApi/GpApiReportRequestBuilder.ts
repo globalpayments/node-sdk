@@ -145,6 +145,47 @@ export class GpApiReportRequestBuilder implements IRequestBuilder {
         queryParams["system.hierarchy"] = builder.searchBuilder.systemHierarchy;
         queryParams = { ...queryParams, ...this.getTransactionParams(builder) };
         break;
+
+      case ReportType.FindDepositsPaged:
+        endpoint = GpApiRequest.DEPOSITS_ENDPOINT;
+        verb = "GET";
+
+        queryParams["account_name"] = config.accessTokenInfo.dataAccountName;
+        queryParams["account_id"] = config.accessTokenInfo.dataAccountID;
+        queryParams["order_by"] = builder.depositOrderBy;
+        queryParams["order"] = builder.order;
+        queryParams["amount"] = builder.searchBuilder?.amount
+          ? StringUtils.toNumeric(builder.searchBuilder.amount.toString())
+          : undefined;
+        if (builder.searchBuilder.startDate) {
+          queryParams["from_time_created"] = new Date(
+            builder.searchBuilder.startDate,
+          )
+            .toISOString()
+            .split("T")[0];
+        }
+        if (builder.searchBuilder.endDate) {
+          queryParams["to_time_created"] = new Date(
+            builder.searchBuilder.endDate,
+          )
+            .toISOString()
+            .split("T")[0];
+        }
+
+        queryParams["id"] = builder.searchBuilder.depositId;
+        queryParams["status"] = builder.searchBuilder.depositStatus;
+        queryParams["masked_account_number_last4"] =
+          builder.searchBuilder.accountNumberLastFour;
+        queryParams["system.mid"] = builder.searchBuilder.merchantId;
+        queryParams["system.hierarchy"] = builder.searchBuilder.systemHierarchy;
+        break;
+      case ReportType.DepositDetail:
+        endpoint =
+          GpApiRequest.DEPOSITS_ENDPOINT +
+          "/" +
+          builder.searchBuilder.depositId;
+        verb = "GET";
+        break;
       default:
         throw new NotImplementedError();
     }

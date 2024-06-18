@@ -1,6 +1,16 @@
 # Changelog
 
-## Latest - v3.6.2 (06/07/24):
+## Latest - v3.7.0 (06/18/24):
+
+### Enhancements:
+
+- [GP-API] Add deposits feature
+- [GP-API] Fix authorization code mapping
+- [GP-API] Improve testing
+- [Validations] Improve validations mechanism
+- [Portico] Added support for unique MUT request.
+
+## v3.6.2 (06/07/24):
 
 ### Enhancements:
 
