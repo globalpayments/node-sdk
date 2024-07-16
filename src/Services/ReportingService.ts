@@ -1,6 +1,7 @@
 /* eslint-disable indent */
 import {
   DepositSummary,
+  DisputeSummary,
   PagedResult,
   ReportType,
   TransactionReportBuilder,
@@ -57,6 +58,48 @@ export class ReportingService {
     return new TransactionReportBuilder<TransactionSummary>(
       ReportType.StoredPaymentMethodDetail,
     ).withStoredPaymentMethodId(paymentMethodId);
+  }
+
+  public static disputeDetail(
+    disputeId: string,
+  ): TransactionReportBuilder<DisputeSummary> {
+    return new TransactionReportBuilder<DisputeSummary>(
+      ReportType.DisputeDetail,
+    ).withDisputeId(disputeId);
+  }
+
+  public static findDisputesPaged(
+    page: number,
+    pageSize: number,
+  ): TransactionReportBuilder<PagedResult> {
+    return new TransactionReportBuilder<PagedResult>(
+      ReportType.FindDisputesPaged,
+    ).withPaging(page, pageSize);
+  }
+
+  public static documentDisputeDetail(
+    disputeId: string | null,
+  ): TransactionReportBuilder<PagedResult> {
+    return new TransactionReportBuilder<PagedResult>(
+      ReportType.DocumentDisputeDetail,
+    ).withDisputeId(disputeId);
+  }
+
+  public static settlementDisputeDetail(
+    settlementDisputeId: string,
+  ): TransactionReportBuilder<DisputeSummary> {
+    return new TransactionReportBuilder<DisputeSummary>(
+      ReportType.SettlementDisputeDetail,
+    ).withSettlementDisputeId(settlementDisputeId);
+  }
+
+  public static findSettlementDisputesPaged(
+    page: number,
+    pageSize: number,
+  ): TransactionReportBuilder<PagedResult> {
+    return new TransactionReportBuilder<PagedResult>(
+      ReportType.FindSettlementDisputesPaged,
+    ).withPaging(page, pageSize);
   }
 
   public static findSettlementTransactionsPaged(

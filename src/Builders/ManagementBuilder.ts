@@ -1,4 +1,5 @@
 import {
+  DisputeDocument,
   LodgingData,
   PaymentMethod,
   PaymentMethodUsageMode,
@@ -280,6 +281,30 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
   public withLodgingData(value: LodgingData) {
     this.lodgingData = value;
 
+    return this;
+  }
+
+  /**
+   * Sets the Dispute Id.
+   *
+   * @param string value
+   *
+   * @return $this
+   */
+  public withDisputeId(value: string) {
+    this.disputeId = value;
+    return this;
+  }
+
+  /**
+   * Sets the Dispute Documents.
+   *
+   * @param DisputeDocument[] $value
+   *
+   * @return $this
+   */
+  public withDisputeDocuments(value: DisputeDocument[]) {
+    this.disputeDocuments = value;
     return this;
   }
 }

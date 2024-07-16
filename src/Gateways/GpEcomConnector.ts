@@ -187,6 +187,24 @@ export class GpEcomConnector
       request.PAYER_REF = encoder(builder.hostedPaymentData.customerKey || "");
       request.PMT_REF = encoder(builder.hostedPaymentData.paymentKey || "");
       request.PROD_ID = encoder(builder.hostedPaymentData.productId || "");
+
+      if (builder.hostedPaymentData.addressCapture !== undefined) {
+        request.HPP_CAPTURE_ADDRESS = encoder(
+          builder.hostedPaymentData.addressCapture ? "1" : "0" || "",
+        );
+      }
+
+      if (builder.hostedPaymentData.notReturnAddress !== undefined) {
+        request.HPP_DO_NOT_RETURN_ADDRESS = encoder(
+          builder.hostedPaymentData.notReturnAddress ? "1" : "0" || "",
+        );
+      }
+
+      if (builder.hostedPaymentData.removeShipping !== undefined) {
+        request.HPP_REMOVE_SHIPPING = encoder(
+          builder.hostedPaymentData.removeShipping ? "1" : "0" || "",
+        );
+      }
     }
     if (builder.shippingAddress) {
       request.SHIPPING_CODE = encoder(builder.shippingAddress.postalCode || "");

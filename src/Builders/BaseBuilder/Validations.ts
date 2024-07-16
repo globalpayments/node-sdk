@@ -44,7 +44,7 @@ export class Validations {
           }
         }
 
-        if ((Number(ruleType) & value) !== value) {
+        if ((Number(ruleType) & value) !== value || Number(ruleType) > value) {
           return;
         }
 

@@ -91,6 +91,25 @@ export class GpApiManagementRequestBuilder implements IRequestBuilder {
           gratuity: builder.gratuity && StringUtils.toNumeric(builder.gratuity),
         };
         break;
+      case TransactionType.DisputeAcceptance:
+        endpoint =
+          GpApiRequest.DISPUTES_ENDPOINT +
+          "/" +
+          builder.disputeId +
+          "/acceptance";
+        verb = "POST";
+        break;
+      case TransactionType.DisputeChallenge:
+        endpoint =
+          GpApiRequest.DISPUTES_ENDPOINT +
+          "/" +
+          builder.disputeId +
+          "/challenge";
+        verb = "POST";
+        payload = {
+          documents: builder.disputeDocuments,
+        };
+        break;
       case TransactionType.Refund:
         endpoint =
           GpApiRequest.TRANSACTION_ENDPOINT +

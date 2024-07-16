@@ -10,6 +10,7 @@
     "skipLibCheck": true,
     "strictNullChecks": true,
     "sourceMap": true,
+    "esModuleInterop": true,
     "declaration": true,
     "outDir": "./lib",
     "baseUrl": ".",

@@ -1,6 +1,14 @@
 # Changelog
 
-## Latest - v3.7.0 (06/18/24):
+## Latest - v3.8.0 (07/16/24):
+
+### Enhancements:
+
+- [GP-API] Add disputes feature
+- [GP-ECOM] Add HPP capture article updates
+- [Other] Switch automated tests from Ava to Jest
+
+## v3.7.0 (06/18/24):
 
 ### Enhancements:
 

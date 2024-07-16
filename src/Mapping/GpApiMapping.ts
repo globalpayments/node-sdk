@@ -1,6 +1,8 @@
 import {
   AuthenticationSource,
   DepositSummary,
+  DisputeDocument,
+  DisputeSummary,
   MessageExtension,
   Secure3dStatus,
   Secure3dVersion,
@@ -233,6 +235,23 @@ export class GpApiMapping {
         report = this.setPagingInfo(response);
         report.result = response.deposits.map((deposit: any) =>
           this.mapDepositSummary(deposit),
+        );
+        break;
+      case ReportType.DisputeDetail:
+      case ReportType.SettlementDisputeDetail:
+        report = this.mapDisputeSummary(response);
+        break;
+      case ReportType.DocumentDisputeDetail:
+        report = new DisputeDocument();
+        report.id = response.id;
+        report.b64Content = response.b64_content;
+        break;
+      case ReportType.FindDisputesPaged:
+      case ReportType.FindSettlementDisputesPaged:
+        report = this.setPagingInfo(response);
+
+        report.result = response.disputes.map((dispute: any) =>
+          this.mapDisputeSummary(dispute),
         );
         break;
       default:
@@ -532,9 +551,82 @@ export class GpApiMapping {
       );
     }
 
-    // if (response.fees) {
     summary.feesTotalAmount = StringUtils.toAmount(response?.fees?.amount);
-    // }
+
+    return summary;
+  }
+
+  static mapDisputeSummary(response: any): DisputeSummary {
+    const summary = new DisputeSummary();
+    summary.caseId = response.id;
+    summary.caseIdTime = response.time_created
+      ? new Date(response.time_created)
+      : response.stage_time_created
+      ? new Date(response.stage_time_created)
+      : "";
+    summary.caseStatus = response.status;
+    summary.caseStage = response.stage;
+    summary.caseAmount = StringUtils.toAmount(response.amount);
+    summary.caseCurrency = response.currency;
+
+    if (response.system) {
+      const system = response.system;
+      summary.caseMerchantId = system.mid ?? null;
+      summary.merchantHierarchy = system.hierarchy ?? null;
+      summary.merchantName = system.name ?? null;
+    }
+
+    const card =
+      response?.transaction?.payment_method?.card ||
+      response?.payment_method?.card;
+
+    if (card) {
+      summary.transactionARN = card.arn;
+      summary.transactionCardType = card.brand;
+      summary.transactionMaskedCardNumber = card.number;
+    }
+
+    if (response.transaction) {
+      summary.transactionTime = new Date(response.transaction.time_created);
+      summary.transactionType = response.transaction.type;
+      summary.transactionAmount = StringUtils.toAmount(
+        response.transaction.amount,
+      );
+      summary.transactionCurrency = response.transaction.currency;
+      summary.transactionReferenceNumber = response.transaction.reference;
+
+      if (response.transaction.payment_method?.card) {
+        const card = response.transaction.payment_method.card;
+        summary.transactionMaskedCardNumber =
+          card.masked_number_first6last4 ?? "";
+        summary.transactionAuthCode = card.authcode;
+      }
+    }
+
+    if (response.documents) {
+      summary.documents = response.documents
+        .filter((document: any) => document.id)
+        .map((document: any) => {
+          const disputeDocument = new DisputeDocument();
+          disputeDocument.id = document.id;
+          disputeDocument.type = document.type ?? null;
+          return disputeDocument;
+        });
+    }
+
+    summary.reasonCode = response.reason_code;
+    summary.reason = response.reason_description;
+    summary.respondByDate = new Date(response.time_to_respond_by);
+    summary.result = response.result;
+    summary.lastAdjustmentAmount = StringUtils.toAmount(
+      response.last_adjustment_amount,
+    );
+    summary.lastAdjustmentCurrency = response.last_adjustment_currency;
+    summary.lastAdjustmentFunding = response.last_adjustment_funding;
+    summary.depositDate = response.deposit_time_created
+      ? new Date(response.deposit_time_created)
+      : null;
+    summary.depositReference = response.deposit_id ?? null;
 
     return summary;
   }

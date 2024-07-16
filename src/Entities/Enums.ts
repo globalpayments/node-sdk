@@ -555,7 +555,6 @@ export enum PhoneNumberType {
   SHIPPING = "SHIPPING",
   MOBILE = "MOBILE",
 }
-
 export enum PreOrderIndicator {
   MerchandiseAvailable = "MERCHANDISE_AVAILABLE",
   FutureAvailability = "FUTURE_AVAILABILITY",
@@ -598,15 +597,20 @@ export enum ReportType {
   Activity = 1 << 1,
   BatchDetail = 1 << 2,
   BatchHistory = 1 << 3,
+  DocumentDisputeDetail = 1 << 3,
   BatchSummary = 1 << 4,
   OpenAuths = 1 << 5,
   Search = 1 << 6,
   TransactionDetail = 1 << 7,
   FindDeposits = 1 << 8,
   DepositDetail = 1 << 11,
+  DisputeDetail = 1 << 12,
+  SettlementDisputeDetail = 1 << 13,
   FindTransactionsPaged = 1 << 15,
   FindSettlementTransactionsPaged = 1 << 16,
   FindDepositsPaged = 1 << 17,
+  FindDisputesPaged = 1 << 18,
+  FindSettlementDisputesPaged = 1 << 19,
   FindStoredPaymentMethodsPaged = 1 << 20,
   StoredPaymentMethodDetail = 1 << 21,
 }
@@ -964,6 +968,9 @@ export enum TransactionType {
   /// ProPay: Move money out via Flash Funds
   /// </summary>
   PushMoneyFlashFunds = 1 << 53,
+
+  DisputeAcceptance = 1 << 53,
+  DisputeChallenge = 1 << 54,
 
   /// <summary>
   /// ProPay: Disburse funds to a ProPay account

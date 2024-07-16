@@ -186,6 +186,63 @@ export class GpApiReportRequestBuilder implements IRequestBuilder {
           builder.searchBuilder.depositId;
         verb = "GET";
         break;
+      case ReportType.DisputeDetail:
+        endpoint =
+          GpApiRequest.DISPUTES_ENDPOINT +
+          "/" +
+          builder.searchBuilder.disputeId;
+        verb = "GET";
+        break;
+      case ReportType.DocumentDisputeDetail:
+        endpoint =
+          GpApiRequest.DISPUTES_ENDPOINT +
+          "/" +
+          builder.searchBuilder.disputeId +
+          "/documents/" +
+          builder.searchBuilder.disputeDocumentId;
+        verb = "GET";
+        break;
+      case ReportType.DisputeDetail:
+        endpoint =
+          GpApiRequest.DISPUTES_ENDPOINT +
+          "/" +
+          builder.searchBuilder.disputeId;
+        verb = "GET";
+        break;
+      case ReportType.SettlementDisputeDetail:
+        endpoint =
+          GpApiRequest.SETTLEMENT_DISPUTES_ENDPOINT +
+          "/" +
+          builder.searchBuilder.settlementDisputeId;
+        verb = "GET";
+        break;
+      case ReportType.DisputeDetail:
+        endpoint =
+          GpApiRequest.DISPUTES_ENDPOINT +
+          "/" +
+          builder.searchBuilder.disputeId;
+        verb = "GET";
+        break;
+      case ReportType.FindSettlementDisputesPaged:
+        endpoint = GpApiRequest.SETTLEMENT_DISPUTES_ENDPOINT;
+        verb = "GET";
+
+        queryParams = {
+          ...queryParams,
+          ...this.getDisputesParams(builder),
+          account_name: config.accessTokenInfo.dataAccountName,
+          account_id: config.accessTokenInfo.dataAccountID,
+        };
+        break;
+      case ReportType.FindDisputesPaged:
+        endpoint = GpApiRequest.DISPUTES_ENDPOINT;
+        verb = "GET";
+
+        queryParams = {
+          ...queryParams,
+          ...this.getDisputesParams(builder),
+        };
+        break;
       default:
         throw new NotImplementedError();
     }
@@ -230,5 +287,38 @@ export class GpApiReportRequestBuilder implements IRequestBuilder {
       page: builder.page,
       page_size: builder.pageSize,
     };
+  }
+
+  private getDisputesParams(builder: any): any {
+    return {
+      order_by: builder.disputeOrderBy,
+      order: builder.order,
+      arn: builder.searchBuilder.aquirerReferenceNumber,
+      brand: builder.searchBuilder.cardBrand,
+      status: builder.searchBuilder.disputeStatus,
+      stage: builder.searchBuilder.disputeStage,
+      from_stage_time_created: builder.searchBuilder.startStageDate
+        ? this.formatDate(builder.searchBuilder.startStageDate)
+        : null,
+      to_stage_time_created: builder.searchBuilder.endStageDate
+        ? this.formatDate(builder.searchBuilder.endStageDate)
+        : null,
+      from_deposit_time_created: builder.searchBuilder.startDepositDate
+        ? this.formatDate(builder.searchBuilder.startDepositDate)
+        : null,
+      to_deposit_time_created: builder.searchBuilder.endDepositDate
+        ? this.formatDate(builder.searchBuilder.endDepositDate)
+        : null,
+      "system.mid": builder.searchBuilder.merchantId,
+      "system.hierarchy": builder.searchBuilder.systemHierarchy,
+      deposit_id: builder.searchBuilder.depositReference,
+    };
+  }
+
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const day = ("0" + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
   }
 }

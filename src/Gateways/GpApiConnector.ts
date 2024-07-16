@@ -285,6 +285,11 @@ export class GpApiConnector
     ) {
       this.contentType = "";
     }
+
+    if (endpoint.indexOf("/challenge") !== -1) {
+      this.headers["Content-Type"] = "application/json";
+    }
+
     let response;
 
     try {

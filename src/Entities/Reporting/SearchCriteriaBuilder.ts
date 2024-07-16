@@ -3,6 +3,8 @@ import {
   ArgumentError,
   CardType,
   Channel,
+  DisputeStage,
+  DisputeStatus,
   FraudFilterMode,
   IPaymentMethod,
   PayByLinkStatus,
@@ -54,8 +56,10 @@ export class SearchCriteriaBuilder<T> {
   public depositReference?: string;
   public depositStatus?: string;
   public displayName?: string;
-  public disputeId?: string;
+  public disputeId?: string | null;
   public disputeDocumentId?: string;
+  public disputeStage?: DisputeStage;
+  public disputeStatus?: DisputeStatus;
   public endBatchDate?: Date;
   public endDate?: string;
   public fromTimeLastUpdated?: string;
