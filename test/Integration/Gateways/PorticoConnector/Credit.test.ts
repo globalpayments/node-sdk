@@ -1,15 +1,22 @@
 import {
+  Address,
   CreditCardData,
   CreditTrackData,
   EncryptionData,
-  ReportingService,
-  ServicesContainer,
-  Transaction,
-  StoredCredentialInitiator,
-  PorticoConfig,
   MobilePaymentMethodType,
   PaymentDataSourceType,
+  PorticoConfig,
+  ReportingService,
+  ServicesContainer,
+  StoredCredentialInitiator,
+  TaxType,
+  Transaction,
+  TransactionModifier,
 } from "../../../../src";
+import {DiscountDetails} from "../../../../src/Entities/DiscountDetails";
+import {AdditionalTaxDetails} from "../../../../src/Entities/AdditionalTaxDetails";
+import {CommercialLineItem} from "../../../../src/Entities/CommercialLineItem";
+import {CommercialData} from "../../../../src/Entities/CommercialData";
 
 const card = new CreditCardData();
 card.number = "4111111111111111";
@@ -20,7 +27,7 @@ card.cardHolderName = "Joe Smith";
 
 const track = new CreditTrackData();
 /* eslint-disable */
-  track.value =
+track.value =
     "<E1050711%B4012001000000016^VI TEST CREDIT^251200000000000000000000?|LO04K0WFOmdkDz0um+GwUkILL8ZZOP6Zc4rCpZ9+kg2T3JBT4AEOilWTI|+++++++Dbbn04ekG|11;4012001000000016=25120000000000000000?|1u2F/aEhbdoPixyAPGyIDv3gBfF|+++++++Dbbn04ekG|00|||/wECAQECAoFGAgEH2wYcShV78RZwb3NAc2VjdXJlZXhjaGFuZ2UubmV0PX50qfj4dt0lu9oFBESQQNkpoxEVpCW3ZKmoIV3T93zphPS3XKP4+DiVlM8VIOOmAuRrpzxNi0TN/DWXWSjUC8m/PI2dACGdl/hVJ/imfqIs68wYDnp8j0ZfgvM26MlnDbTVRrSx68Nzj2QAgpBCHcaBb/FZm9T7pfMr2Mlh2YcAt6gGG1i2bJgiEJn8IiSDX5M2ybzqRT86PCbKle/XCTwFFe1X|>;";
   /* eslint-enable */
 track.encryptionData = new EncryptionData();
@@ -372,6 +379,34 @@ test.skip("credit swipe authorization", async () => {
   expect(capture.responseCode).toBe("00");
 });
 
+test('authorize and capture from transaction', async ()=> {
+
+
+  const card = new CreditCardData();
+  card.number = "4111111111111111";
+  card.expMonth = "12";
+  card.expYear = "2030";
+  card.cvn = "123";
+
+  const address =  new Address();
+  address.postalCode = "750241234";
+
+  const authResponse = await card.authorize(10)
+      .withCurrency("USD")
+      .withAllowDuplicates(true)
+      .withAddress(address)
+      .execute();
+
+  const captureResponse =  await Transaction.fromId(authResponse.transactionId)
+      .capture(10)
+      .withCurrency("USD")
+      .execute();
+
+  expect(authResponse).toBeTruthy();
+  expect(captureResponse).toBeTruthy();
+
+});
+
 test("credit swipe sale", async () => {
   const response = await track
     .charge(15)
@@ -484,3 +519,57 @@ test.skip("credit void from transaction id", async () => {
   expect(voidResponse).toBeTruthy();
   expect(voidResponse.responseCode).toBe("00");
 });
+
+test("level_iii_response", async () => {
+  const address = new Address();
+  address.postalCode = "75024";
+  address.streetAddress1 = "6860";
+
+  const commercialData = new CommercialData(
+    TaxType.SalesTax,
+    TransactionModifier.LevelIII,
+  );
+  commercialData.poNumber = "9876543210";
+  commercialData.taxAmount = 10;
+  commercialData.destinationPostalCode = "85212";
+  commercialData.destinationCountryCode = "USA";
+  commercialData.originPostalCode = "22193";
+  commercialData.summaryCommodityCode = "SSC";
+  commercialData.customerReferenceId = "UVATREF162";
+  commercialData.orderDate = new Date();
+  commercialData.freightAmount = 10;
+  commercialData.dutyAmount = 10;
+
+  const additionalTaxDetails = new AdditionalTaxDetails();
+  additionalTaxDetails.taxAmount = 10;
+  additionalTaxDetails.taxRate = 10;
+
+  commercialData.additionalTaxDetails = additionalTaxDetails;
+  const commercialLineItem = new CommercialLineItem();
+
+  commercialLineItem.description = "PRODUCT 1 NOTES";
+  commercialLineItem.productCode = "PRDCD1";
+  commercialLineItem.quantity = 1;
+
+  const discountDetails = new DiscountDetails();
+  discountDetails.discountAmount = 10;
+  commercialLineItem.discountDetails = discountDetails;
+
+  commercialData.addLineItems(commercialLineItem);
+
+  const chargeResponse = await card
+    .charge("111.12")
+    .withCurrency("USD")
+    .withAddress(address)
+    .withCommercialRequest(true)
+    .execute();
+
+  expect(chargeResponse).toBeTruthy();
+  expect(chargeResponse.responseCode).toBe("00");
+  expect(chargeResponse.commercialIndicator).toBe("0");
+  const mb = chargeResponse.edit();
+  const cpcResponse = await mb.withCommercialData(commercialData).execute();
+  expect(cpcResponse).toBeTruthy();
+  expect(cpcResponse.responseCode).toBe("00");
+});
+

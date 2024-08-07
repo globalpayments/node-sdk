@@ -1,15 +1,15 @@
 import {
-  Address,
-  BatchService,
-  CreditCardData,
-  CreditTrackData,
-  GiftCard,
-  PorticoConfig,
-  ServicesContainer,
-  TaxType,
-  TransactionModifier,
+    Address,
+    BatchService,
+    CreditCardData,
+    CreditTrackData,
+    GiftCard,
+    PorticoConfig,
+    ServicesContainer,
+    TaxType,
+    TransactionModifier,
 } from "../../../../../src";
-import { TestCards } from "../../../../Data";
+import {TestCards} from "../../../../Data";
 
 const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A";
@@ -444,7 +444,7 @@ test("014 - charge jcb", () => {
 
 /// AUTHORIZATION
 
-test.failing("015 - authorization visa", () => {
+test("015 - authorization visa", () => {
   // test 015a Authorization
   const card = TestCards.visaManual();
   const address = new Address();
@@ -480,7 +480,7 @@ test.failing("015 - authorization visa", () => {
   });
 });
 
-test.failing("016 - authorization mastercard", () => {
+test("016 - authorization mastercard", () => {
   // test 016a Authorization
   const card = TestCards.masterCardManual();
   const address = new Address();
@@ -630,7 +630,7 @@ test("020 - partial approval mastercard", () => {
 
 /// LEVEL II CORPORATE PURCHASE CARD
 
-test.failing("021 - level ii response b", () => {
+test("021 - level ii response b", () => {
   const address = new Address();
   address.streetAddress1 = "6860 Dallas Pkwy";
   address.postalCode = "750241234";
@@ -668,7 +668,7 @@ test.failing("021 - level ii response b", () => {
   });
 });
 
-test.failing("022 - level ii response b", () => {
+test("022 - level ii response b", () => {
   const address = new Address();
   address.streetAddress1 = "6860";
   address.postalCode = "750241234";
@@ -706,7 +706,7 @@ test.failing("022 - level ii response b", () => {
   });
 });
 
-test.failing("023 - level ii response r", () => {
+test("023 - level ii response r", () => {
   const address = new Address();
   address.streetAddress1 = "6860";
   address.postalCode = "75024";
@@ -743,7 +743,7 @@ test.failing("023 - level ii response r", () => {
   });
 });
 
-test.failing("024 - level ii response s", () => {
+test("024 - level ii response s", () => {
   const address = new Address();
   address.streetAddress1 = "6860";
   address.postalCode = "75024";
@@ -782,7 +782,7 @@ test.failing("024 - level ii response s", () => {
   });
 });
 
-test.failing("025 - level ii response s", () => {
+test("025 - level ii response s", () => {
   const address = new Address();
   address.streetAddress1 = "6860";
   address.postalCode = "75024";
@@ -820,7 +820,7 @@ test.failing("025 - level ii response s", () => {
   });
 });
 
-test.failing("026 - level ii response s", () => {
+test("026 - level ii response s", () => {
   const address = new Address();
   address.streetAddress1 = "6860";
   address.postalCode = "75024";
@@ -858,7 +858,7 @@ test.failing("026 - level ii response s", () => {
   });
 });
 
-test.failing("027 - level ii response s", () => {
+test("027 - level ii response s", () => {
   const address = new Address();
   address.streetAddress1 = "6860";
   address.postalCode = "75024";
@@ -897,7 +897,7 @@ test.failing("027 - level ii response s", () => {
   });
 });
 
-test.failing("028 - level ii response s", () => {
+test("028 - level ii response s", () => {
   const address = new Address();
   address.streetAddress1 = "6860";
   address.postalCode = "75024";
@@ -935,7 +935,7 @@ test.failing("028 - level ii response s", () => {
   });
 });
 
-test.failing("029 - level ii no response", () => {
+test("029 - level ii no response", () => {
   const address = new Address();
   address.streetAddress1 = "6860";
   address.postalCode = "75024";
@@ -973,7 +973,7 @@ test.failing("029 - level ii no response", () => {
   });
 });
 
-test.failing("030 - level ii no response", () => {
+test("030 - level ii no response", () => {
   const address = new Address();
   address.streetAddress1 = "6860";
   address.postalCode = "750241234";
@@ -1011,7 +1011,7 @@ test.failing("030 - level ii no response", () => {
   });
 });
 
-test.failing("031 - level ii no response", () => {
+test("031 - level ii no response", () => {
   const address = new Address();
   address.streetAddress1 = "6860";
   address.postalCode = "75024";
@@ -1050,7 +1050,7 @@ test.failing("031 - level ii no response", () => {
   });
 });
 
-test.failing("032 - level ii no response", () => {
+test("032 - level ii no response", () => {
   const address = new Address();
   address.streetAddress1 = "6860";
   address.postalCode = "75024";
@@ -1488,7 +1488,7 @@ test("051 - sale gift 2", () => {
   });
 });
 
-test.failing("052 - sale gift 1 void", () => {
+test("052 - sale gift 1 void", () => {
   const card = TestCards.giftCard1Swipe();
 
   return new Promise<void>((resolve, reject) => {
@@ -1516,7 +1516,7 @@ test.failing("052 - sale gift 1 void", () => {
   });
 });
 
-test.failing("053 - sale gift 2 void", () => {
+test("053 - sale gift 2 void", () => {
   const card = TestCards.giftCard2Manual();
 
   return new Promise<void>((resolve, reject) => {
@@ -1544,7 +1544,7 @@ test.failing("053 - sale gift 2 void", () => {
   });
 });
 
-test.failing("056 - reversal gift 2", () => {
+test("056 - reversal gift 2", () => {
   const card = TestCards.giftCard2Manual();
 
   return new Promise<void>((resolve, reject) => {

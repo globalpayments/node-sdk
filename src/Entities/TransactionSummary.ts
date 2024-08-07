@@ -67,6 +67,7 @@ export class TransactionSummary extends BaseSummary {
   public emvChipCondition: string;
   public hasEmvTags: string;
   public hasEcomPaymentData: string;
+  public hasLevelIII: string;
   public cavvResponseCode: string;
   public tokenPanLastFour: string;
   public companyName: string;

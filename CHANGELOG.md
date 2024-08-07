@@ -1,6 +1,14 @@
 # Changelog
 
-## Latest - v3.8.0 (07/16/24):
+## Latest - v3.8.1 (08/16/24):
+
+### Enhancements:
+
+- [Portico] Added support for lvl iii transactions.
+- [Portico] Fix to tokenAction block scope issue.
+
+
+## v3.8.0 (07/16/24):
 
 ### Enhancements:
 

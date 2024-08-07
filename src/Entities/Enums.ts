@@ -155,6 +155,11 @@ export enum ColorDepth {
   ThirtyTwoBits = "THIRTY_TWO_BITS",
   FortyEightBits = "FORTY_EIGHT_BITS",
 }
+
+export enum CreditDebitIndicator {
+  Credit = "Credit",
+  Debit = "Debit",
+}
 export enum CurrencyType {
   CURRENCY,
   POINTS,
@@ -459,6 +464,11 @@ export enum MethodUrlCompletion {
   Yes = "YES",
   No = "NO",
   Unavailable = "UNAVAILABLE",
+}
+
+export enum NetGrossIndicator {
+  NET = "NET",
+  GROSS = "GROSS",
 }
 
 export enum OrderTransactionType {
@@ -853,6 +863,7 @@ export enum TransactionModifier {
   EncryptedMobile = 1 << 12,
   AlternativePaymentMethod = 1 << 13,
   DecryptedMobile = 1 << 14,
+  LevelIII = 1 << 15,
 }
 
 export enum TransactionSortProperty {

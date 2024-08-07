@@ -13,6 +13,7 @@ import {
   TransactionType,
 } from "../";
 import { PayFacResponseData } from "./ProFac/PayFacResponseData";
+
 export class Transaction {
   public authorizedAmount: string;
   /**
@@ -176,7 +177,9 @@ export class Transaction {
     if (this.commercialIndicator) {
       builder = builder.withModifier(TransactionModifier.LevelII);
     }
-
+    if (this.cardType) {
+      builder.cardType = this.cardType;
+    }
     return builder;
   }
 

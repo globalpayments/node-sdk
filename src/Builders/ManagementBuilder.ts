@@ -13,46 +13,53 @@ import {
   TransactionType,
 } from "../";
 import { TransactionBuilder } from "./TransactionBuilder";
+import { CommercialData } from "../Entities/CommercialData";
 
 export class ManagementBuilder extends TransactionBuilder<Transaction> {
   public amount: string | number | null;
   public authAmount: string | number;
+  public currency: string;
+  public commercialData?: CommercialData;
+  public description: string;
+  public gratuity: string | number | null;
+  public lodgingData: LodgingData;
+  public poNumber: string;
+  public reasonCode?: ReasonCode;
+  public taxAmount: string | number;
+  public taxType: TaxType;
+  public cardType?: string;
+
+  public constructor(type: number, paymentMethod?: PaymentMethod) {
+    super(type, paymentMethod);
+    this.supplementaryData = {};
+  }
+
   public get authorizationCode() {
     if (this.paymentMethod instanceof TransactionReference) {
       return this.paymentMethod.authCode;
     }
     return undefined;
   }
+
   public get clientTransactionId() {
     if (this.paymentMethod instanceof TransactionReference) {
       return this.paymentMethod.clientTransactionId;
     }
     return undefined;
   }
-  public currency: string;
-  public description: string;
-  public gratuity: string | number | null;
-  public lodgingData: LodgingData;
+
   public get orderId() {
     if (this.paymentMethod instanceof TransactionReference) {
       return this.paymentMethod.orderId;
     }
     return undefined;
   }
-  public poNumber: string;
-  public reasonCode?: ReasonCode;
-  public taxAmount: string | number;
-  public taxType: TaxType;
+
   public get transactionId() {
     if (this.paymentMethod instanceof TransactionReference) {
       return this.paymentMethod.transactionId;
     }
     return undefined;
-  }
-
-  public constructor(type: number, paymentMethod?: PaymentMethod) {
-    super(type, paymentMethod);
-    this.supplementaryData = {};
   }
 
   /**
@@ -65,34 +72,6 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
     return ServicesContainer.instance()
       .getClient(configName)
       .manageTransaction(this);
-  }
-
-  protected setupValidations() {
-    this.validations
-      .of(
-        "transactionType",
-        /* tslint:disable:trailing-comma */
-        TransactionType.Capture |
-          TransactionType.Edit |
-          TransactionType.Hold |
-          TransactionType.Release,
-        /* tslint:enable:trailing-comma */
-      )
-      .check("transactionId")
-      .isNotNull();
-
-    this.validations
-      .of("transactionType", TransactionType.Edit)
-      .with("transactionModifier", TransactionModifier.LevelII)
-      .check("taxType")
-      .isNotNull();
-
-    this.validations
-      .of("transactionType", TransactionType.Refund)
-      .when("amount")
-      .isNotNull()
-      .check("currency")
-      .isNotNull();
   }
 
   /**
@@ -134,6 +113,15 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
     if (currency !== undefined) {
       this.currency = currency;
     }
+    return this;
+  }
+
+  public withCommercialData(cd: CommercialData) {
+    this.commercialData = cd;
+    this.transactionModifier =
+      cd.commercialIndicator === TransactionModifier.LevelII
+        ? TransactionModifier.LevelII
+        : TransactionModifier.LevelIII;
     return this;
   }
 
@@ -306,5 +294,33 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
   public withDisputeDocuments(value: DisputeDocument[]) {
     this.disputeDocuments = value;
     return this;
+  }
+
+  protected setupValidations() {
+    this.validations
+      .of(
+        "transactionType",
+        /* tslint:disable:trailing-comma */
+        TransactionType.Capture |
+          TransactionType.Edit |
+          TransactionType.Hold |
+          TransactionType.Release,
+        /* tslint:enable:trailing-comma */
+      )
+      .check("transactionId")
+      .isNotNull();
+
+    this.validations
+      .of("transactionType", TransactionType.Edit)
+      .with("transactionModifier", TransactionModifier.LevelII)
+      .check("taxType")
+      .isNotNull();
+
+    this.validations
+      .of("transactionType", TransactionType.Refund)
+      .when("amount")
+      .isNotNull()
+      .check("currency")
+      .isNotNull();
   }
 }

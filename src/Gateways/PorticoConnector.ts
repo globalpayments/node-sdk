@@ -30,7 +30,9 @@ import {
   ITokenizable,
   ITrackData,
   ManagementBuilder,
+  MobilePaymentMethodType,
   NotImplementedError,
+  PaymentDataSourceType,
   PaymentMethodType,
   RecurringPaymentMethod,
   ReportBuilder,
@@ -45,12 +47,11 @@ import {
   TransactionSummary,
   TransactionType,
   UnsupportedTransactionError,
-  MobilePaymentMethodType,
-  PaymentDataSourceType,
 } from "../";
 import { validateAmount, validateInput } from "../Utils/InputValidation";
 import { XmlGateway } from "./XmlGateway";
 import { PorticoConfig } from "src/ServiceConfigs";
+import { CommercialLineItem } from "../Entities/CommercialLineItem";
 
 export class PorticoConnector extends XmlGateway implements IPaymentGateway {
   protected static XmlNamespace = "http://Hps.Exchange.PosGateway";
@@ -618,9 +619,109 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         const ref = builder.paymentMethod as object as TransactionReference;
         subElement(root, "GatewayTxnId").append(cData(ref.transactionId));
       }
+      // level II or III
+      if (builder.commercialData) {
+        const modifier = builder.transactionModifier;
+        const cd = builder.commercialData;
+        if (
+          modifier === TransactionModifier.LevelII ||
+          modifier === TransactionModifier.LevelIII
+        ) {
+          const cpc = subElement(root, "CPCData");
+          if (cd.poNumber !== undefined) {
+            subElement(cpc, "CardHolderPONbr").append(cData(cd.poNumber));
+          }
+          if (cd.taxType !== undefined) {
+            subElement(cpc, "TaxType").append(
+              cData(this.hydrateTaxType(cd.taxType)),
+            );
+          }
+          if (cd.taxAmount !== undefined) {
+            subElement(cpc, "TaxAmt").append(cData(cd.taxAmount.toString()));
+          }
+        }
+        const paymentType = builder.paymentMethod?.paymentMethodType;
+        if (
+          modifier === TransactionModifier.LevelIII &&
+          paymentType &&
+          paymentType === PaymentMethodType.Credit
+        ) {
+          const cdc = subElement(root, "CorporateData");
+          const isVisa = builder.cardType === "Visa";
+          const data = subElement(cdc, isVisa ? "Visa" : "MC");
 
-      // level II Data
-      if (
+          if (cd.lineItems !== undefined) {
+            buildLineItems(data, isVisa, cd.lineItems);
+          }
+
+          if (isVisa) {
+            if (cd.summaryCommodityCode !== undefined) {
+              subElement(data, "SummaryCommodityCode").append(
+                cData(cd.summaryCommodityCode),
+              );
+            }
+            if (cd.discountAmount !== undefined) {
+              subElement(data, "DiscountAmt").append(
+                cData(cd.discountAmount.toString()),
+              );
+            }
+            if (cd.freightAmount !== undefined) {
+              subElement(data, "FreightAmt").append(
+                cData(cd.freightAmount.toString()),
+              );
+            }
+            if (cd.dutyAmount !== undefined) {
+              subElement(data, "DutyAmt").append(
+                cData(cd.dutyAmount.toString()),
+              );
+            }
+            if (cd.destinationPostalCode !== undefined) {
+              subElement(data, "DestinationPostalZipCode").append(
+                cData(cd.destinationPostalCode),
+              );
+            }
+            if (cd.originPostalCode !== undefined) {
+              subElement(data, "ShipFromPostalZipCode").append(
+                cData(cd.originPostalCode),
+              );
+            }
+            if (cd.destinationCountryCode !== undefined) {
+              subElement(data, "DestinationCountryCode").append(
+                cData(cd.destinationCountryCode),
+              );
+            }
+            if (cd.customerReferenceId !== undefined) {
+              subElement(data, "InvoiceRefNbr").append(
+                cData(cd.customerReferenceId),
+              );
+            }
+            const taxAmount = cd.taxAmount ? cd.taxAmount.toString() : "0";
+            if (
+              cd.additionalTaxDetails?.taxAmount !== undefined ||
+              cd.taxAmount !== undefined
+            ) {
+              subElement(data, "VATTaxAmtFreight").append(
+                cData(
+                  cd.additionalTaxDetails?.taxAmount
+                    ? cd.additionalTaxDetails.taxAmount.toString()
+                    : taxAmount,
+                ),
+              );
+            }
+            if (cd.orderDate instanceof Date) {
+              const formattedDate = cd.orderDate.toISOString().slice(0, 19);
+              subElement(data, "OrderDate").append(cData(formattedDate));
+            }
+
+            if (cd.additionalTaxDetails?.taxRate !== undefined) {
+              subElement(data, "VATTaxRateFreight").append(
+                cData(cd.additionalTaxDetails.taxRate.toString()),
+              );
+            }
+          }
+        }
+      } else if (
+        // level II only
         builder.transactionType === TransactionType.Edit &&
         builder.transactionModifier === TransactionModifier.LevelII
       ) {
@@ -639,12 +740,13 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       }
 
       // Token Management
-      const tokenActions = subElement(root, "TokenActions");
+
       if (
         builder.paymentMethod &&
         builder.paymentMethod.isTokenizable &&
         builder.transactionType === TransactionType.TokenUpdate
       ) {
+        const tokenActions = subElement(root, "TokenActions");
         subElement(root, "TokenValue").append(
           cData(builder.paymentMethod.token),
         );
@@ -664,6 +766,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         builder.paymentMethod.isTokenizable &&
         builder.transactionType === TransactionType.TokenDelete
       ) {
+        const tokenActions = subElement(root, "TokenActions");
         subElement(root, "TokenValue").append(
           cData(builder.paymentMethod.token),
         );
@@ -941,7 +1044,10 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         }
         throw new UnsupportedTransactionError();
       case TransactionType.Edit:
-        if (builder.transactionModifier === TransactionModifier.LevelII) {
+        if (
+          builder.transactionModifier === TransactionModifier.LevelII ||
+          builder.transactionModifier === TransactionModifier.LevelIII
+        ) {
           return "CreditCPCEdit";
         }
         return "CreditTxnEdit";
@@ -1491,6 +1597,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     result.debtRepaymentIndicator = root.findtext(".//DebtRepaymentIndicator");
     result.captureAmount = root.findtext(".//CaptureAmtInfo");
     result.fullyCaptured = root.findtext(".//FullyCapturedInd");
+    result.hasLevelIII = root.findtext(".//HasLevelIII");
 
     return result;
   }
@@ -1520,5 +1627,62 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       paymentDataSource == PaymentDataSourceType.GOOGLEPAYAPP ||
       paymentDataSource == PaymentDataSourceType.GOOGLEPAYWEB
     );
+  }
+}
+// prettier-ignore
+function buildLineItems(
+    data: Element,
+    isVisa: boolean,
+    items: CommercialLineItem[],
+) {
+  if (!items || items.length === 0) {
+    return;
+  }
+
+  const lineItems = subElement(data, "LineItems");
+  for (const item of items) {
+    const lineItem = subElement(lineItems, "LineItemDetail");
+
+    if (item.description !== undefined) {
+      subElement(lineItem, "ItemDescription").append(cData(item.description));
+    }
+    if (item.productCode !== undefined) {
+      subElement(lineItem, "ProductCode").append(cData(item.productCode));
+    }
+    if (item.quantity !== undefined) {
+      subElement(lineItem, "Quantity").append(cData(item.quantity.toString()));
+    }
+    if (item.totalAmount !== undefined) {
+      subElement(lineItem, "ItemTotalAmt").append(
+        cData(item.totalAmount.toString()),
+      );
+    }
+    if (item.unitOfMeasure !== undefined) {
+      subElement(lineItem, "UnitOfMeasure").append(
+        cData(item.unitOfMeasure.toString()),
+      );
+    }
+
+    if (!isVisa) {
+      continue;
+    }
+    if (item.commodityCode !== undefined) {
+      subElement(lineItem, "ItemCommodityCode").append(
+        cData(item.commodityCode),
+      );
+    }
+    if (item.unitCost !== undefined) {
+      subElement(lineItem, "UnitCost").append(cData(item.unitCost.toString()));
+    }
+    if (item.taxAmount !== undefined) {
+      subElement(lineItem, "VATTaxAmt").append(
+        cData(item.taxAmount.toString()),
+      );
+    }
+    if (item.discountDetails?.discountAmount !== undefined) {
+      subElement(lineItem, "DiscountAmt").append(
+        cData(item.discountDetails.discountAmount.toString()),
+      );
+    }
   }
 }
