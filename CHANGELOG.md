@@ -1,6 +1,13 @@
 # Changelog
 
-## Latest - v3.8.1 (08/16/24):
+## Latest - v3.8.2 (08/14/24):
+
+### Enhancements:
+
+- [Portico] Added support for incremental Auth.
+
+
+## v3.8.1 (08/05/24):
 
 ### Enhancements:
 

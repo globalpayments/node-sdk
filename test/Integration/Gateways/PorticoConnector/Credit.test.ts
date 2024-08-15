@@ -573,3 +573,22 @@ test("level_iii_response", async () => {
   expect(cpcResponse.responseCode).toBe("00");
 });
 
+test("incremental auth", async () => {
+  const address = new Address();
+  address.postalCode = "750241234";
+
+  const origResponse = await card
+    .charge(15)
+    .withCurrency("USD")
+    .withAllowDuplicates(true)
+    .execute();
+
+  const captureResponse = await Transaction.fromId(origResponse.transactionId)
+    .additionalAuth(12)
+    .withModifier(TransactionModifier.Incremental)
+    .withCurrency("USD")
+    .execute();
+
+  expect(origResponse).toBeTruthy();
+  expect(captureResponse).toBeTruthy();
+});

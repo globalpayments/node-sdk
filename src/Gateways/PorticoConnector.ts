@@ -579,7 +579,8 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         builder.transactionType === TransactionType.Reversal ||
         builder.transactionType === TransactionType.Refund ||
         builder.paymentMethod.paymentMethodType === PaymentMethodType.Gift ||
-        builder.paymentMethod.paymentMethodType === PaymentMethodType.ACH
+        builder.paymentMethod.paymentMethodType === PaymentMethodType.ACH ||
+        builder.transactionModifier === TransactionModifier.Incremental
       ) {
         root = new Element("Block1");
       } else {
@@ -777,7 +778,8 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         builder.transactionType === TransactionType.Reversal ||
         builder.transactionType === TransactionType.Refund ||
         builder.paymentMethod.paymentMethodType === PaymentMethodType.Gift ||
-        builder.paymentMethod.paymentMethodType === PaymentMethodType.ACH
+        builder.paymentMethod.paymentMethodType === PaymentMethodType.ACH ||
+        builder.transactionModifier === TransactionModifier.Incremental
       ) {
         transaction.append(root);
       }
