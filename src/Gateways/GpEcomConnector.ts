@@ -538,10 +538,10 @@ export class GpEcomConnector
     }
 
     const phone = subElement(payer, "phonenumbers");
-    subElement(phone, "home").append(cData(customer.homePhone));
+    subElement(phone, "home").append(cData(customer.homePhone as string));
     subElement(phone, "work").append(cData(customer.workPhone));
     subElement(phone, "fax").append(cData(customer.fax));
-    subElement(phone, "mobile").append(cData(customer.mobilePhone));
+    subElement(phone, "mobile").append(cData(customer.mobilePhone as string));
 
     subElement(payer, "email").append(cData(customer.email));
 

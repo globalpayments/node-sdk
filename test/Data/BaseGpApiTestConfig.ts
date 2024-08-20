@@ -35,6 +35,8 @@ export class BaseGpApiTestConfig {
     config.accessTokenInfo = new AccessTokenInfo();
     config.accessTokenInfo.transactionProcessingAccountName =
       "transaction_processing";
+    config.accessTokenInfo.transactionProcessingAccountID =
+      "TRA_c9967ad7d8ec4b46b6dd44a61cde9a91";
     config.accessTokenInfo.riskAssessmentAccountName = "EOS_RiskAssessment";
 
     config.challengeNotificationUrl = "https://ensi808o85za.x.pipedream.net/";

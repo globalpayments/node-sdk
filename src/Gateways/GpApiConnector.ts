@@ -14,6 +14,7 @@ import {
   TransactionSummary,
 } from "../../src/Entities";
 import {
+  AlternativePaymentMethod,
   AuthorizationBuilder,
   BaseBuilder,
   GpApiConfig,
@@ -96,9 +97,13 @@ export class GpApiConnector
     if (!this.accessToken) {
       await this.signIn();
     }
-    return this.executeProcess(builder).then((response: string) =>
-      GpApiMapping.mapResponse(response),
-    );
+    return this.executeProcess(builder).then((response: string) => {
+      if (builder.paymentMethod instanceof AlternativePaymentMethod) {
+        return GpApiMapping.mapResponseAPM(response);
+      }
+
+      return GpApiMapping.mapResponse(response);
+    });
   }
 
   public async signIn() {
@@ -187,9 +192,13 @@ export class GpApiConnector
     if (!this.accessToken) {
       await this.signIn();
     }
-    return this.executeProcess(builder).then((response: string) =>
-      GpApiMapping.mapResponse(response),
-    );
+    return this.executeProcess(builder).then((response: string) => {
+      if (builder.paymentMethod instanceof AlternativePaymentMethod) {
+        return GpApiMapping.mapResponseAPM(response);
+      }
+
+      return GpApiMapping.mapResponse(response);
+    });
   }
   async processReport<T>(builder: ReportBuilder<T>): Promise<T> {
     if (!this.accessToken) {

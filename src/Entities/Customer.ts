@@ -1,4 +1,9 @@
-import { Address, IPaymentMethod, RecurringPaymentMethod } from "../";
+import {
+  Address,
+  IPaymentMethod,
+  PhoneNumber,
+  RecurringPaymentMethod,
+} from "../";
 import { RecurringEntity } from "./RecurringEntity";
 
 export class Customer extends RecurringEntity<Customer> {
@@ -37,7 +42,7 @@ export class Customer extends RecurringEntity<Customer> {
   /**
    * Customer's home phone number
    */
-  public homePhone: string;
+  public homePhone: string | PhoneNumber;
 
   /**
    * Customer's work phone number
@@ -52,7 +57,7 @@ export class Customer extends RecurringEntity<Customer> {
   /**
    * Customer's mobile phone number
    */
-  public mobilePhone: string;
+  public mobilePhone: string | PhoneNumber;
 
   /**
    * Customer's email address

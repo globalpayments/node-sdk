@@ -1,9 +1,10 @@
-import { BaseSummary, PaymentEntryMode } from ".";
+import { AlternativePaymentResponse, BaseSummary, PaymentEntryMode } from ".";
 
 export class TransactionSummary extends BaseSummary {
   public accountDataSource: string;
   public accountNumberLast4: string;
   public accountType: string;
+  public alternativePaymentResponse: AlternativePaymentResponse;
   public aquirerReferenceNumber: string;
   public authCode: string;
   public authorizedAmount: string;

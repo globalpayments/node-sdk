@@ -323,4 +323,19 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
       .check("currency")
       .isNotNull();
   }
+
+  /**
+   * Previous request's transaction reference
+   *
+   * @internal
+   * @param IPaymentMethod $paymentMethod Transaction reference
+   *
+   * @return ManagementBuilder
+   */
+  public withPaymentMethod(
+    paymentMethod: PaymentMethod | TransactionReference,
+  ): ManagementBuilder {
+    this.paymentMethod = paymentMethod;
+    return this;
+  }
 }

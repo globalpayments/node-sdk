@@ -1,5 +1,6 @@
 import {
   AccountType,
+  Address,
   AuthorizationBuilder,
   CheckType,
   EntryMethod,
@@ -15,6 +16,7 @@ export class ECheck extends PaymentMethod implements IChargable {
   public accountType: AccountType;
   public achVerify: boolean;
   public birthYear: string;
+  public bankAddress: Address;
   public checkHolderName: string;
   public checkName: string;
   public checkNumber: string;
@@ -40,6 +42,19 @@ export class ECheck extends PaymentMethod implements IChargable {
    */
   public charge(amount?: string | number) {
     return new AuthorizationBuilder(TransactionType.Sale, this).withAmount(
+      amount,
+    );
+  }
+
+  /**
+   * Refunds the payment method
+   *
+   * @param string|number amount Amount to authorize
+   *
+   * @return AuthorizationBuilder
+   */
+  public refund(amount?: string | number) {
+    return new AuthorizationBuilder(TransactionType.Refund, this).withAmount(
       amount,
     );
   }

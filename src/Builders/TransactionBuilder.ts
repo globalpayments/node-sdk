@@ -2,12 +2,13 @@ import {
   IPaymentMethod,
   PaymentMethod,
   TransactionModifier,
+  TransactionReference,
   TransactionType,
 } from "../";
 import { BaseBuilder } from "./BaseBuilder";
 
 export abstract class TransactionBuilder<T> extends BaseBuilder<T> {
-  public paymentMethod: PaymentMethod;
+  public paymentMethod: PaymentMethod | TransactionReference;
   public transactionType: TransactionType;
   public transactionModifier = TransactionModifier.None;
   public supplementaryData: Record<string, string | string[]> = {};
@@ -17,20 +18,15 @@ export abstract class TransactionBuilder<T> extends BaseBuilder<T> {
 
     this.transactionType = type;
     if (paymentMethod) {
-      this.paymentMethod = paymentMethod as PaymentMethod;
+      this.paymentMethod = paymentMethod as
+        | PaymentMethod
+        | TransactionReference;
     }
   }
 
   public withModifier(modifier?: TransactionModifier) {
     if (modifier !== undefined) {
       this.transactionModifier = modifier;
-    }
-    return this;
-  }
-
-  public withPaymentMethod(paymentMethod?: IPaymentMethod) {
-    if (paymentMethod !== undefined) {
-      this.paymentMethod = paymentMethod as PaymentMethod;
     }
     return this;
   }

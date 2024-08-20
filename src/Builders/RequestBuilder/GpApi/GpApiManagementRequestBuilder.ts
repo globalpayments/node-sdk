@@ -9,6 +9,7 @@ import {
   ProtectSensitiveData,
   StringUtils,
   Transaction,
+  TransactionReference,
   TransactionType,
 } from "../../../../src";
 import { Card } from "../../../../src/Entities/GpApi/DTO";
@@ -87,7 +88,7 @@ export class GpApiManagementRequestBuilder implements IRequestBuilder {
           "/capture";
         verb = "POST";
         payload = {
-          amount: StringUtils.toNumeric(builder.amount),
+          amount: builder.amount && StringUtils.toNumeric(builder.amount),
           gratuity: builder.gratuity && StringUtils.toNumeric(builder.gratuity),
         };
         break;
@@ -118,7 +119,9 @@ export class GpApiManagementRequestBuilder implements IRequestBuilder {
           "/refund";
         verb = "POST";
         payload = {
-          amount: StringUtils.toNumeric(builder.amount),
+          amount: builder.amount
+            ? StringUtils.toNumeric(builder.amount)
+            : undefined,
         };
         break;
       case TransactionType.Reversal:
@@ -210,6 +213,28 @@ export class GpApiManagementRequestBuilder implements IRequestBuilder {
           };
         }
 
+        break;
+      case TransactionType.Confirm:
+        if (
+          builder.paymentMethod instanceof TransactionReference &&
+          builder.paymentMethod.paymentMethodType === PaymentMethodType.APM
+        ) {
+          endpoint =
+            GpApiRequest.TRANSACTION_ENDPOINT +
+            "/" +
+            builder.paymentMethod.transactionId +
+            "/confirmation";
+          verb = "POST";
+          const apmResponse = builder.paymentMethod.alternativePaymentResponse;
+          payload = {
+            payment_method: {
+              apm: {
+                provider: apmResponse.providerName,
+                provider_payer_reference: apmResponse.providerReference,
+              },
+            },
+          };
+        }
         break;
     }
 

@@ -87,6 +87,9 @@ export class StringUtils {
     }
 
     const f = parseFloat(value.toString()) * 100;
+    if (0 < Number(value) && Number(value) < 1) {
+      return "0" + parseFloat(f.toFixed(2)).toString();
+    }
     return parseFloat(f.toFixed(2)).toString();
   }
 

@@ -5,11 +5,8 @@ import {
   EnumMapping,
   TransactionType,
   AuthorizationBuilder,
-  CreditCardData,
   PaymentMethod,
   TrackNumber,
-  CreditTrackData,
-  DebitTrackData,
   PaymentMethodType,
 } from "../../src";
 
@@ -59,15 +56,12 @@ export class CardUtils {
     gatewayProvider: any,
     maskedValues: Record<string, string>,
   ) {
-    const paymentMethod = builder.paymentMethod;
+    const paymentMethod = builder.paymentMethod as PaymentMethod;
     const transactionType = builder.transactionType;
 
     const card = new Card();
 
-    if (
-      paymentMethod instanceof CreditTrackData ||
-      paymentMethod instanceof DebitTrackData
-    ) {
+    if (paymentMethod.isTrackData) {
       card.track = paymentMethod.value;
       if (transactionType === TransactionType.Sale) {
         if (!card.track) {
@@ -110,7 +104,7 @@ export class CardUtils {
               : "CREDIT";
         }
       }
-    } else if (builder.paymentMethod instanceof CreditCardData) {
+    } else if (paymentMethod.isCardData) {
       card.number = paymentMethod.number;
       maskedValues = {
         ...maskedValues,
@@ -169,8 +163,8 @@ export class CardUtils {
       }
     }
 
-    if (builder.paymentMethod.isPinProtected) {
-      card.pin_block = builder.paymentMethod.pinBlock;
+    if (paymentMethod.isPinProtected) {
+      card.pin_block = paymentMethod.pinBlock;
     }
 
     const billingAddress = builder.billingAddress

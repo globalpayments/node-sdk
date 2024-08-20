@@ -1,4 +1,5 @@
 import {
+  AlternativePaymentResponse,
   Card,
   CardIssuerResponse,
   GiftCard,
@@ -96,6 +97,20 @@ export class Transaction {
     }
 
     return null;
+  }
+
+  get alternativePaymentResponse(): AlternativePaymentResponse | null {
+    if (this.transactionReference) {
+      return this.transactionReference.alternativePaymentResponse;
+    }
+    return null;
+  }
+
+  set alternativePaymentResponse(value: AlternativePaymentResponse) {
+    if (!(this.transactionReference instanceof TransactionReference)) {
+      this.transactionReference = new TransactionReference();
+    }
+    this.transactionReference.alternativePaymentResponse = value;
   }
 
   set authorizationCode(authCode: string) {
@@ -244,5 +259,11 @@ export class Transaction {
     return new ManagementBuilder(TransactionType.Void).withPaymentMethod(
       this.transactionReference,
     );
+  }
+
+  public confirm(amount?: string | number | null) {
+    return new ManagementBuilder(TransactionType.Confirm)
+      .withPaymentMethod(this.transactionReference)
+      .withAmount(amount);
   }
 }

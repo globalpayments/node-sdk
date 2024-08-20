@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v3.8.2 (08/14/24):
+## Latest - v3.9.0 (08/20/24):
+
+### Enhancements:
+
+- [GP-API] Added support for ACH, APM and EBT
+
+## v3.8.2 (08/14/24):
 
 ### Enhancements:
 

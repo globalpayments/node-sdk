@@ -249,7 +249,7 @@ export class GpApiAuthorizationRequestBuilder implements IRequestBuilder {
           provider: paymentMethodContainer.alternativePaymentMethodType,
           address_override_mode: paymentMethodContainer.addressOverrideMode
             ? paymentMethodContainer.addressOverrideMode
-            : null,
+            : undefined,
         };
         return paymentMethod;
 
@@ -326,7 +326,7 @@ export class GpApiAuthorizationRequestBuilder implements IRequestBuilder {
   ): any {
     const captureMode = this.getCaptureMode(builder);
 
-    const requestBody: any = {
+    let requestBody: any = {
       account_name: config.accessTokenInfo.transactionProcessingAccountName,
       account_id: config.accessTokenInfo.transactionProcessingAccountID,
       channel: config.channel,
@@ -385,6 +385,18 @@ export class GpApiAuthorizationRequestBuilder implements IRequestBuilder {
       requestBody.payer = this.setPayerInformation(builder);
     }
 
+    if (builder.paymentMethod instanceof AlternativePaymentMethod) {
+      const mappedOrder = this.setOrderInformation(builder, requestBody);
+      requestBody = {
+        ...requestBody,
+        order: mappedOrder,
+        ...this.setNotificationUrls(),
+        amount:
+          mappedOrder?.amount ||
+          StringUtils.toNumeric(builder.amount.toString()),
+      };
+    }
+
     if (builder.dccRateData) {
       requestBody.currency_conversion = { id: builder.dccRateData.dccId };
     }
@@ -394,6 +406,144 @@ export class GpApiAuthorizationRequestBuilder implements IRequestBuilder {
     }
 
     return requestBody;
+  }
+
+  private setNotificationUrls() {
+    return {
+      notifications: {
+        return_url: this.builder.paymentMethod.returnUrl || undefined,
+        status_url: this.builder.paymentMethod.statusUpdateUrl || undefined,
+        cancel_url: this.builder.paymentMethod.cancelUrl || undefined,
+      },
+    };
+  }
+
+  private setOrderInformation(builder: AuthorizationBuilder, request: any) {
+    let order: Record<string, any> = {};
+    if (builder.orderDetails) {
+      order = {
+        description: builder.orderDetails.description,
+      };
+    }
+
+    if (builder.shippingAddress) {
+      order = {
+        ...order,
+        shipping_address: {
+          line_1: builder.shippingAddress.streetAddress1,
+          line_2: builder.shippingAddress.streetAddress2,
+          line_3: builder.shippingAddress.streetAddress3,
+          city: builder.shippingAddress.city,
+          postal_code: builder.shippingAddress.postalCode,
+          state: builder.shippingAddress.state,
+          country: builder.shippingAddress.country,
+        },
+      };
+    }
+
+    const [phoneNumber, phoneCountryCode] = this.getPhoneNumber(
+      builder,
+      PhoneNumberType.SHIPPING,
+    );
+
+    if (phoneCountryCode || phoneNumber) {
+      order["shipping_phone"] = {
+        country_code: phoneCountryCode,
+        subscriber_number: phoneNumber,
+      };
+    }
+
+    switch (true) {
+      case builder.paymentMethod instanceof AlternativePaymentMethod:
+        if (builder.productData) {
+          order = {
+            ...order,
+            ...this.setItemDetailsListForApm(builder),
+          };
+        }
+        break;
+    }
+
+    if (request.order) {
+      order = {
+        ...order,
+        ...request.order,
+      };
+    }
+
+    return Object.keys(order).length ? order : undefined;
+  }
+
+  private setItemDetailsListForApm(builder: AuthorizationBuilder) {
+    let taxTotalAmount = 0;
+    let itemsAmount = 0;
+    let orderAmount = 0;
+    const items: any[] = [];
+    const order: Record<string, any> = {};
+
+    for (const product of builder.productData) {
+      const qta = product.quantity ?? 0;
+      const taxAmount = StringUtils.toNumeric(product.tax_amount);
+      const unitAmount = StringUtils.toNumeric(product.unit_amount);
+
+      items.push({
+        reference: product.reference ?? null,
+        label: product.label ?? null,
+        description: product.description ?? null,
+        quantity: qta,
+        unit_amount: unitAmount,
+        unit_currency: product.unit_currency ?? null,
+        tax_amount: taxAmount,
+        amount: (Number(qta) * Number(unitAmount)).toString(),
+      });
+
+      if (product.tax_amount) {
+        taxTotalAmount += Number(product.tax_amount);
+      }
+      if (product.unit_amount) {
+        itemsAmount += Number(product.quantity) * Number(product.unit_amount);
+      }
+    }
+
+    order.tax_amount = StringUtils.toNumeric(taxTotalAmount.toString());
+    order.item_amount = StringUtils.toNumeric(itemsAmount.toString());
+
+    if (builder.shippingAmount) {
+      order.shipping_amount = StringUtils.toNumeric(
+        String(builder.shippingAmount || ""),
+      );
+      orderAmount += Number(builder.shippingAmount);
+    }
+
+    order.insurance_offered =
+      builder.orderDetails && builder.orderDetails.hasInsurance !== undefined
+        ? builder.orderDetails.hasInsurance
+          ? "YES"
+          : "NO"
+        : null;
+    order.shipping_discount = builder.shippingDiscount
+      ? StringUtils.toNumeric(builder.shippingDiscount)
+      : 0;
+
+    if (builder.orderDetails && builder.orderDetails.insuranceAmount) {
+      order.insurance_amount = StringUtils.toNumeric(
+        String(builder.orderDetails.insuranceAmount || ""),
+      );
+      orderAmount += Number(builder.orderDetails.insuranceAmount);
+    }
+
+    if (builder.orderDetails && builder.orderDetails.handlingAmount) {
+      order.handling_amount = StringUtils.toNumeric(
+        String(builder.orderDetails.handlingAmount || ""),
+      );
+      orderAmount += Number(builder.orderDetails.handlingAmount);
+    }
+
+    orderAmount += itemsAmount + taxTotalAmount;
+    order.amount = StringUtils.toNumeric(String(orderAmount || ""));
+    order.currency = builder.currency ?? null;
+    order.items = items;
+    return order;
   }
 
   private setRequestStoredCredentials(
@@ -422,30 +572,35 @@ export class GpApiAuthorizationRequestBuilder implements IRequestBuilder {
   private setPayerInformation(builder: AuthorizationBuilder): any {
     const payer: any = {};
 
-    payer["reference"] = builder.customerId
-      ? builder.customerId
-      : builder.customerData
-      ? builder.customerData.id
-      : null;
+    if (builder.customerId || builder.customerData?.id) {
+      payer["id"] = builder.customerId || builder.customerData?.id;
+    }
+    if (builder.customerData) {
+      payer["reference"] = builder.customerData.key;
+    }
 
     switch (builder.paymentMethod.constructor) {
       case AlternativePaymentMethod:
-        payer["home_phone"] = {
-          country_code: builder.homePhone?.countryCode
-            ? StringUtils.validateToNumber(builder.homePhone.countryCode)
-            : null,
-          subscriber_number: builder.homePhone?.number
-            ? StringUtils.validateToNumber(builder.homePhone.number)
-            : null,
-        };
-        payer["work_phone"] = {
-          country_code: builder.workPhone?.countryCode
-            ? StringUtils.validateToNumber(builder.workPhone.countryCode)
-            : null,
-          subscriber_number: builder.workPhone?.number
-            ? StringUtils.validateToNumber(builder.workPhone.number)
-            : null,
-        };
+        if (builder.homePhone?.countryCode || builder.homePhone?.number) {
+          payer["home_phone"] = {
+            country_code: builder.homePhone?.countryCode
+              ? StringUtils.validateToNumber(builder.homePhone.countryCode)
+              : undefined,
+            subscriber_number: builder.homePhone?.number
+              ? StringUtils.validateToNumber(builder.homePhone.number)
+              : undefined,
+          };
+        }
+        if (builder.workPhone?.countryCode || builder.workPhone?.number) {
+          payer["work_phone"] = {
+            country_code: builder.workPhone?.countryCode
+              ? StringUtils.validateToNumber(builder.workPhone.countryCode)
+              : undefined,
+            subscriber_number: builder.workPhone?.number
+              ? StringUtils.validateToNumber(builder.workPhone.number)
+              : undefined,
+          };
+        }
         break;
       case ECheck:
         payer["billing_address"] = {
@@ -473,7 +628,7 @@ export class GpApiAuthorizationRequestBuilder implements IRequestBuilder {
         break;
     }
 
-    return payer;
+    return Object.keys(payer).length ? payer : undefined;
   }
 
   private getPhoneNumber(builder: any, type: string): [string, string] {

@@ -1,4 +1,5 @@
 import {
+  AlternativePaymentResponse,
   AuthenticationSource,
   DepositSummary,
   DisputeDocument,
@@ -30,10 +31,6 @@ import {
 import { PaymentMethod } from "../../src/Entities/GpApi/DTO";
 
 export class GpApiMapping {
-  public static mapResponseAPM(response: string) {
-    response;
-  }
-
   public static mapResponse(response: any): Transaction {
     const transaction = new Transaction();
 
@@ -311,6 +308,27 @@ export class GpApiMapping {
         summary.cardType = card.brand ?? null;
         summary.authCode = card.authcode ?? null;
         summary.brandReference = card.brand_reference ?? null;
+      }
+
+      if (response.payment_method?.apm) {
+        /** map Open Banking response info */
+        if (
+          response.payment_method.apm.provider?.toLowerCase() ===
+          PaymentProvider.OPEN_BANKING
+        ) {
+          // To be implemented
+        } else {
+          /** map APMs (Paypal) response info */
+          const apm = response.payment_method.apm;
+          const alternativePaymentResponse = new AlternativePaymentResponse();
+          alternativePaymentResponse.redirectUrl =
+            response.payment_method.redirect_url ?? null;
+          alternativePaymentResponse.providerName = apm.provider ?? null;
+          alternativePaymentResponse.providerReference =
+            apm.provider_reference ?? null;
+          summary.alternativePaymentResponse = alternativePaymentResponse;
+          summary.paymentType = PaymentMethodName.APM;
+        }
       }
     }
 
@@ -629,5 +647,76 @@ export class GpApiMapping {
     summary.depositReference = response.deposit_id ?? null;
 
     return summary;
+  }
+
+  static mapResponseAPM(response: any): Transaction {
+    const apm = new AlternativePaymentResponse();
+    const transaction = GpApiMapping.mapResponse(response);
+    const paymentMethodApm = response.payment_method.apm;
+
+    apm.redirectUrl =
+      response.payment_method.redirect_url ??
+      paymentMethodApm.redirect_url ??
+      null;
+    apm.qrCodeImage = response.payment_method.qr_code ?? null;
+
+    if (typeof paymentMethodApm.provider === "string") {
+      apm.providerName = paymentMethodApm.provider;
+    } else if (typeof paymentMethodApm.provider === "object") {
+      apm.providerName = paymentMethodApm.provider?.name ?? null;
+      apm.providerReference =
+        paymentMethodApm.provider?.merchant_identifier ?? null;
+      apm.timeCreatedReference = paymentMethodApm.provider
+        ?.time_created_reference
+        ? paymentMethodApm.provider.time_created_reference
+        : null;
+    }
+
+    apm.accountHolderName = paymentMethodApm.provider_payer_name ?? null;
+    apm.ack = paymentMethodApm.ack ?? null;
+    apm.sessionToken = paymentMethodApm.session_token ?? null;
+    apm.correlationReference = paymentMethodApm.correlation_reference ?? null;
+    apm.versionReference = paymentMethodApm.version_reference ?? null;
+    apm.buildReference = paymentMethodApm.build_reference ?? null;
+    apm.timeCreatedReference = paymentMethodApm.time_created_reference
+      ? paymentMethodApm.time_created_reference
+      : null;
+    apm.transactionReference = paymentMethodApm.transaction_reference ?? null;
+    apm.secureAccountReference =
+      paymentMethodApm.secure_account_reference ?? null;
+    apm.reasonCode = paymentMethodApm.reason_code ?? null;
+    apm.pendingReason = paymentMethodApm.pending_reason ?? null;
+    apm.grossAmount = StringUtils.toAmount(paymentMethodApm.gross_amount);
+    apm.paymentTimeReference = paymentMethodApm.payment_time_reference
+      ? paymentMethodApm.payment_time_reference
+      : null;
+    apm.paymentType = paymentMethodApm.payment_type ?? null;
+    apm.paymentStatus = paymentMethodApm.payment_status ?? null;
+    apm.type = paymentMethodApm.type ?? null;
+    apm.protectionEligibilty = paymentMethodApm.protection_eligibilty ?? null;
+    apm.feeAmount = StringUtils.toAmount(paymentMethodApm.fee_amount);
+
+    if (response.payment_method.authorization) {
+      const authorization = response.payment_method.authorization;
+      apm.authStatus = authorization.status ?? null;
+      apm.authAmount = StringUtils.toAmount(authorization.amount);
+      apm.authAck = authorization.ack ?? null;
+      apm.authCorrelationReference =
+        authorization.correlation_reference ?? null;
+      apm.authVersionReference = authorization.version_reference ?? null;
+      apm.authBuildReference = authorization.build_reference ?? null;
+      apm.authPendingReason = authorization.pending_reason ?? null;
+      apm.authProtectionEligibilty =
+        authorization.protection_eligibilty ?? null;
+      apm.authProtectionEligibiltyType =
+        authorization.protection_eligibilty_type ?? null;
+      apm.authReference = authorization.reference ?? null;
+    }
+
+    apm.nextAction = paymentMethodApm.next_action ?? null;
+    apm.secondsToExpire = paymentMethodApm.seconds_to_expire ?? null;
+    transaction.alternativePaymentResponse = apm;
+
+    return transaction;
   }
 }
