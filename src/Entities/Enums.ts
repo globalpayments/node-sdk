@@ -1036,6 +1036,7 @@ export enum TransactionType {
   Search = 1 << 20,
   Hold = 1 << 21,
   Release = 1 << 23,
+  DccRateLookup = 1 << 23,
   VerifyEnrolled = 1 << 24,
   VerifySignature = 1 << 25,
   TokenDelete = 1 << 26,

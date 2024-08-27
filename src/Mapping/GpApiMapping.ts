@@ -1,6 +1,7 @@
 import {
   AlternativePaymentResponse,
   AuthenticationSource,
+  DccRateData,
   DepositSummary,
   DisputeDocument,
   DisputeSummary,
@@ -31,6 +32,8 @@ import {
 import { PaymentMethod } from "../../src/Entities/GpApi/DTO";
 
 export class GpApiMapping {
+  static DCC_RESPONSE = "RATE_LOOKUP";
+
   public static mapResponse(response: any): Transaction {
     const transaction = new Transaction();
 
@@ -86,6 +89,13 @@ export class GpApiMapping {
       transaction.cvnResponseCode = response.card.cvv || null;
       transaction.cardBrandTransactionId =
         response.card.brand_reference || null;
+    }
+
+    if (
+      response.action.type === GpApiMapping.DCC_RESPONSE ||
+      response.currency_conversion
+    ) {
+      transaction.dccRateData = GpApiMapping.mapDccInfo(response);
     }
 
     return transaction;
@@ -718,5 +728,30 @@ export class GpApiMapping {
     transaction.alternativePaymentResponse = apm;
 
     return transaction;
+  }
+
+  private static mapDccInfo(response: any): DccRateData {
+    if (response.currency_conversion) {
+      response = response.currency_conversion;
+    }
+
+    const dccRateData = new DccRateData();
+    dccRateData.cardHolderCurrency = response.payer_currency || null;
+    dccRateData.cardHolderAmount = response.payer_amount
+      ? StringUtils.toAmount(response.payer_amount)
+      : null;
+    dccRateData.cardHolderRate = response.exchange_rate || null;
+    dccRateData.merchantCurrency = response.currency || null;
+    dccRateData.merchantAmount = response.amount
+      ? StringUtils.toAmount(response.amount)
+      : null;
+    dccRateData.marginRatePercentage = response.margin_rate_percentage || null;
+    dccRateData.exchangeRateSourceName = response.exchange_rate_source || null;
+    dccRateData.commissionPercentage = response.commission_percentage || null;
+    dccRateData.exchangeRateSourceTimestamp =
+      response.exchange_rate_time_created || null;
+    dccRateData.dccId = response.id || null;
+
+    return dccRateData;
   }
 }

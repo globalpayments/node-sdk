@@ -1,6 +1,9 @@
 import {
   AuthorizationBuilder,
   BuilderError,
+  DccProcessor,
+  DccRateData,
+  DccRateType,
   EncryptionData,
   InquiryType,
   ManagementBuilder,
@@ -230,5 +233,21 @@ export abstract class Credit
       TransactionType.Detokenize,
       this,
     ).execute();
+  }
+
+  public getDccRate(dccRateType?: DccRateType, ccp?: DccProcessor) {
+    const authBuilder = new AuthorizationBuilder(
+      TransactionType.DccRateLookup,
+      this,
+    );
+
+    if (dccRateType || ccp) {
+      const dccRateData = new DccRateData();
+      if (ccp) dccRateData.dccProcessor = ccp;
+      if (dccRateType) dccRateData.dccRateType = dccRateType;
+      authBuilder.withDccRateData(dccRateData);
+    }
+
+    return authBuilder;
   }
 }

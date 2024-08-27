@@ -1,4 +1,5 @@
 import {
+  DccRateData,
   DisputeDocument,
   LodgingData,
   PaymentMethod,
@@ -336,6 +337,19 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
     paymentMethod: PaymentMethod | TransactionReference,
   ): ManagementBuilder {
     this.paymentMethod = paymentMethod;
+    return this;
+  }
+
+  /**
+   * Set the request dccRateData
+   *
+   * @param DccRateData dccRateData
+   *
+   * @return AuthorizationBuilder
+   */
+  public withDccRateData(value: DccRateData) {
+    this.dccRateData = value;
+
     return this;
   }
 }

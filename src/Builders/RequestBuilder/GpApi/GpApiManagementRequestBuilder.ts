@@ -1,6 +1,7 @@
 import {
   BaseBuilder,
   CreditCardData,
+  DccRateData,
   GatewayError,
   GpApiRequest,
   IRequestBuilder,
@@ -90,6 +91,9 @@ export class GpApiManagementRequestBuilder implements IRequestBuilder {
         payload = {
           amount: builder.amount && StringUtils.toNumeric(builder.amount),
           gratuity: builder.gratuity && StringUtils.toNumeric(builder.gratuity),
+          currency_conversion: builder.dccRateData
+            ? this.getDccRate(builder.dccRateData)
+            : undefined,
         };
         break;
       case TransactionType.DisputeAcceptance:
@@ -122,6 +126,9 @@ export class GpApiManagementRequestBuilder implements IRequestBuilder {
           amount: builder.amount
             ? StringUtils.toNumeric(builder.amount)
             : undefined,
+          currency_conversion: builder.dccRateData
+            ? this.getDccRate(builder.dccRateData)
+            : undefined,
         };
         break;
       case TransactionType.Reversal:
@@ -144,6 +151,9 @@ export class GpApiManagementRequestBuilder implements IRequestBuilder {
         verb = "POST";
         payload = {
           amount: StringUtils.toNumeric(builder.amount),
+          currency_conversion: builder.dccRateData
+            ? this.getDccRate(builder.dccRateData)
+            : undefined,
         };
 
         break;
@@ -241,6 +251,12 @@ export class GpApiManagementRequestBuilder implements IRequestBuilder {
     GpApiRequest.maskedValues = this.maskedValues;
 
     return new GpApiRequest(endpoint, verb, JSON.stringify(payload));
+  }
+
+  getDccRate(dccRateData: DccRateData) {
+    return {
+      id: dccRateData.dccId,
+    };
   }
 
   buildRequestFromJson(jsonRequest: string): void {

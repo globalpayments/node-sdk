@@ -3,6 +3,7 @@ import {
   AddressType,
   AliasAction,
   Customer,
+  DccRateData,
   EBTCardData,
   EcommerceInfo,
   EmvLastChipRead,
@@ -82,6 +83,7 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public scheduleId: string;
   public shippingAddress: Address;
   public timestamp: string;
+  public dccRateData: DccRateData;
   public transactionInitiator: StoredCredentialInitiator;
   public idempotencyKey: string;
   public emvChipCondition: EmvLastChipRead;
@@ -891,6 +893,18 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
 
   public withMerchantCategory(merchantCategory: MerchantCategory) {
     this.merchantCategory = merchantCategory;
+    return this;
+  }
+
+  /**
+   * Set the request dccRateData
+   *
+   * @param DccRateData dccRateData
+   *
+   * @return AuthorizationBuilder
+   */
+  public withDccRateData(value: DccRateData) {
+    this.dccRateData = value;
     return this;
   }
 }

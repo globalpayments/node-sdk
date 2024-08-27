@@ -2,6 +2,7 @@ import {
   AlternativePaymentResponse,
   Card,
   CardIssuerResponse,
+  DccRateData,
   GiftCard,
   ManagementBuilder,
   PayerDetails,
@@ -44,6 +45,7 @@ export class Transaction {
   public transactionReference: TransactionReference;
   public token: string;
   public giftCard: GiftCard;
+  public dccRateData: DccRateData;
   public clientTransactionId: string;
   public timestamp: string;
   public batchId: string;

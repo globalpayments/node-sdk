@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v3.9.0 (08/20/24):
+## Latest - v3.10.0 (08/27/24):
+
+### Enhancements:
+
+- [GP-API] Added support DCC 
+
+## v3.9.0 (08/20/24):
 
 ### Enhancements:
 

@@ -130,7 +130,19 @@ export class GpApiAuthorizationRequestBuilder implements IRequestBuilder {
           requestData = this.generateVerificationRequest(builder, config);
         }
         break;
-
+      case TransactionType.DccRateLookup:
+        endpoint = GpApiRequest.DCC_ENDPOINT;
+        requestData = {
+          account_name: config.accessTokenInfo.transactionProcessingAccountName,
+          account_id: config.accessTokenInfo.transactionProcessingAccountID,
+          channel: config.channel,
+          amount: StringUtils.toNumeric((builder.amount as string) || null),
+          currency: builder.currency,
+          country: config.country,
+          reference: builder.clientTransactionId || GenerationUtils.getGuuid(),
+          payment_method: this.createPaymentMethodParam(builder, config),
+        };
+        break;
       default:
         throw new Error("Unsupported transaction type");
     }
