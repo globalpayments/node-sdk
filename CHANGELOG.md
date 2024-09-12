@@ -1,6 +1,13 @@
 # Changelog
 
-## Latest - v3.10.0 (08/27/24):
+## Latest - v3.10.1 (09/10/24):
+
+### Enhancements:
+
+- [Other] Fix to entities Exports
+- [Dependencies] Change to webpack version
+
+## v3.10.0 (08/27/24):
 
 ### Enhancements:
 

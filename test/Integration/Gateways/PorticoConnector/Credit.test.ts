@@ -1,7 +1,11 @@
 import {
+  AdditionalTaxDetails,
   Address,
+  CommercialData,
+  CommercialLineItem,
   CreditCardData,
   CreditTrackData,
+  DiscountDetails,
   EncryptionData,
   MobilePaymentMethodType,
   PaymentDataSourceType,
@@ -13,10 +17,6 @@ import {
   Transaction,
   TransactionModifier,
 } from "../../../../src";
-import {DiscountDetails} from "../../../../src/Entities/DiscountDetails";
-import {AdditionalTaxDetails} from "../../../../src/Entities/AdditionalTaxDetails";
-import {CommercialLineItem} from "../../../../src/Entities/CommercialLineItem";
-import {CommercialData} from "../../../../src/Entities/CommercialData";
 
 const card = new CreditCardData();
 card.number = "4111111111111111";
@@ -379,32 +379,30 @@ test.skip("credit swipe authorization", async () => {
   expect(capture.responseCode).toBe("00");
 });
 
-test('authorize and capture from transaction', async ()=> {
-
-
+test("authorize and capture from transaction", async () => {
   const card = new CreditCardData();
   card.number = "4111111111111111";
   card.expMonth = "12";
   card.expYear = "2030";
   card.cvn = "123";
 
-  const address =  new Address();
+  const address = new Address();
   address.postalCode = "750241234";
 
-  const authResponse = await card.authorize(10)
-      .withCurrency("USD")
-      .withAllowDuplicates(true)
-      .withAddress(address)
-      .execute();
+  const authResponse = await card
+    .authorize(10)
+    .withCurrency("USD")
+    .withAllowDuplicates(true)
+    .withAddress(address)
+    .execute();
 
-  const captureResponse =  await Transaction.fromId(authResponse.transactionId)
-      .capture(10)
-      .withCurrency("USD")
-      .execute();
+  const captureResponse = await Transaction.fromId(authResponse.transactionId)
+    .capture(10)
+    .withCurrency("USD")
+    .execute();
 
   expect(authResponse).toBeTruthy();
   expect(captureResponse).toBeTruthy();
-
 });
 
 test("credit swipe sale", async () => {

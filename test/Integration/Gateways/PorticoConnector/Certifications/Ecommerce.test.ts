@@ -1,15 +1,15 @@
 import {
-    Address,
-    BatchService,
-    CreditCardData,
-    CreditTrackData,
-    GiftCard,
-    PorticoConfig,
-    ServicesContainer,
-    TaxType,
-    TransactionModifier,
+  Address,
+  BatchService,
+  CreditCardData,
+  CreditTrackData,
+  GiftCard,
+  PorticoConfig,
+  ServicesContainer,
+  TaxType,
+  TransactionModifier,
 } from "../../../../../src";
-import {TestCards} from "../../../../Data";
+import { TestCards } from "../../../../Data";
 
 const config = new PorticoConfig();
 config.secretApiKey = "skapi_cert_MTyMAQBiHVEAewvIzXVFcmUd2UcyBge_eCpaASUp0A";
