@@ -1,6 +1,13 @@
 # Changelog
 
-## Latest - v3.10.1 (09/10/24):
+## Latest - v3.10.2 (10/31/24):
+
+### Enhancements:
+
+- [Other] E2E sample app GooglePay API and Portico
+- [Portico] Added 3d secure credit transactions
+
+## v3.10.1 (09/10/24):
 
 ### Enhancements:
 

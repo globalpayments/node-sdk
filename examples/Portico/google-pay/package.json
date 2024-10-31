@@ -1,0 +1,22 @@
+{
+  "name": "google-pay",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "GPL-2.0",
+  "scripts": {
+    "deploy": "now",
+    "develop": "micro",
+    "start": "micro"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "express": "^4.16.4",
+    "globalpayments-api": "^3.10.1",
+    "micro": "^9.3.4",
+    "nodemon": "^2.0.22"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15",
+    "now": "^9.3.3"
+  }
+}

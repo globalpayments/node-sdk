@@ -11,9 +11,11 @@ import {
   PaymentDataSourceType,
   PorticoConfig,
   ReportingService,
+  Secure3dVersion,
   ServicesContainer,
   StoredCredentialInitiator,
   TaxType,
+  ThreeDSecure,
   Transaction,
   TransactionModifier,
 } from "../../../../src";
@@ -28,8 +30,8 @@ card.cardHolderName = "Joe Smith";
 const track = new CreditTrackData();
 /* eslint-disable */
 track.value =
-    "<E1050711%B4012001000000016^VI TEST CREDIT^251200000000000000000000?|LO04K0WFOmdkDz0um+GwUkILL8ZZOP6Zc4rCpZ9+kg2T3JBT4AEOilWTI|+++++++Dbbn04ekG|11;4012001000000016=25120000000000000000?|1u2F/aEhbdoPixyAPGyIDv3gBfF|+++++++Dbbn04ekG|00|||/wECAQECAoFGAgEH2wYcShV78RZwb3NAc2VjdXJlZXhjaGFuZ2UubmV0PX50qfj4dt0lu9oFBESQQNkpoxEVpCW3ZKmoIV3T93zphPS3XKP4+DiVlM8VIOOmAuRrpzxNi0TN/DWXWSjUC8m/PI2dACGdl/hVJ/imfqIs68wYDnp8j0ZfgvM26MlnDbTVRrSx68Nzj2QAgpBCHcaBb/FZm9T7pfMr2Mlh2YcAt6gGG1i2bJgiEJn8IiSDX5M2ybzqRT86PCbKle/XCTwFFe1X|>;";
-  /* eslint-enable */
+  "<E1050711%B4012001000000016^VI TEST CREDIT^251200000000000000000000?|LO04K0WFOmdkDz0um+GwUkILL8ZZOP6Zc4rCpZ9+kg2T3JBT4AEOilWTI|+++++++Dbbn04ekG|11;4012001000000016=25120000000000000000?|1u2F/aEhbdoPixyAPGyIDv3gBfF|+++++++Dbbn04ekG|00|||/wECAQECAoFGAgEH2wYcShV78RZwb3NAc2VjdXJlZXhjaGFuZ2UubmV0PX50qfj4dt0lu9oFBESQQNkpoxEVpCW3ZKmoIV3T93zphPS3XKP4+DiVlM8VIOOmAuRrpzxNi0TN/DWXWSjUC8m/PI2dACGdl/hVJ/imfqIs68wYDnp8j0ZfgvM26MlnDbTVRrSx68Nzj2QAgpBCHcaBb/FZm9T7pfMr2Mlh2YcAt6gGG1i2bJgiEJn8IiSDX5M2ybzqRT86PCbKle/XCTwFFe1X|>;";
+/* eslint-enable */
 track.encryptionData = new EncryptionData();
 track.encryptionData.version = "01";
 
@@ -589,4 +591,44 @@ test("incremental auth", async () => {
 
   expect(origResponse).toBeTruthy();
   expect(captureResponse).toBeTruthy();
+});
+
+test("3D Secure V1", async () => {
+  const ecom = new ThreeDSecure();
+  ecom.cavv = "XXXXf98AAajXbDRg3HSUMAACAAA=";
+  ecom.xid = "0l35fwh1sys3ojzyxelu4ddhmnu5zfke5vst";
+  ecom.eci = 5;
+  ecom.version = Secure3dVersion.ONE;
+
+  card.threeDSecure = ecom;
+
+  const response = await card
+    .charge("10.00")
+    .withCurrency("USD")
+    .withInvoiceNumber("1234567890")
+    .withAllowDuplicates(true)
+    .execute();
+
+  expect(response).toBeTruthy();
+  expect(response.responseCode).toBe("00");
+});
+
+test("3D Secure V2", async () => {
+  const ecom = new ThreeDSecure();
+  ecom.cavv = "XXXXf98AAajXbDRg3HSUMAACAAA=";
+  ecom.xid = "0l35fwh1sys3ojzyxelu4ddhmnu5zfke5vst";
+  ecom.eci = 5;
+  ecom.version = Secure3dVersion.TWO;
+
+  card.threeDSecure = ecom;
+
+  const response = await card
+    .charge("10.00")
+    .withCurrency("USD")
+    .withInvoiceNumber("1234567890")
+    .withAllowDuplicates(true)
+    .execute();
+
+  expect(response).toBeTruthy();
+  expect(response.responseCode).toBe("00");
 });

@@ -9,6 +9,7 @@ import {
   ManagementBuilder,
   PaymentMethodType,
   PaymentMethodUsageMode,
+  ThreeDSecure,
   Transaction,
   TransactionType,
 } from "../";
@@ -62,6 +63,8 @@ export abstract class Credit
   public paymentSource: string;
   public cryptogram: string;
   public eci: string;
+
+  public threeDSecure: ThreeDSecure;
 
   /**
    * Authorizes the payment method

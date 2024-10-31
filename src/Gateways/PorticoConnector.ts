@@ -38,6 +38,7 @@ import {
   ReportBuilder,
   ReportType,
   SecCode,
+  Secure3dVersion,
   TaxType,
   Transaction,
   TransactionBuilder,
@@ -278,6 +279,41 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
 
       if (card instanceof CreditCardData) {
         const creditCardData = card as CreditCardData;
+
+        const secureEcom = creditCardData.threeDSecure;
+        if (secureEcom) {
+          // 3d Secure Element
+          if (
+            secureEcom.eci &&
+            !this.isAppleOrGooglePay(secureEcom.paymentDataSource)
+          ) {
+            const secure3D = subElement(block1, "Secure3D");
+            subElement(secure3D, "Version").text = threeDSecureNumericVersion(
+              secureEcom.version,
+            );
+            subElement(secure3D, "AuthenticationValue").append(
+              cData(secureEcom.cavv),
+            );
+            subElement(secure3D, "ECI").append(
+              cData(secureEcom.eci.toFixed(0)),
+            );
+            subElement(secure3D, "DirectoryServerTxnId").append(
+              cData(secureEcom.xid),
+            );
+          }
+
+          // WalletData Element
+          if (this.isAppleOrGooglePay(secureEcom.paymentDataSource)) {
+            const walletData = subElement(block1, "WalletData");
+            subElement(walletData, "PaymentSource").append(
+              cData(secureEcom.paymentDataSource),
+            );
+            subElement(walletData, "Cryptogram").append(cData(secureEcom.cavv));
+            subElement(walletData, "ECI").append(
+              cData(secureEcom.eci.toFixed()),
+            );
+          }
+        }
 
         //  WalletData Element
         if (
@@ -1631,6 +1667,12 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     );
   }
 }
+
+const threeDSecureNumericVersion = (version: Secure3dVersion): string => {
+  if (version === Secure3dVersion.TWO) return "2";
+  return "1";
+};
+
 // prettier-ignore
 function buildLineItems(
     data: Element,
