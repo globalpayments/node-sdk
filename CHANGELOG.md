@@ -1,6 +1,13 @@
 # Changelog
 
-## Latest - v3.10.2 (10/31/24):
+## Latest - v3.10.3 (11/06/24):
+
+### Enhancements:
+
+- [Portico] Map additional response messages
+
+
+## v3.10.2 (10/31/24):
 
 ### Enhancements:
 

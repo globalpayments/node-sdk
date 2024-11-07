@@ -1193,10 +1193,10 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     result.responseCode = root.findtext(".//RspCode")
       ? this.normalizeResponse(root.findtext(".//RspCode"))
       : gatewayRspCode;
-    result.responseMessage = root.findtext(".//RspMessage")
+    const rspMsg = root.findtext(".//RspMessage")
       ? root.findtext(".//RspMessage")
-      : gatewayRspText;
-
+      : root.findtext(".//RspText");
+    result.responseMessage = rspMsg || gatewayRspText;
     result.authorizedAmount = root.findtext(".//AuthAmt");
     result.availableBalance = root.findtext(".//AvailableBalance");
     result.avsResponseCode = root.findtext(".//AVSRsltCode");

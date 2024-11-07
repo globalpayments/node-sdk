@@ -407,6 +407,38 @@ test("authorize and capture from transaction", async () => {
   expect(captureResponse).toBeTruthy();
 });
 
+test("authorize, capture and refund from transaction ID", async () => {
+  const card = new CreditCardData();
+  card.number = "4111111111111111";
+  card.expMonth = "12";
+  card.expYear = "2030";
+  card.cvn = "123";
+
+  const address = new Address();
+  address.postalCode = "750241234";
+
+  const authResponse = await card
+    .authorize(10)
+    .withCurrency("USD")
+    .withAllowDuplicates(true)
+    .withAddress(address)
+    .execute();
+
+  const captureResponse = await Transaction.fromId(authResponse.transactionId)
+    .capture(10)
+    .withCurrency("USD")
+    .execute();
+
+  const refundResponse = await Transaction.fromId(authResponse.transactionId)
+    .refund(10)
+    .withCurrency("USD")
+    .execute();
+
+  expect(authResponse).toBeTruthy();
+  expect(captureResponse).toBeTruthy();
+  expect(refundResponse).toBeTruthy();
+});
+
 test("credit swipe sale", async () => {
   const response = await track
     .charge(15)
