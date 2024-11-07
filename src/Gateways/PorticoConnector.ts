@@ -1186,7 +1186,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
 
     if (acceptedCodes.indexOf(gatewayRspCode) === -1) {
       throw new GatewayError(
-        `Unexpected Gateway Response: ${gatewayRspCode} - ${gatewayRspText}`,
+        'Unexpected Gateway Response', gatewayRspCode, gatewayRspText
       );
     }
 
