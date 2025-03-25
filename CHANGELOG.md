@@ -1,6 +1,13 @@
 # Changelog
 
-## Latest - v3.10.3 (11/06/24):
+## Latest - v3.10.4 (03/21/24):
+
+### Enhancements:
+
+- [Recurring] Fix typing issues with recurring payments
+
+
+## v3.10.3 (11/06/24):
 
 ### Enhancements:
 

@@ -1,3 +1,4 @@
+/* tslint:disable */
 import { EmailReceipt, PaymentSchedule, ScheduleFrequency } from "../";
 import { RecurringEntity } from "./";
 
@@ -10,7 +11,7 @@ export class Schedule extends RecurringEntity<Schedule> {
   /// <summary>
   /// The date/time the schedule was cancelled.
   /// </summary>
-  public cancellationDate: Date;
+  public cancellationDate: Date | null;
 
   /// <summary>
   /// The schedule's currency.
@@ -47,7 +48,7 @@ export class Schedule extends RecurringEntity<Schedule> {
   /// <summary>
   /// The end date of a schedule, if any.
   /// </summary>
-  public endDate: Date;
+  public endDate: Date | null;
 
   /// <summary>
   /// The schedule's frequency.
@@ -73,7 +74,7 @@ export class Schedule extends RecurringEntity<Schedule> {
   /// <summary>
   /// The date/time when the schedule should process next.
   /// </summary>
-  public nextProcessingDate: Date;
+  public nextProcessingDate: Date | null;
 
   /// <summary>
   /// The number of payments made to date on the schedule.
@@ -105,7 +106,7 @@ export class Schedule extends RecurringEntity<Schedule> {
   /// <summary>
   /// The start date of a schedule.
   /// </summary>
-  public startDate: Date;
+  public startDate: Date | null;
 
   /// <summary>
   /// The schedule's status.
@@ -119,12 +120,6 @@ export class Schedule extends RecurringEntity<Schedule> {
 
   /// <summary>
   /// The total amount for the schedule (`Amount` + `TaxAmount`).
-  /// </summary>
-  public get totalAmount() {
-    return (
-      parseFloat(this.amount.toString()) + parseFloat(this.taxAmount.toString())
-    );
-  }
 
   public constructor(customerKey?: string, paymentKey?: string) {
     super();
@@ -136,10 +131,18 @@ export class Schedule extends RecurringEntity<Schedule> {
     }
   }
 
+  /// </summary>
+  public get totalAmount() {
+    return (
+      parseFloat(this.amount.toString()) + parseFloat(this.taxAmount.toString())
+    );
+  }
+
   /// <summary>
   /// Sets the schedule's amount.
   /// </summary>
   /// <param name="value">The amount</param>
+
   /// <returns>Schedule</returns>
   public withAmount(value?: number | string) {
     if (value) {

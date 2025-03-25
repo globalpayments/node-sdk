@@ -16,25 +16,25 @@ import {
   PaymentSchedule,
   RecurringBuilder,
   RecurringPaymentMethod,
-  SecCode,
   Schedule,
+  SecCode,
   StringUtils,
   TransactionType,
   UnsupportedTransactionError,
 } from "../";
 import { RestGateway } from "./RestGateway";
+import { processServerDate } from "../Utils/ServerDates";
 
 export class PayPlanConnector extends RestGateway implements IRecurringService {
   public supportsRetrieval = true;
   public supportsUpdatePaymentDetails = false;
-  private _secretApiKey: string;
   public siteId: string;
   public licenseId: string;
   public deviceId: string;
-  private _username: string;
-  private _password: string;
   public developerId: string;
   public versionNumber: string;
+
+  private _secretApiKey: string;
 
   get secretApiKey() {
     return this._secretApiKey;
@@ -48,6 +48,8 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     this.setAuthorizationHeader(this.secretApiKey);
   }
 
+  private _username: string;
+
   get username() {
     return this._username;
   }
@@ -59,6 +61,8 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     this._username = value;
     this.setAuthorizationHeader(`${this.username}:${this.password}`);
   }
+
+  private _password: string;
 
   get password() {
     return this._password;
@@ -294,6 +298,9 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
           case PaymentSchedule.LastDayOfTheMonth:
             return "Last";
           default:
+            if (!entity.startDate) {
+              return "First";
+            }
             const day = entity.startDate.getUTCDate();
             if (day > 28) {
               return "Last";
@@ -440,7 +447,12 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     return request;
   }
 
-  protected buildDate(request: any, name: string, date: Date, force = false) {
+  protected buildDate(
+    request: any,
+    name: string,
+    date: Date | null,
+    force = false,
+  ) {
     const getDateValue = (d: Date) => {
       if (typeof date === "string" && (date as string).length === 8) {
         return d;
@@ -617,7 +629,9 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     }
 
     schedule.deviceId = response.deviceId;
-    schedule.startDate = response.startDate === "" ? null : response.startDate;
+    schedule.startDate = !response.startDate
+      ? null
+      : processServerDate(response.startDate);
     schedule.paymentSchedule = ((value: string) => {
       switch (value) {
         case "Last":
@@ -629,7 +643,9 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
       }
     })(response.processingDateInfo);
     schedule.frequency = response.frequency;
-    schedule.endDate = response.endDate === "" ? null : response.endDate;
+    schedule.endDate = !response.endDate
+      ? null
+      : processServerDate(response.endDate);
     schedule.reprocessingCount = response.reprocessingCount;
     schedule.emailReceipt = response.emailReceipt;
     schedule.emailNotification = ((value: string) => {
@@ -643,15 +659,17 @@ export class PayPlanConnector extends RestGateway implements IRecurringService {
     schedule.poNumber = response.poNumber;
     schedule.description = response.description;
     // statusSetDate
-    schedule.nextProcessingDate =
-      response.nextProcessingDate === "" ? null : response.nextProcessingDate;
+    schedule.nextProcessingDate = !response.nextProcessingDate
+      ? null
+      : processServerDate(response.nextProcessingDate);
     // previousProcessingDate
     // approvedTransactionCount
     // failureCount
     // totalApprovedAmountToDate
     // numberOfPaymentsRemaining
-    schedule.cancellationDate =
-      response.cancellationDate === "" ? null : response.cancellationDate;
+    schedule.cancellationDate = !response.cancellationDate
+      ? null
+      : processServerDate(response.cancellationDate);
     // creationDate
     // lastChangeDate
     schedule.hasStarted = response.scheduleStarted as boolean;
