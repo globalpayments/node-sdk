@@ -42,3 +42,7 @@ logger.txt
 
 # VS Code setup
 .vscode/
+
+#local
+.DS_Store
+.idea/

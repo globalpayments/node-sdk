@@ -1,6 +1,6 @@
 {
   "name": "globalpayments-api",
-  "version" : "3.10.4",
+  "version" : "3.10.5",
   "description": "Global Payments SDK for NodeJS for Heartland and Global Payments eCommerce gateways",
   "author": "Heartland Payment Systems",
   "license": "GPL-2.0",
@@ -16,7 +16,7 @@
   "scripts": {
     "build": "tsc",
     "test:jest": "jest",
-    "test:serial": "jest --runInBand put/path/to-your file here",
+    "test:serial": "jest --runInBand test/Integration/Gateways/PorticoConnector/Credit.test.ts",
     "build:netsuite": "webpack --env.GP_NETSUITE_BUILD --config config/webpack.netsuite.js && node bin/netsuite-post.js",
     "build:clean": "rimraf lib",
     "docs": "typedoc --mode file --name \"GlobalPayments.Api\" --project tsconfig.json --out docs src",
@@ -58,5 +58,6 @@
     "lib/test/**",
     "appsec.properties",
     "CHANGELOG.md"
-  ]
+  ],
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

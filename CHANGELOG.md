@@ -1,6 +1,13 @@
 # Changelog
 
-## Latest - v3.10.4 (03/21/24):
+## Latest - v3.10.5 (04/09/25):
+
+### Enhancements:
+
+- [Other] Updates to code to address security vulnerabilities
+- [Dependencies] Update dependency versions to address security vulnerabilities
+
+##  v3.10.4 (03/21/25):
 
 ### Enhancements:
 
@@ -32,7 +39,7 @@
 
 ### Enhancements:
 
-- [GP-API] Added support DCC 
+- [GP-API] Added support DCC
 
 ## v3.9.0 (08/20/24):
 
@@ -126,9 +133,9 @@
 
 ### Enhancements:
 - PayPlan Enhancements: - Added payment methods to customer response
-                        - Cardtype, NameOnAccount , and Last4 of both credit card and ACH are included in payment response 
-                        - Fix for Processor Configuration error response message
-                        - Added 204 as a success code when Request is successful; but response contains no data
+  - Cardtype, NameOnAccount , and Last4 of both credit card and ACH are included in payment response
+  - Fix for Processor Configuration error response message
+  - Added 204 as a success code when Request is successful; but response contains no data
 
 ## v3.3.2 (02/22/24):
 
@@ -159,7 +166,7 @@
 ### Enhancements:
 
 - [GP-API] Generate Access Token for GP API users
-  - https://developer.globalpay.com/api/access-token
+    - https://developer.globalpay.com/api/access-token
 
 ### Bug Fixes:
 
@@ -186,13 +193,8 @@
 
 #### Reporting Enhancements
 
-- SdkNameVersion Identifier: Name and Version of the SDK used for integration, where applicable. 
+- SdkNameVersion Identifier: Name and Version of the SDK used for integration, where applicable.
 
 ## v1.4.8 (12/13/22)
 
-#### Enhancements
-
-- Portico Connector: WalletData element added to process ApplePay/GooglePay Transactions using 
-  Digital Tokens
-
-## v1.4.7 (11/17/22)
+#### 
