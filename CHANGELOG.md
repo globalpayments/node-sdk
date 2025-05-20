@@ -1,25 +1,29 @@
 # Changelog
 
-## Latest - v3.10.5 (04/09/25):
+## Latest - v3.10.6 (05/13/25):
+
+### Enhancements:
+
+- [Portico] Fix to reporting response mapping
+
+## v3.10.5 (04/09/25):
 
 ### Enhancements:
 
 - [Other] Updates to code to address security vulnerabilities
 - [Dependencies] Update dependency versions to address security vulnerabilities
 
-##  v3.10.4 (03/21/25):
+## v3.10.4 (03/21/25):
 
 ### Enhancements:
 
 - [Recurring] Fix typing issues with recurring payments
-
 
 ## v3.10.3 (11/06/24):
 
 ### Enhancements:
 
 - [Portico] Map additional response messages
-
 
 ## v3.10.2 (10/31/24):
 
@@ -53,14 +57,12 @@
 
 - [Portico] Added support for incremental Auth.
 
-
 ## v3.8.1 (08/05/24):
 
 ### Enhancements:
 
 - [Portico] Added support for lvl iii transactions.
 - [Portico] Fix to tokenAction block scope issue.
-
 
 ## v3.8.0 (07/16/24):
 
@@ -105,7 +107,7 @@
 - [Portico] Handle async response for debit reversal testcase.
 - [Package.json]  Added files configuration to be included in npm publish due to a change.
 
-##  v3.5.2 (05/21/24):
+## v3.5.2 (05/21/24):
 
 ### Enhancements:
 
@@ -132,10 +134,11 @@
 ## v3.3.3 (02/27/24):
 
 ### Enhancements:
+
 - PayPlan Enhancements: - Added payment methods to customer response
-  - Cardtype, NameOnAccount , and Last4 of both credit card and ACH are included in payment response
-  - Fix for Processor Configuration error response message
-  - Added 204 as a success code when Request is successful; but response contains no data
+    - Cardtype, NameOnAccount , and Last4 of both credit card and ACH are included in payment response
+    - Fix for Processor Configuration error response message
+    - Added 204 as a success code when Request is successful; but response contains no data
 
 ## v3.3.2 (02/22/24):
 
@@ -197,4 +200,4 @@
 
 ## v1.4.8 (12/13/22)
 
-#### 
+####  

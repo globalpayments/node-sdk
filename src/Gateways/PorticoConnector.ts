@@ -1585,9 +1585,10 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     result.deviceId = root.findtext(".//DeviceId");
     result.gratuityAmount = root.findtext(".//GratuityAmtInfo");
     result.issuerResponseCode = this.normalizeResponse(
-      root.findtext(".//IssuerRspCode"),
+      root.findtext(".//IssuerRspCode") || root.findtext(".//RspCode"),
     );
-    result.issuerResponseMessage = root.findtext(".//IssuerRspText");
+    result.issuerResponseMessage =
+      root.findtext(".//IssuerRspText") || root.findtext(".//RspText");
     result.issuerTransactionId = root.findtext(".//IssTxnId");
     result.maskedCardNumber = root.findtext(".//MaskedCardNbr");
     result.gatewayResponseCode = this.normalizeResponse(
@@ -1669,7 +1670,9 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
 }
 
 const threeDSecureNumericVersion = (version: Secure3dVersion): string => {
-  if (version === Secure3dVersion.TWO) return "2";
+  if (version === Secure3dVersion.TWO) {
+    return "2";
+  }
   return "1";
 };
 
