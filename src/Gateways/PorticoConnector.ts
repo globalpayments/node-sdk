@@ -594,6 +594,41 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       );
     }
 
+    // auto substantiation
+    if (builder.autoSubstantiation) {
+      const autoSub = subElement(block1, "AutoSubstantiation");
+
+      let index = 0;
+      const fieldNames = ["First", "Second", "Third", "Fourth"];
+
+      for (const [key, value] of builder.autoSubstantiation.getAmounts()) {
+        if (value && value !== "0") {
+          if (index > 3) {
+            throw new Error(
+              "You may only specify three different subtotals in a single transaction.",
+            );
+          }
+
+          const amountNode = subElement(
+            autoSub,
+            fieldNames[index++] + "AdditionalAmtInfo",
+          );
+          subElement(amountNode, "AmtType").append(cData(key));
+          subElement(amountNode, "Amt").append(cData(value));
+        }
+      }
+      const mvf = builder.autoSubstantiation.getMerchantVerificationValue();
+      if (mvf) {
+        subElement(autoSub, "MerchantVerificationValue").append(cData(mvf));
+      }
+
+      subElement(autoSub, "RealTimeSubstantiation").append(
+        cData(
+          builder.autoSubstantiation.isRealTimeSubstantiation() ? "Y" : "N",
+        ),
+      );
+    }
+
     return this.doTransaction(
       this.buildEnvelope(transaction, builder.clientTransactionId),
     ).then((response) => this.mapResponse(response, builder));

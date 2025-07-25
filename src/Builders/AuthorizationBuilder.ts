@@ -30,6 +30,7 @@ import {
   UnsupportedTransactionError,
 } from "../";
 import { TransactionBuilder } from "./TransactionBuilder";
+import { AutoSubstantiation } from "../Entities/AutoSubstantiation";
 
 export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public alias: string;
@@ -39,6 +40,7 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public amount: string | number;
   public authAmount: string | number;
   public amountEstimated: boolean;
+  public autoSubstantiation: AutoSubstantiation;
   public balanceInquiryType: InquiryType;
   public billingAddress: Address;
   public cardBrandTransactionId: string;
@@ -133,132 +135,6 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
     );
   }
 
-  protected setupValidations(): void {
-    this.validations
-      .of(
-        "transactionType",
-        /* tslint:disable:trailing-comma */
-        TransactionType.Auth |
-          TransactionType.Sale |
-          TransactionType.Refund |
-          TransactionType.AddValue,
-        /* tslint:enable:trailing-comma */
-      )
-      .with("transactionModifier", TransactionModifier.None)
-      .check("amount")
-      .isNotNull()
-      .check("currency")
-      .isNotNull()
-      .check("paymentMethod")
-      .isNotNull();
-
-    this.validations
-      .of(
-        "transactionType",
-        /* tslint:disable:trailing-comma */
-        TransactionType.Auth | TransactionType.Sale | TransactionType.Verify,
-        /* tslint:enable:trailing-comma */
-      )
-      .with("transactionModifier", TransactionModifier.HostedRequest)
-      .check("amount")
-      .isNotNull()
-      .check("currency")
-      .isNotNull();
-
-    this.validations
-      .of(
-        "transactionType",
-        /* tslint:disable:trailing-comma */
-        TransactionType.Auth | TransactionType.Sale,
-        /* tslint:enable:trailing-comma */
-      )
-      .with("transactionModifier", TransactionModifier.Offline)
-      .check("amount")
-      .isNotNull()
-      .check("currency")
-      .isNotNull()
-      .check("offlineAuthCode")
-      .isNotNull()
-      .check("offlineAuthCode")
-      .isNotEmpty();
-
-    this.validations
-      .of("transactionType", TransactionType.Auth | TransactionType.Sale)
-      .with("transactionModifier", TransactionModifier.EncryptedMobile)
-      .check("paymentMethod")
-      .isNotNull()
-      .check("paymentMethod")
-      .isNotEmpty();
-
-    this.validations
-      .of("transactionType", TransactionType.BenefitWithDrawal)
-      .with("transactionModifier", TransactionModifier.CashBack)
-      .check("amount")
-      .isNotNull()
-      .check("currency")
-      .isNotNull()
-      .check("paymentMethod")
-      .isNotNull();
-
-    this.validations
-      .of("transactionType", TransactionType.Balance)
-      .check("paymentMethod")
-      .isNotNull();
-
-    this.validations
-      .of("transactionType", TransactionType.Alias)
-      .check("aliasAction")
-      .isNotNull()
-      .check("alias")
-      .isNotNull();
-
-    this.validations
-      .of("transactionType", TransactionType.Replace)
-      .check("replacementCard")
-      .isNotNull();
-
-    this.validations
-      .of("paymentMethodType", PaymentMethodType.ACH)
-      .check("billingAddress")
-      .isNotNull();
-
-    this.validations
-      .of("transactionType", TransactionType.Auth)
-      .with("transactionModifier", TransactionModifier.AlternativePaymentMethod)
-      .check("amount")
-      .isNotNull()
-      .check("currency")
-      .isNotNull()
-      .check("paymentMethod")
-      .isNotNull()
-      .check("paymentMethod.returnUrl")
-      .isNotNull()
-      .check("paymentMethod.statusUpdateUrl")
-      .isNotNull()
-      .check("paymentMethod.country")
-      .isNotNull()
-      .check("paymentMethod.accountHolderName")
-      .isNotNull();
-
-    this.validations
-      .of("transactionType", TransactionType.Sale)
-      .with("transactionModifier", TransactionModifier.AlternativePaymentMethod)
-      .check("amount")
-      .isNotNull()
-      .check("currency")
-      .isNotNull()
-      .check("paymentMethod")
-      .isNotNull()
-      .check("paymentMethod.returnUrl")
-      .isNotNull()
-      .check("paymentMethod.statusUpdateUrl")
-      .isNotNull()
-      .check("paymentMethod.country")
-      .isNotNull()
-      .check("paymentMethod.accountHolderName")
-      .isNotNull();
-  }
-
   /**
    * Sets an address value; where applicable.
    *
@@ -281,6 +157,11 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
       this.shippingAddress = address;
     }
 
+    return this;
+  }
+
+  public withAutoSubstantiation(autoSubstantiation: AutoSubstantiation) {
+    this.autoSubstantiation = autoSubstantiation;
     return this;
   }
 
@@ -906,5 +787,131 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public withDccRateData(value: DccRateData) {
     this.dccRateData = value;
     return this;
+  }
+
+  protected setupValidations(): void {
+    this.validations
+      .of(
+        "transactionType",
+        /* tslint:disable:trailing-comma */
+        TransactionType.Auth |
+          TransactionType.Sale |
+          TransactionType.Refund |
+          TransactionType.AddValue,
+        /* tslint:enable:trailing-comma */
+      )
+      .with("transactionModifier", TransactionModifier.None)
+      .check("amount")
+      .isNotNull()
+      .check("currency")
+      .isNotNull()
+      .check("paymentMethod")
+      .isNotNull();
+
+    this.validations
+      .of(
+        "transactionType",
+        /* tslint:disable:trailing-comma */
+        TransactionType.Auth | TransactionType.Sale | TransactionType.Verify,
+        /* tslint:enable:trailing-comma */
+      )
+      .with("transactionModifier", TransactionModifier.HostedRequest)
+      .check("amount")
+      .isNotNull()
+      .check("currency")
+      .isNotNull();
+
+    this.validations
+      .of(
+        "transactionType",
+        /* tslint:disable:trailing-comma */
+        TransactionType.Auth | TransactionType.Sale,
+        /* tslint:enable:trailing-comma */
+      )
+      .with("transactionModifier", TransactionModifier.Offline)
+      .check("amount")
+      .isNotNull()
+      .check("currency")
+      .isNotNull()
+      .check("offlineAuthCode")
+      .isNotNull()
+      .check("offlineAuthCode")
+      .isNotEmpty();
+
+    this.validations
+      .of("transactionType", TransactionType.Auth | TransactionType.Sale)
+      .with("transactionModifier", TransactionModifier.EncryptedMobile)
+      .check("paymentMethod")
+      .isNotNull()
+      .check("paymentMethod")
+      .isNotEmpty();
+
+    this.validations
+      .of("transactionType", TransactionType.BenefitWithDrawal)
+      .with("transactionModifier", TransactionModifier.CashBack)
+      .check("amount")
+      .isNotNull()
+      .check("currency")
+      .isNotNull()
+      .check("paymentMethod")
+      .isNotNull();
+
+    this.validations
+      .of("transactionType", TransactionType.Balance)
+      .check("paymentMethod")
+      .isNotNull();
+
+    this.validations
+      .of("transactionType", TransactionType.Alias)
+      .check("aliasAction")
+      .isNotNull()
+      .check("alias")
+      .isNotNull();
+
+    this.validations
+      .of("transactionType", TransactionType.Replace)
+      .check("replacementCard")
+      .isNotNull();
+
+    this.validations
+      .of("paymentMethodType", PaymentMethodType.ACH)
+      .check("billingAddress")
+      .isNotNull();
+
+    this.validations
+      .of("transactionType", TransactionType.Auth)
+      .with("transactionModifier", TransactionModifier.AlternativePaymentMethod)
+      .check("amount")
+      .isNotNull()
+      .check("currency")
+      .isNotNull()
+      .check("paymentMethod")
+      .isNotNull()
+      .check("paymentMethod.returnUrl")
+      .isNotNull()
+      .check("paymentMethod.statusUpdateUrl")
+      .isNotNull()
+      .check("paymentMethod.country")
+      .isNotNull()
+      .check("paymentMethod.accountHolderName")
+      .isNotNull();
+
+    this.validations
+      .of("transactionType", TransactionType.Sale)
+      .with("transactionModifier", TransactionModifier.AlternativePaymentMethod)
+      .check("amount")
+      .isNotNull()
+      .check("currency")
+      .isNotNull()
+      .check("paymentMethod")
+      .isNotNull()
+      .check("paymentMethod.returnUrl")
+      .isNotNull()
+      .check("paymentMethod.statusUpdateUrl")
+      .isNotNull()
+      .check("paymentMethod.country")
+      .isNotNull()
+      .check("paymentMethod.accountHolderName")
+      .isNotNull();
   }
 }

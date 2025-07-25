@@ -1,6 +1,7 @@
 export * from "./AdditionalTaxDetails";
 export * from "./Address";
 export * from "./AlternativePaymentResponse";
+export * from "./AutoSubstantiation";
 export * from "./BatchSummary";
 export * from "./BrowserData";
 export * from "./Card";

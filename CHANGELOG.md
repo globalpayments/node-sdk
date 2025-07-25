@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v3.10.6 (05/13/25):
+## Latest - v3.10.7 (07/23/25):
+
+### Enhancements:
+
+- [Portico] Added AutoSubstantiation coverage to Portico
+
+## v3.10.6 (05/13/25):
 
 ### Enhancements:
 
@@ -200,4 +206,4 @@
 
 ## v1.4.8 (12/13/22)
 
-####  
+####   
