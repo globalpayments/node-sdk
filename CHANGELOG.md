@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v3.10.7 (07/23/25):
+## Latest - v3.10.8 (10/03/25):
+
+### Enhancements:
+
+- [Other] Unify all branding under Global Payments
+
+## v3.10.7 (07/23/25):
 
 ### Enhancements:
 
@@ -206,4 +212,4 @@
 
 ## v1.4.8 (12/13/22)
 
-####   
+####     

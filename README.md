@@ -2,7 +2,7 @@
     <img src="https://globalpayments.github.io/images/globapaymentsLogo.png" alt="Global Payments logo" title="Global Payments" align="right" width="225" />
 </a>
 
-# Heartland & Global Payments Node.js SDK
+# Global Payments Node.js SDK
 
 This SDK makes it easy to integrate your Node.js application with our Card Not Present and Card Present APIs.
 
@@ -52,11 +52,13 @@ yarn add globalpayments-api
 
 ## Documentation and Examples
 
-You can find the latest SDK documentation along with code examples and test cards on the [Global Payments](https://developer.realexpayments.com) and [Heartland](https://developer.heartlandpaymentsystems.com/documentation) Developer Hubs.
+You can find the latest SDK documentation along with code examples and test cards on
+the [Global Payments](https://developer.globalpay.com) Developer Hub.
 
 In addition you can find working examples in the our example code repository.
 
-_Quick Tip_: The included [test suite](https://github.com/globalpayments/node-sdk/tree/master/test) can be a great source of code samples for using the SDK!
+_Quick Tip_: The included [test suite](https://github.com/globalpayments/node-sdk/tree/master/test) can be a great
+source of code samples for using the SDK!
 
 #### Process a Payment Example
 
@@ -83,7 +85,7 @@ card
 #### Test Card Data
 
 | Name        | Number           | Exp Month | Exp Year | CVN  |
-| ----------- | ---------------- | --------- | -------- | ---- |
+|-------------|------------------|-----------|----------|------|
 | Visa        | 4263970000005262 | 12        | 2025     | 123  |
 | MasterCard  | 2223000010005780 | 12        | 2019     | 900  |
 | MasterCard  | 5425230000004415 | 12        | 2025     | 123  |
@@ -94,7 +96,11 @@ card
 
 #### Testing Exceptions
 
-During your integration you will want to test for specific issuer responses such as 'Card Declined'. Because our sandbox environments do not actually reach out to issuing banks for authorizations, there are specific transaction amounts and/or card numbers that will trigger gateway and issuing bank responses. Please contact your support representative for a complete listing of values used to simulate transaction AVS/CVV results, declines, errors, and other responses that can be caught in your code. Example error handling code:
+During your integration you will want to test for specific issuer responses such as 'Card Declined'. Because our sandbox
+environments do not actually reach out to issuing banks for authorizations, there are specific transaction amounts
+and/or card numbers that will trigger gateway and issuing bank responses. Please contact your support representative for
+a complete listing of values used to simulate transaction AVS/CVV results, declines, errors, and other responses that
+can be caught in your code. Example error handling code:
 
 ```javascript
 card
@@ -138,4 +144,5 @@ All our code is open sourced and we encourage fellow developers to contribute an
 
 ## License
 
-This project is licensed under the GNU General Public License v2.0. Please see [LICENSE.md](LICENSE.md) located at the project's root for more details.
+This project is licensed under the GNU General Public License v2.0. Please see [LICENSE.md](LICENSE.md) located at the
+project's root for more details.
