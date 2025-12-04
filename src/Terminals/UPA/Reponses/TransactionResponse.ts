@@ -55,11 +55,17 @@ export class TransactionResponse implements ITerminalResponse {
   public requestId: string;
 
   constructor(jsonResponse: any) {
+    if (typeof jsonResponse === "string")
+      try {
+        jsonResponse = JSON.parse(jsonResponse);
+      } catch {
+        throw new NotImplementedError("Invalid JSON string");
+      }
     if (this.isGpApiResponse(jsonResponse)) {
       this.requestId = this.transactionId = jsonResponse.id;
       this.deviceResponseText = jsonResponse.status;
       this.responseText = this.deviceResponseCode =
-        jsonResponse.action.result_code;
+        jsonResponse.action?.result_code || "";
       this.deviceResponseText = jsonResponse.status;
     } else {
       throw new NotImplementedError();

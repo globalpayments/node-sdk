@@ -106,6 +106,13 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       }
     }
 
+    if((builder.paymentMethod.paymentMethodType === PaymentMethodType.Credit && builder.transactionModifier === TransactionModifier.None && builder.amountEstimated != null) || builder.transactionModifier === TransactionModifier.Incremental)
+    {
+      subElement(block1, "AmountIndicator").append(cData(builder.amountEstimated === true ? "E" : "F"));
+    }
+    
+   
+      
     if (builder.amount !== undefined && builder.amount !== "") {
       subElement(block1, "Amt").append(
         cData(validateAmount("portico", builder.amount)),
@@ -148,6 +155,9 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         cData(builder.aliasAction.toString()),
       );
       subElement(block1, "Alias").append(cData(builder.alias));
+    }
+    if (builder.batchId) {
+      subElement(block1, "BatchId").append(cData(builder.batchId));
     }
 
     const isCheck =
@@ -677,10 +687,17 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         );
       }
 
-      if (builder.clientTransactionId) {
-        subElement(root, "ClientTxnId").append(
-          cData(builder.clientTransactionId),
-        );
+      if (
+        builder.transactionType == TransactionType.Reversal ||
+        (builder.paymentMethod != null &&
+          builder.paymentMethod.paymentMethodType == PaymentMethodType.ACH)
+      ) {
+        // client transaction ID
+        if (builder.clientTransactionId) {
+          subElement(root, "ClientTxnId").append(
+            cData(builder.clientTransactionId),
+          );
+        }
       }
 
       // transaction ID
@@ -691,6 +708,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         const ref = builder.paymentMethod as object as TransactionReference;
         subElement(root, "GatewayTxnId").append(cData(ref.transactionId));
       }
+
       // level II or III
       if (builder.commercialData) {
         const modifier = builder.transactionModifier;
@@ -877,15 +895,14 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         subElement(transaction, "DeviceId").append(cData(trb.deviceId));
       }
 
-      if (trb.startDate) {
+      if (trb.searchBuilder?.startDate && !trb.startDate) {
         subElement(transaction, "RptStartUtcDT").append(
-          cData(trb.startDate.toISOString()),
+          cData(trb.searchBuilder.startDate.toISOString()),
         );
       }
-
-      if (trb.endDate) {
+      if (trb.searchBuilder?.endDate && !trb.endDate) {
         subElement(transaction, "RptEndUtcDT").append(
-          cData(trb.endDate.toISOString()),
+          cData(trb.searchBuilder.endDate.toISOString()),
         );
       }
 
@@ -961,6 +978,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     }
 
     // transaction
+
     subElement(version1, "Transaction").append(transaction);
     return new ElementTree(envelope).write();
   }
@@ -1196,11 +1214,12 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
   protected mapReportRequestType<T>(builder: ReportBuilder<T>): string {
     switch (builder.reportType) {
       case ReportType.Activity:
+      case ReportType.FindTransactions:
         return "ReportActivity";
       case ReportType.TransactionDetail:
         return "ReportTxnDetail";
-      case ReportType.FindTransactions:
-        return "FindTransactions";
+      case ReportType.BatchDetail:
+        return "ReportBatchDetail";
       default:
         throw new UnsupportedTransactionError();
     }
@@ -1248,11 +1267,15 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     result.referenceNumber = root.findtext(".//RefNbr");
     result.transactionDescriptor = root.findtext(".//TxnDescriptor");
     result.cardBrandTransactionId = root.findtext(".//CardBrandTxnId");
+    result.clientTransactionId = root.findtext(".//ClientTxnId");
 
     if (builder.paymentMethod) {
       result.transactionReference = new TransactionReference(
         root.findtext(".//GatewayTxnId"),
       );
+      result.transactionReference.clientTransactionId =
+        root.findtext(".//ClientTxnId");
+
       result.transactionReference.paymentMethodType =
         builder.paymentMethod.paymentMethodType;
     }
@@ -1303,6 +1326,12 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
         .findall(".//Details")
         .map(this.hydrateTransactionSummary.bind(this));
     }
+    if (builder.reportType === ReportType.BatchDetail) {
+      result = doc
+        .findall(".//Details")
+        .map(this.hydrateTransactionSummary.bind(this));
+    }
+
     if (builder.reportType === ReportType.FindTransactions) {
       result = doc
         .findall(".//Transactions")

@@ -73,10 +73,10 @@ export class GpApiReportRequestBuilder implements IRequestBuilder {
           reference: builder?.searchBuilder?.referenceNumber,
           status: builder?.searchBuilder?.storedPaymentMethodStatus,
           from_time_created: builder?.searchBuilder?.startDate
-            ? builder.searchBuilder?.startDate
+            ? this.formatDate(new Date(builder.searchBuilder.startDate))
             : undefined,
           to_time_created: builder?.searchBuilder?.endDate
-            ? builder.searchBuilder?.endDate
+            ? this.formatDate(new Date(builder.searchBuilder.endDate))
             : undefined,
           from_time_last_updated,
           to_time_last_updated,

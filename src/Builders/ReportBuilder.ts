@@ -29,4 +29,36 @@ export abstract class ReportBuilder<T> extends BaseBuilder<T> {
 
     return this;
   }
+
+  public withTransactionId(value?: string) {
+    if (!this.searchBuilder) {
+      this.searchBuilder = new SearchCriteriaBuilder<T>(this as any);
+    }
+    this.searchBuilder.transactionId = value;
+    return this;
+  }
+
+  public withBatchId(value?: string) {
+    if (!this.searchBuilder) {
+      this.searchBuilder = new SearchCriteriaBuilder<T>(this as any);
+    }
+    this.searchBuilder.batchId = value;
+    return this;
+  }
+
+  public withStartDate(value?: Date) {
+    if (!this.searchBuilder) {
+      this.searchBuilder = new SearchCriteriaBuilder<T>(this as any);
+    }
+    this.searchBuilder.startDate = value;
+    return this;
+  }
+
+  public withEndDate(value?: Date) {
+    if (!this.searchBuilder) {
+      this.searchBuilder = new SearchCriteriaBuilder<T>(this as any);
+    }
+    this.searchBuilder.endDate = value;
+    return this;
+  }
 }

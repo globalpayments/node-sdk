@@ -29,6 +29,7 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
   public taxAmount: string | number;
   public taxType: TaxType;
   public cardType?: string;
+  public amountEstimated?: boolean;
 
   public constructor(type: number, paymentMethod?: PaymentMethod) {
     super(type, paymentMethod);
@@ -219,6 +220,17 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
     return this;
   }
 
+  /**
+   * Sets whether the amount is estimated or final
+   * 
+   * @param value true for estimated (E), false for final (F)
+   * @returns ManagementBuilder
+   */
+  public withAmountEstimated(value: boolean) {
+    this.amountEstimated = value;
+    return this;
+  }
+  
   public withDynamicDescriptor(dynamicDescriptor: string) {
     this.dynamicDescriptor = dynamicDescriptor;
 

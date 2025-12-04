@@ -61,7 +61,7 @@ export class SearchCriteriaBuilder<T> {
   public disputeStage?: DisputeStage;
   public disputeStatus?: DisputeStatus;
   public endBatchDate?: Date;
-  public endDate?: string;
+  public endDate?: Date;
   public fromTimeLastUpdated?: string;
   public toTimeLastUpdated?: string;
   public endDepositDate?: Date;
@@ -96,7 +96,7 @@ export class SearchCriteriaBuilder<T> {
   public scheduleId?: string;
   public siteTrace?: string;
   public startBatchDate?: Date;
-  public startDate?: string;
+  public startDate?: Date;
   public startDepositDate?: Date;
   public startStageDate?: Date;
   public systemHierarchy?: string;
@@ -125,7 +125,7 @@ export class SearchCriteriaBuilder<T> {
   public returnPii?: boolean;
   public riskAssessmentMode?: FraudFilterMode;
   public riskAssessmentReasonCode?: ReasonCode;
-
+  public transactionId?: string;
   constructor(reportBuilder: TransactionReportBuilder<T>) {
     this.reportBuilder = reportBuilder;
   }

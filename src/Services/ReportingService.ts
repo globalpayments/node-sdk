@@ -15,6 +15,12 @@ export class ReportingService {
     );
   }
 
+  public static batchDetail(): TransactionReportBuilder<TransactionSummary[]> {
+    return new TransactionReportBuilder<TransactionSummary[]>(
+      ReportType.BatchDetail,
+    );
+  }
+
   public static transactionDetail(
     transactionId?: string,
   ): TransactionReportBuilder<TransactionSummary> {

@@ -18,6 +18,8 @@ import {
   ThreeDSecure,
   Transaction,
   TransactionModifier,
+  Logger,
+  SampleRequestLogger,
 } from "../../../../src";
 
 const card = new CreditCardData();
@@ -37,6 +39,7 @@ track.encryptionData.version = "01";
 
 beforeEach(() => {
   const config = new PorticoConfig();
+  config.requestLogger = new SampleRequestLogger(new Logger("logs"));
   config.secretApiKey = "skapi_cert_MXDMBQDwa3IAA4GV7NGMqQA_wFR3_TNeamFWoNUu_Q";
   ServicesContainer.configureService(config);
 });
@@ -625,6 +628,29 @@ test("incremental auth", async () => {
   expect(captureResponse).toBeTruthy();
 });
 
+test.skip("incremental auth amount indicator always E", async () => {
+  const address = new Address();
+  address.postalCode = "750241234";
+
+  const origResponse = await card
+    .charge(15)
+    .withCurrency("USD")
+    .withAmountEstimated(false)
+    .withAllowDuplicates(true)
+    .execute();
+
+  // Incremental auth, AmountIndicator should always be "E"
+  const captureResponse = await Transaction.fromId(origResponse.transactionId)
+    .additionalAuth(12)
+    .withModifier(TransactionModifier.Incremental)
+    .withCurrency("USD")
+    .execute();
+
+  expect(origResponse).toBeTruthy();
+  expect(captureResponse).toBeTruthy();
+  expect(captureResponse.responseCode).toBe("00");
+});
+
 test("3D Secure V1", async () => {
   const ecom = new ThreeDSecure();
   ecom.cavv = "XXXXf98AAajXbDRg3HSUMAACAAA=";
@@ -663,4 +689,62 @@ test("3D Secure V2", async () => {
 
   expect(response).toBeTruthy();
   expect(response.responseCode).toBe("00");
+});
+describe("AmountIndicator Tests cases", () => {
+test("credit sale amount indicator F", async () => {
+  const response = await card
+    .charge(15)
+    .withCurrency("USD")
+    .withAmountEstimated(false)
+    .withAllowDuplicates(true)
+    .execute();
+
+  expect(response).toBeTruthy();
+  expect(response.responseCode).toBe("00");
+});
+
+test("credit auth amount indicator F", async () => {
+  const response = await card
+    .authorize(15)
+    .withCurrency("USD")
+    .withAmountEstimated(false)
+    .withAllowDuplicates(true)
+    .execute();
+
+  expect(response).toBeTruthy();
+  expect(response.responseCode).toBe("00");
+});
+
+test("credit auth amount indicator E", async () => {
+  const response = await card
+    .authorize(15)
+    .withCurrency("USD")
+    .withAmountEstimated(true)
+    .withAllowDuplicates(true)
+    .execute();
+
+  expect(response).toBeTruthy();
+  expect(response.responseCode).toBe("00");
+});
+
+test("incremental auth amount indicator E", async () => {
+  const origResponse = await card
+    .authorize(15)
+    .withCurrency("USD")
+    .withAmountEstimated(true)
+    .withAllowDuplicates(true)
+    .execute();
+
+  const captureResponse = await Transaction.fromId(origResponse.transactionId)
+    .additionalAuth(12)
+    .withModifier(TransactionModifier.Incremental)
+    .withAmountEstimated(true)
+    .withCurrency("USD")
+    .execute(); 
+ 
+  expect(origResponse).toBeTruthy();
+  expect(captureResponse).toBeTruthy();
+  expect(captureResponse.responseCode).toBe("00");
+});
+
 });

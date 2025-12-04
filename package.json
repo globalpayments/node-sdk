@@ -1,6 +1,6 @@
 {
   "name": "globalpayments-api",
-  "version" : "3.10.8",
+  "version" : "3.10.9",
   "description": "Global Payments SDK for NodeJS for Global Payments eCommerce gateways",
   "author": "Global Payments",
   "license": "GPL-2.0",
@@ -16,7 +16,7 @@
   "scripts": {
     "build": "tsc",
     "test:jest": "jest",
-    "test:serial": "jest --runInBand test/Integration/Gateways/PorticoConnector/Credit.test.ts",
+    "test:serial": "jest --runInBand test/Integration/Gateways/PorticoConnector/Reporting.test.ts",
     "build:netsuite": "webpack --env.GP_NETSUITE_BUILD --config config/webpack.netsuite.js && node bin/netsuite-post.js",
     "build:clean": "rimraf lib",
     "docs": "typedoc --mode file --name \"GlobalPayments.Api\" --project tsconfig.json --out docs src",

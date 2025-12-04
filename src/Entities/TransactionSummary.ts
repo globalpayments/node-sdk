@@ -79,4 +79,5 @@ export class TransactionSummary extends BaseSummary {
   public fullyCaptured: string;
   public fingerprint: string;
   public fingerprintIndicator: string;
+  public batchId: string;
 }

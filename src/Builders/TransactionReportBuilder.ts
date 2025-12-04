@@ -65,29 +65,25 @@ export class TransactionReportBuilder<T> extends ReportBuilder<T> {
   }
 
   public withEndDate(endDate?: Date) {
-    if (endDate !== undefined) {
-      this.endDate = endDate;
+    this.searchBuilder.endDate = endDate;
+    return this;
+  }
+
+  public withTransactionId(transactionId?: string) {
+     if (transactionId !== undefined) {
+      this.transactionId  = transactionId;
     }
     return this;
   }
 
   public withStartDate(startDate?: Date) {
-    if (startDate !== undefined) {
-      this.startDate = startDate;
-    }
+    this.searchBuilder.startDate = startDate;
     return this;
   }
 
   public withStoredPaymentMethodId(storedPaymentMethodId?: string) {
     if (storedPaymentMethodId !== undefined) {
       this.searchBuilder.storedPaymentMethodId = storedPaymentMethodId;
-    }
-    return this;
-  }
-
-  public withTransactionId(transactionId?: string) {
-    if (transactionId !== undefined) {
-      this.transactionId = transactionId;
     }
     return this;
   }
