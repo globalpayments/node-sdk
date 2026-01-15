@@ -62,6 +62,7 @@ export enum AlternativePaymentType {
   BbvaColumbia = "bbvacolumbia",
   BciTbanc = "bcitbanc",
   Bitpay = "bitpay",
+  Blik = "blik",
   BoletoBancario = "boletobancario_",
   Bradesco = "bradesco",
   Cabal = "cabal_",
@@ -681,6 +682,7 @@ export enum PaymentMethodUsageMode {
 
 export enum PaymentProvider {
   OPEN_BANKING = "OPEN_BANKING",
+  BLIK = "BLIK",
 }
 
 export enum PaymentSchedule {

@@ -1,6 +1,10 @@
 # Changelog
 
-## Latest - v3.10.9 (12/04/25):
+## Latest - v3.10.10 (15/01/26):
+### Enhancements:
+- [GP-API] Added Blik alternative payment method support to SDK
+
+##  v3.10.9 (12/04/25):
 ### Enhancements:
 - [Portico] Added withstartdate and withenddate for reporting
 - [Portico] Implemented amountIndicator element 

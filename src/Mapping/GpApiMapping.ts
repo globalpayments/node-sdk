@@ -33,6 +33,7 @@ import { PaymentMethod } from "../../src/Entities/GpApi/DTO";
 
 export class GpApiMapping {
   static DCC_RESPONSE = "RATE_LOOKUP";
+  static BLIK = "blik";
 
   public static mapResponse(response: any): Transaction {
     const transaction = new Transaction();
@@ -153,6 +154,14 @@ export class GpApiMapping {
       transaction.paymentMethodType = PaymentMethodType.ACH;
     } else if (paymentMethodResponse.apm) {
       transaction.paymentMethodType = PaymentMethodType.APM;
+
+      // Check if APM provider is BLIK (case-insensitive), then map APM data
+      if (GpApiMapping.isBlikProvider(paymentMethodResponse)) {
+        GpApiMapping.mapAlternativePaymentData(
+          { payment_method: paymentMethodResponse },
+          transaction,
+        );
+      }
     }
 
     if (paymentMethodResponse.shipping_address || paymentMethodResponse.payer) {
@@ -753,5 +762,29 @@ export class GpApiMapping {
     dccRateData.dccId = response.id || null;
 
     return dccRateData;
+  }
+
+  private static isBlikProvider(paymentMethod: any): boolean {
+    const provider = paymentMethod?.apm?.provider;
+    return (
+      typeof provider === "string" &&
+      provider.toLowerCase() === GpApiMapping.BLIK.toLowerCase()
+    );
+  }
+
+  private static mapAlternativePaymentData(
+    response: any,
+    transaction: Transaction,
+  ): void {
+    const paymentMethod = response.payment_method;
+    const apm = paymentMethod?.apm;
+
+    if (!transaction.alternativePaymentResponse) {
+      transaction.alternativePaymentResponse = new AlternativePaymentResponse();
+    }
+
+    transaction.alternativePaymentResponse.redirectUrl =
+      paymentMethod?.redirect_url ?? null;
+    transaction.alternativePaymentResponse.providerName = apm?.provider ?? null;
   }
 }

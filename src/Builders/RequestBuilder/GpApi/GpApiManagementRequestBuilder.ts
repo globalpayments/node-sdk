@@ -130,6 +130,21 @@ export class GpApiManagementRequestBuilder implements IRequestBuilder {
             ? this.getDccRate(builder.dccRateData)
             : undefined,
         };
+
+        if (builder.paymentMethod instanceof TransactionReference) {
+          const transactionReference = builder.paymentMethod;
+          const apmResponse = transactionReference.alternativePaymentResponse;
+          const isBlik = apmResponse?.providerName?.toLowerCase() === "blik";
+
+          if (isBlik) {
+            payload.payment_method = {
+              apm: {
+                provider: apmResponse.providerName,
+                redirect_url: apmResponse.redirectUrl,
+              },
+            };
+          }
+        }
         break;
       case TransactionType.Reversal:
         endpoint =
