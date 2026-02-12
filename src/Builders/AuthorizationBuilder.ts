@@ -2,6 +2,7 @@ import {
   Address,
   AddressType,
   AliasAction,
+  BuilderError,
   Customer,
   DccRateData,
   EBTCardData,
@@ -107,6 +108,20 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
    * @returns Promise<Transaction>
    */
   public execute(configName: string = "default"): Promise<Transaction> {
+    // Additional validation for PayU/Open Banking payment method
+    if (
+      this.paymentMethod &&
+      this.transactionModifier === TransactionModifier.AlternativePaymentMethod
+    ) {
+      const apmType = (this.paymentMethod as any).alternativePaymentMethodType;
+      const apmTypeUpper = apmType?.toUpperCase();
+      if (apmTypeUpper === "PAYU" || apmTypeUpper === "OB") {
+        if (!(this.paymentMethod as any).bank) {
+          throw new BuilderError("bank cannot be null for PayU transactions");
+        }
+      }
+    }
+
     super.execute();
     return ServicesContainer.instance()
       .getClient(configName)

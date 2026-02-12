@@ -74,4 +74,7 @@ export class AlternativePaymentResponse {
   public secondsToExpire: string | null;
   public qrCodeImage: string | null;
   /* end region */
+
+  /* Bank Payment */
+  public bank: any | null;
 }

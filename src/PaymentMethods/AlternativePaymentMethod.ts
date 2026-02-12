@@ -39,6 +39,7 @@ export class AlternativePaymentMethod
   addressOverrideMode: string;
   pinBlock: string;
   encryptionData: EncryptionData;
+  bank: string;
   /* eslint-enable indent */
 
   constructor(alternativePaymentMethodType: string) {

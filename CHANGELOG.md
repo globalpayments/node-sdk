@@ -1,6 +1,10 @@
 # Changelog
 
-## Latest - v3.10.10 (15/01/26):
+## Latest - v3.10.11 (11/02/26):
+### Enhancements:
+- [GP-API] Added in APM added PAYU for OB 
+
+## v3.10.10 (15/01/26):
 ### Enhancements:
 - [GP-API] Added Blik alternative payment method support to SDK
 

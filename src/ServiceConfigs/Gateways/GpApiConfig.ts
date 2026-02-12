@@ -38,6 +38,8 @@ export class GpApiConfig extends GatewayConfig {
 
   public deviceCurrency: string;
 
+  public transactionProcessingAccountName: string;
+
   constructor() {
     super(GatewayProvider.GpApi);
   }

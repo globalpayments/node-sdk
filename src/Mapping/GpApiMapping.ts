@@ -34,6 +34,7 @@ import { PaymentMethod } from "../../src/Entities/GpApi/DTO";
 export class GpApiMapping {
   static DCC_RESPONSE = "RATE_LOOKUP";
   static BLIK = "blik";
+  static PAYU = "payu";
 
   public static mapResponse(response: any): Transaction {
     const transaction = new Transaction();
@@ -155,8 +156,11 @@ export class GpApiMapping {
     } else if (paymentMethodResponse.apm) {
       transaction.paymentMethodType = PaymentMethodType.APM;
 
-      // Check if APM provider is BLIK (case-insensitive), then map APM data
-      if (GpApiMapping.isBlikProvider(paymentMethodResponse)) {
+      // Check if APM provider is BLIK or PayU (case-insensitive), then map APM data
+      if (
+        GpApiMapping.isBlikProvider(paymentMethodResponse) ||
+        GpApiMapping.isPayUProvider(paymentMethodResponse)
+      ) {
         GpApiMapping.mapAlternativePaymentData(
           { payment_method: paymentMethodResponse },
           transaction,
@@ -734,9 +738,32 @@ export class GpApiMapping {
 
     apm.nextAction = paymentMethodApm.next_action ?? null;
     apm.secondsToExpire = paymentMethodApm.seconds_to_expire ?? null;
+
+    // Map bank response for BANK_PAYMENT provider
+    if (paymentMethodApm.provider?.toUpperCase() === "BANK_PAYMENT") {
+      GpApiMapping.mapBankResponse(paymentMethodApm, apm);
+    }
+
     transaction.alternativePaymentResponse = apm;
 
     return transaction;
+  }
+
+  private static mapBankResponse(
+    paymentMethodApm: any,
+    apm: AlternativePaymentResponse,
+  ): void {
+    if (paymentMethodApm.bank) {
+      const bank = paymentMethodApm.bank;
+      const bankResponse: any = {
+        name: bank.name ?? null,
+        identifierCode: bank.identifier_code ?? null,
+        iban: bank.iban ?? null,
+        code: bank.code ?? null,
+        accountNumber: bank.account_number ?? null,
+      };
+      apm.bank = bankResponse;
+    }
   }
 
   private static mapDccInfo(response: any): DccRateData {
@@ -769,6 +796,14 @@ export class GpApiMapping {
     return (
       typeof provider === "string" &&
       provider.toLowerCase() === GpApiMapping.BLIK.toLowerCase()
+    );
+  }
+
+  private static isPayUProvider(paymentMethod: any): boolean {
+    const provider = paymentMethod?.apm?.provider;
+    return (
+      typeof provider === "string" &&
+      provider.toLowerCase() === GpApiMapping.PAYU.toLowerCase()
     );
   }
 

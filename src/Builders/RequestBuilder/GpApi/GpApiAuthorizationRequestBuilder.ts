@@ -263,6 +263,18 @@ export class GpApiAuthorizationRequestBuilder implements IRequestBuilder {
             ? paymentMethodContainer.addressOverrideMode
             : undefined,
         };
+
+        // Add bank name for Open Banking (OB)
+        const apmType =
+          paymentMethodContainer.alternativePaymentMethodType?.toUpperCase();
+        if (apmType === "OB" && paymentMethodContainer.bank) {
+          paymentMethod.bank_transfer = {
+            bank: {
+              name: paymentMethodContainer.bank,
+            },
+          };
+        }
+
         return paymentMethod;
 
       default:

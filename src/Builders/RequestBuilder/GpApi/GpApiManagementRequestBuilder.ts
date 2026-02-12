@@ -135,8 +135,9 @@ export class GpApiManagementRequestBuilder implements IRequestBuilder {
           const transactionReference = builder.paymentMethod;
           const apmResponse = transactionReference.alternativePaymentResponse;
           const isBlik = apmResponse?.providerName?.toLowerCase() === "blik";
+          const isPayU = apmResponse?.providerName?.toLowerCase() === "payu";
 
-          if (isBlik) {
+          if (isBlik || isPayU) {
             payload.payment_method = {
               apm: {
                 provider: apmResponse.providerName,

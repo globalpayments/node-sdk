@@ -115,6 +115,8 @@ export enum AlternativePaymentType {
   Nordea = "nordea",
   Osuuspankki = "osuuspankki",
   Oxxo = "oxxo",
+  /** Open Banking - Used for PayU and other Open Banking providers in Poland */
+  OB = "ob",
   PagoFacil = "pagofacil",
   PaypostLietuvosPastas = "paypost",
   Paysafecard = "paysafecard",
@@ -683,6 +685,7 @@ export enum PaymentMethodUsageMode {
 export enum PaymentProvider {
   OPEN_BANKING = "OPEN_BANKING",
   BLIK = "BLIK",
+  PAYU = "PAYU",
 }
 
 export enum PaymentSchedule {
@@ -1208,3 +1211,27 @@ export enum PropayTermsVersion {
   merchantUK = 4,
   merchantAU = 5,
 }
+
+export enum BankList {
+  PKOBANKPOLSKISA = "pkobankpolskisa",
+  SANTANDER = "santander",
+  ING = "ing",
+  BANKPEKAOSA = "bankpekaosa",
+  MBANK = "mbank",
+  ALIOR = "alior",
+  BNPPARIBAS = "bnpparibas",
+  MILLENIUM = "millenium",
+  CREDITAGRICOLE = "creditagricole",
+  CITI = "citi",
+  INTELIGO = "inteligo",
+  BANKISPOLDZIELCZE = "bankispoldzielcze",
+  BOSBANK = "bosbank",
+  NESTBANK = "nestbank",
+  VELOBANK = "velobank",
+  BANKNOWYSA = "banknowysa",
+  PLUSBANK = "plusbank",
+  BANKPOCZTOWY = "bankpocztowy",
+}
+
+// Alias for BankList for PayU compatibility
+export const PayUBankCode = BankList;
