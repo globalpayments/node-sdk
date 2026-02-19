@@ -2,6 +2,7 @@ import {
   AccessTokenInfo,
   Channel,
   ConfigurationError,
+  DataResidency,
   Environment,
   GatewayProvider,
   IntervalToExpire,
@@ -38,6 +39,7 @@ export class GpApiConfig extends GatewayConfig {
 
   public deviceCurrency: string;
 
+  public dataResidency: DataResidency = DataResidency.None;
   public transactionProcessingAccountName: string;
 
   constructor() {
@@ -46,10 +48,20 @@ export class GpApiConfig extends GatewayConfig {
 
   public configureContainer(services: ConfiguredServices) {
     if (!this.serviceUrl) {
-      this.serviceUrl =
-        this.environment == Environment.Production
-          ? ServiceEndpoints.GP_API_PRODUCTION
-          : ServiceEndpoints.GP_API_TEST;
+      if (this.dataResidency === DataResidency.EU) {
+        if (this.environment == Environment.Production) {
+          this.serviceUrl = ServiceEndpoints.GP_API_EU_PRODUCTION;
+        } else if (this.environment == Environment.Qa) {
+          this.serviceUrl = ServiceEndpoints.GP_API_EU_QA;
+        } else {
+          this.serviceUrl = ServiceEndpoints.GP_API_EU_TEST;
+        }
+      } else {
+        this.serviceUrl =
+          this.environment == Environment.Production
+            ? ServiceEndpoints.GP_API_PRODUCTION
+            : ServiceEndpoints.GP_API_TEST;
+      }
     }
 
     const gateway = new GpApiConnector(this);

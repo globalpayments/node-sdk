@@ -458,6 +458,11 @@ export enum Environment {
   Qa = "QA",
 }
 
+export enum DataResidency {
+  EU = "EU",
+  None = "None",
+}
+
 export enum EmvLastChipRead {
   SUCCESSFUL = "Successful",
   FAILED = "Failed",

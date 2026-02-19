@@ -1,5 +1,6 @@
 import {
   AccessTokenInfo,
+  DataResidency,
   Environment,
   GpApiConfig,
   GpApiConnector,
@@ -10,10 +11,20 @@ export class GpApiService {
   public static async generateTransactionKey(config: GpApiConfig) {
     const gateway = new GpApiConnector(config);
     if (!gateway.serviceUrl) {
-      gateway.serviceUrl =
-        config.environment == Environment.Production
-          ? ServiceEndpoints.GP_API_PRODUCTION
-          : ServiceEndpoints.GP_API_TEST;
+      if (config.dataResidency === DataResidency.EU) {
+        if (config.environment == Environment.Production) {
+          gateway.serviceUrl = ServiceEndpoints.GP_API_EU_PRODUCTION;
+        } else if (config.environment == Environment.Qa) {
+          gateway.serviceUrl = ServiceEndpoints.GP_API_EU_QA;
+        } else {
+          gateway.serviceUrl = ServiceEndpoints.GP_API_EU_TEST;
+        }
+      } else {
+        gateway.serviceUrl =
+          config.environment == Environment.Production
+            ? ServiceEndpoints.GP_API_PRODUCTION
+            : ServiceEndpoints.GP_API_TEST;
+      }
     }
 
     gateway.requestLogger = config.requestLogger;
