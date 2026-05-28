@@ -70,8 +70,8 @@ export class TransactionReportBuilder<T> extends ReportBuilder<T> {
   }
 
   public withTransactionId(transactionId?: string) {
-     if (transactionId !== undefined) {
-      this.transactionId  = transactionId;
+    if (transactionId !== undefined) {
+      this.transactionId = transactionId;
     }
     return this;
   }

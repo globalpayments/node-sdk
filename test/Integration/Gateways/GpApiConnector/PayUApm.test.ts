@@ -13,7 +13,7 @@ import {
 } from "../../../../src";
 import { GpApiConfig } from "../../../../src/ServiceConfigs";
 
-const AMOUNT = 16.50;
+const AMOUNT = 16.5;
 const CURRENCY = "PLN";
 const RETURN_URL = "https://www.example.com/returnUrl";
 const STATUS_UPDATE_URL = "https://www.example.com/statusUrl";
@@ -36,9 +36,10 @@ const setupPayUConfig = () => {
   gpApiConfig.requestLogger = new SampleRequestLogger(new Logger("logs"));
 
   const accessTokenInfo = new AccessTokenInfo();
-  accessTokenInfo.transactionProcessingAccountName = "GPECOM_PAYU_APM_Transaction_Processing";
+  accessTokenInfo.transactionProcessingAccountName =
+    "GPECOM_PAYU_APM_Transaction_Processing";
   gpApiConfig.accessTokenInfo = accessTokenInfo;
-  
+
   ServicesContainer.configureService(gpApiConfig, "payuConfig");
 };
 
@@ -80,11 +81,14 @@ describe("GP API PayU APM Tests", () => {
     expect(
       response.alternativePaymentResponse?.providerName?.toUpperCase(),
     ).toBe("BANK_PAYMENT");
-    
+
     // Save transaction ID for later tests
     savedTransactionId = response.transactionId!;
     console.log("Transaction ID from sale:", savedTransactionId);
-    console.log("Redirect URL:", response.alternativePaymentResponse?.redirectUrl);
+    console.log(
+      "Redirect URL:",
+      response.alternativePaymentResponse?.redirectUrl,
+    );
   });
 
   /**

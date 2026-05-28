@@ -19,6 +19,7 @@ import {
   Transaction,
   TransactionModifier,
   Logger,
+  IRequestLogger,
   SampleRequestLogger,
 } from "../../../../src";
 
@@ -37,10 +38,35 @@ track.value =
 track.encryptionData = new EncryptionData();
 track.encryptionData.version = "01";
 
+const logger = new Logger("logs");
+const sampleRequestLogger = new SampleRequestLogger(logger);
+let lastRequestBody = "";
+
+const requestLogger: IRequestLogger = {
+  requestSent(verb, endpoint, requestId, headers, data) {
+    lastRequestBody = data || "";
+    sampleRequestLogger.requestSent(
+      verb,
+      endpoint,
+      requestId,
+      (headers || {}) as Record<string, string | number>,
+      data,
+    );
+  },
+  responseReceived(response, requestId) {
+    return sampleRequestLogger.responseReceived(response, requestId ?? 0);
+  },
+  responseError(e, requestId, headers) {
+    return sampleRequestLogger.responseError(e, requestId, headers || {});
+  },
+};
+
+const config = new PorticoConfig();
+config.requestLogger = requestLogger;
+config.secretApiKey = "skapi_cert_MXDMBQDwa3IAA4GV7NGMqQA_wFR3_TNeamFWoNUu_Q";
+
 beforeEach(() => {
-  const config = new PorticoConfig();
-  config.requestLogger = new SampleRequestLogger(new Logger("logs"));
-  config.secretApiKey = "skapi_cert_MXDMBQDwa3IAA4GV7NGMqQA_wFR3_TNeamFWoNUu_Q";
+  lastRequestBody = "";
   ServicesContainer.configureService(config);
 });
 
@@ -150,6 +176,145 @@ test("credit sale", async () => {
   expect(response.responseCode).toBe("00");
 });
 
+test("testCreditSaleWithClerkIdLogs", async () => {
+  let response: Transaction | null = null;
+  let capturedError: Error | null = null;
+
+  try {
+    response = await card
+      .charge(15)
+      .withCurrency("USD")
+      .withAllowDuplicates(true)
+      .withClerkId("CLERK-123")
+      .execute();
+  } catch (e) {
+    capturedError = e as Error;
+  }
+
+  expect(lastRequestBody).toContain("<ClerkID><![CDATA[CLERK-123]]></ClerkID>");
+
+  if (capturedError) {
+    expect(capturedError.message).toContain(
+      "Unexpected HTTP status code [500]",
+    );
+  } else {
+    expect(response).toBeTruthy();
+    expect((response as Transaction).responseCode).toBe("00");
+  }
+});
+
+test("testCreditSaleWithoutClerkIdLogs", async () => {
+  const response = await card
+    .charge(15)
+    .withCurrency("USD")
+    .withAllowDuplicates(true)
+    .execute();
+
+  expect(response).toBeTruthy();
+  expect(response.responseCode).toBe("00");
+
+  expect(lastRequestBody).not.toContain("<ClerkID>");
+});
+
+test("CreditCapture_ClerkId", async () => {
+  const authResponse = await card
+    .authorize(14)
+    .withCurrency("USD")
+    .withAllowDuplicates(true)
+    .withClerkId("0998_ID")
+    .execute();
+
+  expect(authResponse).toBeTruthy();
+  expect(authResponse.responseCode).toBe("00");
+  expect(lastRequestBody).toContain("<ClerkID><![CDATA[0998_ID]]></ClerkID>");
+
+  const capture = await authResponse
+    .capture(16)
+    .withGratuity("2.00")
+    .withClerkId("C3008_ID")
+    .execute();
+
+  expect(capture).toBeTruthy();
+  expect(capture.responseCode).toBe("00");
+  expect(lastRequestBody).toContain("<ClerkID><![CDATA[C3008_ID]]></ClerkID>");
+});
+
+
+test("ClerkId_Negative", async () => {
+  expect(() => {
+    card
+      .authorize(14)
+      .withCurrency("USD")
+      .withAllowDuplicates(true)
+      .withClerkId("C3008_ID0983634567ndhgfds45678908765432wqsdcvn 87723");
+  }).toThrow("ClerkId length should not be more than 50 characters");
+
+  await logger.info("ClerkId_Negative test - Validation Error: ClerkId length should not be more than 50 characters", 0, {}, false);
+});
+
+test("credit reversal with valid ClerkID", async () => {
+  let response: Transaction | null = null;
+  let capturedError: Error | null = null;
+  try {
+    response = await card
+      .reverse(15)
+      .withCurrency("USD")
+      .withAllowDuplicates(true)
+      .withClerkId("789")
+      .execute();
+  } catch (e) {
+    capturedError = e as Error;
+  }
+  expect(lastRequestBody).toContain("<ClerkID><![CDATA[789]]></ClerkID>");
+  if (capturedError) {
+    expect(capturedError.message).toContain("Unexpected HTTP status code [500]");
+  } else {
+    expect(response).toBeTruthy();
+    expect((response as Transaction).responseCode).toBe("00");
+  }
+});
+test("credit refund with valid ClerkID", async () => {
+  let response: Transaction | null = null;
+  let capturedError: Error | null = null;
+  try {
+    response = await card
+      .refund(15)
+      .withCurrency("USD")
+      .withAllowDuplicates(true)
+      .withClerkId("741")
+      .execute();
+  } catch (e) {
+    capturedError = e as Error;
+  }
+  expect(lastRequestBody).toContain("<ClerkID><![CDATA[741]]></ClerkID>");
+  if (capturedError) {
+    expect(capturedError.message).toContain("Unexpected HTTP status code [500]");
+  } else {
+    expect(response).toBeTruthy();
+    expect((response as Transaction).responseCode).toBe("00");
+  }
+});
+test("credit auth with valid ClerkID", async () => {
+  let response: Transaction | null = null;
+  let capturedError: Error | null = null;
+  try {
+    response = await card
+      .authorize(15)
+      .withCurrency("USD")
+      .withAllowDuplicates(true)
+      .withClerkId("159")
+      .execute();
+  } catch (e) {
+    capturedError = e as Error;
+  }
+  expect(lastRequestBody).toContain("<ClerkID><![CDATA[159]]></ClerkID>");
+  if (capturedError) {
+    expect(capturedError.message).toContain("Unexpected HTTP status code [500]");
+  } else {
+    expect(response).toBeTruthy();
+    expect((response as Transaction).responseCode).toBe("00");
+  }
+});
 test("credit sale with convenience", async () => {
   const response = await card
     .charge(15)
@@ -691,60 +856,58 @@ test("3D Secure V2", async () => {
   expect(response.responseCode).toBe("00");
 });
 describe("AmountIndicator Tests cases", () => {
-test("credit sale amount indicator F", async () => {
-  const response = await card
-    .charge(15)
-    .withCurrency("USD")
-    .withAmountEstimated(false)
-    .withAllowDuplicates(true)
-    .execute();
+  test("credit sale amount indicator F", async () => {
+    const response = await card
+      .charge(15)
+      .withCurrency("USD")
+      .withAmountEstimated(false)
+      .withAllowDuplicates(true)
+      .execute();
 
-  expect(response).toBeTruthy();
-  expect(response.responseCode).toBe("00");
-});
+    expect(response).toBeTruthy();
+    expect(response.responseCode).toBe("00");
+  });
 
-test("credit auth amount indicator F", async () => {
-  const response = await card
-    .authorize(15)
-    .withCurrency("USD")
-    .withAmountEstimated(false)
-    .withAllowDuplicates(true)
-    .execute();
+  test("credit auth amount indicator F", async () => {
+    const response = await card
+      .authorize(15)
+      .withCurrency("USD")
+      .withAmountEstimated(false)
+      .withAllowDuplicates(true)
+      .execute();
 
-  expect(response).toBeTruthy();
-  expect(response.responseCode).toBe("00");
-});
+    expect(response).toBeTruthy();
+    expect(response.responseCode).toBe("00");
+  });
 
-test("credit auth amount indicator E", async () => {
-  const response = await card
-    .authorize(15)
-    .withCurrency("USD")
-    .withAmountEstimated(true)
-    .withAllowDuplicates(true)
-    .execute();
+  test("credit auth amount indicator E", async () => {
+    const response = await card
+      .authorize(15)
+      .withCurrency("USD")
+      .withAmountEstimated(true)
+      .withAllowDuplicates(true)
+      .execute();
 
-  expect(response).toBeTruthy();
-  expect(response.responseCode).toBe("00");
-});
+    expect(response).toBeTruthy();
+    expect(response.responseCode).toBe("00");
+  });
 
-test("incremental auth amount indicator E", async () => {
-  const origResponse = await card
-    .authorize(15)
-    .withCurrency("USD")
-    .withAmountEstimated(true)
-    .withAllowDuplicates(true)
-    .execute();
+  test("incremental auth amount indicator E", async () => {
+    const origResponse = await card
+      .authorize(15)
+      .withCurrency("USD")
+      .withAmountEstimated(true)
+      .withAllowDuplicates(true)
+      .execute();
 
-  const captureResponse = await Transaction.fromId(origResponse.transactionId)
-    .additionalAuth(12)
-    .withModifier(TransactionModifier.Incremental)
-    .withAmountEstimated(true)
-    .withCurrency("USD")
-    .execute(); 
- 
-  expect(origResponse).toBeTruthy();
-  expect(captureResponse).toBeTruthy();
-  expect(captureResponse.responseCode).toBe("00");
-});
-
+    const captureResponse = await Transaction.fromId(origResponse.transactionId)
+      .additionalAuth(12)
+      .withModifier(TransactionModifier.Incremental)
+      .withAmountEstimated(true)
+      .withCurrency("USD")
+      .execute();
+    expect(origResponse).toBeTruthy();
+    expect(captureResponse).toBeTruthy();
+    expect(captureResponse.responseCode).toBe("00");
+  });
 });

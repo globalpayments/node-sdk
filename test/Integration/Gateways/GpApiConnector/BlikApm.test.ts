@@ -81,7 +81,10 @@ describe("GP API BLIK APM Tests", () => {
     // Log transaction details for refund test
     console.log("\n========================================");
     console.log("TRANSACTION ID:", response.transactionId);
-    console.log("REDIRECT URL:", response.alternativePaymentResponse?.redirectUrl);
+    console.log(
+      "REDIRECT URL:",
+      response.alternativePaymentResponse?.redirectUrl,
+    );
     console.log("========================================");
     console.log("\nINSTRUCTIONS FOR REFUND TEST:");
     console.log("1. Copy the transaction ID above");
@@ -142,7 +145,7 @@ describe("GP API BLIK APM Tests", () => {
         .execute("blikConfig");
       fail("Expected BuilderError to be thrown");
     } catch (error: any) {
-    console.log("ERROR MESSAGE:", error.message);
+      console.log("ERROR MESSAGE:", error.message);
       expect(error).toBeTruthy();
       expect(error.message).toBe(
         "paymentMethod.statusUpdateUrl cannot be null for this transaction type.",

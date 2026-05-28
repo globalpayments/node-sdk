@@ -57,6 +57,21 @@ export class UpaController extends DeviceController {
     return this.doTransaction(request);
   }
 
+  public configureConnector(): IDeviceCommInterface {
+    switch (this._settings.connectionMode) {
+      case ConnectionModes.HTTP:
+      case ConnectionModes.SERIAL:
+      case ConnectionModes.SSL_TCP:
+      case ConnectionModes.MEET_IN_THE_CLOUD:
+        if (this._settings.gatewayConfig instanceof GpApiConfig) {
+          return new UpaMicInterface(this._settings);
+        }
+      case ConnectionModes.TCP_IP:
+      default:
+        throw new NotImplementedError();
+    }
+  }
+
   private buildManageTransaction(
     builder: TerminalManageBuilder,
   ): IDeviceMessage {
@@ -84,7 +99,7 @@ export class UpaController extends DeviceController {
 
     const requestData: Record<string, any> = {
       command: this.mapTransactionType(transactionType),
-      ecrId: builder.ecrId,
+      EcrId: builder.ecrId,
       requestId: requestId.toString(),
     };
 
@@ -97,7 +112,7 @@ export class UpaController extends DeviceController {
 
     transactionData.transaction.referenceNumber = builder.transactionId;
 
-    transactionData.transaction.amount = builder.amount?.toFixed(2);
+    transactionData.transaction.baseAmount = builder.amount?.toFixed(2);
     transactionData.transaction.taxAmount = builder.taxAmount;
     transactionData.transaction.tipAmount = builder.tipAmount;
     transactionData.transaction.taxIndicator = builder.taxIndicator;
@@ -135,7 +150,7 @@ export class UpaController extends DeviceController {
 
     const requestData: Record<string, any> = {
       command: this.mapTransactionType(transactionType),
-      ecrId: builder.ecrId?.toString(),
+      EcrId: builder.ecrId?.toString(),
       requestId: requestId.toString(),
     };
 
@@ -199,11 +214,11 @@ export class UpaController extends DeviceController {
       transactionType != TransactionType.Tokenize
     ) {
       if (transactionType === TransactionType.Auth) {
-        transactionData.transaction.amount = builder.amount?.toFixed(2);
+        transactionData.transaction.baseAmount = builder.amount?.toFixed(2);
         transactionData.transaction.preAuthAmount =
           builder.preAuthAmount?.toString(2);
       } else {
-        transactionData.transaction.amount = builder.amount?.toFixed(2);
+        transactionData.transaction.baseAmount = builder.amount?.toFixed(2);
         transactionData.transaction.cashBackAmount =
           builder.cashBackAmount?.toFixed(2);
         transactionData.transaction.tipAmount = builder.gratuity?.toFixed(2);
@@ -223,8 +238,6 @@ export class UpaController extends DeviceController {
         builder.dentalAmount?.toFixed(2);
       transactionData.transaction.visionOpticalAmount =
         builder.visionOpticalAmount?.toFixed(2);
-      transactionData.transaction.cardAcquisition =
-        StoredCredentialInitiator.CardHolder ? "C" : "M";
     }
 
     if (transactionType === TransactionType.Refund) {
@@ -279,20 +292,5 @@ export class UpaController extends DeviceController {
     }
 
     return new TransactionResponse(response);
-  }
-
-  public configureConnector(): IDeviceCommInterface {
-    switch (this._settings.connectionMode) {
-      case ConnectionModes.HTTP:
-      case ConnectionModes.SERIAL:
-      case ConnectionModes.SSL_TCP:
-      case ConnectionModes.MEET_IN_THE_CLOUD:
-        if (this._settings.gatewayConfig instanceof GpApiConfig) {
-          return new UpaMicInterface(this._settings);
-        }
-      case ConnectionModes.TCP_IP:
-      default:
-        throw new NotImplementedError();
-    }
   }
 }

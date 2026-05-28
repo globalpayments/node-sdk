@@ -30,6 +30,8 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
   public taxType: TaxType;
   public cardType?: string;
   public amountEstimated?: boolean;
+  public clerkId?: string;
+  private _clientTransactionId: string;
 
   public constructor(type: number, paymentMethod?: PaymentMethod) {
     super(type, paymentMethod);
@@ -44,10 +46,18 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
   }
 
   public get clientTransactionId() {
+    if (this._clientTransactionId) {
+      return this._clientTransactionId;
+    }
     if (this.paymentMethod instanceof TransactionReference) {
       return this.paymentMethod.clientTransactionId;
     }
     return undefined;
+  }
+
+  public withClientTransactionId(clientTransactionId: string) {
+    this._clientTransactionId = clientTransactionId;
+    return this;
   }
 
   public get orderId() {
@@ -222,7 +232,7 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
 
   /**
    * Sets whether the amount is estimated or final
-   * 
+   *
    * @param value true for estimated (E), false for final (F)
    * @returns ManagementBuilder
    */
@@ -230,10 +240,26 @@ export class ManagementBuilder extends TransactionBuilder<Transaction> {
     this.amountEstimated = value;
     return this;
   }
-  
+
   public withDynamicDescriptor(dynamicDescriptor: string) {
     this.dynamicDescriptor = dynamicDescriptor;
 
+    return this;
+  }
+
+  /**
+   * Sets the clerk identifier for Portico transactions.
+   *
+   * @param clerkId The clerk ID (max 50 characters)
+   * @returns ManagementBuilder
+   */
+  public withClerkId(clerkId?: string) {
+    if (clerkId !== undefined) {
+      if (clerkId.length > 50) {
+        throw new Error("ClerkId length should not be more than 50 characters");
+      }
+      this.clerkId = clerkId;
+    }
     return this;
   }
 

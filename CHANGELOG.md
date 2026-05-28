@@ -1,6 +1,10 @@
 # Changelog
 
-## Latest - v3.10.12 (02/18/26):
+## Latest - v3.10.13 (05/27/26):
+### Enhancements:
+- [Portico] Added clerkId in Portico 
+
+## v3.10.12 (02/18/26):
 ### Enhancements:
 - [GP-API] Added EU Data Residency support 
 

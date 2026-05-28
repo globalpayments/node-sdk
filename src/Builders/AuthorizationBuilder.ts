@@ -50,6 +50,7 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public currency: string;
   public customerData: Customer;
   public customerId: string;
+  public clerkId: string;
   public customerIpAddress: string;
   public cvn: string;
   public description: string;
@@ -362,6 +363,22 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
   public withCustomerId(customerId?: string) {
     if (customerId !== undefined) {
       this.customerId = customerId;
+    }
+    return this;
+  }
+
+  /**
+   * Sets the clerk identifier for Portico credit-card transactions.
+   *
+   * @param clerkId The clerk ID (max 50 characters)
+   * @returns AuthorizationBuilder
+   */
+  public withClerkId(clerkId?: string) {
+    if (clerkId !== undefined) {
+      if (clerkId.length > 50) {
+        throw new Error("ClerkId length should not be more than 50 characters");
+      }
+      this.clerkId = clerkId;
     }
     return this;
   }

@@ -106,13 +106,13 @@ describe("GP-API Data Residency", () => {
       const config = new GpApiConfig();
 
       expect(config.dataResidency).toBe(DataResidency.None);
-      
     });
 
     test("should default to None when dataResidency is not set", () => {
       const config = new GpApiConfig();
       config.appId = "QlI6DivlPcXboV1AAG3NGtf340bJO6A34SqUa5REJojQMzat";
-      config.appKey = "G3Gdx6biXAXgJJFaMnuLo0hlBCCMH18rCXnPzySl37nwctMAmrV1EykuXi6GQCrh";
+      config.appKey =
+        "G3Gdx6biXAXgJJFaMnuLo0hlBCCMH18rCXnPzySl37nwctMAmrV1EykuXi6GQCrh";
       config.environment = Environment.Test;
 
       // Manually trigger URL setting logic without full container initialization
@@ -142,8 +142,6 @@ describe("GP-API Data Residency", () => {
       expect(gpApiConfig.dataResidency).toBeDefined();
       expect(gpApiConfig.dataResidency).toBe(DataResidency.None);
     });
-
-   
   });
 
   describe.only("Negative Test Cases - EU Data Residency", () => {
@@ -166,15 +164,15 @@ describe("GP-API Data Residency", () => {
 
     test("should NOT allow dataResidency on non-GPAPI gateway configs", () => {
       const porticoConfig = new PorticoConfig();
-      
+
       // PorticoConfig should not have dataResidency as a defined property
-      const hasDataResidencyProperty = porticoConfig.hasOwnProperty('dataResidency') || 
-                                        'dataResidency' in Object.getPrototypeOf(porticoConfig);
-      
+      const hasDataResidencyProperty =
+        porticoConfig.hasOwnProperty("dataResidency") ||
+        "dataResidency" in Object.getPrototypeOf(porticoConfig);
+
       expect(hasDataResidencyProperty).toBe(false);
       expect(porticoConfig instanceof PorticoConfig).toBe(true);
       expect(porticoConfig instanceof GpApiConfig).toBe(false);
     });
   });
-
 });

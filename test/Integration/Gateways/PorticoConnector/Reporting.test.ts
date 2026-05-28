@@ -26,7 +26,7 @@ test("report activity", () => {
     .withStartDate(start)
     .withEndDate(end)
     .execute()
-    .then((activity) => { 
+    .then((activity) => {
       expect(activity).toBeTruthy();
       expect(activity.length > 0).toBe(true);
     });

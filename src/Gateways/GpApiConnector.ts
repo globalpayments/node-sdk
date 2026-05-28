@@ -72,6 +72,9 @@ export class GpApiConnector
    * @return string|null
    */
   private getReleaseVersion(): string | null {
+    if (process.env.SDK_TESTING === "true") {
+      return "";
+    }
     const filename = __dirname + "/../../../package.json";
     if (!fs.existsSync(filename)) {
       return null;
@@ -196,15 +199,18 @@ export class GpApiConnector
     }
 
     // For PayU APM refunds, return mock success response instead of making actual API call
-    const isPayUApmRefund = builder.transactionType === TransactionType.Refund &&
+    const isPayUApmRefund =
+      builder.transactionType === TransactionType.Refund &&
       (builder.paymentMethod instanceof AlternativePaymentMethod ||
-       builder.paymentMethod?.paymentMethodType === PaymentMethodType.APM);
+        builder.paymentMethod?.paymentMethodType === PaymentMethodType.APM);
 
     if (isPayUApmRefund) {
-      console.log('[PayU APM Mock] Returning mock refund success response');
-      
+      console.log("[PayU APM Mock] Returning mock refund success response");
+
       // Create mock successful refund response
-      const amountInMinorUnits = builder.amount ? (Number(builder.amount) * 100).toString() : "1650";
+      const amountInMinorUnits = builder.amount
+        ? (Number(builder.amount) * 100).toString()
+        : "1650";
       const mockRefundResponse = {
         id: builder.paymentMethod?.transactionId,
         time_created: new Date().toISOString(),
@@ -225,8 +231,8 @@ export class GpApiConnector
           entry_mode: "ECOM",
           apm: {
             provider: "payu",
-            status: "CAPTURED"
-          }
+            status: "CAPTURED",
+          },
         },
         action: {
           id: "ACT_mock_refund_" + Math.random().toString(36).substring(7),
@@ -234,11 +240,14 @@ export class GpApiConnector
           time_created: new Date().toISOString(),
           result_code: "SUCCESS",
           app_id: "hlZAokTftDazLlWDPe8E6VAz5g9rSDPg",
-          app_name: "UCP_Test_Automation_App"
-        }
+          app_name: "UCP_Test_Automation_App",
+        },
       };
 
-      console.log('[PayU APM Mock] Mock refund response:', JSON.stringify(mockRefundResponse, null, 2));
+      console.log(
+        "[PayU APM Mock] Mock refund response:",
+        JSON.stringify(mockRefundResponse, null, 2),
+      );
 
       // Return mock response directly without making API call - pass object, not string
       return Promise.resolve(GpApiMapping.mapResponseAPM(mockRefundResponse));
@@ -301,13 +310,16 @@ export class GpApiConnector
     }
 
     // For APM refunds, modify request to include mock CAPTURED status
-    if (builder instanceof ManagementBuilder && 
-        builder.transactionType === TransactionType.Refund &&
-        (builder.paymentMethod instanceof AlternativePaymentMethod ||
-         builder.paymentMethod?.paymentMethodType === PaymentMethodType.APM)) {
-      
-      console.log('[PayU APM Mock] Modifying refund request with CAPTURED status');
-      
+    if (
+      builder instanceof ManagementBuilder &&
+      builder.transactionType === TransactionType.Refund &&
+      (builder.paymentMethod instanceof AlternativePaymentMethod ||
+        builder.paymentMethod?.paymentMethodType === PaymentMethodType.APM)
+    ) {
+      console.log(
+        "[PayU APM Mock] Modifying refund request with CAPTURED status",
+      );
+
       // Parse existing request body
       let requestData: any = {};
       if (request.requestBody) {
@@ -317,16 +329,19 @@ export class GpApiConnector
           requestData = {};
         }
       }
-      
+
       // Add mock status to request
       requestData.status = "CAPTURED";
       requestData.force_refund = true;
       requestData.mock_captured = true;
-      
+
       // Update request body with modified data
       request.requestBody = JSON.stringify(requestData);
-      
-      console.log('[PayU APM Mock] Modified request body:', request.requestBody);
+
+      console.log(
+        "[PayU APM Mock] Modified request body:",
+        request.requestBody,
+      );
     }
 
     const idempotencyKey = builder.idempotencyKey || null;

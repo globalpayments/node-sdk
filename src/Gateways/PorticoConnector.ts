@@ -106,13 +106,17 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       }
     }
 
-    if((builder.paymentMethod.paymentMethodType === PaymentMethodType.Credit && builder.transactionModifier === TransactionModifier.None && builder.amountEstimated != null) || builder.transactionModifier === TransactionModifier.Incremental)
-    {
-      subElement(block1, "AmountIndicator").append(cData(builder.amountEstimated === true ? "E" : "F"));
+    if (
+      (builder.paymentMethod.paymentMethodType === PaymentMethodType.Credit &&
+        builder.transactionModifier === TransactionModifier.None &&
+        builder.amountEstimated != null) ||
+      builder.transactionModifier === TransactionModifier.Incremental
+    ) {
+      subElement(block1, "AmountIndicator").append(
+        cData(builder.amountEstimated === true ? "E" : "F"),
+      );
     }
-    
-   
-      
+
     if (builder.amount !== undefined && builder.amount !== "") {
       subElement(block1, "Amt").append(
         cData(validateAmount("portico", builder.amount)),
@@ -556,6 +560,8 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       subElement(fields, "InvoiceNbr").append(cData(builder.invoiceNumber));
     }
 
+
+
     if (builder.ecommerceInfo) {
       if (builder.ecommerceInfo.channel) {
         subElement(block1, "Ecommerce").append(
@@ -640,7 +646,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     }
 
     return this.doTransaction(
-      this.buildEnvelope(transaction, builder.clientTransactionId),
+      this.buildEnvelope(transaction, builder.clientTransactionId, builder.clerkId),
     ).then((response) => this.mapResponse(response, builder));
   }
 
@@ -875,7 +881,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     }
 
     return this.doTransaction(
-      this.buildEnvelope(transaction, builder.clientTransactionId),
+      this.buildEnvelope(transaction, builder.clientTransactionId, builder.clerkId),
     ).then((response) => this.mapResponse(response, builder));
   }
 
@@ -930,6 +936,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
   protected buildEnvelope(
     transaction: Element,
     clientTransactionId?: string,
+    clerkId?: string,
   ): string {
     const envelope = element("soap:Envelope", {
       "xmlns:soap": "http://schemas.xmlsoap.org/soap/envelope/",
@@ -972,9 +979,17 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     if (this.sdkNameVersion) {
       subElement(header, "SDKNameVersion").append(cData(this.sdkNameVersion));
     } else {
-      subElement(header, "SDKNameVersion").append(
-        cData("nodejs-version:" + process.env.npm_package_version),
-      );
+      if (process.env.SDK_TESTING === "true") {
+        subElement(header, "SDKNameVersion").append(cData(""));
+      } else {
+        subElement(header, "SDKNameVersion").append(
+          cData("nodejs-version:" + process.env.npm_package_version),
+        );
+      }
+    }
+
+    if (clerkId) {
+      subElement(header, "ClerkID").append(cData(clerkId));
     }
 
     // transaction

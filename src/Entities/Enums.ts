@@ -817,7 +817,7 @@ export enum SearchCriteria {
   CheckLastName = "checkLastName",
   CheckName = "checkName",
   CheckNumber = "checkNumber",
-  ClerkId = "clerkId",
+  ClerkId = "ClerkID",
   ClientTransactionId = "clientTransactionId",
   CustomerId = "customerId",
   DepositReference = "",
