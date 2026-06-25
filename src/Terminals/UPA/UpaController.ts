@@ -99,7 +99,7 @@ export class UpaController extends DeviceController {
 
     const requestData: Record<string, any> = {
       command: this.mapTransactionType(transactionType),
-      EcrId: builder.ecrId,
+      EcrId: builder.ecrId?.toString(),
       requestId: requestId.toString(),
     };
 
@@ -118,7 +118,9 @@ export class UpaController extends DeviceController {
     transactionData.transaction.taxIndicator = builder.taxIndicator;
     transactionData.transaction.invoiceNbr = builder.invoiceNumber;
     transactionData.transaction.processCPC = builder.processCPC;
-
+    if (transactionType === TransactionType.Refund) {
+      transactionData.transaction.totalAmount = builder.amount?.toFixed(2);
+    }
     requestData.data = transactionData;
 
     request.data = requestData;

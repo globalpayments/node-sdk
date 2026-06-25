@@ -1,4 +1,3 @@
-import * as fs from "fs";
 import { IPayFacProvider } from "./IPayFacProvider";
 import { IPaymentGateway } from "./IPaymentGateway";
 import { RestGateway } from "./RestGateway";
@@ -28,6 +27,7 @@ import {
   RequestBuilderFactory,
   Secure3dBuilder,
   TransactionType,
+  getSdkVersion,
 } from "../../src";
 import { PayFacBuilder } from "src/Builders/PayFacBuilder";
 
@@ -62,27 +62,8 @@ export class GpApiConnector
     this.headers["X-GP-Version"] = GpApiConnector.GP_API_VERSION;
     this.headers["Accept"] = "application/json";
     this.headers["Accept-Encoding"] = "gzip";
-    this.headers["x-gp-sdk"] = "node;version=" + this.getReleaseVersion();
+    this.headers["x-gp-sdk"] = "node;version=" + getSdkVersion();
     this.headers["Content-Type"] = "charset=UTF-8";
-  }
-
-  /**
-   * Get the SDK release version
-   *
-   * @return string|null
-   */
-  private getReleaseVersion(): string | null {
-    if (process.env.SDK_TESTING === "true") {
-      return "";
-    }
-    const filename = __dirname + "/../../../package.json";
-    if (!fs.existsSync(filename)) {
-      return null;
-    }
-
-    const packageJson = JSON.parse(fs.readFileSync(filename).toString());
-
-    return packageJson.version || "";
   }
 
   public getVersion(): string {

@@ -191,30 +191,6 @@ export class TerminalAuthBuilder extends TerminalBuilder {
     return this;
   }
 
-  protected setupValidations() {
-    this.validations
-      .of(
-        "transactionType",
-        TransactionType.Auth | TransactionType.Sale | TransactionType.Refund,
-      )
-      .with("transactionModifier", TransactionModifier.None)
-      .check("amount")
-      .isNotNull();
-
-    this.validations
-      .of("transactionType", TransactionType.Refund)
-      .check("amount")
-      .isNotNull();
-
-    this.validations
-      .of("transactionType", TransactionType.Refund)
-      .with("paymentMethodType", PaymentMethodType.Credit)
-      .check("transactionId")
-      .isNotNull()
-      .check("authCode")
-      .isNotNull();
-  }
-
   public withTaxType(taxType: TaxType, taxExemptId: string = "") {
     this.taxType = taxType;
     this.taxExempt = taxType === TaxType.TaxExempt ? "1" : "0";
@@ -235,5 +211,21 @@ export class TerminalAuthBuilder extends TerminalBuilder {
   public withAllowPartialAuth(value: boolean) {
     this.allowPartialAuth = value;
     return this;
+  }
+
+  protected setupValidations() {
+    this.validations
+      .of(
+        "transactionType",
+        TransactionType.Auth | TransactionType.Sale | TransactionType.Refund,
+      )
+      .with("transactionModifier", TransactionModifier.None)
+      .check("amount")
+      .isNotNull();
+
+    this.validations
+      .of("transactionType", TransactionType.Refund)
+      .check("amount")
+      .isNotNull();
   }
 }

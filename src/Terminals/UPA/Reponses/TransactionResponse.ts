@@ -62,11 +62,18 @@ export class TransactionResponse implements ITerminalResponse {
         throw new NotImplementedError("Invalid JSON string");
       }
     if (this.isGpApiResponse(jsonResponse)) {
-      this.requestId = this.transactionId = jsonResponse.id;
+      this.requestId = jsonResponse.id;
+      this.status = jsonResponse.status;
       this.deviceResponseText = jsonResponse.status;
       this.responseText = this.deviceResponseCode =
         jsonResponse.action?.result_code || "";
-      this.deviceResponseText = jsonResponse.status;
+
+      const host = jsonResponse.response?.data?.host;
+      if (host) {
+        this.transactionId = host.referenceNumber || jsonResponse.id;
+      } else {
+        this.transactionId = jsonResponse.id;
+      }
     } else {
       throw new NotImplementedError();
     }

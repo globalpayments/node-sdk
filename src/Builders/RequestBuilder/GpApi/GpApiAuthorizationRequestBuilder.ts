@@ -419,6 +419,14 @@ export class GpApiAuthorizationRequestBuilder implements IRequestBuilder {
           mappedOrder?.amount ||
           StringUtils.toNumeric(builder.amount.toString()),
       };
+    } else if (
+      builder.supplementaryData &&
+      Object.keys(builder.supplementaryData).length
+    ) {
+      const mappedOrder = this.setOrderInformation(builder, requestBody);
+      if (mappedOrder) {
+        requestBody.order = mappedOrder;
+      }
     }
 
     if (builder.dccRateData) {
@@ -486,6 +494,23 @@ export class GpApiAuthorizationRequestBuilder implements IRequestBuilder {
           };
         }
         break;
+    }
+
+    // Supplementary data (e.g. VISA_DIRECT_AFT) 
+    if (
+      builder.supplementaryData &&
+      Object.keys(builder.supplementaryData).length
+    ) {
+      const supplementary_data: Array<{ type: string; fields: string[] }> = [];
+      for (const [type, fields] of Object.entries(builder.supplementaryData)) {
+        const fieldsArray = Array.isArray(fields) ? fields : [fields];
+        if (type !== "" && fieldsArray.length > 0) {
+          supplementary_data.push({ type, fields: fieldsArray });
+        }
+      }
+      if (supplementary_data.length) {
+        order.supplementary_data = supplementary_data;
+      }
     }
 
     if (request.order) {

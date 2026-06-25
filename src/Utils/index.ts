@@ -3,4 +3,5 @@ export * from "./CountryUtils";
 export * from "./GenerationUtils";
 export * from "./IRawRequestBuilder";
 export * from "./Logging";
+export * from "./SdkVersion";
 export * from "./StringUtils";

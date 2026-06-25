@@ -58,6 +58,11 @@ export class TerminalManageBuilder extends TerminalBuilder {
     return this;
   }
 
+  public withEcrId(ecrId: number) {
+    this.ecrId = ecrId;
+    return this;
+  }
+
   /**
    * Previous request's transaction ID
    *

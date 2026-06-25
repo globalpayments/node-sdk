@@ -48,6 +48,7 @@ import {
   TransactionSummary,
   TransactionType,
   UnsupportedTransactionError,
+  getSdkVersion,
 } from "../";
 import { validateAmount, validateInput } from "../Utils/InputValidation";
 import { XmlGateway } from "./XmlGateway";
@@ -979,13 +980,10 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     if (this.sdkNameVersion) {
       subElement(header, "SDKNameVersion").append(cData(this.sdkNameVersion));
     } else {
-      if (process.env.SDK_TESTING === "true") {
-        subElement(header, "SDKNameVersion").append(cData(""));
-      } else {
-        subElement(header, "SDKNameVersion").append(
-          cData("nodejs-version:" + process.env.npm_package_version),
-        );
-      }
+      const version = getSdkVersion();
+      subElement(header, "SDKNameVersion").append(
+        cData(version ? "nodejs-version:" + version : ""),
+      );
     }
 
     if (clerkId) {

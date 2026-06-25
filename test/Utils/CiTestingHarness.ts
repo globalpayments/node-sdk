@@ -1,6 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
-import { IRequestIdProvider } from "../../src";
+import {
+  IRequestIdProvider,
+} from "../../src";
 
 export enum CacheMode {
   Locked = "Locked",
@@ -17,6 +19,11 @@ export class CiTestingHarness {
   private testName: string;
   private idMap: Record<string, string>;
   private fixedTimestamp: number;
+
+  private language = "node";
+  private category: string | null = null;
+  private subcategory: string | null = null;
+  private currentFunction: string | null = null;
 
   constructor(
     targetServiceUrl: string,
@@ -58,6 +65,48 @@ export class CiTestingHarness {
     });
   }
 
+  /**
+   * Set the function being tested. The convention is "category|subcategory|function".
+   * This is parsed at runtime into the respective fields and appended to the proxy URL
+   * so the proxy validates them against its functionality list and records the test run.
+   */
+  public setFunction(functionPath: string | null): void {
+    if (functionPath === null) {
+      this.category = null;
+      this.subcategory = null;
+      this.currentFunction = null;
+    } else {
+      const parts = functionPath.split("|", 3);
+      if (parts.length === 3) {
+        this.category = parts[0];
+        this.subcategory = parts[1];
+        this.currentFunction = parts[2];
+      } else {
+        this.category = null;
+        this.subcategory = null;
+        this.currentFunction = functionPath;
+      }
+    }
+  }
+
+  /**
+   * Override the default language tag ("node") sent to the proxy.
+   * This is rarely needed; it exists for cross-language test scenarios.
+   */
+  public setLanguage(language: string): void {
+    this.language = language;
+  }
+
+  /**
+   * Reset the harness fields so a stale function tag does not leak from one test
+   * method into the next. Call this after the test URL has been consumed.
+   */
+  public reset(): void {
+    this.category = null;
+    this.subcategory = null;
+    this.currentFunction = null;
+  }
+
   public getTestingUrl(): string {
     const cacheReturns = this.cacheMode === CacheMode.Locked;
     let targetHost = this.targetServiceUrl;
@@ -66,15 +115,28 @@ export class CiTestingHarness {
     targetHost = targetHost.replace(/^https?:\/\//, "");
     targetHost = "https:/" + targetHost;
 
-    return `${CiTestingHarness.PROXY_ENDPOINT}/(cacheReturns:${cacheReturns})/${targetHost}`;
+    let args = `cacheReturns:${cacheReturns}`;
+    if (
+      this.language !== null &&
+      this.category !== null &&
+      this.subcategory !== null &&
+      this.currentFunction !== null
+    ) {
+      args += `,language:${this.encodeUrlPathSegment(this.language)}`;
+      args += `,category:${this.encodeUrlPathSegment(this.category)}`;
+      args += `,subcategory:${this.encodeUrlPathSegment(this.subcategory)}`;
+      args += `,function:${this.encodeUrlPathSegment(this.currentFunction)}`;
+    }
+
+    return `${CiTestingHarness.PROXY_ENDPOINT}/(${args})/${targetHost}`;
   }
 
   public generateRandomId(key: string): string {
-    if (this.idMap[key]) {
-      return this.idMap[key];
-    }
-
     if (this.cacheMode === CacheMode.Locked) {
+      if (this.idMap[key]) {
+        return this.idMap[key];
+      }
+
       throw new Error(
         `Harness is locked but no cached ID found for key: ${key}. Run tests in Unlocked mode first.`,
       );
@@ -92,11 +154,11 @@ export class CiTestingHarness {
     max: number,
     decimals: number,
   ): string {
-    if (this.idMap[key]) {
-      return this.idMap[key];
-    }
-
     if (this.cacheMode === CacheMode.Locked) {
+      if (this.idMap[key]) {
+        return this.idMap[key];
+      }
+
       throw new Error(
         `Harness is locked but no cached value found for key: ${key}. Run tests in Unlocked mode first.`,
       );
@@ -120,6 +182,10 @@ export class CiTestingHarness {
 
   public getCurrentTime(): Date {
     return new Date();
+  }
+
+  private encodeUrlPathSegment(value: string): string {
+    return encodeURIComponent(value);
   }
 
   private loadExistingIds(): Record<string, string> {

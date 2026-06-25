@@ -1,6 +1,10 @@
 # Changelog
 
-## Latest - v3.10.13 (05/27/26):
+## Latest - v3.10.14 (06/24/26):
+### Enhancements:
+- [GP-API] Added support for Visa Direct Account Funding Transactions (AFT)
+
+## v3.10.13 (05/27/26):
 ### Enhancements:
 - [Portico] Added clerkId in Portico 
 
