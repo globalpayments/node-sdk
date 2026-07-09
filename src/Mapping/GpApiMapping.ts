@@ -100,6 +100,16 @@ export class GpApiMapping {
       transaction.dccRateData = GpApiMapping.mapDccInfo(response);
     }
 
+    if (Array.isArray(response.platforms)) {
+      const porticoPlatform = response.platforms.find(
+        (p: any) => p.type === "PORTICO",
+      );
+      if (porticoPlatform) {
+        transaction.porticoTransactionId =
+          porticoPlatform.transaction_id || null;
+      }
+    }
+
     return transaction;
   }
 

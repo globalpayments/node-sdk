@@ -3,3 +3,4 @@ export * from "./GpApiAccount";
 export * from "./GpApiRequest";
 export * from "./GpApiTokenResponse";
 export * from "./PageResult";
+export * from "./PorticoTokenConfig";

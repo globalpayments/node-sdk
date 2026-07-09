@@ -561,8 +561,6 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
       subElement(fields, "InvoiceNbr").append(cData(builder.invoiceNumber));
     }
 
-
-
     if (builder.ecommerceInfo) {
       if (builder.ecommerceInfo.channel) {
         subElement(block1, "Ecommerce").append(
@@ -647,7 +645,11 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     }
 
     return this.doTransaction(
-      this.buildEnvelope(transaction, builder.clientTransactionId, builder.clerkId),
+      this.buildEnvelope(
+        transaction,
+        builder.clientTransactionId,
+        builder.clerkId,
+      ),
     ).then((response) => this.mapResponse(response, builder));
   }
 
@@ -882,7 +884,11 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     }
 
     return this.doTransaction(
-      this.buildEnvelope(transaction, builder.clientTransactionId, builder.clerkId),
+      this.buildEnvelope(
+        transaction,
+        builder.clientTransactionId,
+        builder.clerkId,
+      ),
     ).then((response) => this.mapResponse(response, builder));
   }
 
@@ -1281,7 +1287,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     result.transactionDescriptor = root.findtext(".//TxnDescriptor");
     result.cardBrandTransactionId = root.findtext(".//CardBrandTxnId");
     result.clientTransactionId = root.findtext(".//ClientTxnId");
-
+    result.globalTransactionId = root.findtext(".//x_global_transaction_id");
     if (builder.paymentMethod) {
       result.transactionReference = new TransactionReference(
         root.findtext(".//GatewayTxnId"),
@@ -1714,7 +1720,7 @@ export class PorticoConnector extends XmlGateway implements IPaymentGateway {
     result.captureAmount = root.findtext(".//CaptureAmtInfo");
     result.fullyCaptured = root.findtext(".//FullyCapturedInd");
     result.hasLevelIII = root.findtext(".//HasLevelIII");
-
+    result.globalTransactionId = root.findtext(".//x_global_transaction_id");
     return result;
   }
 
@@ -1755,9 +1761,9 @@ const threeDSecureNumericVersion = (version: Secure3dVersion): string => {
 
 // prettier-ignore
 function buildLineItems(
-    data: Element,
-    isVisa: boolean,
-    items: CommercialLineItem[],
+  data: Element,
+  isVisa: boolean,
+  items: CommercialLineItem[],
 ) {
   if (!items || items.length === 0) {
     return;

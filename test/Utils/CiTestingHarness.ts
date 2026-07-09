@@ -1,8 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import {
-  IRequestIdProvider,
-} from "../../src";
+import { IRequestIdProvider } from "../../src";
 
 export enum CacheMode {
   Locked = "Locked",

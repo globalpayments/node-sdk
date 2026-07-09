@@ -239,7 +239,6 @@ test("CreditCapture_ClerkId", async () => {
   expect(lastRequestBody).toContain("<ClerkID><![CDATA[C3008_ID]]></ClerkID>");
 });
 
-
 test("ClerkId_Negative", async () => {
   expect(() => {
     card
@@ -249,7 +248,12 @@ test("ClerkId_Negative", async () => {
       .withClerkId("C3008_ID0983634567ndhgfds45678908765432wqsdcvn 87723");
   }).toThrow("ClerkId length should not be more than 50 characters");
 
-  await logger.info("ClerkId_Negative test - Validation Error: ClerkId length should not be more than 50 characters", 0, {}, false);
+  await logger.info(
+    "ClerkId_Negative test - Validation Error: ClerkId length should not be more than 50 characters",
+    0,
+    {},
+    false,
+  );
 });
 
 test("credit reversal with valid ClerkID", async () => {
@@ -267,7 +271,9 @@ test("credit reversal with valid ClerkID", async () => {
   }
   expect(lastRequestBody).toContain("<ClerkID><![CDATA[789]]></ClerkID>");
   if (capturedError) {
-    expect(capturedError.message).toContain("Unexpected HTTP status code [500]");
+    expect(capturedError.message).toContain(
+      "Unexpected HTTP status code [500]",
+    );
   } else {
     expect(response).toBeTruthy();
     expect((response as Transaction).responseCode).toBe("00");
@@ -288,7 +294,9 @@ test("credit refund with valid ClerkID", async () => {
   }
   expect(lastRequestBody).toContain("<ClerkID><![CDATA[741]]></ClerkID>");
   if (capturedError) {
-    expect(capturedError.message).toContain("Unexpected HTTP status code [500]");
+    expect(capturedError.message).toContain(
+      "Unexpected HTTP status code [500]",
+    );
   } else {
     expect(response).toBeTruthy();
     expect((response as Transaction).responseCode).toBe("00");
@@ -309,7 +317,9 @@ test("credit auth with valid ClerkID", async () => {
   }
   expect(lastRequestBody).toContain("<ClerkID><![CDATA[159]]></ClerkID>");
   if (capturedError) {
-    expect(capturedError.message).toContain("Unexpected HTTP status code [500]");
+    expect(capturedError.message).toContain(
+      "Unexpected HTTP status code [500]",
+    );
   } else {
     expect(response).toBeTruthy();
     expect((response as Transaction).responseCode).toBe("00");

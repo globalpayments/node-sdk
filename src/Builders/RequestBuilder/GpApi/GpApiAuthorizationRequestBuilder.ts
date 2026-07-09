@@ -496,7 +496,7 @@ export class GpApiAuthorizationRequestBuilder implements IRequestBuilder {
         break;
     }
 
-    // Supplementary data (e.g. VISA_DIRECT_AFT) 
+    // Supplementary data (e.g. VISA_DIRECT_AFT)
     if (
       builder.supplementaryData &&
       Object.keys(builder.supplementaryData).length

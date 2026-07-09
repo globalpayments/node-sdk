@@ -42,7 +42,7 @@ module.exports = {
         SwitchCase: 1,
         ObjectExpression: 1,
         MemberExpression: 1,
-        FunctionDeclaration: { body: 1, parameters: 2 },
+        FunctionDeclaration: { body: 1, parameters: 1 },
         ignoredNodes: ["ConditionalExpression"],
       },
     ],

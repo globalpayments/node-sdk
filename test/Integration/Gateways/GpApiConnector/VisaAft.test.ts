@@ -143,9 +143,9 @@ test("visa AFT sale without currency throws MANDATORY_DATA_MISSING", async () =>
   } catch (error) {
     caught = true;
     expect(error).toBeTruthy();
-    expect(
-      (error as Error)?.message.includes("MANDATORY_DATA_MISSING"),
-    ).toBe(true);
+    expect((error as Error)?.message.includes("MANDATORY_DATA_MISSING")).toBe(
+      true,
+    );
     expect((error as Error)?.message.includes("currency")).toBe(true);
   }
   expect(caught).toBe(true);
@@ -185,9 +185,9 @@ test("visa AFT sale with zero amount throws an amount error", async () => {
     caught = true;
     expect(error).toBeTruthy();
     expect(error instanceof GatewayError).toBe(true);
-    expect(
-      (error as Error)?.message.includes("INVALID_REQUEST_DATA"),
-    ).toBe(true);
+    expect((error as Error)?.message.includes("INVALID_REQUEST_DATA")).toBe(
+      true,
+    );
     expect((error as Error)?.message.toLowerCase().includes("amount")).toBe(
       true,
     );

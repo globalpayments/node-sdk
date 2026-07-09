@@ -1,6 +1,12 @@
 # Changelog
 
-## Latest - v3.10.14 (06/24/26):
+## Latest - v3.10.15 (07/08/26):
+### Enhancements:
+- [Other] fix formatting setting
+- [Portico] Added txn id mapping
+- [GP-API] Portico Credentials Support for GP-API Access Token
+
+## v3.10.14 (06/24/26):
 ### Enhancements:
 - [GP-API] Added support for Visa Direct Account Funding Transactions (AFT)
 

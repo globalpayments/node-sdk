@@ -9,6 +9,7 @@ import {
   GpApiTokenResponse,
   NotImplementedError,
   PaymentMethodType,
+  PorticoTokenConfig,
   Secure3dVersion,
   Transaction,
   TransactionSummary,
@@ -63,7 +64,7 @@ export class GpApiConnector
     this.headers["Accept"] = "application/json";
     this.headers["Accept-Encoding"] = "gzip";
     this.headers["x-gp-sdk"] = "node;version=" + getSdkVersion();
-    this.headers["Content-Type"] = "charset=UTF-8";
+    this.headers["Content-Type"] = "application/json; charset=UTF-8";
   }
 
   public getVersion(): string {
@@ -161,13 +162,42 @@ export class GpApiConnector
   public async getAccessToken(): Promise<GpApiTokenResponse> {
     this.accessToken = "";
 
-    const request = await GpApiSessionInfo.signIn(
-      this.gpApiConfig.appId,
-      this.gpApiConfig.appKey,
-      this.gpApiConfig.secondsToExpire,
-      this.gpApiConfig.intervalToExpire,
-      this.gpApiConfig.permissions,
-    );
+    let request;
+
+    const hasPorticoCredentials =
+      this.gpApiConfig.secretApiKey ||
+      (this.gpApiConfig.siteId &&
+        this.gpApiConfig.licenseId &&
+        this.gpApiConfig.porticoDeviceId &&
+        this.gpApiConfig.porticoUsername &&
+        this.gpApiConfig.porticoPassword);
+
+    if (hasPorticoCredentials) {
+      const porticoTokenConfig = new PorticoTokenConfig();
+      porticoTokenConfig.secretApiKey = this.gpApiConfig.secretApiKey;
+      porticoTokenConfig.siteId = this.gpApiConfig.siteId;
+      porticoTokenConfig.licenseId = this.gpApiConfig.licenseId;
+      porticoTokenConfig.deviceId = this.gpApiConfig.porticoDeviceId;
+      porticoTokenConfig.username = this.gpApiConfig.porticoUsername;
+      porticoTokenConfig.password = this.gpApiConfig.porticoPassword;
+
+      request = await GpApiSessionInfo.signIn(
+        this.gpApiConfig.appId,
+        this.gpApiConfig.appKey,
+        this.gpApiConfig.secondsToExpire,
+        this.gpApiConfig.intervalToExpire,
+        this.gpApiConfig.permissions,
+        porticoTokenConfig,
+      );
+    } else {
+      request = await GpApiSessionInfo.signIn(
+        this.gpApiConfig.appId,
+        this.gpApiConfig.appKey,
+        this.gpApiConfig.secondsToExpire,
+        this.gpApiConfig.intervalToExpire,
+        this.gpApiConfig.permissions,
+      );
+    }
 
     return super
       .doTransaction(request.httpVerb, request.endpoint, request.requestBody)

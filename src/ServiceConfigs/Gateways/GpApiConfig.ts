@@ -42,6 +42,14 @@ export class GpApiConfig extends GatewayConfig {
   public dataResidency: DataResidency = DataResidency.None;
   public transactionProcessingAccountName: string;
 
+  // Portico credentials for GPAPI access token via Portico authentication
+  public secretApiKey: string;
+  public siteId: string;
+  public licenseId: string;
+  public porticoDeviceId: string;
+  public porticoUsername: string;
+  public porticoPassword: string;
+
   constructor() {
     super(GatewayProvider.GpApi);
   }
@@ -77,9 +85,36 @@ export class GpApiConfig extends GatewayConfig {
   public validate() {
     super.validate();
 
-    if (!this.accessTokenInfo && (!this.appId || !this.appKey)) {
+    const hasAnySiteCred = !!(
+      this.siteId ||
+      this.licenseId ||
+      this.porticoDeviceId ||
+      this.porticoUsername ||
+      this.porticoPassword
+    );
+    const hasAllSiteCreds = !!(
+      this.siteId &&
+      this.licenseId &&
+      this.porticoDeviceId &&
+      this.porticoUsername &&
+      this.porticoPassword
+    );
+
+    if (hasAnySiteCred && !hasAllSiteCreds) {
       throw new ConfigurationError(
-        "AccessTokenInfo or AppId and AppKey cannot be null",
+        "Incomplete Portico site credentials: siteId, licenseId, porticoDeviceId, porticoUsername, and porticoPassword are all required.",
+      );
+    }
+
+    const hasPorticoCredentials = !!(this.secretApiKey || hasAllSiteCreds);
+
+    if (
+      !this.accessTokenInfo &&
+      (!this.appId || !this.appKey) &&
+      !hasPorticoCredentials
+    ) {
+      throw new ConfigurationError(
+        "AccessTokenInfo or AppId and AppKey or Portico credentials cannot be null",
       );
     }
   }

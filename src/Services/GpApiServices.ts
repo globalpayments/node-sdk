@@ -10,7 +10,9 @@ import {
 export class GpApiService {
   public static async generateTransactionKey(config: GpApiConfig) {
     const gateway = new GpApiConnector(config);
-    if (!gateway.serviceUrl) {
+    if (config.serviceUrl) {
+      gateway.serviceUrl = config.serviceUrl;
+    } else if (!gateway.serviceUrl) {
       if (config.dataResidency === DataResidency.EU) {
         if (config.environment == Environment.Production) {
           gateway.serviceUrl = ServiceEndpoints.GP_API_EU_PRODUCTION;

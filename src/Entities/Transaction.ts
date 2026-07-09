@@ -57,7 +57,7 @@ export class Transaction {
   public tokenUsageMode: PaymentMethodUsageMode;
   public cardDetails: Card;
   public threeDSecure: ThreeDSecure;
-
+  public globalTransactionId: string;
   /**
    * Used for ACH transactions
    */
@@ -65,6 +65,7 @@ export class Transaction {
   public accountType: string;
 
   public cardIssuerResponse: CardIssuerResponse;
+  public porticoTransactionId: string;
 
   get transactionId(): string {
     return this.transactionReference?.transactionId;
