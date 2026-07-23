@@ -59,7 +59,7 @@ export class GpEcomManagementRequestBuilder
     }
 
     if (builder.alternativePaymentType === null) {
-      subElement(request, "channel").append(cData(config.channel) || "");
+      subElement(request, "channel").append(cData(config.channel || ""));
     }
 
     if (builder.amount) {
@@ -80,7 +80,7 @@ export class GpEcomManagementRequestBuilder
     if (builder.transactionType === TransactionType.Refund) {
       if (builder.authorizationCode) {
         subElement(request, "authcode").append(
-          cData(builder.authorizationCode) || "",
+          cData(builder.authorizationCode || ""),
         );
       }
       subElement(request, "refundhash").append(

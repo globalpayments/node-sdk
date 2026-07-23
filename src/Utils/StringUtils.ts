@@ -95,7 +95,7 @@ export class StringUtils {
 
   static boolToString(value: boolean): string | undefined {
     if (typeof value !== "boolean") {
-      return;
+      return undefined;
     }
 
     return JSON.stringify(value);

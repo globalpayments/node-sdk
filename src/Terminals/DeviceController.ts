@@ -4,22 +4,23 @@ import {
   IDeviceInterface,
   IRequestIdProvider,
   ITerminalConfiguration,
+  ITerminalReport,
   ITerminalResponse,
   UpaMessageId,
 } from ".";
 import { ConnectionModes } from "./Enums";
 import { TerminalAuthBuilder } from "./Builders/TerminalAuthBuilder";
-import { TerminalManageBuilder } from "./Builders";
+import { TerminalManageBuilder, TerminalReportBuilder } from "./Builders";
 import { DeviceMessage } from "./DeviceMessage";
 
 export abstract class DeviceController {
-  protected _interface: IDeviceInterface;
+  protected _interface?: IDeviceInterface;
   protected _settings: ITerminalConfiguration;
   public connector: IDeviceCommInterface;
 
-  public connectionMode: ConnectionModes;
-  public deviceType: DeviceType;
-  public requestIdProvider: IRequestIdProvider;
+  public connectionMode?: ConnectionModes;
+  public deviceType?: DeviceType;
+  public requestIdProvider!: IRequestIdProvider;
 
   constructor(settings: ITerminalConfiguration) {
     this._settings = settings;
@@ -64,4 +65,7 @@ export abstract class DeviceController {
   abstract manageTransaction(
     builder: TerminalManageBuilder,
   ): Promise<ITerminalResponse>;
+  abstract processReport(
+    builder: TerminalReportBuilder,
+  ): Promise<ITerminalReport>;
 }

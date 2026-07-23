@@ -54,7 +54,10 @@ function createDevice(testKey: string): IDeviceInterface {
 }
 
 function assertMitcUpaResponse(response: any): void {
-  expect("SUCCESS").toContain(response.deviceResponseCode);
+  if (response.deviceResponseCode === "ERROR") {
+    console.error("Refund Error:", response.deviceResponseText);
+  }
+  expect(["SUCCESS", "00"]).toContain(response.deviceResponseCode);
 }
 
 test("CreditSale", async () => {
@@ -75,7 +78,7 @@ test("CreditSale", async () => {
   expect(response).toBeTruthy();
   assertMitcUpaResponse(response);
 });
-
+//
 test("RefundAgainstCard", async () => {
   ciTestingHarness.setFunction("UPA|Functionality|Refund against Card");
   const device = createDevice("RefundAgainstCard");
@@ -106,12 +109,11 @@ test("RefundAgainstTransactionId", async () => {
     10,
     2,
   );
-
+  // Wait for device to be ready before first transaction
   const saleResponse = await device
     .sale(parseFloat(amount))
     .withEcrId(13)
     .execute();
-
   expect(saleResponse).toBeTruthy();
   assertMitcUpaResponse(saleResponse);
 
@@ -120,12 +122,17 @@ test("RefundAgainstTransactionId", async () => {
     await new Promise((resolve) => setTimeout(resolve, 15000));
   }
 
-  const refundResponse = await device
-    .refundById(parseFloat(amount))
-    .withEcrId(13)
-    .withTransactionId(saleResponse.transactionId)
-    .execute();
+  try {
+    const refundResponse = await device
+      .refundById(parseFloat(amount))
+      .withEcrId(13)
+      .withTransactionId(saleResponse.transactionId)
+      .execute();
 
-  expect(refundResponse).toBeTruthy();
-  assertMitcUpaResponse(refundResponse);
+    expect(refundResponse).toBeTruthy();
+    assertMitcUpaResponse(refundResponse);
+  } catch (error) {
+    console.error("Refund Error:", error);
+    throw error;
+  }
 });

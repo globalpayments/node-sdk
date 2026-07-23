@@ -1,9 +1,10 @@
 module.exports = {
-    preset: "ts-jest",
-    verbose: true,
-    runner: "jest-runner",
-    testTimeout: 900000,
-    testEnvironment: "node",
-    extensionsToTreatAsEsm: [".ts"],
-    testMatch: ["**/?(*.)+(spec|test).[jt]s?(x)"],
-}
+  preset: "ts-jest",
+  verbose: true,
+  runner: "jest-runner",
+  testTimeout: 900000,
+  testEnvironment: "node",
+  extensionsToTreatAsEsm: [".ts"],
+  testMatch: ["**/?(*.)+(spec|test).[jt]s?(x)"],
+  testPathIgnorePatterns: ["/node_modules/", "<rootDir>/lib/"],
+};

@@ -7,9 +7,10 @@ import {
 
 export abstract class TerminalBuilder extends TransactionBuilder<ITerminalResponse> {
   paymentMethodType?: PaymentMethodType;
-  referenceNumber: number;
-  ecrId: number;
-  clerkNumber: string;
+  referenceNumber?: number;
+  ecrId?: number;
+  clerkNumber?: string;
+  clerkId?: number;
 
   public withPaymentMethodType(value: PaymentMethodType) {
     this.paymentMethodType = value;
@@ -25,6 +26,14 @@ export abstract class TerminalBuilder extends TransactionBuilder<ITerminalRespon
   }
   public withClerkNumber(value: string) {
     this.clerkNumber = value;
+    return this;
+  }
+  public withEcrId(ecrId: number | string) {
+    this.ecrId = typeof ecrId === "string" ? Number(ecrId) : ecrId;
+    return this;
+  }
+  public withClerkId(clerkId: number) {
+    this.clerkId = clerkId;
     return this;
   }
 

@@ -46,13 +46,13 @@ export class RecurringEntity<TResult extends IRecurringEntity>
       .execute(configName)
       .then((response: any[] | TResult) => {
         if (!response || (response as any).length === 0) {
-          return;
+          return undefined;
         }
         const entity = (response as any)[0] || response;
         if (entity) {
           return RecurringService.get<TResult>(entity, configName);
         }
-        return;
+        return undefined;
       });
   }
 

@@ -4,6 +4,7 @@ import {
   CurrencyType,
   IPaymentMethod,
   ITerminalResponse,
+  Lodging,
   PaymentMethod,
   PaymentMethodType,
   ServicesContainer,
@@ -13,50 +14,83 @@ import {
   TransactionReference,
   TransactionType,
 } from "../../../src";
+import { AcquisitionType } from "../../Entities/Enums/AcquisitionType";
 import { TerminalBuilder } from "./TerminalBuilder";
 
 export class TerminalAuthBuilder extends TerminalBuilder {
-  public address: Address;
+  public address?: Address;
 
-  public allowDuplicates: boolean;
+  public allowDuplicates?: boolean;
 
   public amount?: number;
 
-  public authCode: string;
+  public authCode?: string;
 
-  public cashBackAmount: number;
+  public cashBackAmount?: number;
 
-  public currency: CurrencyType;
+  public lodging?: Lodging;
 
-  public customerCode: string;
+  public currency?: CurrencyType;
 
-  public gratuity: number;
+  public customerCode?: string;
 
-  public invoiceNumber: string;
+  public gratuity?: number;
 
-  public poNumber: string;
+  public invoiceNumber?: string;
 
-  public requestMultiUseToken: boolean;
+  public poNumber?: string;
 
-  public signatureCapture: boolean;
+  public requestMultiUseToken?: boolean;
 
-  public taxAmount: number;
+  public signatureCapture?: boolean;
 
-  public taxExempt: string;
+  public taxAmount?: number;
 
-  public taxExemptId: string;
+  public taxExempt?: string;
 
-  public transactionId: string;
+  public taxExemptId?: string;
 
-  public shiftId: string;
+  public transactionId?: string;
 
-  public taxType: TaxType;
+  public shiftId?: string;
+
+  public taxType?: TaxType;
 
   public terminalRefNumber?: string;
 
-  public allowPartialAuth: boolean;
+  public lineItemLeft?: string;
 
-  public transactionInitiator: StoredCredentialInitiator;
+  public lineItemRight?: string;
+
+  public cardOnFileIndicator?: StoredCredentialInitiator;
+
+  public cardBrandTransId?: string;
+
+  public preAuthAmount?: number;
+
+  public cardAcquisition?: AcquisitionType;
+
+  public acquisitionTypes?: AcquisitionType[];
+
+  public timeout?: number;
+
+  public transactionDate?: Date;
+
+  public merchantDecision?: string;
+
+  public language?: string;
+
+  public processCPC?: boolean;
+
+  public allowPartialAuth?: boolean;
+
+  public transactionInitiator?: StoredCredentialInitiator;
+
+  public isQuickChip?: boolean;
+
+  public hasCheckLuhn?: boolean;
+
+  public hasSecurityCode?: boolean;
 
   constructor(
     transactionType: TransactionType,
@@ -94,8 +128,18 @@ export class TerminalAuthBuilder extends TerminalBuilder {
     return this;
   }
 
+  public withPreAuthAmount(preAuthAmount?: number) {
+    this.preAuthAmount = preAuthAmount;
+    return this;
+  }
+
   public withCashBack(amount: number) {
     this.cashBackAmount = amount;
+    return this;
+  }
+
+  public withLodging(lodging: Lodging) {
+    this.lodging = lodging;
     return this;
   }
 
@@ -178,11 +222,18 @@ export class TerminalAuthBuilder extends TerminalBuilder {
 
   public withCardBrandStorage(transactionInitiator: StoredCredentialInitiator) {
     this.transactionInitiator = transactionInitiator;
+    this.cardOnFileIndicator = transactionInitiator;
     return this;
   }
 
-  public withEcrId(ecrId: number) {
-    this.ecrId = ecrId;
+  public withCardOnFileIndicator(value: StoredCredentialInitiator) {
+    this.transactionInitiator = value;
+    this.cardOnFileIndicator = value;
+    return this;
+  }
+
+  public withCardBrandTransId(value: string) {
+    this.cardBrandTransId = value;
     return this;
   }
 
@@ -191,25 +242,48 @@ export class TerminalAuthBuilder extends TerminalBuilder {
     return this;
   }
 
-  public withTaxType(taxType: TaxType, taxExemptId: string = "") {
-    this.taxType = taxType;
-    this.taxExempt = taxType === TaxType.TaxExempt ? "1" : "0";
-    this.taxExemptId = taxExemptId;
+  public withLineItemLeft(lineItemLeft: string) {
+    this.lineItemLeft = lineItemLeft;
     return this;
   }
 
-  public withClientTransactionId(clientTransactionId: string) {
-    this.clientTransactionId = clientTransactionId;
+  public withLineItemRight(lineItemRight: string) {
+    this.lineItemRight = lineItemRight;
     return this;
   }
 
-  /**
-   *
-   * @param bool value
-   * @return this
-   */
-  public withAllowPartialAuth(value: boolean) {
-    this.allowPartialAuth = value;
+  public withCardAcquisition(cardAcquisition: AcquisitionType) {
+    this.cardAcquisition = cardAcquisition;
+    return this;
+  }
+
+  public withAcquisitionTypes(acquisitionTypes: AcquisitionType[]) {
+    this.acquisitionTypes = acquisitionTypes;
+    return this;
+  }
+
+  public withTransactionDate(transactionDate: Date) {
+    this.transactionDate = transactionDate;
+    return this;
+  }
+
+  public withTimeout(timeout: number) {
+    this.timeout = timeout;
+    return this;
+  }
+
+  public withMerchantDecision(merchantDecision: string) {
+    this.merchantDecision = merchantDecision;
+    return this;
+  }
+
+  public withLanguage(language: string) {
+    this.language = language;
+    return this;
+  }
+
+  public withProcessCPC(processCPC: boolean) {
+    this.processCPC = processCPC;
     return this;
   }
 
@@ -227,5 +301,50 @@ export class TerminalAuthBuilder extends TerminalBuilder {
       .of("transactionType", TransactionType.Refund)
       .check("amount")
       .isNotNull();
+
+    this.validations
+      .of("transactionType", TransactionType.Refund)
+      .with("paymentMethodType", PaymentMethodType.Credit)
+      .when("paymentMethod.transactionId")
+      .isNotNull()
+      .check("paymentMethod.authCode")
+      .isNotNull();
+  }
+
+  public withTaxType(taxType: TaxType, taxExemptId: string = "") {
+    this.taxType = taxType;
+    this.taxExempt = taxType === TaxType.TaxExempt ? "1" : "0";
+    this.taxExemptId = taxExemptId;
+    return this;
+  }
+
+  public withClientTransactionId(clientTransactionId: string) {
+    this.clientTransactionId = clientTransactionId;
+    return this;
+  }
+
+  public withQuickChip(value: boolean) {
+    this.isQuickChip = value;
+    return this;
+  }
+
+  public withCheckLuhn(value: boolean) {
+    this.hasCheckLuhn = value;
+    return this;
+  }
+
+  public withSecurityCode(value: boolean) {
+    this.hasSecurityCode = value;
+    return this;
+  }
+
+  /**
+   *
+   * @param bool value
+   * @return this
+   */
+  public withAllowPartialAuth(value: boolean) {
+    this.allowPartialAuth = value;
+    return this;
   }
 }

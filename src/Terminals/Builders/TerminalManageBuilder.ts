@@ -1,10 +1,12 @@
 import {
   CurrencyType,
   IPaymentMethod,
+  Lodging,
   ITerminalResponse,
   PaymentMethod,
   PaymentMethodType,
   ServicesContainer,
+  TaxType,
   TransactionModifier,
   TransactionReference,
   TransactionType,
@@ -12,13 +14,25 @@ import {
 import { TerminalBuilder } from "./TerminalBuilder";
 
 export class TerminalManageBuilder extends TerminalBuilder {
-  public amount: number;
+  public amount?: number;
 
-  public currency: CurrencyType;
+  public currency?: CurrencyType;
 
-  public gratuity: number;
+  public gratuity?: number;
 
-  public transactionId: string;
+  public invoiceNumber?: string;
+
+  public taxAmount?: number;
+
+  public taxExempt?: string;
+
+  public taxExemptId?: string;
+
+  public processCPC?: boolean;
+
+  public lodgingData?: Lodging;
+
+  public transactionId?: string;
 
   public terminalRefNumber?: string;
 
@@ -58,8 +72,31 @@ export class TerminalManageBuilder extends TerminalBuilder {
     return this;
   }
 
-  public withEcrId(ecrId: number) {
-    this.ecrId = ecrId;
+  public withInvoiceNumber(invoiceNumber: string) {
+    this.invoiceNumber = invoiceNumber;
+    return this;
+  }
+
+  public withTaxAmount(taxAmount: number) {
+    this.taxAmount = taxAmount;
+    return this;
+  }
+
+  public withTaxType(taxType: TaxType, taxExemptId?: string) {
+    this.taxExempt = taxType === TaxType.TaxExempt ? "1" : "0";
+    if (taxExemptId !== undefined) {
+      this.taxExemptId = taxExemptId;
+    }
+    return this;
+  }
+
+  public withProcessCPC(processCPC: boolean) {
+    this.processCPC = processCPC;
+    return this;
+  }
+
+  public withLodgingData(lodgingData: Lodging) {
+    this.lodgingData = lodgingData;
     return this;
   }
 

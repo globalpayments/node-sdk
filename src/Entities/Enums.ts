@@ -1009,6 +1009,8 @@ export enum TransactionModifier {
   AlternativePaymentMethod = 1 << 13,
   DecryptedMobile = 1 << 14,
   LevelIII = 1 << 15,
+  DeletePreAuth = 1 << 16,
+  UpdateLodgingDetails = 1 << 17,
 }
 
 export enum TransactionSortProperty {
@@ -1053,7 +1055,7 @@ export enum TransactionType {
   RiskAssess = 1 << 27,
   InitiateAuthentication = 1 << 28,
   TokenUpdate = 1 << 31,
-  Tokenize = 1 << 33,
+  Tokenize = 2 ** 33,
   /// <summary>
   ///
   /// ProPay: Create Account

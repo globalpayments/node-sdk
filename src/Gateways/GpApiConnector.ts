@@ -440,9 +440,9 @@ export class GpApiConnector
     return JSON.parse(response);
   }
 
-  public processPassThrough(jsonRequest: string): Promise<string> {
+  public async processPassThrough(jsonRequest: string): Promise<string> {
     if (!this.accessToken) {
-      this.signIn();
+      await this.signIn();
     }
     const requestBuilder = new GpApiMiCRequestBuilder();
     const request = requestBuilder.buildRequestFromJson(

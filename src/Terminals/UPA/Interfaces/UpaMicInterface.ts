@@ -14,7 +14,7 @@ import {
 export class UpaMicInterface implements IDeviceCommInterface {
   private config: ITerminalConfiguration;
   private gatewayConfig: GatewayConfig;
-  private connector: IPaymentGateway;
+  private connector?: IPaymentGateway;
 
   constructor(config: ITerminalConfiguration) {
     this.config = config;
@@ -25,9 +25,10 @@ export class UpaMicInterface implements IDeviceCommInterface {
     this.connector = ServicesContainer.instance().getClient(
       this.config.getConfigName(),
     );
+
     if (
       this.gatewayConfig instanceof GpApiConfig &&
-      !this.gatewayConfig.accessTokenInfo.accessToken &&
+      !this.gatewayConfig.accessTokenInfo?.accessToken &&
       this.connector instanceof GpApiConnector
     ) {
       this.connector.signIn();
@@ -43,12 +44,11 @@ export class UpaMicInterface implements IDeviceCommInterface {
     try {
       let out: Promise<string>;
       if (this.gatewayConfig instanceof GpApiConfig) {
+        const accessTokenInfo = this.gatewayConfig.accessTokenInfo;
         const requestData = {
-          merchant_id: this.gatewayConfig.accessTokenInfo.merchantId,
-          account_id:
-            this.gatewayConfig.accessTokenInfo.transactionProcessingAccountID,
-          account_name:
-            this.gatewayConfig.accessTokenInfo.transactionProcessingAccountName,
+          merchant_id: accessTokenInfo?.merchantId,
+          account_id: accessTokenInfo?.transactionProcessingAccountID,
+          account_name: accessTokenInfo?.transactionProcessingAccountName,
           channel: this.gatewayConfig.channel,
           country: this.gatewayConfig.country,
           currency: this.gatewayConfig.deviceCurrency,
@@ -66,7 +66,8 @@ export class UpaMicInterface implements IDeviceCommInterface {
         }
       }
     } catch (e) {
-      throw new GatewayError(`Device error: ${e.message}`, e.message);
+      const errorMessage = e instanceof Error ? e.message : String(e);
+      throw new GatewayError(`Device error: ${errorMessage}`, errorMessage);
     }
   }
 

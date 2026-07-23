@@ -49,7 +49,7 @@ export class Validations {
         }
 
         for (const validation of this.rules[enumName][ruleType]) {
-          if (!validation.clause) {
+          if (!validation.clause || !validation.clause.callback) {
             continue;
           }
 
@@ -61,8 +61,16 @@ export class Validations {
             continue;
           }
 
+          if (
+            validation.precondition &&
+            validation.precondition.callback &&
+            !validation.precondition.callback(builder)
+          ) {
+            continue;
+          }
+
           if (!validation.clause.callback(builder)) {
-            throw new BuilderError(validation.clause.message);
+            throw new BuilderError(validation.clause.message ?? "");
           }
         }
       });

@@ -6,9 +6,10 @@ import { ValidationTarget } from "./ValidationTarget";
 export class ValidationClause {
   public parent: Validations;
   public target: ValidationTarget;
-  public callback: <T>(build: BaseBuilder<T>) => boolean;
-  public message: string;
+  public callback?: <T>(build: BaseBuilder<T>) => boolean;
+  public message?: string;
   public precondition: boolean;
+  public property: string;
 
   public constructor(
     parent: Validations,
@@ -18,13 +19,15 @@ export class ValidationClause {
     this.parent = parent;
     this.target = target;
     this.precondition = precondition;
+    this.property = target.property;
   }
 
   public isNotNull(message?: string): ValidationTarget {
+    const property = this.property;
     this.callback = <T>(builder: BaseBuilder<T>) => {
-      let value = builder[this.target.property];
-      if (this.target.property.includes(".")) {
-        const keys = this.target.property.split(".");
+      let value = builder[property];
+      if (property.includes(".")) {
+        const keys = property.split(".");
         for (const key of keys) {
           value = value ? value[key] : builder[key];
         }
@@ -33,7 +36,7 @@ export class ValidationClause {
     };
     this.message = message
       ? message
-      : `${this.target.property} cannot be null for this transaction type.`;
+      : `${property} cannot be null for this transaction type.`;
 
     if (this.precondition) {
       return this.target;
@@ -45,13 +48,14 @@ export class ValidationClause {
   }
 
   public isNull(message?: string): ValidationTarget {
+    const property = this.property;
     this.callback = <T>(builder: BaseBuilder<T>) => {
-      const value = builder[this.target.property];
+      const value = builder[property];
       return undefined === value || null === value;
     };
     this.message = message
       ? message
-      : `${this.target.property} cannot be set for this transaction type.`;
+      : `${property} cannot be set for this transaction type.`;
 
     if (this.precondition) {
       return this.target;
@@ -63,13 +67,14 @@ export class ValidationClause {
   }
 
   public isNotEmpty(message?: string): ValidationTarget {
+    const property = this.property;
     this.callback = <T>(builder: BaseBuilder<T>) => {
-      const value = builder[this.target.property];
+      const value = builder[property];
       return !!value;
     };
     this.message = message
       ? message
-      : `${this.target.property} cannot be empty for this transaction type.`;
+      : `${property} cannot be empty for this transaction type.`;
 
     if (this.precondition) {
       return this.target;
@@ -81,13 +86,14 @@ export class ValidationClause {
   }
 
   public isNotEqualTo(expected: unknown, message?: string): ValidationTarget {
+    const property = this.property;
     this.callback = <T>(builder: BaseBuilder<T>) => {
-      const value = builder[this.target.property];
+      const value = builder[property];
       return expected !== value;
     };
     this.message = message
       ? message
-      : `${this.target.property} cannot be ${expected} for this transaction type.`;
+      : `${property} cannot be ${expected} for this transaction type.`;
 
     if (this.precondition) {
       return this.target;
@@ -99,13 +105,14 @@ export class ValidationClause {
   }
 
   public isEqualTo(expected: unknown, message?: string): ValidationTarget {
+    const property = this.property;
     this.callback = <T>(builder: BaseBuilder<T>) => {
-      const value = builder[this.target.property];
+      const value = builder[property];
       return expected === value;
     };
     this.message = message
       ? message
-      : `${this.target.property} cannot be different than ${expected} for this transaction type.`;
+      : `${property} cannot be different than ${expected} for this transaction type.`;
 
     if (this.precondition) {
       return this.target;
@@ -117,11 +124,12 @@ export class ValidationClause {
   }
 
   isInstanceOf(clazz: any, message: string | null = null): ValidationTarget {
+    const property = this.property;
     this.callback = (builder: any) => {
       // this will result in checking isInterfaceRequired (e.g paymentMethod.isSecure3d)
-      if (!builder[this.target.property]["is" + clazz]) {
+      if (!builder[property]["is" + clazz]) {
         throw new BuilderError(
-          `${this.target.property} must be an instance of the ${clazz.name} class.`,
+          `${property} must be an instance of the ${clazz.name} class.`,
         );
       }
       return true;
@@ -130,7 +138,7 @@ export class ValidationClause {
     this.message =
       message !== null
         ? message
-        : `${this.target.property} must be an instance of the ${clazz.name} class.`;
+        : `${property} must be an instance of the ${clazz.name} class.`;
 
     if (this.precondition) {
       return this.target;

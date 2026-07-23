@@ -1,6 +1,15 @@
 # Changelog
 
-## Latest - v3.10.15 (07/08/26):
+## Latest - v3.11.00 (07/23/26):
+### Enhancements:
+- [UPA-MITC] - Added Semi-Integrated (SI) support in the Node SDK for UPA device commands in MEET_IN_THE_CLOUD mode, exposed through DeviceService.create(config), with UPA-spec message dispatch and request/response logging.
+
+  Commands added in this release:
+    - **Admin:** `ping`, `reboot`, `cancel`, `registerPOS`, `getSignature`, `endOfDay`, `sendStoreAndForward`, `deleteSaf`
+    - **Transaction:** `sale`, `verify`, `balance`, `reverse`, `deletePreAuth`, `startCardTransaction`, `updateLodgingDetail().withLodgingData()`
+    - **Reporting:** `getSAFReport`, `findBatches`, `getBatchReport`, `getBatchDetails`, `getOpenTabDetails`
+
+## v3.10.15 (07/08/26):
 ### Enhancements:
 - [Other] fix formatting setting
 - [Portico] Added txn id mapping

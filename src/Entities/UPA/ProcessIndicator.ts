@@ -4,5 +4,5 @@ export class ProcessingIndicator {
   public QuickChip: string;
   public CheckLuhn: string;
   public SecurityCode: string;
-  public CardTypeFilter: CardTypeFilter;
+  public CardTypeFilter: CardTypeFilter | CardTypeFilter[];
 }
