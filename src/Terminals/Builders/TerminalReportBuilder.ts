@@ -13,6 +13,18 @@ export class TerminalReportBuilder<
   public background?: string;
   public printReportType?: string;
 
+  // === TYP Report Extra Fields (AH-2327) ===
+  /** Summary or Detail report selector (see UpaReportType). */
+  public reportTypeValue?: string;
+  /** Report sub-type filter (e.g. TYP, Discount, TYPandDiscount). */
+  public reportSubType?: string;
+  /** Request both Summary and Detail reports in a single response. */
+  public bothReports?: boolean;
+  /** Restrict report to a specific clerk id. */
+  public clerkId?: string;
+  /** Request the previous batch report instead of the current one. */
+  public previousBatchReport?: boolean;
+
   constructor(reportType: TerminalReportType) {
     super();
     this.reportType = reportType;
@@ -41,6 +53,20 @@ export class TerminalReportBuilder<
       case UpaSearchCriteria.ReportOutput:
         this.reportOutput = value.toString();
         break;
+      case UpaSearchCriteria.ReportType:
+        this.reportTypeValue = value.toString();
+        break;
+      case UpaSearchCriteria.ReportSubType:
+        this.reportSubType = value.toString();
+        break;
+      case UpaSearchCriteria.BothReports:
+        this.bothReports = Boolean(value);
+        break;
+      case UpaSearchCriteria.ClerkId:
+        this.clerkId = value.toString();
+        break;
+      case UpaSearchCriteria.PreviousBatchReport:
+        this.previousBatchReport = Boolean(value);
       case UpaSearchCriteria.Background:
         this.background = value.toString();
         break;

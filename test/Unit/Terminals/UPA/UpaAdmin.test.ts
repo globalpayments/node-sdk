@@ -67,7 +67,6 @@ async function settleDevice(delayMs = 8000): Promise<void> {
     await sleep(delayMs);
   }
 }
-
 afterEach(async () => {
   await settleDevice();
 });

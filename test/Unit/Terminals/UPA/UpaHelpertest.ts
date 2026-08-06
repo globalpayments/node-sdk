@@ -540,8 +540,6 @@ export async function executeLiveStartCardTransaction(
   return response;
 }
 
-/* eslint-enable indent */
-
 export function buildConfig(
   gpApiOverrides: Partial<GpApiConfig> = {},
 ): ConnectionConfig {

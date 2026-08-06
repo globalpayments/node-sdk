@@ -34,6 +34,7 @@ card.cardPresent = true;
 const amount = "2.02";
 const currency = "USD";
 
+/* eslint-disable indent */
 function gpApiSetup(
   appId: string,
   appKey: string,
@@ -70,6 +71,7 @@ function assertTransactionResponse(
   expect(["00", "SUCCESS"]).toContain(transaction.responseCode);
   expect(transaction.responseMessage).toBe(transactionStatus);
 }
+/* eslint-enable indent */
 
 test("postCapture", async () => {
   ciTestingHarness.setFunction("GP-API|Transactions|POST Capture");

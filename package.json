@@ -1,6 +1,6 @@
 {
   "name": "globalpayments-api",
-  "version" : "3.11.0",
+  "version" : "3.11.1",
   "description": "Global Payments SDK for NodeJS for Global Payments eCommerce gateways",
   "author": "Global Payments",
   "license": "GPL-2.0",

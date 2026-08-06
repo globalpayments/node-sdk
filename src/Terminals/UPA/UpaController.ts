@@ -519,7 +519,7 @@ export class UpaController extends DeviceController {
       return TerminalUtils.buildUpaRequest(request);
     }
 
-    const params: Record<string, string> = {};
+    const params: Record<string, any> = {};
     if (builder.reportOutput) {
       params.reportOutput = builder.reportOutput;
     }
@@ -539,6 +539,22 @@ export class UpaController extends DeviceController {
         builder.reportType === TerminalReportType.GetSAFReport)
     ) {
       params.reportType = builder.printReportType;
+    }
+    // === TYP Report Extra Fields ===
+    if (builder.reportTypeValue) {
+      params.reportType = builder.reportTypeValue;
+    }
+    if (builder.reportSubType) {
+      params.reportSubType = builder.reportSubType;
+    }
+    if (builder.bothReports !== undefined) {
+      params.bothReports = builder.bothReports ? "1" : "0";
+    }
+    if (builder.clerkId) {
+      params.clerkId = builder.clerkId;
+    }
+    if (builder.previousBatchReport !== undefined) {
+      params.previousBatchReport = builder.previousBatchReport ? "1" : "0";
     }
 
     if (Object.keys(params).length > 0) {

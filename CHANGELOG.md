@@ -1,6 +1,10 @@
 # Changelog
 
-## Latest - v3.11.00 (07/23/26):
+## Latest - v3.11.01 (08/5/26):
+### Enhancements:
+- [UPA-MITC] - Added targeted support for Mexico GP API CP UPA type handling in the Node SDK. Updated request/response flows to correctly recognize the new UPA type.
+
+## v3.11.00 (07/23/26):
 ### Enhancements:
 - [UPA-MITC] - Added Semi-Integrated (SI) support in the Node SDK for UPA device commands in MEET_IN_THE_CLOUD mode, exposed through DeviceService.create(config), with UPA-spec message dispatch and request/response logging.
 

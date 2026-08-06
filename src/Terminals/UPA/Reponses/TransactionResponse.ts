@@ -72,6 +72,30 @@ export class TransactionResponse implements ITerminalResponse {
   public invoiceNumber = "";
   public extraChargeTotal?: number;
 
+  // === TYP (Thank You Points) loyalty fields - Sale ===
+  /** Loyalty programme redemption ID returned by TYP host (Sale only). */
+  public redeemId?: string;
+  /** Status of TYP redemption (e.g., "COMPLETE"). */
+  public redeemStatus?: string;
+  /** Monetary value redeemed from TYP balance, in transaction currency. */
+  public currencyAmountRedeemed?: number;
+  /** Number of TYP loyalty points redeemed in this transaction. */
+  public pointsRedeemed?: number;
+  /** Discount amount applied as a result of TYP redemption. */
+  public discountAmountRedeemed?: number;
+
+  // === TYP (Thank You Points) loyalty fields - Void / Reverse ===
+  /** Loyalty redemption ID for voided/reversed TYP redemption. */
+  public voidRedeemId?: string;
+  /** Status of voided TYP redemption (e.g., "COMPLETE"). */
+  public voidRedeemStatus?: string;
+  /** Monetary value reversed from TYP balance on void/reverse. */
+  public voidCurrencyAmountRedeemed?: number;
+  /** TYP loyalty points reversed in void/reverse transaction. */
+  public voidPointsRedeemed?: number;
+  /** Discount amount reversed on TYP void/reverse. */
+  public voidDiscountAmountRedeemed?: number;
+
   constructor(jsonResponse: any) {
     if (typeof jsonResponse === "string")
       try {
@@ -154,14 +178,44 @@ export class TransactionResponse implements ITerminalResponse {
       );
       this.invoiceNumber = this.toStringValue(payment?.invoiceNbr);
       this.extraChargeTotal = this.toNumber(transaction?.extraChargeTotal);
+
+      // TYP - Sale redemption (only present when device returns it)
+      if (host?.redeemId) {
+        this.redeemId = this.toStringValue(host.redeemId);
+        this.redeemStatus = this.toStringValue(host.redeemStatus);
+        this.currencyAmountRedeemed = this.toNumber(
+          host.currencyAmountRedeemed,
+        );
+        this.pointsRedeemed = this.toNumber(host.pointsRedeemed);
+        this.discountAmountRedeemed = this.toNumber(
+          host.discountAmountRedeemed,
+        );
+      }
+
+      // TYP - Void / Reverse redemption
+      if (host?.voidRedeemId) {
+        this.voidRedeemId = this.toStringValue(host.voidRedeemId);
+        this.voidRedeemStatus = this.toStringValue(host.voidRedeemStatus);
+        this.voidCurrencyAmountRedeemed = this.toNumber(
+          host.voidCurrencyAmountRedeemed,
+        );
+        this.voidPointsRedeemed = this.toNumber(host.voidPointsRedeemed);
+        this.voidDiscountAmountRedeemed = this.toNumber(
+          host.voidDiscountAmountRedeemed,
+        );
+      }
     } else {
-      // Native UPA device response
+      // Native UPA device response (semi-integrated socket format).
+      // Wire shape per AH-2327 contract:
+      //   { message, data: { cmdResult, data: { host, payment, multipleMessage },
+      //     response, EcrId, requestId } }
       const data = jsonResponse?.data;
       const cmdResult = data?.cmdResult;
       const responseData = data?.data;
-      const host = responseData?.host;
-      const payment = responseData?.payment;
       const transaction = responseData?.transaction;
+      const inner = data?.data;
+      const host = inner?.host;
+      const payment = inner?.payment;
       this.deviceResponseText = cmdResult?.result ?? "";
       this.deviceResponseCode = cmdResult?.errorCode ?? "00";
       this.status = this.deviceResponseText;
@@ -197,6 +251,56 @@ export class TransactionResponse implements ITerminalResponse {
       this.authorizationCode = this.approvalCode;
       this.referenceNumber =
         this.referenceNumber || this.toStringValue(host?.referenceNumber);
+
+      if (host) {
+        this.responseCode = host.responseCode ?? "";
+        this.responseText = host.responseText ?? "";
+        this.approvalCode = host.approvalCode ?? "";
+        this.authorizationCode = host.approvalCode ?? "";
+        this.referenceNumber = this.toStringValue(host.referenceNumber);
+        this.transactionId = this.toStringValue(host.referenceNumber);
+        this.terminalRefNumber = this.toStringValue(host.tranNo);
+        this.avsResponseCode = host.AvsResultCode ?? "";
+        this.avsResponseText = host.AvsResultText ?? "";
+        this.baseAmount = this.toNumber(host.baseAmount);
+        this.tipAmount = this.toNumber(host.tipAmount);
+        this.cashBackAmount = this.toNumber(host.cashBackAmount);
+        this.transactionAmount = this.toNumber(host.totalAmount) ?? 0;
+
+        // TYP - Sale redemption
+        if (host.redeemId) {
+          this.redeemId = this.toStringValue(host.redeemId);
+          this.redeemStatus = this.toStringValue(host.redeemStatus);
+          this.currencyAmountRedeemed = this.toNumber(
+            host.currencyAmountRedeemed,
+          );
+          this.pointsRedeemed = this.toNumber(host.pointsRedeemed);
+          this.discountAmountRedeemed = this.toNumber(
+            host.discountAmountRedeemed,
+          );
+        }
+
+        // TYP - Void / Reverse redemption
+        if (host.voidRedeemId) {
+          this.voidRedeemId = this.toStringValue(host.voidRedeemId);
+          this.voidRedeemStatus = this.toStringValue(host.voidRedeemStatus);
+          this.voidCurrencyAmountRedeemed = this.toNumber(
+            host.voidCurrencyAmountRedeemed,
+          );
+          this.voidPointsRedeemed = this.toNumber(host.voidPointsRedeemed);
+          this.voidDiscountAmountRedeemed = this.toNumber(
+            host.voidDiscountAmountRedeemed,
+          );
+        }
+      }
+
+      if (payment) {
+        this.paymentType = payment.cardType ?? "";
+        this.cardType = payment.cardType ?? "";
+        this.cardGroup = payment.cardGroup ?? "";
+        this.maskedCardNumber = payment.maskedPan ?? payment.maskedPAN ?? "";
+        this.cardHolderName = payment.cardHolderName ?? "";
+      }
     }
   }
 
