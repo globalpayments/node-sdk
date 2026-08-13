@@ -1,6 +1,11 @@
 # Changelog
 
-## Latest - v3.11.01 (08/5/26):
+## Latest - v3.11.02 (08/13/26):
+### Enhancements:
+- [UPA-MITC] - Added `Scan` command with optional ScanData parameters; parameterless calls supported; scanData response in GP-API and MITC paths.
+- [UPA-MITC] - Added `Void` command with dual identifier support (tranNo/terminalRefNumber or referenceNumber/transactionId).
+
+## v3.11.01 (08/06/26):
 ### Enhancements:
 - [UPA-MITC] - Added targeted support for Mexico GP API CP UPA type handling in the Node SDK. Updated request/response flows to correctly recognize the new UPA type.
 

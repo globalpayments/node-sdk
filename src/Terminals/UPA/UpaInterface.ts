@@ -34,6 +34,7 @@ import {
   TerminalReportBuilder,
 } from "../Builders";
 import { CardTypeFilter } from "../../Entities/Enums/CardTypeFilter";
+import { ScanData } from "../../Entities/UPA/ScanData";
 import { DeviceInterface } from "../DeviceInterface";
 import { TerminalUtils } from "../TerminalUtils";
 import { UpaParam } from "../../Entities/UPA/UpaParam";
@@ -153,6 +154,53 @@ export class UpaInterface<T extends UpaController>
       UpaMessageId.GET_SIGNATURE,
     );
     return new UpaSignatureResponse(rawResponse);
+  }
+
+  public async scan(scanData?: ScanData): Promise<IDeviceResponse> {
+    const requestId = this.upaController.requestIdProvider.getRequestId();
+    const innerData: Record<string, any> = {};
+
+    if (scanData) {
+      const params: Record<string, any> = {};
+      if (scanData.header) {
+        params.header = scanData.header.toUpperCase();
+      }
+      if (scanData.prompt1) {
+        params.prompt1 = scanData.prompt1.toUpperCase();
+      }
+      if (scanData.prompt2) {
+        params.prompt2 = scanData.prompt2.toUpperCase();
+      }
+      if (scanData.displayOption !== undefined) {
+        params.displayOption = scanData.displayOption;
+      }
+      if (scanData.timeOut !== undefined) {
+        params.timeOut = scanData.timeOut;
+      }
+      if (Object.keys(params).length > 0) {
+        innerData.params = params;
+      }
+    }
+
+    const request: Record<string, any> = {
+      message: UpaMessageType.MSG,
+      data: {
+        command: UpaMessageId.SCAN,
+        EcrId: this.ecrId,
+        requestId: requestId.toString(),
+      },
+    };
+
+    if (Object.keys(innerData).length > 0) {
+      request.data.data = innerData;
+    }
+
+    const message = TerminalUtils.buildUpaRequest(request);
+    const rawResponse = await this.upaController.send(
+      message,
+      UpaMessageId.SCAN,
+    );
+    return new TransactionResponse(rawResponse);
   }
 
   public async ping(): Promise<IDeviceResponse> {

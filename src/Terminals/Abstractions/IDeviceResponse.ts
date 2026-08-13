@@ -57,6 +57,7 @@ export interface ITerminalResponse extends IDeviceResponse {
   merchantFee?: number;
   storeAndForward?: number;
   safTransaction?: boolean;
+  deviceSerialNumber?: string;
 }
 
 export interface ITerminalReport extends IDeviceResponse {

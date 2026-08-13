@@ -238,4 +238,11 @@ export abstract class DeviceInterface<T extends DeviceController>
       "This is not supported by the currently configured device.",
     );
   }
+
+  public scan(_scanData?: any): Promise<IDeviceResponse> {
+    void _scanData;
+    throw new UnsupportedTransactionError(
+      "This is not supported by the currently configured device.",
+    );
+  }
 }

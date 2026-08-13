@@ -13,6 +13,7 @@ import {
 import {
   POSData,
   ProcessingIndicator,
+  ScanData,
   UpaParam,
   UpaTransactionData,
 } from "../../Entities/UPA";
@@ -71,5 +72,6 @@ export interface IDeviceInterface {
     displayOption?: number,
   ): Promise<ISignatureResponse>;
   ping(): Promise<IDeviceResponse>;
+  scan(scanData?: ScanData): Promise<IDeviceResponse>;
   //endregion
 }

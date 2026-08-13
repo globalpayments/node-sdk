@@ -150,6 +150,8 @@ export class TerminalManageBuilder extends TerminalBuilder {
     this.validations
       .of("transactionType", TransactionType.Void)
       .with("transactionModifier", TransactionModifier.None)
+      .when("terminalRefNumber")
+      .isNull()
       .check("transactionId")
       .isNotNull();
 

@@ -26,4 +26,5 @@ export enum UpaMessageId {
   START_CARD_TRANSACTION = "StartCardTransaction",
   UPDATE_LODGING_DETAILS = "UpdateLodgingDetails",
   REGISTER_POS = "RegisterPOS",
+  SCAN = "Scan",
 }

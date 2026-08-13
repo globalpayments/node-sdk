@@ -174,6 +174,36 @@ export class UpaController extends DeviceController {
         builder.amount,
       );
       transactionData.transaction.invoiceNbr = builder.invoiceNumber;
+    } else if (transactionType === TransactionType.Void) {
+      // Per UPA spec §12.4.2.1: transaction sub-node accepts ONLY
+      //   `tranNo`  (mapped from builder.terminalRefNumber) OR
+      //   `referenceNumber` (mapped from builder.transactionId).
+      // Both together is spec error VOID004 ("ENTER TRANNO OR
+      // REFERENCENUMBER NOT BOTH"); neither is VOID003.
+      const hasTranNo =
+        builder.terminalRefNumber !== undefined &&
+        builder.terminalRefNumber !== null &&
+        builder.terminalRefNumber !== "";
+      const hasReferenceNumber =
+        builder.transactionId !== undefined &&
+        builder.transactionId !== null &&
+        builder.transactionId !== "";
+
+      if (hasTranNo && hasReferenceNumber) {
+        throw new UnsupportedTransactionError(
+          "Void accepts either terminalRefNumber (tranNo) or transactionId (referenceNumber), not both (UPA spec §12.4.2, error VOID004).",
+        );
+      }
+      if (!hasTranNo && !hasReferenceNumber) {
+        throw new UnsupportedTransactionError(
+          "Void requires either terminalRefNumber (tranNo) or transactionId (referenceNumber) (UPA spec §12.4.2, error VOID003).",
+        );
+      }
+      if (hasTranNo) {
+        transactionData.transaction.tranNo = builder.terminalRefNumber;
+      } else {
+        transactionData.transaction.referenceNumber = builder.transactionId;
+      }
     } else {
       transactionData.transaction.referenceNumber = builder.transactionId;
       transactionData.transaction.amount = isTipAdjust
@@ -203,6 +233,23 @@ export class UpaController extends DeviceController {
     }
 
     if (builder.transactionType === TransactionType.Void) {
+      const hasTranNo =
+        builder.terminalRefNumber !== undefined &&
+        builder.terminalRefNumber !== null;
+      const hasRefNum =
+        builder.transactionId !== undefined && builder.transactionId !== null;
+
+      if (hasTranNo && hasRefNum) {
+        throw new UnsupportedTransactionError(
+          "VOID004: Provide either tranNo (terminalRefNumber) or referenceNumber (transactionId) for Void, not both.",
+        );
+      }
+      if (!hasTranNo && !hasRefNum) {
+        throw new UnsupportedTransactionError(
+          "VOID003: Void requires either tranNo (terminalRefNumber) or referenceNumber (transactionId).",
+        );
+      }
+
       transactionData.transaction.tranNo = builder.terminalRefNumber;
     }
 
@@ -243,6 +290,7 @@ export class UpaController extends DeviceController {
 
     const isDedicatedAmountCommand =
       transactionType === TransactionType.Reversal ||
+      transactionType === TransactionType.Void ||
       (transactionType === TransactionType.Delete &&
         builder.transactionModifier === TransactionModifier.DeletePreAuth) ||
       (transactionType === TransactionType.Edit &&

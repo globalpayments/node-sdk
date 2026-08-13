@@ -71,6 +71,7 @@ export class TransactionResponse implements ITerminalResponse {
   public gatewayResponseMessage = "";
   public invoiceNumber = "";
   public extraChargeTotal?: number;
+  public scanData = "";
 
   // === TYP (Thank You Points) loyalty fields - Sale ===
   /** Loyalty programme redemption ID returned by TYP host (Sale only). */
@@ -178,6 +179,7 @@ export class TransactionResponse implements ITerminalResponse {
       );
       this.invoiceNumber = this.toStringValue(payment?.invoiceNbr);
       this.extraChargeTotal = this.toNumber(transaction?.extraChargeTotal);
+      this.scanData = this.toStringValue(responseData?.scanData);
 
       // TYP - Sale redemption (only present when device returns it)
       if (host?.redeemId) {
@@ -245,6 +247,7 @@ export class TransactionResponse implements ITerminalResponse {
       this.transactionAmount =
         this.toNumber(transaction?.totalAmount ?? host?.totalAmount) ?? 0;
       this.extraChargeTotal = this.toNumber(transaction?.extraChargeTotal);
+      this.scanData = this.toStringValue(responseData?.scanData);
       this.transactionId = this.toStringValue(host?.referenceNumber);
       this.terminalRefNumber = this.toStringValue(host?.tranNo);
       this.approvalCode = this.toStringValue(host?.approvalCode);
