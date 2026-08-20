@@ -465,6 +465,18 @@ export class UpaController extends DeviceController {
         transactionData.transaction.baseAmount = this.formatAmount(
           builder.amount,
         );
+        transactionData.transaction.allowDuplicate =
+          builder.allowDuplicates !== undefined
+            ? builder.allowDuplicates
+              ? "1"
+              : "0"
+            : undefined;
+        transactionData.transaction.allowPartialAuth =
+          authBuilder.allowPartialAuth !== undefined
+            ? authBuilder.allowPartialAuth
+              ? "1"
+              : "0"
+            : undefined;
         transactionData.transaction.tipAmount = this.formatAmount(
           builder.gratuity,
         );

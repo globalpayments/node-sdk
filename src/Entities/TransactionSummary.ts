@@ -81,4 +81,9 @@ export class TransactionSummary extends BaseSummary {
   public fingerprintIndicator: string;
   public batchId: string;
   public globalTransactionId: string;
+  public terminalRefNumber: string;
+  public safReferenceNumber: string;
+  public tranNo: string;
+  public hostTimeout: boolean;
+  public chipFallback: boolean;
 }

@@ -701,7 +701,7 @@ export async function findLiveBatches(
 ): Promise<BatchList> {
   const response = await (device as any)
     .findBatches()
-    .where(UpaSearchCriteria.EcrId, 13)
+    .where(UpaSearchCriteria.EcrId, 12)
     .execute();
 
   expect(response).toBeInstanceOf(BatchList);

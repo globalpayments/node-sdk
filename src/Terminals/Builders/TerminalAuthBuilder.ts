@@ -76,6 +76,8 @@ export class TerminalAuthBuilder extends TerminalBuilder {
 
   public transactionDate?: Date;
 
+  public shippingDate?: Date;
+
   public merchantDecision?: string;
 
   public language?: string;
@@ -267,6 +269,11 @@ export class TerminalAuthBuilder extends TerminalBuilder {
     return this;
   }
 
+  public withShippingDate(shippingDate: Date) {
+    this.shippingDate = shippingDate;
+    return this;
+  }
+
   public withTimeout(timeout: number) {
     this.timeout = timeout;
     return this;
@@ -306,8 +313,6 @@ export class TerminalAuthBuilder extends TerminalBuilder {
       .of("transactionType", TransactionType.Refund)
       .with("paymentMethodType", PaymentMethodType.Credit)
       .when("paymentMethod.transactionId")
-      .isNotNull()
-      .check("paymentMethod.authCode")
       .isNotNull();
   }
 

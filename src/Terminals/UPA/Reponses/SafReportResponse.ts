@@ -141,7 +141,10 @@ export class SafReportResponse implements ITerminalReport {
     const summary = new TransactionSummary();
     summary.transactionType = record.transactionType;
     summary.transactionId = record.transId;
+    summary.terminalRefNumber = record.transId;
     summary.referenceNumber = record.referenceNumber;
+    summary.safReferenceNumber = record.safReferenceNumber;
+    summary.tranNo = record.tranNo;
     summary.gratuityAmount = record.tipAmount;
     summary.taxAmount = record.taxAmount;
     summary.amount = record.baseAmount;
@@ -153,8 +156,14 @@ export class SafReportResponse implements ITerminalReport {
       summary.transactionDate = transactionDate;
     }
     summary.authCode = record.approvalCode;
+    summary.hostTimeout =
+      record.hostTimeOut === true || record.hostTimeOut === "1";
     summary.entryMode = record.cardAcquisition;
     summary.status = record.responseCode;
+    if (record.fallback !== undefined && record.fallback !== null) {
+      summary.chipFallback =
+        record.fallback === "1" || record.fallback === true;
+    }
     return summary;
   }
 

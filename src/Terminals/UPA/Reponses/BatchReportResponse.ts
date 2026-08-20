@@ -27,7 +27,7 @@ export class BatchRecordResponse {
   public batchStatus = "";
   public openUtcDateTime = "";
   public closeUtcDateTime = "";
-  public openTnxId = "";
+  public openTnxId?: number;
   public totalAmount?: number;
   public totalCnt?: number;
   public creditCnt?: number;
@@ -53,6 +53,13 @@ export class BatchReportResponse implements ITerminalReport {
   public multipleMessage = "";
   public merchantName = "";
   public deviceSerialNumber = "";
+  public ecrId = "";
+  public requestId = "";
+  public message = "";
+  public response = "";
+  public result = "";
+  public errorCode = "";
+  public errorMessage = "";
   public batchRecord?: BatchRecordResponse;
 
   constructor(jsonResponse: any) {
@@ -82,6 +89,13 @@ export class BatchReportResponse implements ITerminalReport {
 
     this.status = cmdResult.result ?? "";
     this.command = data.response ?? "";
+    this.response = data.response ?? "";
+    this.result = cmdResult.result ?? "";
+    this.errorCode = cmdResult.errorCode ?? "";
+    this.errorMessage = cmdResult.errorMessage ?? "";
+    this.message = cmdResult.errorMessage ?? "";
+    this.ecrId = data.ecrId ?? data.EcrId ?? "";
+    this.requestId = data.requestId ?? data.RequestId ?? "";
     this.deviceResponseCode =
       cmdResult.errorCode ?? this.deviceResponseCode ?? "00";
     if (this.status === "Success") {
@@ -180,7 +194,9 @@ export class BatchReportResponse implements ITerminalReport {
     summary.authorizedAmount = transaction.authorizedAmount;
     summary.cardType = transaction.cardType;
     summary.maskedCardNumber = transaction.maskedPAN ?? transaction.maskedPan;
-    summary.referenceNumber = transaction.referenceNumber;
+    summary.referenceNumber = this.toStringOrUndefined(
+      transaction.referenceNumber,
+    ) as string;
     summary.issuerTransactionId = transaction.gatewayTxnId;
     summary.clerkId = transaction.clerkId;
     summary.amount = transaction.requestedAmount;
@@ -202,6 +218,13 @@ export class BatchReportResponse implements ITerminalReport {
 
     const date = new Date(value);
     return Number.isNaN(date.getTime()) ? undefined : date;
+  }
+
+  private toStringOrUndefined(value: unknown): string | undefined {
+    if (value === undefined || value === null) {
+      return undefined;
+    }
+    return String(value);
   }
 
   private toNumber(value: unknown): number | undefined {

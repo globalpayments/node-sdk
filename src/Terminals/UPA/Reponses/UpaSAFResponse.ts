@@ -57,14 +57,7 @@ export class UpaSAFResponse implements ISAFResponse {
         this.referenceNumber =
           responseData.referenceNumber ?? this.referenceNumber;
         this.multipleMessage = responseData.multipleMessage;
-
-        const safDetails: any[] = responseData.SafDetails || [];
-        safDetails.forEach((detail: any) => {
-          this.totalAmount =
-            (this.totalAmount || 0) + Number(detail.SafTotal || 0);
-          this.totalCount =
-            (this.totalCount || 0) + Number(detail.SafCount || 0);
-        });
+        this.parseSafDetails(responseData.SafDetails);
       }
     } else {
       // Native UPA device response
@@ -128,7 +121,9 @@ export class UpaSAFResponse implements ISAFResponse {
     const summary = new TransactionSummary();
     summary.transactionType = record?.transactionType;
     summary.transactionId = record?.transId;
+    summary.terminalRefNumber = record?.transId;
     summary.referenceNumber = record?.referenceNumber;
+    summary.safReferenceNumber = record?.safReferenceNumber;
     summary.gratuityAmount = record?.tipAmount;
     summary.taxAmount = record?.taxAmount;
     summary.amount = record?.baseAmount;
@@ -136,6 +131,8 @@ export class UpaSAFResponse implements ISAFResponse {
     summary.cardType = record?.cardType;
     summary.maskedCardNumber = record?.maskedPan;
     summary.authCode = record?.approvalCode;
+    summary.hostTimeout =
+      record?.hostTimeOut === true || record?.hostTimeOut === "1";
     summary.entryMode = record?.cardAcquisition;
     summary.status = record?.responseCode;
 

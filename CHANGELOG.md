@@ -1,6 +1,11 @@
 # Changelog
 
-## Latest - v3.11.02 (08/13/26):
+## Latest - v3.11.03 (08/20/26):
+### Enhancements:
+- [UPA-MITC] - Improved UPA error mapping to expose full failure responses through GatewayError.Expanded UPA error-response test coverage across Sale, Void, and Refund flows
+- [UPA-MITC] - Added missing response field mappings across EOD, SAF, batch, and report flows.
+
+## v3.11.02 (08/13/26):
 ### Enhancements:
 - [UPA-MITC] - Added `Scan` command with optional ScanData parameters; parameterless calls supported; scanData response in GP-API and MITC paths.
 - [UPA-MITC] - Added `Void` command with dual identifier support (tranNo/terminalRefNumber or referenceNumber/transactionId).

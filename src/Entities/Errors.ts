@@ -33,9 +33,25 @@ export class ConfigurationError extends ApiError {
 }
 
 export class GatewayError extends ApiError {
+  [key: string]: any;
   public responseCode: string;
   public responseMessage: string;
-  constructor(m?: string, code?: string, message?: string) {
+  public deviceResponseCode: string;
+  public deviceResponseMessage: string;
+  public issuerResponseCode: string;
+  public issuerResponseMessage: string;
+  public rawResponse: any;
+  constructor(
+    m?: string,
+    code?: string,
+    message?: string,
+    issuerResponseCode?: string,
+    issuerResponseMessage?: string,
+    deviceResponseCode?: string,
+    deviceResponseMessage?: string,
+    rawResponse?: any,
+    responseData?: Record<string, any>,
+  ) {
     super(m);
     Object.setPrototypeOf(this, GatewayError.prototype);
     this.name = this.constructor.name;
@@ -44,6 +60,32 @@ export class GatewayError extends ApiError {
     }
     if (message) {
       this.responseMessage = message;
+    }
+    if (issuerResponseCode) {
+      this.issuerResponseCode = issuerResponseCode;
+    }
+    if (issuerResponseMessage) {
+      this.issuerResponseMessage = issuerResponseMessage;
+    }
+    if (deviceResponseCode) {
+      this.deviceResponseCode = deviceResponseCode;
+    }
+    if (deviceResponseMessage) {
+      this.deviceResponseMessage = deviceResponseMessage;
+    }
+    if (rawResponse !== undefined) {
+      this.rawResponse = rawResponse;
+    }
+    if (responseData) {
+      for (const key of Object.keys(responseData)) {
+        if (
+          key !== "__proto__" &&
+          key !== "constructor" &&
+          key !== "prototype"
+        ) {
+          this[key] = responseData[key];
+        }
+      }
     }
   }
 }

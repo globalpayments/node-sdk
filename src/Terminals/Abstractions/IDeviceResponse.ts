@@ -68,10 +68,57 @@ export interface ITerminalReport extends IDeviceResponse {
   multipleMessage?: string;
 }
 
+/**
+ * Common shape of a single transaction row inside a terminal report
+ * (SAF report, batch report, batch details, etc.). Kept intentionally
+ * loose so implementations (e.g. `TransactionSummary`) satisfy it
+ * structurally without inheritance.
+ */
+export interface ITerminalReportTransaction {
+  transactionType?: string;
+  transactionId?: string;
+  referenceNumber?: string;
+  safReferenceNumber?: string;
+  terminalRefNumber?: string;
+  tranNo?: string;
+  authCode?: string;
+  authorizedAmount?: string | number;
+  amount?: string | number;
+  gratuityAmount?: string | number;
+  taxAmount?: string | number;
+  settlementAmount?: string | number;
+  cardType?: string;
+  maskedCardNumber?: string;
+  entryMode?: string;
+  cardSwiped?: string;
+  clerkId?: string;
+  transactionDate?: Date;
+  transactionStatus?: string;
+  status?: string;
+  issuerTransactionId?: string;
+  gatewayResponseCode?: string;
+  gatewayResponseMessage?: string;
+  hostTimeout?: boolean;
+  chipFallback?: boolean;
+}
+
+/**
+ * Bucket of SAF records grouped by outcome (approved / pending / declined).
+ */
+export interface ISafSummaryResponse {
+  totalAmount?: number;
+  count?: number;
+  summaryType?: number;
+  transactions?: ITerminalReportTransaction[];
+}
+
 export interface ISAFResponse extends IDeviceResponse {
   totalCount?: number;
   totalAmount?: number;
   multipleMessage?: string;
+  approved?: Record<number, ISafSummaryResponse>;
+  pending?: Record<number, ISafSummaryResponse>;
+  declined?: Record<number, ISafSummaryResponse>;
 }
 
 export interface IEODResponse extends IDeviceResponse {
@@ -84,6 +131,7 @@ export interface IEODResponse extends IDeviceResponse {
   reversalResponse?: IDeviceResponse;
   safResponse?: ISAFResponse;
   batchReportResponse?: IDeviceResponse;
+  requestId?: string;
   respDateTime?: string;
   batchId?: number;
   gatewayResponseCode?: number;

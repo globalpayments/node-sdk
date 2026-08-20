@@ -1,5 +1,6 @@
 import {
   ApplicationCryptogramType,
+  GatewayError,
   GatewayProvider,
   ITerminalResponse,
   NotImplementedError,
@@ -106,6 +107,7 @@ export class TransactionResponse implements ITerminalResponse {
       }
     this.version = this.extractVersion(jsonResponse);
     this.referenceNumber = this.extractReferenceNumber(jsonResponse);
+    TransactionResponse.checkResponse(jsonResponse);
     if (this.isGpApiResponse(jsonResponse)) {
       const response = jsonResponse.response;
       const cmdResult = response?.cmdResult;
@@ -310,6 +312,56 @@ export class TransactionResponse implements ITerminalResponse {
   private isGpApiResponse(jsonResponse: any): boolean {
     return !!(
       jsonResponse.provider && jsonResponse.provider === GatewayProvider.GpApi
+    );
+  }
+
+  private static checkResponse(jsonResponse: any): void {
+    const isGpApi = !!(
+      jsonResponse?.provider && jsonResponse.provider === GatewayProvider.GpApi
+    );
+    const root = isGpApi ? jsonResponse?.response : jsonResponse?.data;
+    const cmdResult = root?.cmdResult;
+
+    if (!cmdResult || cmdResult.result !== "Failed") {
+      return;
+    }
+
+    const errorCode = cmdResult.errorCode;
+    const errorMessage = cmdResult.errorMessage;
+    const host = root?.data?.host;
+    const responseData = {
+      ...(root?.data ?? {}),
+      ...(errorCode !== undefined ? { errorCode } : {}),
+      ...(errorMessage !== undefined ? { errorMessage } : {}),
+      ...(host?.responseText !== undefined
+        ? { responseText: host.responseText }
+        : {}),
+    };
+
+    if (host) {
+      throw new GatewayError(
+        `Unexpected Gateway Response : ${errorCode} - ${errorMessage}`,
+        host.gatewayResponseCode,
+        host.gatewayResponseMessage,
+        host.responseCode,
+        host.responseText,
+        errorCode,
+        errorMessage,
+        root,
+        responseData,
+      );
+    }
+
+    throw new GatewayError(
+      `Unexpected Device Response : ${errorCode} - ${errorMessage}`,
+      errorCode,
+      errorMessage,
+      undefined,
+      undefined,
+      errorCode,
+      errorMessage,
+      root,
+      responseData,
     );
   }
 

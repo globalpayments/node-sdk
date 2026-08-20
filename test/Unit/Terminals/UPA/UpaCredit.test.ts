@@ -6,6 +6,7 @@
  */
 import {
   ExtraChargeType,
+  GatewayError,
   IDeviceInterface,
   Lodging,
   ServicesContainer,
@@ -310,7 +311,8 @@ describeUpaLive("UPA Credit – updateLodginDetail()", () => {
     invalidLodging.folioNumber = String(Date.now()).slice(-6);
     invalidLodging.extraChargeTypes = [ExtraChargeType.Restaurant];
 
-    let response: TransactionResponse;
+    let response: TransactionResponse | undefined;
+    let caught: unknown;
 
     try {
       response = await (device as any)
@@ -327,26 +329,35 @@ describeUpaLive("UPA Credit – updateLodginDetail()", () => {
         return;
       }
 
-      throw error;
+      caught = error;
     }
 
-    expect(response).toBeInstanceOf(TransactionResponse);
+    if (caught instanceof GatewayError) {
+      if (caught.deviceResponseCode === "LDG001") {
+        // Device firmware may return "DECLINED" instead of "TRANSACTION CANCELED"
+        // LDG001 error code is authoritative
+        const responseText = (caught.deviceResponseMessage ?? "").toUpperCase();
+        const isValidMessage =
+          responseText.includes("TRANSACTION CANCELED") ||
+          responseText.includes("DECLINED") ||
+          responseText.includes("INVALID AMOUNT");
+        expect(isValidMessage).toBe(true);
+        return;
+      }
 
-    if (response.deviceResponseCode === "LDG001") {
-      expect(response.status).toBe("Failed");
-      // Device firmware may return "DECLINED" instead of "TRANSACTION CANCELED"
-      // LDG001 error code is authoritative
-      const responseText = response.deviceResponseText.toUpperCase();
-      const isValidMessage =
-        responseText.includes("TRANSACTION CANCELED") ||
-        responseText.includes("DECLINED") ||
-        responseText.includes("INVALID AMOUNT");
-      expect(isValidMessage).toBe(true);
+      console.warn(
+        `updateLodginDetail() LDG001 scenario surfaced as ${caught.deviceResponseCode} (${caught.deviceResponseMessage}) on the current device firmware. Per UPA doc an invalid amount must surface LDG001.`,
+      );
       return;
     }
 
+    if (caught) {
+      throw caught;
+    }
+
+    expect(response).toBeInstanceOf(TransactionResponse);
     console.warn(
-      `updateLodginDetail() LDG001 scenario surfaced as ${response.deviceResponseCode} (${response.deviceResponseText}) on the current device firmware. Per UPA doc an invalid amount must surface LDG001.`,
+      `updateLodginDetail() LDG001 scenario not reproduced: device accepted the request with status="${response?.status}" code="${response?.deviceResponseCode}". Per UPA doc an invalid amount must surface LDG001.`,
     );
   });
 
@@ -389,7 +400,8 @@ describeUpaLive("UPA Credit – updateLodginDetail()", () => {
     lodging.extraChargeTypes = [ExtraChargeType.Restaurant];
     lodging.extraChargeTotal = 1.5;
 
-    let response: TransactionResponse;
+    let response: TransactionResponse | undefined;
+    let caught: unknown;
 
     try {
       response = await (device as any)
@@ -406,21 +418,30 @@ describeUpaLive("UPA Credit – updateLodginDetail()", () => {
         return;
       }
 
-      throw error;
+      caught = error;
     }
 
-    expect(response).toBeInstanceOf(TransactionResponse);
+    if (caught instanceof GatewayError) {
+      if (caught.deviceResponseCode === "APP013") {
+        expect((caught.deviceResponseMessage ?? "").toUpperCase()).toContain(
+          "BATTERY LEVEL TOO LOW",
+        );
+        return;
+      }
 
-    if (response.deviceResponseCode === "APP013") {
-      expect(response.status).toBe("Failed");
-      expect(response.deviceResponseText.toUpperCase()).toContain(
-        "BATTERY LEVEL TOO LOW",
+      console.warn(
+        `updateLodginDetail() APP013 scenario not reproduced: device returned code=${caught.deviceResponseCode} message=${caught.deviceResponseMessage}. Per UPA doc APP013 requires the device battery to be below the vendor's safe-operating threshold — a condition the SDK cannot induce.`,
       );
       return;
     }
 
+    if (caught) {
+      throw caught;
+    }
+
+    expect(response).toBeInstanceOf(TransactionResponse);
     console.warn(
-      `updateLodginDetail() APP013 scenario not reproduced: device returned code=${response.deviceResponseCode} status=${response.status}. Per UPA doc APP013 requires the device battery to be below the vendor's safe-operating threshold — a condition the SDK cannot induce.`,
+      `updateLodginDetail() APP013 scenario not reproduced: device returned code=${response?.deviceResponseCode} status=${response?.status}. Per UPA doc APP013 requires the device battery to be below the vendor's safe-operating threshold — a condition the SDK cannot induce.`,
     );
   });
 
@@ -517,7 +538,8 @@ describeUpaLive("UPA Credit – updateLodginDetail()", () => {
     malformedLodging.extraChargeTypes = [ExtraChargeType.Restaurant];
     malformedLodging.extraChargeTotal = 0.5;
 
-    let response: TransactionResponse;
+    let response: TransactionResponse | undefined;
+    let caught: unknown;
 
     try {
       response = await (device as any)
@@ -537,34 +559,41 @@ describeUpaLive("UPA Credit – updateLodginDetail()", () => {
         return;
       }
 
-      throw error;
+      caught = error;
     } finally {
       controller.formatAmount = originalFormatAmount;
+    }
+
+    if (caught instanceof GatewayError) {
+      console.log(
+        `[UpaCreditTests:471] ERR010 live response — code="${caught.deviceResponseCode}" message="${caught.deviceResponseMessage}"`,
+      );
+
+      if (caught.deviceResponseCode === "ERR010") {
+        expect((caught.deviceResponseMessage ?? "").toUpperCase()).toContain(
+          "INVALID LENGTH",
+        );
+        return;
+      }
+
+      console.warn(
+        `updateLodginDetail() ERR010 scenario surfaced as ${caught.deviceResponseCode} (${caught.deviceResponseMessage}) on the current device firmware. Per UPA doc the malformed-amount rejection is ERR010 INVALID LENGTH.`,
+      );
+      return;
+    }
+
+    if (caught) {
+      throw caught;
     }
 
     expect(response).toBeInstanceOf(TransactionResponse);
 
     console.log(
-      `[UpaCreditTests:471] ERR010 live response — code="${response.deviceResponseCode}" status="${response.status}" text="${response.deviceResponseText}"`,
+      `[UpaCreditTests:471] ERR010 live response — code="${response?.deviceResponseCode}" status="${response?.status}" text="${response?.deviceResponseText}"`,
     );
 
-    if (response.deviceResponseCode === "ERR010") {
-      expect(response.status).toBe("Failed");
-      expect(response.deviceResponseText.toUpperCase()).toContain(
-        "INVALID LENGTH",
-      );
-      return;
-    }
-
-    if (response.status === "Failed") {
-      console.warn(
-        `updateLodginDetail() ERR010 scenario surfaced as ${response.deviceResponseCode} (${response.deviceResponseText}) on the current device firmware. Per UPA doc the malformed-amount rejection is ERR010 INVALID LENGTH.`,
-      );
-      return;
-    }
-
     console.warn(
-      `updateLodginDetail() ERR010 scenario not reproduced: device accepted the malformed amount with status="${response.status}" code="${response.deviceResponseCode}". Per UPA doc an amount missing the leading zero SHOULD be rejected — the current firmware may be tolerating the drift.`,
+      `updateLodginDetail() ERR010 scenario not reproduced: device accepted the malformed amount with status="${response?.status}" code="${response?.deviceResponseCode}". Per UPA doc an amount missing the leading zero SHOULD be rejected — the current firmware may be tolerating the drift.`,
     );
   });
 });
