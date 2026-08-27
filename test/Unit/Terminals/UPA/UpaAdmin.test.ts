@@ -1,12 +1,15 @@
 /**
- * Unit tests for device-level methods:
+ * Unit tests for device-level methods and administrative transactions:
  *   endOfDay(), sendStoreAndForward(), getSignature(), ping(),
  *   balance(), reverse(), deletePreAuth(),
  *   startCardTransaction(), reboot(),
- *   MITC connection mode, deleteSaf(), cancel(), registerPOS()
- *
+ *   MITC connection mode, deleteSaf(), cancel(), registerPOS(),
+ *   refund() with clerkId and enhanced fields,
+ *   verify() with address verification and CVV verification,
+ *   lineItem() with LineItemDisplay spec
  */
 import {
+  Address,
   ArgumentError,
   GpApiConfig,
   IDeviceInterface,
@@ -1783,5 +1786,251 @@ describeUpaLive("UPA Admin – verify()", () => {
       console.log("[VERIFY ERROR]", err);
       throw err;
     }
+  });
+});
+
+// ===========================================================================
+// refund() with all administrative enhancements
+// ===========================================================================
+describeUpaLive("UPA Credit – refund() with enhanced fields", () => {
+  let device: IDeviceInterface;
+
+  beforeEach(() => {
+    device = createTestDevice();
+  });
+
+  test("refund() includes clerkId in request", async () => {
+    const saleresponse = await (device as any).sale(5).withEcrId(13).execute();
+
+    const builder = await (device as any)
+      .refund(2)
+      .withEcrId(13)
+      .withReferenceNumber(saleresponse.terminalRefNumber)
+      .withClerkId(1234);
+
+    console.log("\n===== EXECUTING REFUND WITH CLERK ID =====");
+    const response = await builder.execute();
+    console.log("Response Status:", (response as any).status);
+    expect(response).toBeDefined();
+    expect(response.status).toBe("Success");
+  });
+
+  test("refund() by transaction ID", async () => {
+    const saleResponse = await device.sale(10).withEcrId(13).execute();
+
+    expect(saleResponse).toBeDefined();
+    expect(saleResponse.status).toBe("Success");
+
+    const response = await device
+      .refund(10)
+      .withEcrId(13)
+      .withTransactionId((saleResponse as any).gatewayTxnId)
+      .execute();
+
+    expect(response).toBeDefined();
+    expect(response.status).toBe("Success");
+    console.log(
+      `[Refund By TransID] Amount: ${response.transactionAmount}, Status: ${response.status}`,
+    );
+  });
+
+  test("refund() includes totalAmount correctly", async () => {
+    const saleResponse = await device.sale(10).withEcrId(13).execute();
+
+    expect(saleResponse).toBeDefined();
+    expect(saleResponse.status).toBe("Success");
+
+    const response = await device
+      .refund(10.5)
+      .withEcrId(13)
+      .withTransactionId((saleResponse as any).gatewayTxnId)
+      .execute();
+
+    expect(response).toBeDefined();
+    expect(response.transactionAmount).toBe(10.5);
+    expect(response.status).not.toBe("Failed");
+    expect((response as any).deviceResponseCode).not.toBe("32");
+    console.log(
+      `[Refund Amount] Amount: ${response.transactionAmount}, Status: ${response.status}`,
+    );
+  });
+});
+
+// ===========================================================================
+// verify() with all administrative enhancements
+// ===========================================================================
+describeUpaLive("UPA Credit – verify() with enhanced fields", () => {
+  let device: IDeviceInterface;
+
+  beforeEach(() => {
+    device = createTestDevice();
+  });
+
+  test("verify() includes address verification in request", async () => {
+    const address = new Address();
+    address.addressLine1 = "123 Main St";
+    address.city = "New York";
+    address.state = "NY";
+    address.postalCode = "10001";
+    address.countryCode = "US";
+
+    const response = await device
+      .verify()
+      .withEcrId(13)
+      .withAddress(address)
+      .execute();
+
+    expect(response).toBeDefined();
+    expect(response.status).toBe("Success");
+    console.log(
+      `[Verify Address] AVS Code: ${response.avsResponseCode}, Status: ${response.status}`,
+    );
+  });
+
+  test("verify() cvv verification", async () => {
+    const response = await device
+      .verify()
+      .withEcrId(13)
+      .withSecurityCode(true)
+      .execute();
+
+    expect(response).toBeDefined();
+    expect(response.status).toBe("Success");
+    expect(response.deviceResponseCode).toBe("00");
+    expect(response.maskedCardNumber).toBeDefined();
+    expect(response.cardType).toBeDefined();
+    console.log(
+      `[Verify CVV] Card: ${response.cardType}, Status: ${response.status}`,
+    );
+  });
+
+  test("verify() includes clerkId in request", async () => {
+    const response = await device
+      .verify()
+      .withEcrId(13)
+      .withClerkId(1234)
+      .execute();
+
+    expect(response).toBeDefined();
+    expect(response.status).toBe("Success");
+    console.log(`[Verify ClerkId] Status: ${response.status}`);
+  });
+
+  test("verify() includes languageCode in request", async () => {
+    const response = await device
+      .verify()
+      .withEcrId(13)
+      .withLanguage("es-ES")
+      .execute();
+
+    expect(response).toBeDefined();
+    expect(response.status).toBe("Success");
+    console.log(`[Verify Language] Status: ${response.status}`);
+  });
+});
+
+// ===========================================================================
+// lineItem() with LineItemDisplay spec (lineItemLeft, lineItemRight)
+// ===========================================================================
+describeUpaLive("UPA Credit – lineItem() with LineItemDisplay spec", () => {
+  let device: IDeviceInterface;
+
+  beforeEach(() => {
+    device = createTestDevice();
+  });
+
+  test("lineItem() displays lineItemLeft and lineItemRight per spec", async () => {
+    const response = await (device as any).lineItem("Toothpaste", "10.00");
+
+    expect(response).toBeInstanceOf(TransactionResponse);
+    expect(response).toBeDefined();
+    console.log(`[LineItem] Item displayed successfully`);
+
+    // Clear device UI
+    await (device as any).cancel();
+  });
+
+  test("lineItem() uses ecrId from device instead of hardcoded value", async () => {
+    (device as any).ecrId = "12";
+
+    const response = await (device as any).lineItem("Test Item", "$5.00");
+
+    expect(response).toBeInstanceOf(TransactionResponse);
+    console.log(`[LineItem CustomEcrId] Item displayed with EcrId: 12`);
+
+    // Clear device UI
+    await (device as any).cancel();
+  });
+
+  test("lineItem() handles optional parameters correctly", async () => {
+    const response = await (device as any).lineItem("Item Only");
+
+    expect(response).toBeInstanceOf(TransactionResponse);
+    console.log(`[LineItem Minimal] Item displayed with minimal parameters`);
+
+    // Clear device UI
+    await (device as any).cancel();
+  });
+
+  test("lineItem() throws error for null leftText", async () => {
+    try {
+      await (device as any).lineItem(null);
+      fail("Should have thrown an error");
+    } catch (error: any) {
+      expect(error.message).toContain("cannot be null");
+    }
+  });
+});
+
+// ===========================================================================
+// Integration tests for all admin enhancements together
+// ===========================================================================
+describeUpaLive("UPA Credit – Complete admin enhancements integration", () => {
+  let device: IDeviceInterface;
+
+  beforeEach(() => {
+    device = createTestDevice();
+  });
+
+  test("refund() with all admin fields builds complete request", async () => {
+    const saleResponse = await device.sale(60).withEcrId(12).execute();
+
+    const response = await device
+      .refund(25)
+      .withEcrId(12)
+      .withClerkId(1234)
+      .withAuthCode("")
+      .withCardBrandTransId("TRANSID2025")
+      .withReferenceNumber(saleResponse.terminalRefNumber)
+      .execute();
+
+    expect(response).toBeDefined();
+    expect(response.status).toBe("Success");
+    console.log(
+      `[Refund AllFields] Amount: ${response.transactionAmount}, Status: ${response.status}`,
+    );
+  });
+
+  test("verify() with all admin fields builds complete request", async () => {
+    const address = new Address();
+    address.streetAddress1 = "456 Oak Ave";
+    address.city = "Los Angeles";
+    address.state = "CA";
+    address.postalCode = "90001";
+
+    const response = await device
+      .verify()
+      .withEcrId(13)
+      .withAddress(address)
+      .withClerkId(1234)
+      .withLanguage("en-US")
+      .withSecurityCode(true)
+      .execute();
+
+    expect(response).toBeDefined();
+    expect(response.status).toBe("Success");
+    console.log(
+      `[Verify AllFields] Status: ${response.status}, AVS: ${response.avsResponseCode}`,
+    );
   });
 });

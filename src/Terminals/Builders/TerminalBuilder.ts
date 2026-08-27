@@ -7,7 +7,7 @@ import {
 
 export abstract class TerminalBuilder extends TransactionBuilder<ITerminalResponse> {
   paymentMethodType?: PaymentMethodType;
-  referenceNumber?: number;
+  referenceNumber?: string;
   ecrId?: number;
   clerkNumber?: string;
   clerkId?: number;
@@ -16,11 +16,11 @@ export abstract class TerminalBuilder extends TransactionBuilder<ITerminalRespon
     this.paymentMethodType = value;
     return this;
   }
-  public withReferenceNumber(value: number) {
+  public withReferenceNumber(value: string) {
     this.referenceNumber = value;
     return this;
   }
-  public withRequestId(value: number) {
+  public withRequestId(value: string) {
     this.referenceNumber = value;
     return this;
   }
@@ -32,6 +32,7 @@ export abstract class TerminalBuilder extends TransactionBuilder<ITerminalRespon
     this.ecrId = typeof ecrId === "string" ? Number(ecrId) : ecrId;
     return this;
   }
+
   public withClerkId(clerkId: number) {
     this.clerkId = clerkId;
     return this;

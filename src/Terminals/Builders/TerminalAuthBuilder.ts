@@ -94,6 +94,12 @@ export class TerminalAuthBuilder extends TerminalBuilder {
 
   public hasSecurityCode?: boolean;
 
+  public lineItems?: Array<{ leftText: string; rightText?: string }>;
+
+  public cardBrandTransactionId?: string;
+
+  public directMktInvoiceNbr?: string;
+
   constructor(
     transactionType: TransactionType,
     paymentMethodType?: PaymentMethodType,
@@ -215,6 +221,17 @@ export class TerminalAuthBuilder extends TerminalBuilder {
     return this.withPaymentMethod(new TransactionReference(transactionId));
   }
 
+  public withAuthCode(value: string) {
+    if (
+      this.paymentMethod == null ||
+      !(this.paymentMethod instanceof TransactionReference)
+    ) {
+      this.paymentMethod = new TransactionReference();
+    }
+    (this.paymentMethod as TransactionReference).authCode = value;
+    return this;
+  }
+
   public withPaymentMethod(paymentMethod?: IPaymentMethod) {
     if (paymentMethod !== undefined) {
       this.paymentMethod = paymentMethod as PaymentMethod;
@@ -234,6 +251,10 @@ export class TerminalAuthBuilder extends TerminalBuilder {
     return this;
   }
 
+  public withDirectMktInvoiceNbr(value: string) {
+    this.directMktInvoiceNbr = value;
+    return this;
+  }
   public withCardBrandTransId(value: string) {
     this.cardBrandTransId = value;
     return this;
@@ -350,6 +371,19 @@ export class TerminalAuthBuilder extends TerminalBuilder {
    */
   public withAllowPartialAuth(value: boolean) {
     this.allowPartialAuth = value;
+    return this;
+  }
+
+  public withLineItems(
+    lineItems: Array<{ leftText: string; rightText?: string }>,
+  ) {
+    this.lineItems = lineItems;
+    return this;
+  }
+
+  public withCardBrandTransactionId(cardBrandTransactionId: string) {
+    this.cardBrandTransactionId = cardBrandTransactionId;
+    this.cardBrandTransId = cardBrandTransactionId;
     return this;
   }
 }

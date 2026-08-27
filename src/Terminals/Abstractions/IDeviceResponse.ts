@@ -11,6 +11,8 @@ export interface IDeviceResponse {
 }
 
 export interface ITerminalResponse extends IDeviceResponse {
+  cvvResultCode: any;
+  cvvResultText: any;
   responseCode: string;
   responseText: string;
   transactionId: string;

@@ -1,6 +1,9 @@
 # Changelog
+## Latest - v3.11.04 (08/27/26):
+### Enhancements:
+- [UPA-MITC] - Added UPA SDK for key sale, authorize, refund, verify, tipAdjust, and line-item workflows, including clerkId, cardBrandTransId, shipping/invoice data, line items, and refund request handling
 
-## Latest - v3.11.03 (08/20/26):
+## v3.11.03 (08/20/26):
 ### Enhancements:
 - [UPA-MITC] - Improved UPA error mapping to expose full failure responses through GatewayError.Expanded UPA error-response test coverage across Sale, Void, and Refund flows
 - [UPA-MITC] - Added missing response field mappings across EOD, SAF, batch, and report flows.

@@ -28,6 +28,8 @@ export class TransactionResponse implements ITerminalResponse {
   public avsResponseText?: string;
   public cvvResponseCode?: string;
   public cvvResponseText?: string;
+  public cvvResultCode: any;
+  public cvvResultText: any;
   public taxExempt?: boolean;
   public taxExemptId?: string;
   public ticketNumber?: string;
@@ -142,6 +144,8 @@ export class TransactionResponse implements ITerminalResponse {
       this.avsResponseText = host?.AvsResultText ?? "";
       this.cvvResponseCode = host?.CvvResultCode ?? "";
       this.cvvResponseText = host?.CvvResultText ?? "";
+      this.cvvResultCode = host?.CvvResultCode ?? "";
+      this.cvvResultText = host?.CvvResultText ?? "";
       this.token = host?.tokenValue ?? "";
       this.cardBrandTransId = host?.cardBrandTransId ?? "";
       this.storeAndForward = this.toNumber(
@@ -237,6 +241,8 @@ export class TransactionResponse implements ITerminalResponse {
       this.gatewayResponseMessage = this.toStringValue(
         host?.gatewayResponseMessage,
       );
+      this.cvvResultCode = host?.CvvResultCode ?? "";
+      this.cvvResultText = host?.CvvResultText ?? "";
       this.cardType = this.toStringValue(payment?.cardType);
       this.paymentType = this.cardType;
       this.entryMethod = this.toStringValue(payment?.cardAcquisition);

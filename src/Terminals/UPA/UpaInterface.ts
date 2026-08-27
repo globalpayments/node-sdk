@@ -242,6 +242,8 @@ export class UpaInterface<T extends UpaController>
   public async lineItem(
     leftText: string,
     rightText?: string,
+    runningLeftText?: string,
+    runningRightText?: string,
   ): Promise<IDeviceResponse> {
     if (!leftText) {
       throw new ApiError("Line item left text cannot be null");
@@ -253,11 +255,13 @@ export class UpaInterface<T extends UpaController>
       data: {
         command: UpaMessageId.LINEITEM,
         requestId: requestId.toString(),
-        EcrId: this.ecrId ?? "12",
+        EcrId: this.ecrId,
         data: {
           params: {
             lineItemLeft: leftText,
             lineItemRight: rightText,
+            lineItemLeftRunning: runningLeftText,
+            lineItemRightRunning: runningRightText,
           },
         },
       },

@@ -36,6 +36,10 @@ export class TerminalManageBuilder extends TerminalBuilder {
 
   public terminalRefNumber?: string;
 
+  public authCode?: string;
+
+  public hasSecurityCode?: boolean;
+
   constructor(
     transactionType: TransactionType,
     paymentMethodType?: PaymentMethodType,
@@ -135,6 +139,11 @@ export class TerminalManageBuilder extends TerminalBuilder {
 
   public withClientTransactionId(clientTransactionId: string) {
     this.clientTransactionId = clientTransactionId;
+    return this;
+  }
+
+  public withSecurityCode(value: boolean) {
+    this.hasSecurityCode = value;
     return this;
   }
 

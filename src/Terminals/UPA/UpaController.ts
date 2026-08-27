@@ -115,7 +115,7 @@ export class UpaController extends DeviceController {
     let requestId = builder.referenceNumber;
 
     if (!requestId && this.requestIdProvider) {
-      requestId = this.requestIdProvider.getRequestId();
+      requestId = String(this.requestIdProvider.getRequestId());
     }
 
     const request: Record<string, any> = {
@@ -136,11 +136,7 @@ export class UpaController extends DeviceController {
       transaction: {},
     };
 
-    if (
-      builder.clerkId !== undefined &&
-      builder.clerkId !== null &&
-      transactionType !== TransactionType.Refund
-    ) {
+    if (builder.clerkId !== undefined && builder.clerkId !== null) {
       transactionData.params = {
         clerkId: builder.clerkId,
       };
@@ -168,12 +164,22 @@ export class UpaController extends DeviceController {
       transactionData.transaction.referenceNumber = builder.transactionId;
       transactionData.transaction.amount = this.formatAmount(builder.amount);
     } else if (transactionType === TransactionType.Refund) {
-      // Refund should only have totalAmount, no amount or tax fields
+      // Refund should only have totalAmount and referenceNumber
+      // authCode is NOT sent in refund requests - it's only used internally by the device
       transactionData.transaction.referenceNumber = builder.transactionId;
       transactionData.transaction.totalAmount = this.formatAmount(
         builder.amount,
       );
       transactionData.transaction.invoiceNbr = builder.invoiceNumber;
+      const refundProcessingIndicators: Record<string, string> = {};
+      if (manageBuilder.hasSecurityCode !== undefined) {
+        refundProcessingIndicators.securityCode = manageBuilder.hasSecurityCode
+          ? "Y"
+          : "N";
+      }
+      if (Object.keys(refundProcessingIndicators).length > 0) {
+        transactionData.processingIndicators = refundProcessingIndicators;
+      }
     } else if (transactionType === TransactionType.Void) {
       // Per UPA spec §12.4.2.1: transaction sub-node accepts ONLY
       //   `tranNo`  (mapped from builder.terminalRefNumber) OR
@@ -325,7 +331,7 @@ export class UpaController extends DeviceController {
     let requestId = builder.referenceNumber;
 
     if (!requestId && this.requestIdProvider) {
-      requestId = this.requestIdProvider.getRequestId();
+      requestId = String(this.requestIdProvider.getRequestId());
     }
 
     const request: Record<string, any> = {
@@ -427,7 +433,11 @@ export class UpaController extends DeviceController {
     if (builder.hasSecurityCode !== undefined) {
       processingIndicators.securityCode = builder.hasSecurityCode ? "Y" : "N";
     }
-    if (Object.keys(processingIndicators).length > 0) {
+    // Only add processingIndicators for Sale, Auth, and Refund - NOT for CardVerify (Verify)
+    if (
+      Object.keys(processingIndicators).length > 0 &&
+      transactionType !== TransactionType.Verify
+    ) {
       transactionData.processingIndicators = processingIndicators;
     }
 
@@ -483,6 +493,19 @@ export class UpaController extends DeviceController {
         transactionData.transaction.cashBackAmount = this.formatAmount(
           builder.cashBackAmount,
         );
+
+        // Add lineItems if provided
+        if (
+          Array.isArray(authBuilder.lineItems) &&
+          authBuilder.lineItems.length > 0
+        ) {
+          transactionData.lineItems = authBuilder.lineItems.map(
+            (item: any) => ({
+              lineItemLeft: item.leftText,
+              lineItemRight: item.rightText,
+            }),
+          );
+        }
       } else {
         transactionData.transaction.baseAmount = this.formatAmount(
           builder.amount,
@@ -551,6 +574,15 @@ export class UpaController extends DeviceController {
           builder.paymentMethod.transactionId;
       } else {
         transactionData.transaction.referenceNumber = builder.terminalRefNumber;
+      }
+
+      // Add authCode if available for refund
+      if (
+        builder.paymentMethod &&
+        "authCode" in builder.paymentMethod &&
+        builder.paymentMethod.authCode
+      ) {
+        transactionData.transaction.authCode = builder.paymentMethod.authCode;
       }
     }
 

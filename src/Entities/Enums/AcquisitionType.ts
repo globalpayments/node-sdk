@@ -7,4 +7,5 @@ export enum AcquisitionType {
   Scan = "Scan",
   Insert = "Insert",
   Tap = "Tap",
+  Chip = "Chip",
 }

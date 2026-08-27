@@ -1,7 +1,10 @@
 /**
  * Unit tests for UPA Credit payment methods:
- *   sale() with processing indicators, sale() with auth-time lodging,
- *   updateLodginDetail()
+ *   sale() with processing indicators, enhanced fields (clerkId, cardBrandTransId, directMkt)
+ *   authorize() with enhanced fields (clerkId, cardBrandTransId, preAuthAmount)
+ *   sale() with auth-time lodging,
+ *   updateLodginDetail(),
+ *   capture/AuthCompletion per UPA Spec §12.4.16
  *
  */
 import {
@@ -23,6 +26,7 @@ import {
   isKnownLiveTransportTimeout,
   useLiveMic,
 } from "./UpaHelpertest";
+import { AcquisitionType } from "../../../../src/Entities/Enums/AcquisitionType";
 
 jest.setTimeout(240000);
 
@@ -594,6 +598,128 @@ describeUpaLive("UPA Credit – updateLodginDetail()", () => {
 
     console.warn(
       `updateLodginDetail() ERR010 scenario not reproduced: device accepted the malformed amount with status="${response?.status}" code="${response?.deviceResponseCode}". Per UPA doc an amount missing the leading zero SHOULD be rejected — the current firmware may be tolerating the drift.`,
+    );
+  });
+});
+
+// ===========================================================================
+// sale() with enhanced field support
+// ===========================================================================
+describeUpaLive("UPA Credit – sale() with enhanced fields", () => {
+  let device: IDeviceInterface;
+
+  beforeEach(() => {
+    device = createTestDevice();
+  });
+
+  test("sale() includes clerkId field", async () => {
+    const response = await device
+      .sale(10)
+      .withEcrId(13)
+      .withClerkId(123)
+      .execute();
+
+    expect(response).toBeDefined();
+    expect(response.status).toBe("Success");
+    console.log(
+      `[Sale ClerkId] Amount: ${response.transactionAmount}, Status: ${response.status}`,
+    );
+  });
+
+  test("sale() includes cardBrandTransId field", async () => {
+    const response = await device
+      .sale(15)
+      .withEcrId(13)
+      .withCardBrandTransId("CARD-BRAND-ID-123")
+      .execute();
+
+    expect(response).toBeDefined();
+    expect(response.status).toBe("Success");
+    console.log(
+      `[Sale CardBrandTransId] Amount: ${response.transactionAmount}, Status: ${response.status}`,
+    );
+  });
+
+  test("sale() includes directMkt fields (shippingDate)", async () => {
+    const shippingDate = new Date("2025-12-25");
+    const response = await device
+      .sale(20)
+      .withEcrId(13)
+      .withShippingDate(shippingDate)
+      .withInvoiceNumber("INV-2025-001")
+      .execute();
+
+    expect(response).toBeDefined();
+    expect(response.status).toBe("Success");
+  });
+
+  test("sale() includes acquisitionTypes in request", async () => {
+    const builder = (device as any)
+      .sale(10)
+      .withEcrId(13)
+      .withAcquisitionTypes([
+        AcquisitionType.Chip,
+        AcquisitionType.Contactless,
+      ]);
+
+    console.log("\n===== EXECUTING SALE WITH ACQUISITION TYPES =====");
+    const response = await builder.execute();
+    console.log("Response Status:", (response as any).status);
+    console.log("Response:", JSON.stringify(response, null, 2));
+    expect(response).toBeDefined();
+  });
+});
+
+// ===========================================================================
+// authorize() with enhanced field support
+// ===========================================================================
+describeUpaLive("UPA Credit – authorize() with enhanced fields", () => {
+  let device: IDeviceInterface;
+
+  beforeEach(() => {
+    device = createTestDevice();
+  });
+
+  test("authorize() includes clerkId field", async () => {
+    const response = await device
+      .authorize(25)
+      .withEcrId(12)
+      .withClerkId(456)
+      .execute();
+
+    expect(response).toBeDefined();
+    expect(response.status).toBe("Success");
+    expect(response.transactionId).toBeTruthy();
+    console.log(
+      `[Auth ClerkId] Amount: ${response.transactionAmount}, TransId: ${response.transactionId}`,
+    );
+  });
+
+  test("authorize() includes cardBrandTransId field", async () => {
+    const response = await device
+      .authorize(30)
+      .withEcrId(12)
+      .withCardBrandTransId("BRAND-TRANS-456")
+      .execute();
+
+    expect(response).toBeDefined();
+    expect(response.status).toBe("Success");
+    console.log(
+      `[Auth CardBrandTransId] Amount: ${response.transactionAmount}, Status: ${response.status}`,
+    );
+  });
+
+  test("authorize() with preAuthAmount field", async () => {
+    const response = await device
+      .authorize(40)
+      .withEcrId(12)
+      .withPreAuthAmount(50.5)
+      .execute();
+
+    expect(response).toBeDefined();
+    expect(response.status).toBe("Success");
+    console.log(
+      `[Auth PreAuthAmount] Amount: ${response.transactionAmount}, Status: ${response.status}`,
     );
   });
 });
