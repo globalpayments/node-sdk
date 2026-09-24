@@ -35,6 +35,20 @@ export class RecurringBuilder<
   }
 
   public setupValidations() {
-    // todo
+    this.for(TransactionType.Edit)
+      .check(() => this.Key)
+      .isNotNull();
+
+    this.for(TransactionType.Delete)
+      .check(() => this.Key)
+      .isNotNull();
+
+    this.for(TransactionType.Fetch)
+      .check(() => this.Key)
+      .isNotNull();
+
+    this.for(TransactionType.Search)
+      .check(() => this.SearchCriteria)
+      .isNotNull();
   }
 }

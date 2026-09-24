@@ -61,6 +61,7 @@ export class TransactionResponse implements ITerminalResponse {
   public tipAmount?: number;
   public baseAmount?: number;
   public cashBackAmount?: number;
+  public preAuthAmount?: number;
   public referenceNumber = "";
   public cardHolderName?: string;
   public requestId: string;
@@ -75,6 +76,7 @@ export class TransactionResponse implements ITerminalResponse {
   public invoiceNumber = "";
   public extraChargeTotal?: number;
   public scanData = "";
+  public taxAmount?: number;
 
   // === TYP (Thank You Points) loyalty fields - Sale ===
   /** Loyalty programme redemption ID returned by TYP host (Sale only). */
@@ -99,6 +101,10 @@ export class TransactionResponse implements ITerminalResponse {
   public voidPointsRedeemed?: number;
   /** Discount amount reversed on TYP void/reverse. */
   public voidDiscountAmountRedeemed?: number;
+
+  // === CPC (Card Present Capable) processing indicator ===
+  /** Card Present Capable processing indicator: "1" or "0" / "Y" or "N". */
+  public processCPC?: string;
 
   constructor(jsonResponse: any) {
     if (typeof jsonResponse === "string")
@@ -159,6 +165,10 @@ export class TransactionResponse implements ITerminalResponse {
       this.cashBackAmount = this.toNumber(
         host?.cashBackAmount ?? transaction?.cashBackAmount,
       );
+      this.preAuthAmount = this.toNumber(
+        host?.preAuthAmount ?? transaction?.preAuthAmount,
+      );
+      this.taxAmount = this.toNumber(host?.taxAmount ?? transaction?.taxAmount);
       this.transactionAmount =
         this.toNumber(host?.totalAmount ?? transaction?.totalAmount) ?? 0;
       this.availableBalance = this.toNumber(host?.availableBalance);
@@ -186,6 +196,17 @@ export class TransactionResponse implements ITerminalResponse {
       this.invoiceNumber = this.toStringValue(payment?.invoiceNbr);
       this.extraChargeTotal = this.toNumber(transaction?.extraChargeTotal);
       this.scanData = this.toStringValue(responseData?.scanData);
+
+      // CPC (Card Present Capable) processing indicator
+      // Note: processCPC is request-only; device does not echo it in response
+      if (
+        transaction?.processCPC !== undefined &&
+        transaction?.processCPC !== null
+      ) {
+        this.processCPC = this.toStringValue(transaction.processCPC);
+      } else if (host?.processCPC !== undefined && host?.processCPC !== null) {
+        this.processCPC = this.toStringValue(host.processCPC);
+      }
 
       // TYP - Sale redemption (only present when device returns it)
       if (host?.redeemId) {
@@ -263,6 +284,15 @@ export class TransactionResponse implements ITerminalResponse {
       this.referenceNumber =
         this.referenceNumber || this.toStringValue(host?.referenceNumber);
 
+      // CPC (Card Present Capable) processing indicator
+      // Note: processCPC is request-only; device does not echo it in response
+      if (
+        transaction?.processCPC !== undefined &&
+        transaction?.processCPC !== null
+      ) {
+        this.processCPC = this.toStringValue(transaction.processCPC);
+      }
+
       if (host) {
         this.responseCode = host.responseCode ?? "";
         this.responseText = host.responseText ?? "";
@@ -276,6 +306,8 @@ export class TransactionResponse implements ITerminalResponse {
         this.baseAmount = this.toNumber(host.baseAmount);
         this.tipAmount = this.toNumber(host.tipAmount);
         this.cashBackAmount = this.toNumber(host.cashBackAmount);
+        this.preAuthAmount = this.toNumber(host.preAuthAmount);
+        this.taxAmount = this.toNumber(host.taxAmount);
         this.transactionAmount = this.toNumber(host.totalAmount) ?? 0;
 
         // TYP - Sale redemption

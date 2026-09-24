@@ -166,6 +166,8 @@ export class TerminalManageBuilder extends TerminalBuilder {
 
     this.validations
       .of("transactionType", TransactionType.Refund)
+      .when("terminalRefNumber")
+      .isNull()
       .check("transactionId")
       .isNotNull();
 

@@ -601,11 +601,6 @@ export class AuthorizationBuilder extends TransactionBuilder<Transaction> {
     return this;
   }
 
-  withShippingAmount(shippingAmount: string | number) {
-    this.shippingAmount = shippingAmount;
-    return this;
-  }
-
   withOrderDetails(orderDetails: OrderDetails) {
     this.orderDetails = orderDetails;
 

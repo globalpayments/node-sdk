@@ -94,6 +94,23 @@ export class TerminalAuthBuilder extends TerminalBuilder {
 
   public hasSecurityCode?: boolean;
 
+  public recurring?: boolean;
+
+  public shippingAmount?: number;
+
+  public taxIndicator?: string;
+
+  public prescriptionAmount?: number;
+
+  public clinicAmount?: number;
+
+  public dentalAmount?: number;
+
+  public visionOpticalAmount?: number;
+
+  public confirmAmount?: boolean;
+
+  public surchargeAmount?: number;
   public lineItems?: Array<{ leftText: string; rightText?: string }>;
 
   public cardBrandTransactionId?: string;
@@ -315,6 +332,31 @@ export class TerminalAuthBuilder extends TerminalBuilder {
     return this;
   }
 
+  public withPrescriptionAmount(prescriptionAmount: number) {
+    this.prescriptionAmount = prescriptionAmount;
+    return this;
+  }
+
+  public withClinicAmount(clinicAmount: number) {
+    this.clinicAmount = clinicAmount;
+    return this;
+  }
+
+  public withDentalAmount(dentalAmount: number) {
+    this.dentalAmount = dentalAmount;
+    return this;
+  }
+
+  public withVisionOpticalAmount(visionOpticalAmount: number) {
+    this.visionOpticalAmount = visionOpticalAmount;
+    return this;
+  }
+
+  public withConfirmationAmount(confirmAmount: boolean) {
+    this.confirmAmount = confirmAmount;
+    return this;
+  }
+
   protected setupValidations() {
     this.validations
       .of(
@@ -341,6 +383,11 @@ export class TerminalAuthBuilder extends TerminalBuilder {
     this.taxType = taxType;
     this.taxExempt = taxType === TaxType.TaxExempt ? "1" : "0";
     this.taxExemptId = taxExemptId;
+    return this;
+  }
+
+  public withTaxIndicator(taxIndicator: string) {
+    this.taxIndicator = taxIndicator;
     return this;
   }
 
@@ -371,13 +418,6 @@ export class TerminalAuthBuilder extends TerminalBuilder {
    */
   public withAllowPartialAuth(value: boolean) {
     this.allowPartialAuth = value;
-    return this;
-  }
-
-  public withLineItems(
-    lineItems: Array<{ leftText: string; rightText?: string }>,
-  ) {
-    this.lineItems = lineItems;
     return this;
   }
 

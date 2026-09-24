@@ -1,5 +1,12 @@
 # Changelog
-## Latest - v3.11.04 (08/27/26):
+## Latest - v3.12.00 (09/24/26):
+### Enhancements:
+- [UPA-MITC] - Expanded Terminal Builder support with recurring, shipping, tax, healthcare, confirmation, and surcharge transaction fields.
+- [UPA-MITC] - Enhanced UPA transaction mapping for Capture, Refund, Delete PreAuth, lodging updates, Auth, and Sale, including tip, cashback, tax, invoice, purchase order, clerk, and CPC processing fields.
+- [UPA-MITC] - Added `preAuthAmount`, `taxAmount`, and `processCPC` response mappings with GP-API fallback support.
+
+
+## v3.11.04 (08/27/26):
 ### Enhancements:
 - [UPA-MITC] - Added UPA SDK for key sale, authorize, refund, verify, tipAdjust, and line-item workflows, including clerkId, cardBrandTransId, shipping/invoice data, line items, and refund request handling
 

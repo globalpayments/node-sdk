@@ -4,6 +4,7 @@
     "target": "ES2022",
     "lib": ["ES2022"],
     "noImplicitAny": true,
+    "types":["node","jest"],
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,

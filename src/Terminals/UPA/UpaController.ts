@@ -149,6 +149,25 @@ export class UpaController extends DeviceController {
       transactionData.transaction.authorizedAmount = this.formatAmount(
         builder.amount,
       );
+      transactionData.transaction.tipAmount = this.formatAmount(
+        builder.gratuity,
+      );
+      transactionData.transaction.cashBackAmount = this.formatAmount(
+        manageBuilder.cashBackAmount,
+      );
+      transactionData.transaction.taxAmount = this.formatAmount(
+        builder.taxAmount,
+      );
+      transactionData.transaction.invoiceNbr = builder.invoiceNumber;
+      transactionData.transaction.taxIndicator = builder.taxExempt;
+      transactionData.transaction.processCPC =
+        builder.processCPC !== undefined
+          ? builder.processCPC
+            ? "1"
+            : "0"
+          : undefined;
+      transactionData.transaction.purchaseOrder = builder.orderId;
+      transactionData.transaction.clerkId = manageBuilder.clerkId;
     } else if (
       transactionType === TransactionType.Delete &&
       builder.transactionModifier === TransactionModifier.DeletePreAuth
@@ -157,29 +176,72 @@ export class UpaController extends DeviceController {
       transactionData.transaction.preAuthAmount = this.formatAmount(
         builder.amount,
       );
+      // Add common fields
+      transactionData.transaction.tipAmount = this.formatAmount(
+        builder.gratuity,
+      );
+      transactionData.transaction.cashBackAmount = this.formatAmount(
+        manageBuilder.cashBackAmount,
+      );
+      transactionData.transaction.taxAmount = this.formatAmount(
+        builder.taxAmount,
+      );
+      transactionData.transaction.invoiceNbr = builder.invoiceNumber;
+      transactionData.transaction.taxIndicator = builder.taxIndicator;
+      transactionData.transaction.processCPC =
+        builder.processCPC !== undefined
+          ? builder.processCPC
+            ? "1"
+            : "0"
+          : undefined;
+      transactionData.transaction.purchaseOrder = builder.orderId;
+      transactionData.transaction.clerkId = manageBuilder.clerkId;
     } else if (
       transactionType === TransactionType.Edit &&
       builder.transactionModifier === TransactionModifier.UpdateLodgingDetails
     ) {
       transactionData.transaction.referenceNumber = builder.transactionId;
       transactionData.transaction.amount = this.formatAmount(builder.amount);
+      // Add common fields
+      transactionData.transaction.tipAmount = this.formatAmount(
+        builder.gratuity,
+      );
+      transactionData.transaction.cashBackAmount = this.formatAmount(
+        manageBuilder.cashBackAmount,
+      );
+      transactionData.transaction.taxAmount = this.formatAmount(
+        builder.taxAmount,
+      );
+      transactionData.transaction.invoiceNbr = builder.invoiceNumber;
+      transactionData.transaction.taxIndicator = builder.taxIndicator;
+      transactionData.transaction.processCPC =
+        builder.processCPC !== undefined
+          ? builder.processCPC
+            ? "1"
+            : "0"
+          : undefined;
+      transactionData.transaction.purchaseOrder = builder.orderId;
+      transactionData.transaction.clerkId = manageBuilder.clerkId;
     } else if (transactionType === TransactionType.Refund) {
-      // Refund should only have totalAmount and referenceNumber
-      // authCode is NOT sent in refund requests - it's only used internally by the device
-      transactionData.transaction.referenceNumber = builder.transactionId;
+      // NOTE: For refund, use terminalRefNumber (tranNo) not transactionId (gateway refNum)
+      transactionData.transaction.referenceNumber = builder.terminalRefNumber;
       transactionData.transaction.totalAmount = this.formatAmount(
         builder.amount,
       );
+      transactionData.transaction.tipAmount = this.formatAmount(
+        builder.gratuity,
+      );
+      transactionData.transaction.cashBackAmount = this.formatAmount(
+        manageBuilder.cashBackAmount,
+      );
+      transactionData.transaction.taxAmount = this.formatAmount(
+        builder.taxAmount,
+      );
       transactionData.transaction.invoiceNbr = builder.invoiceNumber;
-      const refundProcessingIndicators: Record<string, string> = {};
-      if (manageBuilder.hasSecurityCode !== undefined) {
-        refundProcessingIndicators.securityCode = manageBuilder.hasSecurityCode
-          ? "Y"
-          : "N";
-      }
-      if (Object.keys(refundProcessingIndicators).length > 0) {
-        transactionData.processingIndicators = refundProcessingIndicators;
-      }
+      transactionData.transaction.taxIndicator = builder.taxIndicator;
+      // NOTE: processCPC is NOT supported for Refund (device returns ERR009)
+      transactionData.transaction.purchaseOrder = builder.orderId;
+      transactionData.transaction.clerkId = manageBuilder.clerkId;
     } else if (transactionType === TransactionType.Void) {
       // Per UPA spec §12.4.2.1: transaction sub-node accepts ONLY
       //   `tranNo`  (mapped from builder.terminalRefNumber) OR
@@ -210,6 +272,19 @@ export class UpaController extends DeviceController {
       } else {
         transactionData.transaction.referenceNumber = builder.transactionId;
       }
+    } else if (transactionType === TransactionType.Capture) {
+      // Capture requires both "amount" and "preAuthAmount" fields
+      transactionData.transaction.referenceNumber = builder.transactionId;
+      transactionData.transaction.amount = this.formatAmount(builder.amount);
+      transactionData.transaction.preAuthAmount = this.formatAmount(
+        builder.amount,
+      );
+      transactionData.transaction.processCPC =
+        builder.processCPC !== undefined
+          ? builder.processCPC
+            ? "1"
+            : "0"
+          : undefined;
     } else {
       transactionData.transaction.referenceNumber = builder.transactionId;
       transactionData.transaction.amount = isTipAdjust
@@ -221,6 +296,9 @@ export class UpaController extends DeviceController {
       transactionData.transaction.tipAmount = this.formatAmount(
         builder.gratuity,
       );
+      transactionData.transaction.cashBackAmount = this.formatAmount(
+        manageBuilder.cashBackAmount,
+      );
       transactionData.transaction.taxIndicator = builder.taxIndicator;
       transactionData.transaction.invoiceNbr = builder.invoiceNumber;
       transactionData.transaction.processCPC =
@@ -229,6 +307,8 @@ export class UpaController extends DeviceController {
             ? "1"
             : "0"
           : undefined;
+      transactionData.transaction.purchaseOrder = builder.orderId;
+      transactionData.transaction.clerkId = manageBuilder.clerkId;
     }
 
     if (isTipAdjust) {
@@ -297,6 +377,7 @@ export class UpaController extends DeviceController {
     const isDedicatedAmountCommand =
       transactionType === TransactionType.Reversal ||
       transactionType === TransactionType.Void ||
+      transactionType === TransactionType.Capture ||
       (transactionType === TransactionType.Delete &&
         builder.transactionModifier === TransactionModifier.DeletePreAuth) ||
       (transactionType === TransactionType.Edit &&
@@ -433,11 +514,7 @@ export class UpaController extends DeviceController {
     if (builder.hasSecurityCode !== undefined) {
       processingIndicators.securityCode = builder.hasSecurityCode ? "Y" : "N";
     }
-    // Only add processingIndicators for Sale, Auth, and Refund - NOT for CardVerify (Verify)
-    if (
-      Object.keys(processingIndicators).length > 0 &&
-      transactionType !== TransactionType.Verify
-    ) {
+    if (Object.keys(processingIndicators).length > 0) {
       transactionData.processingIndicators = processingIndicators;
     }
 
@@ -470,6 +547,24 @@ export class UpaController extends DeviceController {
         transactionData.transaction.preAuthAmount = this.formatAmount(
           authBuilder.preAuthAmount,
         );
+        transactionData.transaction.taxAmount = this.formatAmount(
+          builder.taxAmount,
+        );
+        transactionData.transaction.taxIndicator = builder.taxExempt;
+        transactionData.transaction.invoiceNbr = builder.invoiceNumber;
+        transactionData.transaction.tipAmount = this.formatAmount(
+          builder.gratuity,
+        );
+        transactionData.transaction.cashBackAmount = this.formatAmount(
+          builder.cashBackAmount,
+        );
+        transactionData.transaction.processCPC =
+          authBuilder.processCPC !== undefined
+            ? authBuilder.processCPC
+              ? "1"
+              : "0"
+            : undefined;
+        transactionData.transaction.purchaseOrder = builder.orderId;
       } else if (transactionType === TransactionType.Sale) {
         transactionData.transaction.invoiceNbr = builder.invoiceNumber;
         transactionData.transaction.baseAmount = this.formatAmount(
@@ -493,6 +588,17 @@ export class UpaController extends DeviceController {
         transactionData.transaction.cashBackAmount = this.formatAmount(
           builder.cashBackAmount,
         );
+        transactionData.transaction.taxAmount = this.formatAmount(
+          builder.taxAmount,
+        );
+        transactionData.transaction.taxIndicator = builder.taxExempt;
+        transactionData.transaction.processCPC =
+          authBuilder.processCPC !== undefined
+            ? authBuilder.processCPC
+              ? "1"
+              : "0"
+            : undefined;
+        transactionData.transaction.purchaseOrder = builder.orderId;
 
         // Add lineItems if provided
         if (
@@ -507,9 +613,18 @@ export class UpaController extends DeviceController {
           );
         }
       } else {
-        transactionData.transaction.baseAmount = this.formatAmount(
-          builder.amount,
-        );
+        // For Capture, use totalAmount instead of baseAmount
+        // For other types (TipAdjust, Void, Edit), use baseAmount
+        if (transactionType === TransactionType.Capture) {
+          transactionData.transaction.totalAmount = this.formatAmount(
+            builder.amount,
+          );
+        } else {
+          transactionData.transaction.baseAmount = this.formatAmount(
+            builder.amount,
+          );
+        }
+
         //amount change to baseAmount for tip adjust, cash back amount is not sent for tip adjust
         transactionData.transaction.cashBackAmount = this.formatAmount(
           builder.cashBackAmount,
@@ -532,6 +647,19 @@ export class UpaController extends DeviceController {
       }
 
       transactionData.transaction.referenceNumber = builder.terminalRefNumber;
+      transactionData.transaction.shippingAmount = this.formatAmount(
+        authBuilder.shippingAmount,
+      );
+
+      // Use direct taxIndicator if set, otherwise use taxExempt
+      if (authBuilder.taxIndicator !== undefined) {
+        transactionData.transaction.taxIndicator = authBuilder.taxIndicator;
+      } else if (
+        transactionType !== TransactionType.Auth &&
+        builder.taxExempt !== undefined
+      ) {
+        transactionData.transaction.taxIndicator = builder.taxExempt;
+      }
 
       transactionData.transaction.prescriptionAmount = this.formatAmount(
         authBuilder.prescriptionAmount,
@@ -545,6 +673,11 @@ export class UpaController extends DeviceController {
       transactionData.transaction.visionOpticalAmount = this.formatAmount(
         authBuilder.visionOpticalAmount,
       );
+      transactionData.transaction.surchargeAmount = this.formatAmount(
+        authBuilder.surchargeAmount,
+      );
+      transactionData.transaction.confirmationAmount =
+        authBuilder.confirmAmount;
       transactionData.transaction.cardAcquisition = authBuilder.cardAcquisition;
 
       if (authBuilder.transactionDate) {

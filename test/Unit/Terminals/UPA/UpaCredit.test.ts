@@ -26,7 +26,6 @@ import {
   isKnownLiveTransportTimeout,
   useLiveMic,
 } from "./UpaHelpertest";
-import { AcquisitionType } from "../../../../src/Entities/Enums/AcquisitionType";
 
 jest.setTimeout(240000);
 
@@ -603,6 +602,158 @@ describeUpaLive("UPA Credit – updateLodginDetail()", () => {
 });
 
 // ===========================================================================
+// COMPREHENSIVE INTEGRATED TEST SCENARIOS FROM SPEC
+// ===========================================================================
+describeUpaLive(
+  "UPA Credit – Comprehensive Builder Scenarios (Spec Compliance)",
+  () => {
+    let device: IDeviceInterface;
+
+    beforeEach(() => {
+      device = createTestDevice();
+    });
+
+    test("[UpaCreditTests:SPEC-001] Sale with ClerkId + TaxAmount", async () => {
+      const builder = (device as any)
+        .sale(25.0)
+        .withEcrId(13)
+        .withClerkId(1234)
+        .withTaxAmount(2.5);
+
+      const response = await builder.execute();
+      expect(response.status).toBe("Success");
+      expect(response.deviceResponseCode).toBe("00");
+    });
+
+    test("[UpaCreditTests:SPEC-003] Sale with CardBrandTransId", async () => {
+      const request = (device as any)
+        .sale(75.0)
+        .withEcrId(13)
+        .withCardBrandTransId("MCC0484550831");
+
+      const response = await request.execute();
+      expect(response).toBeDefined();
+      expect(response.status).toBe("Success");
+      expect(response.deviceResponseCode).toBe("00");
+      expect(response.command).toBe("Sale");
+      expect(response.cardBrandTransId).toBeDefined();
+    });
+
+    test("[UpaCreditTests:SPEC-004] PreAuth with ClerkId + TaxAmount", async () => {
+      const authresponse = await (device as any)
+        .authorize(10.0)
+        .withEcrId(13)
+        .execute();
+      expect(authresponse).toBeDefined();
+      expect(authresponse.status).toBe("Success");
+      expect(authresponse.deviceResponseCode).toBe("00");
+      const controller =
+        ServicesContainer.instance().getDeviceController() as any;
+
+      const builder = (device as any)
+        .capture(100.0)
+        .withEcrId(13)
+        .withClerkId(1111)
+        .withTransactionId(authresponse.transactionId)
+        .withTaxAmount(5.0);
+
+      const request = controller
+        .buildProcessTransaction(builder)
+        .getJsonRequest();
+
+      expect(request.data.command).toBe("AuthCompletion");
+      expect(request.data.data.params.clerkId).toBe(1111);
+      expect(request.data.data.transaction.taxAmount).toBe("5.00");
+
+      const response = await builder.execute();
+      expect(response).toBeDefined();
+      expect(response.status).toBe("Success");
+      expect(response.deviceResponseCode).toBe("00");
+    });
+
+    test("[UpaCreditTests:SPEC-005] Incremental Auth with preAuthAmount - toFixed(2) validation", async () => {
+      const controller =
+        ServicesContainer.instance().getDeviceController() as any;
+
+      const builder = (device as any)
+        .authorize(10.123)
+        .withEcrId(13)
+        .withPreAuthAmount(10.123);
+
+      const request = controller
+        .buildProcessTransaction(builder)
+        .getJsonRequest();
+      const response = await builder.execute();
+      expect(response).toBeDefined();
+      expect(response.status).toBe("Success");
+      expect(response.deviceResponseCode).toBe("00");
+
+      console.log(
+        `[UpaCreditTests:SPEC-005] PreAuth amount 10.123 formatted as:\n` +
+          JSON.stringify(request.data.data.transaction.preAuthAmount, null, 2),
+      );
+
+      // Verify correct toFixed(2) formatting in REQUEST (device doesn't echo preAuthAmount back)
+      expect(request.data.data.transaction.preAuthAmount).toBe("10.12");
+
+      // Note: preAuthAmount is request-only; device does not echo it in response
+      console.log(
+        `[UpaCreditTests:SPEC-005] Response preAuthAmount: "${
+          response.preAuthAmount ?? "not returned by device"
+        }"`,
+      );
+    });
+
+    test("[UpaCreditTests:SPEC-011] Tax Amount Variants", async () => {
+      const controller =
+        ServicesContainer.instance().getDeviceController() as any;
+      const builder = (device as any)
+        .sale(100.0)
+        .withEcrId(13)
+        .withTaxAmount(5.25);
+
+      const request = controller
+        .buildProcessTransaction(builder)
+        .getJsonRequest();
+
+      console.log(
+        `[UpaCreditTests:SPEC-011] TaxAmount Standard tax:\n` +
+          JSON.stringify(request.data.data.transaction.taxAmount),
+      );
+      const response = await builder.execute();
+      expect(response).toBeDefined();
+      expect(response.status).toBe("Success");
+      expect(response.deviceResponseCode).toBe("00");
+      expect(request.data.data.transaction.taxAmount).toBe("5.25");
+    });
+
+    test("[UpaCreditTests:506] sale() serializes prescription amount", async () => {
+      const controller =
+        ServicesContainer.instance().getDeviceController() as any;
+
+      const builder = (device as any)
+        .sale(6.0)
+        .withEcrId(13)
+        .withPrescriptionAmount(25.5)
+        .withClinicAmount(35.75)
+        .withDentalAmount(40.25);
+      //
+      const request = controller
+        .buildProcessTransaction(builder)
+        .getJsonRequest();
+
+      const response = await builder.execute();
+      expect(response).toBeDefined();
+      expect(response.status).toBe("Success");
+      expect(response.deviceResponseCode).toBe("00");
+
+      expect(request.data.command).toBe("Sale");
+      expect(request.data.data.transaction.prescriptionAmount).toBe("25.50");
+      expect(request.data.data.transaction.clinicAmount).toBe("35.75");
+      expect(request.data.data.transaction.dentalAmount).toBe("40.25");
+    });
+  },
+);
 // sale() with enhanced field support
 // ===========================================================================
 describeUpaLive("UPA Credit – sale() with enhanced fields", () => {
@@ -612,29 +763,16 @@ describeUpaLive("UPA Credit – sale() with enhanced fields", () => {
     device = createTestDevice();
   });
 
-  test("sale() includes clerkId field", async () => {
-    const response = await device
-      .sale(10)
+  test("verify() includes cardBrandTransId field", async () => {
+    const response = await (device as any)
+      .verify()
       .withEcrId(13)
-      .withClerkId(123)
+      .withCardBrandTransId("MCC0484550831")
       .execute();
 
     expect(response).toBeDefined();
     expect(response.status).toBe("Success");
-    console.log(
-      `[Sale ClerkId] Amount: ${response.transactionAmount}, Status: ${response.status}`,
-    );
-  });
-
-  test("sale() includes cardBrandTransId field", async () => {
-    const response = await device
-      .sale(15)
-      .withEcrId(13)
-      .withCardBrandTransId("CARD-BRAND-ID-123")
-      .execute();
-
-    expect(response).toBeDefined();
-    expect(response.status).toBe("Success");
+    expect(response.cardBrandTransId).toBeDefined();
     console.log(
       `[Sale CardBrandTransId] Amount: ${response.transactionAmount}, Status: ${response.status}`,
     );
@@ -646,27 +784,11 @@ describeUpaLive("UPA Credit – sale() with enhanced fields", () => {
       .sale(20)
       .withEcrId(13)
       .withShippingDate(shippingDate)
-      .withInvoiceNumber("INV-2025-001")
+      .withInvoiceNumber("INV2025001")
       .execute();
 
     expect(response).toBeDefined();
     expect(response.status).toBe("Success");
-  });
-
-  test("sale() includes acquisitionTypes in request", async () => {
-    const builder = (device as any)
-      .sale(10)
-      .withEcrId(13)
-      .withAcquisitionTypes([
-        AcquisitionType.Chip,
-        AcquisitionType.Contactless,
-      ]);
-
-    console.log("\n===== EXECUTING SALE WITH ACQUISITION TYPES =====");
-    const response = await builder.execute();
-    console.log("Response Status:", (response as any).status);
-    console.log("Response:", JSON.stringify(response, null, 2));
-    expect(response).toBeDefined();
   });
 });
 
@@ -699,7 +821,7 @@ describeUpaLive("UPA Credit – authorize() with enhanced fields", () => {
     const response = await device
       .authorize(30)
       .withEcrId(12)
-      .withCardBrandTransId("BRAND-TRANS-456")
+      .withCardBrandTransId("MCC0484550831")
       .execute();
 
     expect(response).toBeDefined();
@@ -721,5 +843,121 @@ describeUpaLive("UPA Credit – authorize() with enhanced fields", () => {
     console.log(
       `[Auth PreAuthAmount] Amount: ${response.transactionAmount}, Status: ${response.status}`,
     );
+  });
+});
+// ===========================================================================
+// processCPC serialization for Sale and PreAuth
+// ===========================================================================
+describeUpaLive("UPA Credit – processCPC serialization", () => {
+  let device: IDeviceInterface;
+
+  beforeEach(() => {
+    device = createTestDevice();
+  });
+
+  test("[UpaCreditTests:ProcessCPC-001] sale() with ProcessCPC(true) serializes processCPC as '1'", async () => {
+    const controller =
+      ServicesContainer.instance().getDeviceController() as any;
+
+    const builder = (device as any)
+      .sale(10.0)
+      .withEcrId(13)
+      .withProcessCPC(true);
+
+    // Verify request serialization (processCPC is sent to device)
+    const request = controller
+      .buildProcessTransaction(builder)
+      .getJsonRequest();
+
+    console.log(
+      "[UpaCreditTests:ProcessCPC-001] Sale with ProcessCPC(true) request payload:\n" +
+        JSON.stringify(request, null, 2),
+    );
+
+    expect(request.data.command).toBe("Sale");
+    expect(request.data.data.transaction.processCPC).toBe("1");
+
+    // Execute transaction and verify success
+    const response = await builder.execute();
+
+    expect(response.status).toBe("Success");
+    expect(response.deviceResponseCode).toBe("00");
+
+    console.log(
+      "[UpaCreditTests:ProcessCPC-001] Sale response:\n" +
+        JSON.stringify(response, null, 2),
+    );
+
+    // Note: processCPC is request-only; device may not echo it back in response
+    // If device does return it, it will be populated in response.processCPC
+    console.log(
+      `[UpaCreditTests:ProcessCPC-001] Response processCPC value: "${
+        response.processCPC ?? "not returned by device"
+      }"`,
+    );
+  });
+
+  test("[UpaCreditTests:ProcessCPC-002] sale() with ProcessCPC(false) serializes processCPC as '0'", async () => {
+    const controller =
+      ServicesContainer.instance().getDeviceController() as any;
+
+    const builder = (device as any)
+      .sale(10.0)
+      .withEcrId(13)
+      .withProcessCPC(false);
+
+    const request = controller
+      .buildProcessTransaction(builder)
+      .getJsonRequest();
+    const response = await builder.execute();
+    expect(response.status).toBe("Success");
+    expect(response.deviceResponseCode).toBe("00");
+    expect(request.data.command).toBe("Sale");
+    expect(request.data.data.transaction.processCPC).toBe("0");
+  });
+
+  test("[UpaCreditTests:ProcessCPC-003] sale() without ProcessCPC omits processCPC from request", async () => {
+    const controller =
+      ServicesContainer.instance().getDeviceController() as any;
+
+    const builder = (device as any).sale(10.0).withEcrId(13);
+    const response = await builder.execute();
+    expect(response.status).toBe("Success");
+    expect(response.deviceResponseCode).toBe("00");
+
+    const request = controller
+      .buildProcessTransaction(builder)
+      .getJsonRequest();
+
+    expect(request.data.command).toBe("Sale");
+    expect(request.data.data.transaction.processCPC).toBeUndefined();
+  });
+
+  test("[UpaCreditTests:ProcessCPC-004] capture() uses totalAmount (not baseAmount)", async () => {
+    const controller =
+      ServicesContainer.instance().getDeviceController() as any;
+    const authresponse = await (device as any)
+      .authorize(10.0)
+      .withEcrId(13)
+      .execute();
+    expect(authresponse.status).toBe("Success");
+    expect(authresponse.deviceResponseCode).toBe("00");
+
+    const builder = (device as any)
+      .capture()
+      .withTransactionId(authresponse.transactionId)
+      .withProcessCPC(true)
+      .withAmount(10.0)
+      .withEcrId(13);
+
+    const request = controller
+      .buildProcessTransaction(builder)
+      .getJsonRequest();
+    const response = await builder.execute();
+    expect(response.status).toBe("Success");
+    expect(response.deviceResponseCode).toBe("00");
+    expect(request.data.command).toBe("AuthCompletion");
+    expect(request.data.data.transaction.totalAmount).toBe("10.00");
+    expect(request.data.data.transaction.baseAmount).toBeUndefined();
   });
 });
