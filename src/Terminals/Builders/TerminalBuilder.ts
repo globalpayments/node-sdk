@@ -10,7 +10,6 @@ export abstract class TerminalBuilder extends TransactionBuilder<ITerminalRespon
   referenceNumber?: string;
   ecrId?: number;
   clerkNumber?: string;
-  clerkId?: number;
 
   public withPaymentMethodType(value: PaymentMethodType) {
     this.paymentMethodType = value;

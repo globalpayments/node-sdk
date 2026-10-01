@@ -94,6 +94,8 @@ export class TerminalAuthBuilder extends TerminalBuilder {
 
   public hasSecurityCode?: boolean;
 
+  public clerkId?: number;
+
   public recurring?: boolean;
 
   public shippingAmount?: number;
@@ -263,7 +265,6 @@ export class TerminalAuthBuilder extends TerminalBuilder {
   }
 
   public withCardOnFileIndicator(value: StoredCredentialInitiator) {
-    this.transactionInitiator = value;
     this.cardOnFileIndicator = value;
     return this;
   }
@@ -329,6 +330,11 @@ export class TerminalAuthBuilder extends TerminalBuilder {
 
   public withProcessCPC(processCPC: boolean) {
     this.processCPC = processCPC;
+    return this;
+  }
+
+  public withClerkId(clerkId: number) {
+    this.clerkId = clerkId;
     return this;
   }
 

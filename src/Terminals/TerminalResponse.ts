@@ -47,6 +47,10 @@ export class TerminalResponse extends DeviceResponse {
   terminalVerificationResults?: string;
   merchantFee?: number;
   invoiceNbr?: string;
+  cardBrandTransId?: string;
+  cardAcquisition?: string;
+  maskedPan?: string;
+  deviceSerialNumber?: string;
   constructor() {
     super();
     this.responseCode = "";

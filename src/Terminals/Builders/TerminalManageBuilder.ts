@@ -36,9 +36,18 @@ export class TerminalManageBuilder extends TerminalBuilder {
 
   public terminalRefNumber?: string;
 
+  public clerkId?: number;
+
+  public indicator?: 0 | 1;
+
   public authCode?: string;
 
   public hasSecurityCode?: boolean;
+
+  // Getter for clarity: taxIndicator is stored as 'indicator'
+  public get taxIndicator(): 0 | 1 | undefined {
+    return this.indicator;
+  }
 
   constructor(
     transactionType: TransactionType,
@@ -104,6 +113,15 @@ export class TerminalManageBuilder extends TerminalBuilder {
     return this;
   }
 
+  public withClerkId(clerkId: number) {
+    this.clerkId = clerkId;
+    return this;
+  }
+
+  public withTaxIndicator(indicator: 0 | 1) {
+    this.indicator = indicator;
+    return this;
+  }
   /**
    * Previous request's transaction ID
    *

@@ -136,7 +136,12 @@ export class UpaController extends DeviceController {
       transaction: {},
     };
 
-    if (builder.clerkId !== undefined && builder.clerkId !== null) {
+    if (
+      builder.clerkId !== undefined &&
+      builder.clerkId !== null &&
+      transactionType !== TransactionType.Refund &&
+      transactionType !== TransactionType.Capture
+    ) {
       transactionData.params = {
         clerkId: builder.clerkId,
       };
@@ -296,10 +301,10 @@ export class UpaController extends DeviceController {
       transactionData.transaction.tipAmount = this.formatAmount(
         builder.gratuity,
       );
+      transactionData.transaction.taxIndicator = (builder as any).taxIndicator;
       transactionData.transaction.cashBackAmount = this.formatAmount(
         manageBuilder.cashBackAmount,
       );
-      transactionData.transaction.taxIndicator = builder.taxIndicator;
       transactionData.transaction.invoiceNbr = builder.invoiceNumber;
       transactionData.transaction.processCPC =
         builder.processCPC !== undefined
@@ -307,8 +312,10 @@ export class UpaController extends DeviceController {
             ? "1"
             : "0"
           : undefined;
+      if (builder.clerkId !== undefined && builder.clerkId !== null) {
+        transactionData.transaction.clerkId = builder.clerkId;
+      }
       transactionData.transaction.purchaseOrder = builder.orderId;
-      transactionData.transaction.clerkId = manageBuilder.clerkId;
     }
 
     if (isTipAdjust) {
@@ -341,6 +348,10 @@ export class UpaController extends DeviceController {
 
     if (builder.transactionType === TransactionType.Capture) {
       transactionData.transaction.amount = this.formatAmount(builder.amount);
+      // Per UPA spec §12.4.16: preAuthAmount is the initial amount authorized on the original Pre-Auth
+      transactionData.transaction.preAuthAmount = this.formatAmount(
+        builder.amount,
+      );
     }
 
     if (builder.taxExempt !== undefined) {
@@ -376,8 +387,8 @@ export class UpaController extends DeviceController {
 
     const isDedicatedAmountCommand =
       transactionType === TransactionType.Reversal ||
-      transactionType === TransactionType.Void ||
       transactionType === TransactionType.Capture ||
+      transactionType === TransactionType.Void ||
       (transactionType === TransactionType.Delete &&
         builder.transactionModifier === TransactionModifier.DeletePreAuth) ||
       (transactionType === TransactionType.Edit &&

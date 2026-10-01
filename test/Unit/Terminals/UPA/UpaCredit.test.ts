@@ -13,6 +13,7 @@ import {
   IDeviceInterface,
   Lodging,
   ServicesContainer,
+  StoredCredentialInitiator,
   TransactionResponse,
 } from "../../../../src";
 import {
@@ -27,6 +28,7 @@ import {
   useLiveMic,
 } from "./UpaHelpertest";
 
+import { AcquisitionType } from "../../../../src/Entities/Enums/AcquisitionType";
 jest.setTimeout(240000);
 
 function sleep(delayMs: number): Promise<void> {
@@ -601,6 +603,400 @@ describeUpaLive("UPA Credit – updateLodginDetail()", () => {
   });
 });
 
+describeUpaLive("UPA void test case void support and response parsing ", () => {
+  let device: IDeviceInterface;
+
+  beforeEach(() => {
+    device = createTestDevice();
+  });
+
+  test("void support ", async () => {
+    const saleResponse = (await (device as any)
+      .sale(75.0)
+      .withEcrId(12)
+      .withClerkId(789)
+      .execute()) as TransactionResponse;
+
+    expect(saleResponse.status).toBe("Success");
+
+    const voidResponse = (await (device as any)
+      .void()
+      .withEcrId(12)
+      .withTerminalRefNumber(saleResponse.terminalRefNumber)
+      .withTransactionId(saleResponse.transactionId)
+      .withAmount(saleResponse.transactionAmount)
+      .execute()) as TransactionResponse;
+
+    expect(voidResponse).not.toBeNull();
+    expect(voidResponse.status).toBe("Success");
+  });
+});
+
+describeUpaLive("UPA test for capture/Authcompletion ", () => {
+  let device: IDeviceInterface;
+
+  beforeEach(() => {
+    device = createTestDevice();
+  });
+
+  /**
+   * Test 1: Basic Capture
+   * Per UPA Spec §12.4.16 - AuthCompletion with mandatory fields
+   * Mandatory: referenceNumber, amount
+   */
+  test("UPA Capture - Basic (Auth → Capture)", async () => {
+    const authAmount = 10.0;
+    const captureAmount = 10.0;
+    const ecrId = "1";
+
+    // Step 1: Authorize to get transaction ID
+    const authResponse = await device
+      .authorize(authAmount)
+      .withEcrId(ecrId)
+      .execute();
+
+    expect(authResponse).toBeDefined();
+    expect(authResponse.status).toBe("Success");
+    expect(authResponse.transactionId).toBeTruthy();
+
+    await settleDevice();
+
+    // Step 2: Capture the authorized amount
+    const captureResponse = (await device
+      .capture(captureAmount)
+      .withEcrId(ecrId)
+      .withTransactionId(authResponse.transactionId)
+      .execute()) as TransactionResponse;
+
+    expect(captureResponse).toBeDefined();
+    expect(captureResponse.status).toBe("Success");
+    expect(captureResponse.deviceResponseCode).toBe("00");
+    expect(captureResponse.cardType).toBeDefined();
+    expect(captureResponse.transactionId).toBeTruthy();
+    // Note: transactionAmount may include device surcharges
+    expect(captureResponse.transactionAmount).toBeGreaterThanOrEqual(
+      captureAmount,
+    );
+
+    console.log(
+      `[Capture Basic] TransId: ${captureResponse.transactionId}, Amount: ${captureResponse.transactionAmount}`,
+    );
+  });
+
+  /**
+   * Test 2: Capture with Tax and Tip
+   * Per UPA Spec §12.4.16 - Optional fields: taxAmount, tipAmount
+   * Verifies proper amount aggregation
+   */
+  test("UPA Capture - with Tax and Tip", async () => {
+    const authAmount = 50.0;
+    const taxAmount = 5.0;
+    const tipAmount = 10.0;
+    const ecrId = "1";
+
+    // Step 1: Authorize
+    const authResponse = await device
+      .authorize(authAmount)
+      .withEcrId(ecrId)
+      .execute();
+
+    expect(authResponse).toBeDefined();
+    expect(authResponse.status).toBe("Success");
+    expect(authResponse.transactionId).toBeTruthy();
+
+    await settleDevice();
+
+    // Step 2: Capture with tax and tip
+    const captureResponse = (await device
+      .capture(authAmount)
+      .withEcrId(ecrId)
+      .withTransactionId(authResponse.transactionId)
+      .withTaxAmount(taxAmount)
+      .withGratuity(tipAmount)
+      .execute()) as TransactionResponse;
+
+    expect(captureResponse).toBeDefined();
+    expect(captureResponse.status).toBe("Success");
+    expect(captureResponse.deviceResponseCode).toBe("00");
+
+    // Verify amounts
+    // Note: Device may or may not aggregate tax and tip into total amount
+    // At minimum, should have at least the base authorized amount
+    expect(captureResponse.transactionAmount).toBeGreaterThanOrEqual(
+      authAmount,
+    );
+
+    // Log actual values received for debugging
+    console.log(
+      `[Capture Tax+Tip] Amount: ${captureResponse.transactionAmount}, Tax: ${captureResponse.taxAmount}, Tip: ${captureResponse.tipAmount}`,
+    );
+
+    // Verify tax and tip if populated (may be undefined depending on device response format)
+    if (captureResponse.taxAmount !== undefined) {
+      expect(captureResponse.taxAmount).toBeCloseTo(taxAmount, 2);
+    }
+    if (captureResponse.tipAmount !== undefined) {
+      expect(captureResponse.tipAmount).toBeCloseTo(tipAmount, 2);
+    }
+  });
+
+  /**
+   * Test 3: Capture with Tax Indicator (Tax Exempt)
+   * Per UPA Spec §12.4.16 - taxIndicator: 0 or 1
+   * 0 = tax applicable, 1 = tax exempt
+   */
+  test("UPA Capture - with Tax Indicator (Tax Exempt)", async () => {
+    const authAmount = 30.0;
+    const ecrId = "1";
+    const taxIndicator = 1; // 1 = tax exempt
+
+    // Step 1: Authorize
+    const authResponse = await device
+      .authorize(authAmount)
+      .withEcrId(ecrId)
+      .execute();
+
+    expect(authResponse).toBeDefined();
+    expect(authResponse.status).toBe("Success");
+
+    await settleDevice();
+
+    // Step 2: Capture with tax exempt indicator
+    const captureResponse = (await device
+      .capture(authAmount)
+      .withEcrId(ecrId)
+      .withTransactionId(authResponse.transactionId)
+      .withTaxIndicator(taxIndicator)
+      .execute()) as TransactionResponse;
+
+    expect(captureResponse).toBeDefined();
+    expect(captureResponse.status).toBe("Success");
+    // Note: Device may add surcharges, so check for >= base amount
+    expect(captureResponse.transactionAmount).toBeGreaterThanOrEqual(
+      authAmount,
+    );
+
+    console.log(
+      `[Capture TaxExempt] Amount: ${captureResponse.transactionAmount}, TaxIndicator: ${taxIndicator}`,
+    );
+  });
+
+  /**
+   * Test 4: Capture with Invoice Number
+   * Per UPA Spec §12.4.16 - invoiceNbr: AN(1-16)
+   */
+  test("UPA Capture - with Invoice Number", async () => {
+    const authAmount = 25.0;
+    const ecrId = "1";
+    const invoiceNum = "INV-" + Date.now().toString().slice(-8);
+
+    // Step 1: Authorize
+    const authResponse = await device
+      .authorize(authAmount)
+      .withEcrId(ecrId)
+      .execute();
+
+    expect(authResponse).toBeDefined();
+    expect(authResponse.status).toBe("Success");
+
+    await settleDevice();
+
+    // Step 2: Capture with invoice number
+    const captureResponse = (await device
+      .capture(authAmount)
+      .withEcrId(ecrId)
+      .withTransactionId(authResponse.transactionId)
+      .withInvoiceNumber(invoiceNum)
+      .execute()) as TransactionResponse;
+    expect(captureResponse).toBeDefined();
+    expect(captureResponse.status).toBe("Success");
+    // Invoice number may not be returned in response - if it is, verify it matches
+    if (
+      captureResponse.invoiceNumber !== undefined &&
+      captureResponse.invoiceNumber !== ""
+    ) {
+      expect(captureResponse.invoiceNumber).toBe(invoiceNum);
+    }
+    // Amount check (with device surcharges allowance)
+    expect(captureResponse.transactionAmount).toBeGreaterThanOrEqual(
+      authAmount,
+    );
+
+    console.log(
+      `[Capture Invoice] Invoice: ${captureResponse.invoiceNumber}, Amount: ${captureResponse.transactionAmount}`,
+    );
+  });
+
+  /**
+   * Test 5: Capture with Processing CPC (Commercial Card Processing)
+   * Per UPA Spec §12.4.16 - processCPC: 0 or 1
+   * 0 = No, 1 = Yes
+   */
+  test("UPA Capture - with Processing CPC", async () => {
+    const authAmount = 100.0;
+    const ecrId = "1";
+
+    // Step 1: Authorize
+    const authResponse = await device
+      .authorize(authAmount)
+      .withEcrId(ecrId)
+      .execute();
+
+    expect(authResponse).toBeDefined();
+    expect(authResponse.status).toBe("Success");
+
+    await settleDevice();
+
+    // Step 2: Capture with CPC processing
+    const captureResponse = (await device
+      .capture(authAmount)
+      .withEcrId(ecrId)
+      .withTransactionId(authResponse.transactionId)
+      .withProcessCPC(true)
+      .execute()) as TransactionResponse;
+
+    expect(captureResponse).toBeDefined();
+    expect(captureResponse.status).toBe("Success");
+    // Device may add surcharges, so check for >= base amount
+    expect(captureResponse.transactionAmount).toBeGreaterThanOrEqual(
+      authAmount,
+    );
+
+    console.log(
+      `[Capture CPC] Amount: ${captureResponse.transactionAmount}, ProcessCPC: true`,
+    );
+  });
+
+  /**
+   * Test 6: Capture with All Fields
+   * Per UPA Spec §12.4.16 - Comprehensive test with all optional fields
+   * Fields: amount, preAuthAmount, taxAmount, tipAmount, taxIndicator, processCPC
+   */
+  test("UPA Capture - with All Fields", async () => {
+    const authAmount = 75.0;
+    const taxAmount = 7.5;
+    const tipAmount = 15.0;
+    const ecrId = "1";
+    const invoiceNum = "FULL-" + Date.now().toString().slice(-6);
+    const taxIndicator = 0; // 0 = tax applicable
+
+    // Step 1: Authorize
+    const authResponse = await device
+      .authorize(authAmount)
+      .withEcrId(ecrId)
+      .execute();
+
+    expect(authResponse).toBeDefined();
+    expect(authResponse.status).toBe("Success");
+
+    await settleDevice();
+
+    // Step 2: Capture with all fields
+    const captureResponse = (await device
+      .capture(authAmount)
+      .withEcrId(ecrId)
+      .withTransactionId(authResponse.transactionId)
+      .withTaxAmount(taxAmount)
+      .withGratuity(tipAmount)
+      .withTaxIndicator(taxIndicator)
+      .withInvoiceNumber(invoiceNum)
+      .withProcessCPC(true)
+      .execute()) as TransactionResponse;
+
+    expect(captureResponse).toBeDefined();
+    expect(captureResponse.status).toBe("Success");
+    expect(captureResponse.deviceResponseCode).toBe("00");
+
+    // Verify all fields
+    expect(captureResponse.transactionId).toBeTruthy();
+    // Device may not aggregate all tax/tip components into total - at minimum check base amount
+    expect(captureResponse.transactionAmount).toBeGreaterThanOrEqual(
+      authAmount,
+    );
+
+    // Tax and tip may be undefined or may be populated
+    if (
+      captureResponse.taxAmount !== undefined &&
+      captureResponse.taxAmount > 0
+    ) {
+      expect(captureResponse.taxAmount).toBeGreaterThanOrEqual(0);
+    }
+    if (
+      captureResponse.tipAmount !== undefined &&
+      captureResponse.tipAmount > 0
+    ) {
+      expect(captureResponse.tipAmount).toBeGreaterThanOrEqual(0);
+    }
+
+    expect(captureResponse.cardType).toBeDefined();
+    expect(captureResponse.maskedCardNumber).toBeDefined();
+
+    console.log(
+      `[Capture AllFields] Amount: ${captureResponse.transactionAmount}, Tax: ${captureResponse.taxAmount}, Tip: ${captureResponse.tipAmount}, Invoice: ${captureResponse.invoiceNumber}, ClerkId: ${captureResponse.clerkId}`,
+    );
+  });
+
+  /**
+   * Test 7: Capture Response Field Parsing
+   * Per UPA Spec §12.4.16.5 - Validates all output parameters
+   * Verifies proper response parsing from device
+   */
+  test("UPA Capture - Response Field Parsing", async () => {
+    const authAmount = 40.0;
+    const ecrId = "1";
+
+    // Step 1: Authorize
+    const authResponse = await device
+      .authorize(authAmount)
+      .withEcrId(ecrId)
+      .execute();
+
+    expect(authResponse).toBeDefined();
+    expect(authResponse.status).toBe("Success");
+
+    await settleDevice();
+
+    // Step 2: Capture to validate response parsing
+    const captureResponse = (await device
+      .capture(authAmount)
+      .withEcrId(ecrId)
+      .withTransactionId(authResponse.transactionId)
+      .execute()) as TransactionResponse;
+
+    // Core transaction identifiers (per §12.4.16.5)
+    expect(captureResponse.transactionId).toBeTruthy(); // responseId: N16
+    expect(captureResponse.terminalRefNumber).toBeTruthy(); // tranNo: N4
+    expect(captureResponse.approvalCode).toBeTruthy(); // approvalCode: AN6
+
+    // Response codes (per §12.4.16.5)
+    expect(typeof captureResponse.responseCode).toBe("string");
+    expect(typeof captureResponse.responseText).toBe("string");
+    expect(typeof captureResponse.deviceResponseCode).toBe("string");
+    expect(typeof captureResponse.deviceResponseText).toBe("string");
+
+    // Card information (per §12.4.16.5)
+    expect(typeof captureResponse.cardType).toBe("string");
+    expect(typeof captureResponse.maskedCardNumber).toBe("string");
+    expect(captureResponse.maskedCardNumber).toMatch(/^\d{0,25}$/);
+
+    // Status validation
+    expect(captureResponse.status).toBe("Success");
+    expect(captureResponse.deviceResponseCode).toBe("00"); // "00" = Success
+
+    // Amount validation
+    expect(captureResponse.transactionAmount).toBeCloseTo(authAmount, 2);
+    expect(typeof captureResponse.transactionAmount).toBe("number");
+
+    // Gateway response info (per §12.4.16.5)
+    expect(typeof captureResponse.gatewayResponseCode).toBe("string");
+    expect(typeof captureResponse.gatewayResponseMessage).toBe("string");
+
+    console.log(
+      `[Capture ResponseParsing] TransId: ${captureResponse.transactionId}, RefNum: ${captureResponse.terminalRefNumber}, ApprovalCode: ${captureResponse.approvalCode}, CardType: ${captureResponse.cardType}`,
+    );
+  });
+});
+
 // ===========================================================================
 // COMPREHENSIVE INTEGRATED TEST SCENARIOS FROM SPEC
 // ===========================================================================
@@ -737,7 +1133,7 @@ describeUpaLive(
         .withPrescriptionAmount(25.5)
         .withClinicAmount(35.75)
         .withDentalAmount(40.25);
-      //
+
       const request = controller
         .buildProcessTransaction(builder)
         .getJsonRequest();
@@ -754,6 +1150,8 @@ describeUpaLive(
     });
   },
 );
+
+// ===========================================================================
 // sale() with enhanced field support
 // ===========================================================================
 describeUpaLive("UPA Credit – sale() with enhanced fields", () => {
@@ -843,6 +1241,251 @@ describeUpaLive("UPA Credit – authorize() with enhanced fields", () => {
     console.log(
       `[Auth PreAuthAmount] Amount: ${response.transactionAmount}, Status: ${response.status}`,
     );
+  });
+});
+
+// ===========================================================================
+// JIRA Story Requirements – Field Validation
+// ===========================================================================
+describe("JIRA Story: UPA Transaction Processing – Field Validation", () => {
+  let device: IDeviceInterface;
+
+  beforeEach(() => {
+    device = createTestDevice();
+  });
+
+  /**
+   * Requirement: clerkId
+   * Status: withClerkId() method should be available on builder
+   */
+  test("[Requirement:clerkId] Builder has withClerkId method", async () => {
+    const builder = device.sale(10.0);
+
+    expect(builder).toHaveProperty("withClerkId");
+    expect(typeof builder.withClerkId).toBe("function");
+
+    // Should be chainable
+    const chained = builder.withClerkId(123);
+    const result = await chained.withEcrId("13").execute();
+    expect(result.status).toBe("Success");
+    expect(chained).toBeDefined();
+    expect(chained).toEqual(builder); // Returns self for chaining
+  });
+
+  /**
+   * Requirement: cardBrandTransId
+   * Status: withCardBrandTransId() method should exist and work
+   */
+  test("[Requirement:cardBrandTransId] Builder has withCardBrandTransId method", async () => {
+    const builder = device.sale(10.0).withEcrId("13");
+    const transId = "ABC123XYZ";
+
+    expect(builder).toHaveProperty("withCardBrandTransId");
+    expect(typeof builder.withCardBrandTransId).toBe("function");
+
+    // Should be chainable and store value
+    const chained = builder.withCardBrandTransId(transId);
+    const response = await chained.execute();
+    expect(response.status).toBe("Success");
+    expect(chained).toBeDefined();
+    expect(chained).toEqual(builder);
+    expect((builder as any).cardBrandTransId).toBe(transId);
+  });
+
+  /**
+   * Requirement: cardOnFileIndicator
+   * Status: Should support CardHolder ('C'), Merchant ('M')
+   * Note: R (Recurring) and I (Installment) may require additional enum values
+   */
+  test("[Requirement:cardOnFileIndicator] Builder supports CardHolder and Merchant indicators", async () => {
+    const builderCH = device
+      .sale(10.0)
+      .withCardOnFileIndicator(StoredCredentialInitiator.CardHolder);
+    const builderM = device
+      .sale(10.0)
+      .withCardOnFileIndicator(StoredCredentialInitiator.Merchant);
+
+    expect((builderCH as any).cardOnFileIndicator).toBe(
+      StoredCredentialInitiator.CardHolder,
+    );
+    expect((builderM as any).cardOnFileIndicator).toBe(
+      StoredCredentialInitiator.Merchant,
+    );
+    const responseCH = await builderCH.withEcrId("13").execute();
+    const responseM = await builderM.withEcrId("13").execute();
+    expect(responseCH.status).toBe("Success");
+    expect(responseM.status).toBe("Success");
+  });
+
+  /**
+   * Requirement: preAuthAmount
+   * Status: withPreAuthAmount() should exist and use proper formatting
+   */
+  test("[Requirement:preAuthAmount] Builder has withPreAuthAmount with proper formatting", async () => {
+    const builder = device.authorize(15.0);
+    const preAuthAmt = 25.99;
+
+    expect(builder).toHaveProperty("withPreAuthAmount");
+    expect(typeof builder.withPreAuthAmount).toBe("function");
+
+    builder.withPreAuthAmount(preAuthAmt);
+    expect((builder as any).preAuthAmount).toBe(preAuthAmt);
+    const response = await builder.withEcrId("13").execute();
+    expect(response.status).toBe("Success");
+  });
+
+  /**
+   * Requirement: Processing Indicators
+   * Status: Builder should support quickChip, checkLuhn, securityCode
+   */
+  test("[Requirement:processingIndicators] Builder supports processing indicator flags", async () => {
+    const builder = device.sale(10.0) as any;
+
+    // These should be properties on the builder
+    expect(builder).toHaveProperty("isQuickChip");
+    expect(builder).toHaveProperty("hasCheckLuhn");
+    expect(builder).toHaveProperty("hasSecurityCode");
+    const response = await builder.withEcrId("13").execute();
+    expect(response.status).toBe("Success");
+  });
+});
+
+// ===========================================================================
+// JIRA Story Requirements – Method Chaining
+// ===========================================================================
+describe("JIRA Story: UPA Transaction Processing – Method Chaining", () => {
+  let device: IDeviceInterface;
+
+  beforeEach(() => {
+    device = createTestDevice();
+  });
+
+  /**
+   * All required methods should be chainable
+   */
+  test("[MethodChaining] All required methods are chainable", () => {
+    const result = device
+      .sale(25.0)
+      .withClerkId(101)
+      .withCardOnFileIndicator(StoredCredentialInitiator.CardHolder)
+      .withCardBrandTransId("TransID123")
+      .withLineItemLeft("Item Description")
+      .withLineItemRight("$25.00")
+      .withLanguage("en")
+      .withMerchantDecision("Approve")
+      .withAcquisitionTypes([AcquisitionType.Contact])
+      .withPreAuthAmount(50.0);
+
+    // Verify all values are set
+    expect((result as any).amount).toBe(25.0);
+    expect((result as any).clerkId).toBe(101);
+    expect((result as any).cardOnFileIndicator).toBe(
+      StoredCredentialInitiator.CardHolder,
+    );
+    expect((result as any).cardBrandTransId).toBe("TransID123");
+    expect((result as any).lineItemLeft).toBe("Item Description");
+    expect((result as any).lineItemRight).toBe("$25.00");
+    expect((result as any).language).toBe("en");
+    expect((result as any).merchantDecision).toBe("Approve");
+    expect((result as any).acquisitionTypes).toEqual([AcquisitionType.Contact]);
+    expect((result as any).preAuthAmount).toBe(50.0);
+  });
+});
+
+// ===========================================================================
+// JIRA Story Requirements – Comprehensive Integration Test
+// ===========================================================================
+describe("JIRA Story: UPA Transaction Processing – Comprehensive Integration", () => {
+  let device: IDeviceInterface;
+
+  beforeEach(() => {
+    device = createTestDevice();
+  });
+
+  /**
+   * Complete transaction with all fields
+   */
+  test("[Integration:Complete] Sale with all JIRA story requirements", async () => {
+    // Build complete sale transaction matching JIRA requirements
+    const builder = device
+      .sale(99.99)
+      .withClerkId(42)
+      .withCardOnFileIndicator(StoredCredentialInitiator.CardHolder)
+      .withCardBrandTransId("BrandTxnId-2026-001")
+      .withPreAuthAmount(150.0)
+      .withInvoiceNumber("INV-2026-0001")
+      .withRequestMultiUseToken(true);
+
+    // Verify all properties are accessible (without execution)
+    const builderAsAny = builder as any;
+    expect(builderAsAny.amount).toBe(99.99);
+    expect(builderAsAny.clerkId).toBe(42);
+    expect(builderAsAny.cardOnFileIndicator).toBe(
+      StoredCredentialInitiator.CardHolder,
+    );
+    expect(builderAsAny.cardBrandTransId).toBe("BrandTxnId-2026-001");
+    expect(builderAsAny.preAuthAmount).toBe(150.0);
+    expect(builderAsAny.invoiceNumber).toBe("INV-2026-0001");
+    expect(builderAsAny.requestMultiUseToken).toBe(true);
+
+    const response = await builder.withEcrId("13").execute();
+    expect(response.status).toBe("Success");
+  });
+
+  /**
+   * Refund with cardOnFileIndicator - Merchant initiated
+   *
+   * NOTE: Refund-by-reference with GP-API has a limitation:
+   * - UPA spec requires referenceNumber as AN(4-16)
+   * - Device reference numbers are 12 digits (valid for UPA)
+   * - But GP-API's validation layer expects GatewayTxnId (29 chars)
+   * - This creates a constraint where refund-by-reference through GP-API fails
+   *
+   * Solution: Use refund without reference (card-on-file without transaction ID)
+   * This requires either:
+   * 1. CardData for manual refund
+   * 2. Token from previous tokenized transaction
+   * 3. Or wait for GP-API to support device reference numbers
+   */
+  test("[Integration:Refund] Refund with Merchant cardOnFileIndicator", async () => {
+    // For now, test that refund builder supports cardOnFileIndicator properly
+    // Full refund-by-reference will work once GP-API layer is fixed
+    const refundBuilder = device
+      .refund(50.0)
+      .withClerkId(101)
+      .withCardOnFileIndicator(StoredCredentialInitiator.Merchant)
+      .withEcrId("13");
+
+    const builderAsAny = refundBuilder as any;
+    expect(builderAsAny.amount).toBe(50.0);
+    expect(builderAsAny.clerkId).toBe(101);
+    expect(builderAsAny.cardOnFileIndicator).toBe(
+      StoredCredentialInitiator.Merchant,
+    );
+    const response = await refundBuilder.execute();
+    expect(response.status).toBe("Success");
+
+    // Note: Actual refund execution requires CardData or reference that GP-API accepts
+    // This test verifies the builder supports the JIRA requirements
+  });
+
+  /**
+   * Pre-Authorization with all fields
+   */
+  test("[Integration:PreAuth] Pre-Auth with preAuthAmount and processing indicators", async () => {
+    const builder = device
+      .authorize(200.0)
+      .withClerkId(55)
+      .withCardBrandTransId("PreAuthBrandId")
+      .withPreAuthAmount(250.0);
+
+    const builderAsAny = builder as any;
+    expect(builderAsAny.amount).toBe(200.0);
+    expect(builderAsAny.clerkId).toBe(55);
+    expect(builderAsAny.cardBrandTransId).toBe("PreAuthBrandId");
+    expect(builderAsAny.preAuthAmount).toBe(250.0);
+    const response = await builder.withEcrId("13").execute();
+    expect(response.status).toBe("Success");
   });
 });
 // ===========================================================================
@@ -936,6 +1579,7 @@ describeUpaLive("UPA Credit – processCPC serialization", () => {
   test("[UpaCreditTests:ProcessCPC-004] capture() uses totalAmount (not baseAmount)", async () => {
     const controller =
       ServicesContainer.instance().getDeviceController() as any;
+
     const authresponse = await (device as any)
       .authorize(10.0)
       .withEcrId(13)

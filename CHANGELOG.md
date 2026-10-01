@@ -1,5 +1,12 @@
 # Changelog
-## Latest - v3.12.00 (09/24/26):
+## Latest - v3.13.00 (10/01/26):
+### Enhancements:
+- [UPA-MITC] - Added UPA Capture/AuthCompletion support, including capture amount, pre-authorization amount, tax, tip, invoice, and CPC processing fields.
+- [UPA-MITC] - Improved UPA request serialization for clerk ID, card-on-file indicators, pre-authorization amounts, base amounts, and direct marketing fields.
+- [UPA-MITC] - Enhanced transaction response mapping for tax amount, card brand transaction ID, approval details, device response data, invoice number, clerk ID, and card metadata.
+- [UPA-MITC] - Added validation coverage for Capture, Void, and enhanced UPA transaction workflows.
+
+## v3.12.00 (09/24/26):
 ### Enhancements:
 - [UPA-MITC] - Expanded Terminal Builder support with recurring, shipping, tax, healthcare, confirmation, and surcharge transaction fields.
 - [UPA-MITC] - Enhanced UPA transaction mapping for Capture, Refund, Delete PreAuth, lodging updates, Auth, and Sale, including tip, cashback, tax, invoice, purchase order, clerk, and CPC processing fields.

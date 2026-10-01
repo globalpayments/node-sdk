@@ -12,6 +12,9 @@ export class TransactionResponse implements ITerminalResponse {
   public terminalRefNumber: string;
   public token?: string;
   public cardBrandTransId?: string;
+  public directMktInvoiceNbr?: string;
+  public directMktShipMonth?: string;
+  public directMktShipDay?: string;
   public signatureStatus?: string;
   public signatureData?: Buffer;
   public transactionType?: string;
@@ -60,6 +63,7 @@ export class TransactionResponse implements ITerminalResponse {
   public approvalCode: string;
   public tipAmount?: number;
   public baseAmount?: number;
+  public taxAmount?: number;
   public cashBackAmount?: number;
   public preAuthAmount?: number;
   public referenceNumber = "";
@@ -76,7 +80,6 @@ export class TransactionResponse implements ITerminalResponse {
   public invoiceNumber = "";
   public extraChargeTotal?: number;
   public scanData = "";
-  public taxAmount?: number;
 
   // === TYP (Thank You Points) loyalty fields - Sale ===
   /** Loyalty programme redemption ID returned by TYP host (Sale only). */
@@ -154,6 +157,15 @@ export class TransactionResponse implements ITerminalResponse {
       this.cvvResultText = host?.CvvResultText ?? "";
       this.token = host?.tokenValue ?? "";
       this.cardBrandTransId = host?.cardBrandTransId ?? "";
+      this.directMktInvoiceNbr = this.toStringValue(
+        payment?.directMktInvoiceNbr ?? host?.directMktInvoiceNbr,
+      );
+      this.directMktShipMonth = this.toStringValue(
+        payment?.directMktShipMonth ?? host?.directMktShipMonth,
+      );
+      this.directMktShipDay = this.toStringValue(
+        payment?.directMktShipDay ?? host?.directMktShipDay,
+      );
       this.storeAndForward = this.toNumber(
         payment?.storeAndForward ?? host?.storeAndForward,
       );
@@ -162,6 +174,7 @@ export class TransactionResponse implements ITerminalResponse {
         host?.baseAmount ?? transaction?.baseAmount,
       );
       this.tipAmount = this.toNumber(host?.tipAmount ?? transaction?.tipAmount);
+      this.taxAmount = this.toNumber(host?.taxAmount ?? transaction?.taxAmount);
       this.cashBackAmount = this.toNumber(
         host?.cashBackAmount ?? transaction?.cashBackAmount,
       );
@@ -188,6 +201,7 @@ export class TransactionResponse implements ITerminalResponse {
       this.multipleMessage = this.toStringValue(responseData?.multipleMessage);
       this.terminalNumber = this.toStringValue(responseData?.terminalNumber);
       this.responseId = this.toStringValue(host?.responseId);
+      this.cardBrandTransId = this.toStringValue(host?.cardBrandTransId);
       this.respDateTime = this.toStringValue(host?.respDateTime);
       this.gatewayResponseCode = this.toStringValue(host?.gatewayResponseCode);
       this.gatewayResponseMessage = this.toStringValue(
@@ -273,6 +287,11 @@ export class TransactionResponse implements ITerminalResponse {
       this.maskedCardNumber = this.toStringValue(
         payment?.maskedPan ?? payment?.maskedPAN,
       );
+      this.directMktInvoiceNbr = this.toStringValue(
+        payment?.directMktInvoiceNbr,
+      );
+      this.directMktShipMonth = this.toStringValue(payment?.directMktShipMonth);
+      this.directMktShipDay = this.toStringValue(payment?.directMktShipDay);
       this.transactionAmount =
         this.toNumber(transaction?.totalAmount ?? host?.totalAmount) ?? 0;
       this.extraChargeTotal = this.toNumber(transaction?.extraChargeTotal);
@@ -306,6 +325,9 @@ export class TransactionResponse implements ITerminalResponse {
         this.baseAmount = this.toNumber(host.baseAmount);
         this.tipAmount = this.toNumber(host.tipAmount);
         this.cashBackAmount = this.toNumber(host.cashBackAmount);
+        this.directMktInvoiceNbr = this.toStringValue(host.directMktInvoiceNbr);
+        this.directMktShipMonth = this.toStringValue(host.directMktShipMonth);
+        this.directMktShipDay = this.toStringValue(host.directMktShipDay);
         this.preAuthAmount = this.toNumber(host.preAuthAmount);
         this.taxAmount = this.toNumber(host.taxAmount);
         this.transactionAmount = this.toNumber(host.totalAmount) ?? 0;
