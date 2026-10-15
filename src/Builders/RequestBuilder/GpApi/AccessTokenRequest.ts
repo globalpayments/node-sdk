@@ -8,6 +8,7 @@ export class AccessTokenRequest {
   public seconds_to_expire: number | undefined;
   public interval_to_expire: IntervalToExpire | null | undefined;
   public permissions: string[];
+  public restricted_token: string | undefined;
 
   constructor(
     app_id: string,
@@ -17,6 +18,7 @@ export class AccessTokenRequest {
     seconds_to_expire: number,
     interval_to_expire: IntervalToExpire | null,
     permissions: string[],
+    restricted_token: string | undefined = undefined,
   ) {
     this.app_id = app_id;
     this.nonce = nonce;
@@ -25,5 +27,6 @@ export class AccessTokenRequest {
     this.seconds_to_expire = seconds_to_expire || undefined;
     this.interval_to_expire = interval_to_expire || undefined;
     this.permissions = permissions;
+    this.restricted_token = restricted_token;
   }
 }

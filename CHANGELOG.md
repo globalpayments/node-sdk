@@ -1,5 +1,10 @@
 # Changelog
-## Latest - v3.13.00 (10/01/26):
+## Latest - v3.14.00 (10/15/26):
+### Enhancements:
+- [GP-API] - Complete Access Token feature : Added support for all GP-API request parameters (restrictedToken) and response fields (type, appId, appName, timeCreated, secondsToExpire, intervalToExpire, email, merchantName, fileProcessingAccount fields, scope accounts array). AccessTokenInfo now exposes all token metadata for full GP-API spec compliance.
+-[UPA-MITC] - Enhance UPA refund flow and improved transaction response mapping.
+
+## v3.13.00 (10/01/26):
 ### Enhancements:
 - [UPA-MITC] - Added UPA Capture/AuthCompletion support, including capture amount, pre-authorization amount, tax, tip, invoice, and CPC processing fields.
 - [UPA-MITC] - Improved UPA request serialization for clerk ID, card-on-file indicators, pre-authorization amounts, base amounts, and direct marketing fields.

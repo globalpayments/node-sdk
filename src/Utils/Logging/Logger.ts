@@ -26,7 +26,6 @@ export class Logger {
   private logFilePath: string;
   private logLineCount: number = 0;
   private fileHandleSync: number;
-  private fileHandle: fsPromises.FileHandle;
   private lastLine: string = "";
 
   constructor(logDirectory: string) {
@@ -89,14 +88,6 @@ export class Logger {
     fs.closeSync(this.fileHandleSync);
   }
 
-  async setFileHandle(writeMode: fs.Mode) {
-    this.fileHandle = await fsPromises.open(this.logFilePath, writeMode);
-  }
-
-  async closeFileHandle() {
-    await this.fileHandle.close();
-  }
-
   setDateFormat(dateFormat: string): void {
     this.options.dateFormat = dateFormat;
   }
@@ -130,9 +121,10 @@ export class Logger {
 
   async write(message: string): Promise<void> {
     if (this.fileHandleSync !== null) {
+      let fileHandle: fsPromises.FileHandle | null = null;
       try {
-        await this.setFileHandle("a");
-        await fsPromises.appendFile(this.fileHandle, message);
+        fileHandle = await fsPromises.open(this.logFilePath, "a");
+        await fileHandle.appendFile(message);
         this.lastLine = message.trim();
         this.logLineCount++;
 
@@ -140,14 +132,17 @@ export class Logger {
           this.options.flushFrequency &&
           this.logLineCount % this.options.flushFrequency === 0
         ) {
-          await this.fileHandle.datasync();
+          await fileHandle.datasync();
         }
-
-        await this.closeFileHandle();
       } catch (error) {
         throw new Error(
           "The file could not be written to. Check that appropriate permissions have been set.",
         );
+      } finally {
+        // Always close the file handle, even if an error occurred
+        if (fileHandle) {
+          await fileHandle.close();
+        }
       }
     }
   }

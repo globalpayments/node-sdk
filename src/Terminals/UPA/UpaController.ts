@@ -525,7 +525,11 @@ export class UpaController extends DeviceController {
     if (builder.hasSecurityCode !== undefined) {
       processingIndicators.securityCode = builder.hasSecurityCode ? "Y" : "N";
     }
-    if (Object.keys(processingIndicators).length > 0) {
+    // Only add processingIndicators for Sale, Auth, and Refund - NOT for CardVerify (Verify)
+    if (
+      Object.keys(processingIndicators).length > 0 &&
+      transactionType !== TransactionType.Verify
+    ) {
       transactionData.processingIndicators = processingIndicators;
     }
 
@@ -708,6 +712,7 @@ export class UpaController extends DeviceController {
 
     if (transactionType === TransactionType.Refund) {
       transactionData.transaction ??= {};
+      // Do NOT use gateway transactionId as it is rejected by the device
       transactionData.transaction.totalAmount = this.formatAmount(
         builder.amount,
       );

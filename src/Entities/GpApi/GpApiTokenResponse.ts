@@ -6,6 +6,7 @@ export class GpApiTokenResponse {
   public type: string;
   public timeCreated: string;
   public secondsToExpire: number;
+  public intervalToExpire: string;
   public appId: string;
   public appName: string;
   public email: string;
@@ -16,14 +17,18 @@ export class GpApiTokenResponse {
   public disputeManagementAccountName: string;
   public tokenizationAccountName: string;
   public transactionProcessingAccountName: string;
+  public riskAssessmentAccountName: string;
+  public fileProcessingAccountName: string;
   public merchantManagementAccountName: string;
   public merchantManagementAccountId: string;
+  public fileProcessingAccountId: string;
 
   public static DATA_ACCOUNT_NAME_PREFIX = "DAA_";
   public static DISPUTE_MANAGEMENT_ACCOUNT_NAME_PREFIX = "DIA_";
   public static TOKENIZATION_ACCOUNT_NAME_PREFIX = "TKA_";
   public static TRANSACTION_PROCESSING_ACCOUNT_NAME_PREFIX = "TRA_";
   public static RIKS_ASSESSMENT_ACCOUNT_NAME_PREFIX = "RAA_";
+  public static FILE_PROCESSING_ACCOUNT_PREFIX = "FPA_";
   public static MERCHANT_MANAGEMENT_ACCOUNT_PREFIX = "MMA_";
 
   constructor(response: string) {
@@ -115,6 +120,17 @@ export class GpApiTokenResponse {
       GpApiTokenResponse.RIKS_ASSESSMENT_ACCOUNT_NAME_PREFIX,
     );
   }
+
+  public getFileProcessingAccountName() {
+    return this.getAccountName(
+      GpApiTokenResponse.FILE_PROCESSING_ACCOUNT_PREFIX,
+    );
+  }
+
+  public getFileProcessingAccountID() {
+    return this.getAccountID(GpApiTokenResponse.FILE_PROCESSING_ACCOUNT_PREFIX);
+  }
+
   public getMerchantManagementAccountName() {
     return this.getAccountName(
       GpApiTokenResponse.MERCHANT_MANAGEMENT_ACCOUNT_PREFIX,
@@ -138,12 +154,15 @@ export class GpApiTokenResponse {
     this.appName = response.app_name;
     this.timeCreated = response.time_created;
     this.secondsToExpire = response.seconds_to_expire;
+    this.intervalToExpire = response.interval_to_expire;
     this.email = response.email;
     if (response.scope) {
       this.merchantId = response.scope.merchant_id;
       this.merchantName = response.scope.merchant_name;
       for (const account of response.scope.accounts) {
-        this.accounts.push(new GpApiAccount(account.id, account.name));
+        this.accounts.push(
+          new GpApiAccount(account.id, account.name, account.permissions),
+        );
       }
     }
   }

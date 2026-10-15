@@ -1,7 +1,29 @@
+import { GpApiAccount } from "./GpApiAccount";
+
 export class AccessTokenInfo {
   public accessToken: string;
 
+  public token: string;
+
+  public type: string;
+
+  public appId: string;
+
+  public appName: string;
+
+  public timeCreated: string;
+
+  public secondsToExpire: number;
+
+  public intervalToExpire: string;
+
+  public email: string;
+
   public merchantId: string;
+
+  public merchantName: string;
+
+  public accounts: GpApiAccount[] = [];
 
   public dataAccountName: string;
 
@@ -13,6 +35,8 @@ export class AccessTokenInfo {
 
   public riskAssessmentAccountName: string;
 
+  public fileProcessingAccountName: string;
+
   public dataAccountID: string;
 
   public disputeManagementAccountID: string;
@@ -22,6 +46,8 @@ export class AccessTokenInfo {
   public transactionProcessingAccountID: string;
 
   public riskAssessmentAccountID: string;
+
+  public fileProcessingAccountID: string;
 
   public merchantManagementAccountName: string;
 

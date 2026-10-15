@@ -65,6 +65,10 @@ export class TransactionResponse implements ITerminalResponse {
   public baseAmount?: number;
   public taxAmount?: number;
   public cashBackAmount?: number;
+  public authorizedAmount?: number;
+  public tokenResponseCode?: string;
+  public tokenResponseMessage?: string;
+  public panSequenceNumber?: string;
   public preAuthAmount?: number;
   public referenceNumber = "";
   public cardHolderName?: string;
@@ -80,6 +84,82 @@ export class TransactionResponse implements ITerminalResponse {
   public invoiceNumber = "";
   public extraChargeTotal?: number;
   public scanData = "";
+
+  // === EMV Tag Properties ===
+  /** EMV Tag 4F - Application Dedicated File (ADF). */
+  public applicationIdentifier?: string;
+  /** EMV Tag 50 - Application Label. */
+  public emvApplicationLabel?: string;
+  /** EMV Tag 5F20 - Cardholder Name. */
+  public emvCardholderName?: string;
+  /** EMV Tag 5F2A - Transaction Currency Code. */
+  public transactionCurrencyCode?: string;
+  /** EMV Tag 5F34 - Application Primary Account Number (PAN). */
+  public applicationPAN?: string;
+  /** EMV Tag 82 - Application Dedicated File (ADF) Name / Application Indicator. */
+  public applicationAIP?: string;
+  /** EMV Tag 84 - Dedicated File (DF) Name. */
+  public dedicatedDF?: string;
+  /** EMV Tag 8A - Authorised Response Code. */
+  public authorizedResponse?: string;
+  /** EMV Tag 95 - Terminal Verification Results. */
+  public emvTerminalVerificationResults?: string;
+  /** EMV Tag 99 - Transaction PIN Data. */
+  public transactionPIN?: string;
+  /** EMV Tag 9A - Transaction Date. */
+  public transactionDate?: string;
+  /** EMV Tag 9B - Transaction Status Information (TSI). */
+  public transactionTSI?: string;
+  /** EMV Tag 9C - Transaction Type. */
+  public transactionTypeEMV?: string;
+  /** EMV Tag 9F02 - Amount, Authorised. */
+  public amountAuthorised?: string;
+  /** EMV Tag 9F03 - Amount, Other. */
+  public otherAmount?: string;
+  /** EMV Tag 9F06 - Application Identifier (AID). */
+  public emvApplicationId?: string;
+  /** EMV Tag 9F08 - Application Dedicated File (ADF) Name / Application Effective Date. */
+  public applicationICC?: string;
+  /** EMV Tag 9F0D - Issuer Action Code (IAC) - Default. */
+  public iacDefault?: string;
+  /** EMV Tag 9F0E - Issuer Action Code (IAC) - Denial. */
+  public iacDenial?: string;
+  /** EMV Tag 9F0F - Issuer Action Code (IAC) - Online. */
+  public iacOnline?: string;
+  /** EMV Tag 9F10 - Issuer Application Data (IAD). */
+  public issuerApplicationData?: string;
+  /** EMV Tag 9F12 - Application Preferred Name. */
+  public emvApplicationPreferredName?: string;
+  /** EMV Tag 9F1A - Terminal Country Code. */
+  public terminalCountryCode?: string;
+  /** EMV Tag 9F1E - Interface Device (IFD) Serial Number. */
+  public ifdSerialNumber?: string;
+  /** EMV Tag 9F26 - Cryptogram, Application (AC). */
+  public emvApplicationCryptogram?: string;
+  /** EMV Tag 9F27 - Cryptogram, Application Type. */
+  public applicationCryptogramType_Tag?: string;
+  /** EMV Tag 9F33 - Terminal Capabilities. */
+  public terminalCapabilities?: string;
+  /** EMV Tag 9F34 - CVM Results. */
+  public cvmResults?: string;
+  /** EMV Tag 9F35 - Terminal Type. */
+  public terminalType?: string;
+  /** EMV Tag 9F36 - Application Transaction Counter (ATC). */
+  public applicationTransactionCounter?: string;
+  /** EMV Tag 9F37 - Unpredictable Number (UN). */
+  public unpredictableNumber?: string;
+  /** EMV Tag 9F40 - Additional Terminal Capabilities. */
+  public additionalTerminalCapabilities?: string;
+  /** EMV Tag 9F41 - Transaction Sequence Counter (TSC). */
+  public transactionSequenceCounter?: string;
+  /** EMV Tag 9F53 - Transaction Category Code (TCC). */
+  public transactionCategoryCode?: string;
+  /** Terminal Action Code (TAC) - Default. */
+  public tacDefault?: string;
+  /** Terminal Action Code (TAC) - Denial. */
+  public tacDenial?: string;
+  /** Terminal Action Code (TAC) - Online. */
+  public tacOnline?: string;
 
   // === TYP (Thank You Points) loyalty fields - Sale ===
   /** Loyalty programme redemption ID returned by TYP host (Sale only). */
@@ -178,12 +258,20 @@ export class TransactionResponse implements ITerminalResponse {
       this.cashBackAmount = this.toNumber(
         host?.cashBackAmount ?? transaction?.cashBackAmount,
       );
+      this.authorizedAmount = this.toNumber(host?.authorizedAmount);
       this.preAuthAmount = this.toNumber(
         host?.preAuthAmount ?? transaction?.preAuthAmount,
       );
       this.taxAmount = this.toNumber(host?.taxAmount ?? transaction?.taxAmount);
       this.transactionAmount =
         this.toNumber(host?.totalAmount ?? transaction?.totalAmount) ?? 0;
+
+      // Fallback: if baseAmount is missing but we have transactionAmount,
+      // use transactionAmount as baseAmount (for refunds and other transaction types
+      // where device doesn't return separate baseAmount)
+      if (!this.baseAmount && this.transactionAmount) {
+        this.baseAmount = this.transactionAmount;
+      }
       this.availableBalance = this.toNumber(host?.availableBalance);
       this.balanceAmount = this.toNumber(host?.balanceDue) ?? 0;
       this.paymentType = payment?.cardType ?? "";
@@ -210,6 +298,11 @@ export class TransactionResponse implements ITerminalResponse {
       this.invoiceNumber = this.toStringValue(payment?.invoiceNbr);
       this.extraChargeTotal = this.toNumber(transaction?.extraChargeTotal);
       this.scanData = this.toStringValue(responseData?.scanData);
+      this.token = host?.tokenValue ?? "";
+      this.tokenResponseCode = this.toStringValue(host?.tokenRspCode);
+      this.tokenResponseMessage = this.toStringValue(host?.tokenRspMsg);
+      this.cardBIN = this.toStringValue(payment?.cardBIN);
+      this.panSequenceNumber = this.toStringValue(payment?.panSequenceNumber);
 
       // CPC (Card Present Capable) processing indicator
       // Note: processCPC is request-only; device does not echo it in response
@@ -246,6 +339,61 @@ export class TransactionResponse implements ITerminalResponse {
         this.voidDiscountAmountRedeemed = this.toNumber(
           host.voidDiscountAmountRedeemed,
         );
+      }
+
+      // EMV Tag Mappings
+      const emv = responseData?.emv;
+      if (emv) {
+        this.applicationIdentifier = this.toStringValue(emv["4F"]);
+        this.emvApplicationLabel = this.toStringValue(emv["50"]);
+        this.emvCardholderName = this.toStringValue(emv["5F20"]);
+        this.transactionCurrencyCode = this.toStringValue(emv["5F2A"]);
+        this.applicationPAN = this.toStringValue(emv["5F34"]);
+        this.applicationAIP = this.toStringValue(emv["82"]);
+        this.dedicatedDF = this.toStringValue(emv["84"]);
+        this.authorizedResponse = this.toStringValue(emv["8A"]);
+        this.emvTerminalVerificationResults = this.toStringValue(emv["95"]);
+        this.transactionPIN = this.toStringValue(emv["99"]);
+        this.transactionDate = this.toStringValue(emv["9A"]);
+        this.transactionTSI = this.toStringValue(emv["9B"]);
+        this.transactionTypeEMV = this.toStringValue(emv["9C"]);
+        this.amountAuthorised = this.toStringValue(emv["9F02"]);
+        this.otherAmount = this.toStringValue(emv["9F03"]);
+        this.emvApplicationId = this.toStringValue(emv["9F06"]);
+        this.applicationICC = this.toStringValue(emv["9F08"]);
+        this.iacDefault = this.toStringValue(emv["9F0D"]);
+        this.iacDenial = this.toStringValue(emv["9F0E"]);
+        this.iacOnline = this.toStringValue(emv["9F0F"]);
+        this.issuerApplicationData = this.toStringValue(emv["9F10"]);
+        this.emvApplicationPreferredName = this.toStringValue(emv["9F12"]);
+        this.terminalCountryCode = this.toStringValue(emv["9F1A"]);
+        this.ifdSerialNumber = this.toStringValue(emv["9F1E"]);
+        this.emvApplicationCryptogram = this.toStringValue(emv["9F26"]);
+        this.applicationCryptogramType_Tag = this.toStringValue(emv["9F27"]);
+        this.terminalCapabilities = this.toStringValue(emv["9F33"]);
+        this.cvmResults = this.toStringValue(emv["9F34"]);
+        this.cardHolderVerificationMethod = this.toStringValue(emv["9F34"]);
+        this.terminalType = this.toStringValue(emv["9F35"]);
+        this.applicationTransactionCounter = this.toStringValue(emv["9F36"]);
+        this.unpredictableNumber = this.toStringValue(emv["9F37"]);
+        this.additionalTerminalCapabilities = this.toStringValue(emv["9F40"]);
+        this.transactionSequenceCounter = this.toStringValue(emv["9F41"]);
+        this.transactionCategoryCode = this.toStringValue(emv["9F53"]);
+        this.tacDefault = this.toStringValue(emv["TacDefault"]);
+        this.tacDenial = this.toStringValue(emv["TacDenial"]);
+        this.tacOnline = this.toStringValue(emv["TacOnline"]);
+
+        // Fallback to alternate tag names if available
+        this.applicationLabel =
+          this.applicationLabel || this.emvApplicationLabel;
+        this.applicationId = this.applicationId || this.emvApplicationId;
+        this.applicationPreferredName =
+          this.applicationPreferredName || this.emvApplicationPreferredName;
+        this.applicationCryptogram =
+          this.applicationCryptogram || this.emvApplicationCryptogram;
+        this.terminalVerificationResults =
+          this.terminalVerificationResults ||
+          this.emvTerminalVerificationResults;
       }
     } else {
       // Native UPA device response (semi-integrated socket format).
@@ -324,13 +472,25 @@ export class TransactionResponse implements ITerminalResponse {
         this.avsResponseText = host.AvsResultText ?? "";
         this.baseAmount = this.toNumber(host.baseAmount);
         this.tipAmount = this.toNumber(host.tipAmount);
+        this.taxAmount = this.toNumber(host.taxAmount);
         this.cashBackAmount = this.toNumber(host.cashBackAmount);
+        this.authorizedAmount = this.toNumber(host.authorizedAmount);
         this.directMktInvoiceNbr = this.toStringValue(host.directMktInvoiceNbr);
         this.directMktShipMonth = this.toStringValue(host.directMktShipMonth);
         this.directMktShipDay = this.toStringValue(host.directMktShipDay);
         this.preAuthAmount = this.toNumber(host.preAuthAmount);
         this.taxAmount = this.toNumber(host.taxAmount);
         this.transactionAmount = this.toNumber(host.totalAmount) ?? 0;
+        this.token = this.toStringValue(host.tokenValue);
+        this.tokenResponseCode = this.toStringValue(host.tokenRspCode);
+        this.tokenResponseMessage = this.toStringValue(host.tokenRspMsg);
+
+        // Fallback: if baseAmount is missing but we have transactionAmount,
+        // use transactionAmount as baseAmount (for refunds and other transaction types
+        // where device doesn't return separate baseAmount)
+        if (!this.baseAmount && this.transactionAmount) {
+          this.baseAmount = this.transactionAmount;
+        }
 
         // TYP - Sale redemption
         if (host.redeemId) {
@@ -365,6 +525,63 @@ export class TransactionResponse implements ITerminalResponse {
         this.cardGroup = payment.cardGroup ?? "";
         this.maskedCardNumber = payment.maskedPan ?? payment.maskedPAN ?? "";
         this.cardHolderName = payment.cardHolderName ?? "";
+        this.cardBIN = this.toStringValue(payment.cardBIN);
+        this.panSequenceNumber = this.toStringValue(payment.panSequenceNumber);
+      }
+
+      // EMV Tag Mappings for native UPA response
+      const emv = responseData?.emv;
+      if (emv) {
+        this.applicationIdentifier = this.toStringValue(emv["4F"]);
+        this.emvApplicationLabel = this.toStringValue(emv["50"]);
+        this.emvCardholderName = this.toStringValue(emv["5F20"]);
+        this.transactionCurrencyCode = this.toStringValue(emv["5F2A"]);
+        this.applicationPAN = this.toStringValue(emv["5F34"]);
+        this.applicationAIP = this.toStringValue(emv["82"]);
+        this.dedicatedDF = this.toStringValue(emv["84"]);
+        this.authorizedResponse = this.toStringValue(emv["8A"]);
+        this.emvTerminalVerificationResults = this.toStringValue(emv["95"]);
+        this.transactionPIN = this.toStringValue(emv["99"]);
+        this.transactionDate = this.toStringValue(emv["9A"]);
+        this.transactionTSI = this.toStringValue(emv["9B"]);
+        this.transactionTypeEMV = this.toStringValue(emv["9C"]);
+        this.amountAuthorised = this.toStringValue(emv["9F02"]);
+        this.otherAmount = this.toStringValue(emv["9F03"]);
+        this.emvApplicationId = this.toStringValue(emv["9F06"]);
+        this.applicationICC = this.toStringValue(emv["9F08"]);
+        this.iacDefault = this.toStringValue(emv["9F0D"]);
+        this.iacDenial = this.toStringValue(emv["9F0E"]);
+        this.iacOnline = this.toStringValue(emv["9F0F"]);
+        this.issuerApplicationData = this.toStringValue(emv["9F10"]);
+        this.emvApplicationPreferredName = this.toStringValue(emv["9F12"]);
+        this.terminalCountryCode = this.toStringValue(emv["9F1A"]);
+        this.ifdSerialNumber = this.toStringValue(emv["9F1E"]);
+        this.emvApplicationCryptogram = this.toStringValue(emv["9F26"]);
+        this.applicationCryptogramType_Tag = this.toStringValue(emv["9F27"]);
+        this.terminalCapabilities = this.toStringValue(emv["9F33"]);
+        this.cvmResults = this.toStringValue(emv["9F34"]);
+        this.cardHolderVerificationMethod = this.toStringValue(emv["9F34"]);
+        this.terminalType = this.toStringValue(emv["9F35"]);
+        this.applicationTransactionCounter = this.toStringValue(emv["9F36"]);
+        this.unpredictableNumber = this.toStringValue(emv["9F37"]);
+        this.additionalTerminalCapabilities = this.toStringValue(emv["9F40"]);
+        this.transactionSequenceCounter = this.toStringValue(emv["9F41"]);
+        this.transactionCategoryCode = this.toStringValue(emv["9F53"]);
+        this.tacDefault = this.toStringValue(emv["TacDefault"]);
+        this.tacDenial = this.toStringValue(emv["TacDenial"]);
+        this.tacOnline = this.toStringValue(emv["TacOnline"]);
+
+        // Fallback to alternate tag names if available
+        this.applicationLabel =
+          this.applicationLabel || this.emvApplicationLabel;
+        this.applicationId = this.applicationId || this.emvApplicationId;
+        this.applicationPreferredName =
+          this.applicationPreferredName || this.emvApplicationPreferredName;
+        this.applicationCryptogram =
+          this.applicationCryptogram || this.emvApplicationCryptogram;
+        this.terminalVerificationResults =
+          this.terminalVerificationResults ||
+          this.emvTerminalVerificationResults;
       }
     }
   }

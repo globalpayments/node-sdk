@@ -188,6 +188,7 @@ export class GpApiConnector
         this.gpApiConfig.intervalToExpire,
         this.gpApiConfig.permissions,
         porticoTokenConfig,
+        this.gpApiConfig.restrictedToken,
       );
     } else {
       request = await GpApiSessionInfo.signIn(
@@ -196,6 +197,8 @@ export class GpApiConnector
         this.gpApiConfig.secondsToExpire,
         this.gpApiConfig.intervalToExpire,
         this.gpApiConfig.permissions,
+        null,
+        this.gpApiConfig.restrictedToken,
       );
     }
 

@@ -90,10 +90,12 @@ export class GpApiManagementRequestBuilder implements IRequestBuilder {
         verb = "POST";
         payload = {
           amount: builder.amount && StringUtils.toNumeric(builder.amount),
-          gratuity: builder.gratuity && StringUtils.toNumeric(builder.gratuity),
+          gratuity_amount:
+            builder.gratuity && StringUtils.toNumeric(builder.gratuity),
           currency_conversion: builder.dccRateData
             ? this.getDccRate(builder.dccRateData)
             : undefined,
+          description: builder.description || undefined,
         };
         break;
       case TransactionType.DisputeAcceptance:
@@ -129,6 +131,7 @@ export class GpApiManagementRequestBuilder implements IRequestBuilder {
           currency_conversion: builder.dccRateData
             ? this.getDccRate(builder.dccRateData)
             : undefined,
+          description: builder.description || undefined,
         };
 
         if (builder.paymentMethod instanceof TransactionReference) {

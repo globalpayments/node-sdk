@@ -39,6 +39,17 @@ export class GpApiService {
 
     const accessTokenInfo = new AccessTokenInfo();
     accessTokenInfo.accessToken = data.token;
+    accessTokenInfo.token = data.token;
+    accessTokenInfo.type = data.type;
+    accessTokenInfo.appId = data.appId;
+    accessTokenInfo.appName = data.appName;
+    accessTokenInfo.timeCreated = data.timeCreated;
+    accessTokenInfo.secondsToExpire = data.secondsToExpire;
+    accessTokenInfo.intervalToExpire = data.intervalToExpire;
+    accessTokenInfo.email = data.email;
+    accessTokenInfo.merchantId = data.merchantId;
+    accessTokenInfo.merchantName = data.merchantName;
+    accessTokenInfo.accounts = data.accounts;
     accessTokenInfo.dataAccountName = data.getDataAccountName();
     accessTokenInfo.disputeManagementAccountName =
       data.getDisputeManagementAccountName();
@@ -47,6 +58,8 @@ export class GpApiService {
     accessTokenInfo.tokenizationAccountName = data.getTokenizationAccountName();
     accessTokenInfo.riskAssessmentAccountName =
       data.getRiskAssessmentAccountName();
+    accessTokenInfo.fileProcessingAccountName =
+      data.getFileProcessingAccountName();
     accessTokenInfo.merchantManagementAccountName =
       data.getMerchantManagementAccountName();
     accessTokenInfo.dataAccountID = data.getDataAccountID();
@@ -56,6 +69,7 @@ export class GpApiService {
       data.getTransactionProcessingAccountID();
     accessTokenInfo.tokenizationAccountID = data.getTokenizationAccountID();
     accessTokenInfo.riskAssessmentAccountID = data.getRiskAssessmentAccountID();
+    accessTokenInfo.fileProcessingAccountID = data.getFileProcessingAccountID();
     accessTokenInfo.merchantManagementAccountID =
       data.getMerchantManagementAccountID();
 

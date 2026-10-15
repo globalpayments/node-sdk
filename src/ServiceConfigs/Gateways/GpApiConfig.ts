@@ -27,6 +27,8 @@ export class GpApiConfig extends GatewayConfig {
 
   public intervalToExpire: IntervalToExpire;
 
+  public restrictedToken: string;
+
   public methodNotificationUrl: string;
 
   public challengeNotificationUrl: string;

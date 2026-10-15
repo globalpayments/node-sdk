@@ -33,6 +33,7 @@ export class GpApiSessionInfo {
     intervalToExpire: IntervalToExpire | null = null,
     permissions: string[],
     porticoTokenConfig: PorticoTokenConfig | null = null,
+    restrictedToken: string | null = null,
   ) {
     let requestBody: object;
 
@@ -56,6 +57,7 @@ export class GpApiSessionInfo {
         secondsToExpire,
         intervalToExpire,
         permissions,
+        restrictedToken || undefined,
       );
     }
 

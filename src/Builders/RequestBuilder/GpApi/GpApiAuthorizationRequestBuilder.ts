@@ -32,6 +32,7 @@ import {
   CardUtils,
   StoredCredential,
   EntryMethod,
+  TransactionReference,
 } from "../../../../src";
 
 type FraudManagement = {
@@ -286,6 +287,12 @@ export class GpApiAuthorizationRequestBuilder implements IRequestBuilder {
         TransactionModifier.DecryptedMobile,
       ].includes(builder.transactionModifier)
     ) {
+      // Handle TransactionReference (for refunds by reference)
+      if (paymentMethodContainer instanceof TransactionReference) {
+        paymentMethod.id = paymentMethodContainer.transactionId;
+        return paymentMethod;
+      }
+
       if (
         paymentMethodContainer instanceof CreditCardData &&
         paymentMethodContainer.token
