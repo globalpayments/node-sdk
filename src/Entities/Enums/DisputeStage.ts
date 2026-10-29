@@ -8,4 +8,5 @@ export enum DisputeStage {
   PreCompliance = "PRE_COMPLIANCE",
   Compliance = "COMPLIANCE",
   Goodfaith = "GOODFAITH",
+  MastercardPreDispute = "MASTERCARD PRE-DISPUTE",
 }

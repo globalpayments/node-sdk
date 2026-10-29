@@ -850,6 +850,8 @@ export enum SearchCriteria {
   DisputeStage = "disputeStage",
   DisputeStatus = "disputeStatus",
   DisputeDocumentId = "disputeDocumentId",
+  OrderReference = "orderReference",
+  AcquirerCode = "acquirerCode",
   UniqueDeviceId = "uniqueDeviceId",
   UserName = "username",
   Name = "name",

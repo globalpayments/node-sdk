@@ -60,6 +60,8 @@ export class SearchCriteriaBuilder<T> {
   public disputeDocumentId?: string;
   public disputeStage?: DisputeStage;
   public disputeStatus?: DisputeStatus;
+  public orderReference?: string;
+  public acquirerCode?: string;
   public endBatchDate?: Date;
   public endDate?: Date;
   public fromTimeLastUpdated?: string;

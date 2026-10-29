@@ -268,6 +268,12 @@ export class GpApiConnector
     }
 
     return this.executeProcess(builder).then((response: string) => {
+      if (
+        builder.transactionType === TransactionType.DisputeAcceptance ||
+        builder.transactionType === TransactionType.DisputeChallenge
+      ) {
+        return GpApiMapping.mapDisputeResponse(response);
+      }
       if (builder.paymentMethod instanceof AlternativePaymentMethod) {
         return GpApiMapping.mapResponseAPM(response);
       }

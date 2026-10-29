@@ -1,5 +1,12 @@
 # Changelog
-## Latest - v3.14.00 (10/15/26):
+## Latest - v3.15.00 (10/29/26):
+### Enhancements:
+- [GP-API] Expanded Disputes list/detail response mappings, including action, merchant/account scope, payer and merchant amounts, card metadata, financial adjustments, provider evidence, and transaction details.
+- [GP-API] Added Disputes order reference and acquirer code filters, Mastercard pre-dispute stage, and the document ID helper. Document download exposes both `b64Content` and `b64_content`.
+- [GP-API] Accept and Challenge retain the `Transaction` response and now expose mapped `disputeSummary` and `action` details. Accept sends no request body.
+- [GP-API] Added deterministic field-level tests and expanded sandbox dispute examples.
+
+## v3.14.00 (10/15/26):
 ### Enhancements:
 - [GP-API] - Complete Access Token feature : Added support for all GP-API request parameters (restrictedToken) and response fields (type, appId, appName, timeCreated, secondsToExpire, intervalToExpire, email, merchantName, fileProcessingAccount fields, scope accounts array). AccessTokenInfo now exposes all token metadata for full GP-API spec compliance.
 -[UPA-MITC] - Enhance UPA refund flow and improved transaction response mapping.

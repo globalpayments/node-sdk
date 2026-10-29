@@ -1,5 +1,6 @@
 /* eslint-disable indent */
 import {
+  DisputeDocument,
   DepositSummary,
   DisputeSummary,
   PagedResult,
@@ -85,8 +86,8 @@ export class ReportingService {
 
   public static documentDisputeDetail(
     disputeId: string | null,
-  ): TransactionReportBuilder<PagedResult> {
-    return new TransactionReportBuilder<PagedResult>(
+  ): TransactionReportBuilder<DisputeDocument> {
+    return new TransactionReportBuilder<DisputeDocument>(
       ReportType.DocumentDisputeDetail,
     ).withDisputeId(disputeId);
   }

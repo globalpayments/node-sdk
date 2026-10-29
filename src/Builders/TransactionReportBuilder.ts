@@ -64,6 +64,11 @@ export class TransactionReportBuilder<T> extends ReportBuilder<T> {
     return this;
   }
 
+  public withDisputeDocumentId(disputeDocumentId: string) {
+    this.searchBuilder.disputeDocumentId = disputeDocumentId;
+    return this;
+  }
+
   public withEndDate(endDate?: Date) {
     this.searchBuilder.endDate = endDate;
     return this;

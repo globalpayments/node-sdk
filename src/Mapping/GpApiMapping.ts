@@ -1,4 +1,5 @@
 import {
+  Action,
   AlternativePaymentResponse,
   AuthenticationSource,
   DccRateData,
@@ -272,17 +273,26 @@ export class GpApiMapping {
         report = this.mapDisputeSummary(response);
         break;
       case ReportType.DocumentDisputeDetail:
-        report = new DisputeDocument();
-        report.id = response.id;
-        report.b64Content = response.b64_content;
+        report = this.mapDisputeDocument(response);
         break;
       case ReportType.FindDisputesPaged:
       case ReportType.FindSettlementDisputesPaged:
         report = this.setPagingInfo(response);
 
-        report.result = response.disputes.map((dispute: any) =>
+        report.result = (response.disputes ?? []).map((dispute: any) =>
           this.mapDisputeSummary(dispute),
         );
+        if (reportType === ReportType.FindDisputesPaged) {
+          report.currentPageSize = response.current_page_size ?? null;
+          report.totalRecordCount =
+            response.total_record_count ?? response.total_count ?? null;
+          report.merchantId = response.merchant_id;
+          report.merchantName = response.merchant_name;
+          report.accountId = response.account_id;
+          report.accountName = response.account_name;
+          report.filter = response.filter;
+          report.action = this.mapAction(response.action);
+        }
         break;
       default:
         throw new ApiError("Report type not supported!");
@@ -609,47 +619,142 @@ export class GpApiMapping {
 
   static mapDisputeSummary(response: any): DisputeSummary {
     const summary = new DisputeSummary();
+    summary.action = this.mapAction(response.action);
+    summary.merchantId = response.merchant_id ?? response.system?.mid;
+    summary.platformMerchantName = response.merchant_name;
+    summary.accountId = response.account_id;
+    summary.accountName = response.account_name;
+    summary.caseStageTime = response.stage_time_created
+      ? new Date(response.stage_time_created)
+      : null;
+    summary.caseStatusTime = response.status_time_created
+      ? new Date(response.status_time_created)
+      : null;
+    if (response.payer_amount != null) {
+      summary.disputeCustomerAmount = Number(
+        StringUtils.toAmount(response.payer_amount),
+      );
+    }
+    summary.disputeCustomerCurrency = response.payer_currency;
+    summary.merchantAmount = StringUtils.toAmount(response.merchant_amount);
+    summary.merchantCurrency = response.merchant_currency;
+    summary.investigatorComment = response.investigator_comment;
+    summary.fundingType = response.funding_type;
+    summary.lastAdjustmentTimeCreated = response.last_adjustment_time_created
+      ? new Date(response.last_adjustment_time_created)
+      : null;
+    summary.netFinancialAmount = StringUtils.toAmount(
+      response.net_financial_amount,
+    );
+    summary.netFinancialCurrency = response.net_financial_currency;
+    summary.netFinancialFunding = response.net_financial_funding;
+    summary.foreignIssuedCard = response.foreign_issued_card;
+    summary.dispositionDescription = response.disposition_description;
+    summary.dispositionDate = response.disposition_date
+      ? new Date(response.disposition_date)
+      : null;
+    if (response.case_time_created) {
+      summary.caseTime = new Date(response.case_time_created);
+    }
+    summary.storeReference = response.store_reference;
+    summary.regionCode = response.region_code;
+    summary.acquirerCode = response.acquirer_code;
+    summary.terminalCapacityCode = response.device?.terminal_capacity_code;
+    if (response.payment_method_provider) {
+      summary.paymentMethodProvider = response.payment_method_provider.map(
+        (provider: any) => ({
+          comment: provider.comment,
+          reference: provider.reference,
+          documents: (provider.documents ?? []).map((document: any) =>
+            this.mapDisputeDocument(document),
+          ),
+        }),
+      );
+      summary.issuerComment = response.payment_method_provider
+        .filter((provider: any) => provider.comment)
+        .map((provider: any) => provider.comment);
+      summary.issuerCaseNumber = response.payment_method_provider
+        .filter((provider: any) => provider.reference)
+        .map((provider: any) => provider.reference);
+    }
     summary.caseId = response.id;
     summary.caseIdTime = response.time_created
       ? new Date(response.time_created)
       : response.stage_time_created
       ? new Date(response.stage_time_created)
-      : "";
+      : null;
     summary.caseStatus = response.status;
     summary.caseStage = response.stage;
     summary.caseAmount = StringUtils.toAmount(response.amount);
     summary.caseCurrency = response.currency;
 
+    if (!response.system) {
+      summary.caseMerchantId = response.merchant_id ?? null;
+      summary.merchantName = response.merchant_name ?? null;
+      summary.merchantHierarchy = null;
+      summary.merchantDbaName = null;
+      summary.caseTerminalId = null;
+    }
+
     if (response.system) {
       const system = response.system;
-      summary.caseMerchantId = system.mid ?? null;
+      summary.caseMerchantId = system.mid ?? response.merchant_id ?? null;
+      summary.caseTerminalId = system.tid ?? null;
       summary.merchantHierarchy = system.hierarchy ?? null;
       summary.merchantName = system.name ?? null;
+      summary.merchantDbaName = system.dba ?? null;
+      summary.globalTransactionReference =
+        system.global_transaction_reference ??
+        system[" global_transaction_reference"];
+      summary.globalTransactionSource = system.global_transaction_source;
     }
 
     const card =
       response?.transaction?.payment_method?.card ||
+      response?.transaction?.provider?.payment_method?.card ||
       response?.payment_method?.card;
 
     if (card) {
       summary.transactionARN = card.arn;
       summary.transactionCardType = card.brand;
       summary.transactionMaskedCardNumber = card.number;
+      summary.transactionBrandReference = card.brand_reference;
+      summary.transactionCardFunding = card.funding;
+      summary.transactionCardIssuer = card.issuer;
+      summary.transactionIssuerBin = card.issuer_bin;
+      summary.transactionAcquirerBin = card.acquirer_bin;
     }
 
     if (response.transaction) {
-      summary.transactionTime = new Date(response.transaction.time_created);
+      if (response.transaction.time_created) {
+        summary.transactionTime = new Date(response.transaction.time_created);
+      }
       summary.transactionType = response.transaction.type;
       summary.transactionAmount = StringUtils.toAmount(
         response.transaction.amount,
       );
       summary.transactionCurrency = response.transaction.currency;
       summary.transactionReferenceNumber = response.transaction.reference;
+      summary.transactionOrderId =
+        response.transaction.order?.reference ?? response.order?.reference;
+      summary.transactionInvoiceNumber =
+        response.transaction.order?.invoice_number;
+      summary.transactionRemarks = response.transaction.remarks;
+      summary.transactionTerminalCapabilityCode =
+        response.transaction.terminal_capability_code;
+      summary.transactionMerchantCategoryCode =
+        response.transaction.merchant_category_code;
+      summary.transactionAvsResult = response.transaction.provider?.avs_result;
+      summary.transactionEntryModeCode =
+        response.transaction.payment_method?.entry_mode_code;
 
-      if (response.transaction.payment_method?.card) {
-        const card = response.transaction.payment_method.card;
+      const transactionCard =
+        response.transaction.payment_method?.card ??
+        response.transaction.provider?.payment_method?.card;
+      if (transactionCard) {
+        const card = transactionCard;
         summary.transactionMaskedCardNumber =
-          card.masked_number_first6last4 ?? "";
+          card.masked_number_first6last4 ?? card.number ?? "";
         summary.transactionAuthCode = card.authcode;
       }
     }
@@ -657,17 +762,14 @@ export class GpApiMapping {
     if (response.documents) {
       summary.documents = response.documents
         .filter((document: any) => document.id)
-        .map((document: any) => {
-          const disputeDocument = new DisputeDocument();
-          disputeDocument.id = document.id;
-          disputeDocument.type = document.type ?? null;
-          return disputeDocument;
-        });
+        .map((document: any) => this.mapDisputeDocument(document));
     }
 
     summary.reasonCode = response.reason_code;
     summary.reason = response.reason_description;
-    summary.respondByDate = new Date(response.time_to_respond_by);
+    if (response.time_to_respond_by) {
+      summary.respondByDate = new Date(response.time_to_respond_by);
+    }
     summary.result = response.result;
     summary.lastAdjustmentAmount = StringUtils.toAmount(
       response.last_adjustment_amount,
@@ -680,6 +782,35 @@ export class GpApiMapping {
     summary.depositReference = response.deposit_id ?? null;
 
     return summary;
+  }
+
+  public static mapDisputeResponse(response: any): Transaction {
+    const transaction = this.mapResponse(response);
+    transaction.action = this.mapAction(response.action);
+    transaction.disputeSummary = this.mapDisputeSummary(response);
+    return transaction;
+  }
+
+  public static mapAction(response: any): Action | null {
+    if (!response) {
+      return null;
+    }
+    const action = new Action();
+    action.id = response.id;
+    action.type = response.type;
+    action.timeCreated = response.time_created;
+    action.resultCode = response.result_code;
+    action.appId = response.app_id;
+    action.appName = response.app_name;
+    return action;
+  }
+
+  public static mapDisputeDocument(response: any): DisputeDocument {
+    const document = new DisputeDocument();
+    document.id = response.id;
+    document.type = response.type;
+    document.b64_content = response.b64_content ?? response.b64_conent;
+    return document;
   }
 
   static mapResponseAPM(response: any): Transaction {

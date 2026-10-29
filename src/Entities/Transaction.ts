@@ -15,8 +15,12 @@ import {
   TransactionType,
 } from "../";
 import { PayFacResponseData } from "./ProFac/PayFacResponseData";
+import { Action } from "./Action";
+import { DisputeSummary } from "./Reporting/DisputeSummary";
 
 export class Transaction {
+  public action: Action | null;
+  public disputeSummary: DisputeSummary;
   public authorizedAmount: string;
   /**
    * The address verification service (AVS) address response code.

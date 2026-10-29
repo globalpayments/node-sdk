@@ -202,25 +202,11 @@ export class GpApiReportRequestBuilder implements IRequestBuilder {
           builder.searchBuilder.disputeDocumentId;
         verb = "GET";
         break;
-      case ReportType.DisputeDetail:
-        endpoint =
-          GpApiRequest.DISPUTES_ENDPOINT +
-          "/" +
-          builder.searchBuilder.disputeId;
-        verb = "GET";
-        break;
       case ReportType.SettlementDisputeDetail:
         endpoint =
           GpApiRequest.SETTLEMENT_DISPUTES_ENDPOINT +
           "/" +
           builder.searchBuilder.settlementDisputeId;
-        verb = "GET";
-        break;
-      case ReportType.DisputeDetail:
-        endpoint =
-          GpApiRequest.DISPUTES_ENDPOINT +
-          "/" +
-          builder.searchBuilder.disputeId;
         verb = "GET";
         break;
       case ReportType.FindSettlementDisputesPaged:
@@ -241,7 +227,12 @@ export class GpApiReportRequestBuilder implements IRequestBuilder {
         queryParams = {
           ...queryParams,
           ...this.getDisputesParams(builder),
+          deposit_id:
+            builder.searchBuilder.depositId ??
+            builder.searchBuilder.depositReference,
         };
+        delete queryParams.from_deposit_time_created;
+        delete queryParams.to_deposit_time_created;
         break;
       default:
         throw new NotImplementedError();
@@ -294,6 +285,7 @@ export class GpApiReportRequestBuilder implements IRequestBuilder {
       order_by: builder.disputeOrderBy,
       order: builder.order,
       arn: builder.searchBuilder.aquirerReferenceNumber,
+      acquirer_code: builder.searchBuilder.acquirerCode,
       brand: builder.searchBuilder.cardBrand,
       status: builder.searchBuilder.disputeStatus,
       stage: builder.searchBuilder.disputeStage,
@@ -312,6 +304,7 @@ export class GpApiReportRequestBuilder implements IRequestBuilder {
       "system.mid": builder.searchBuilder.merchantId,
       "system.hierarchy": builder.searchBuilder.systemHierarchy,
       deposit_id: builder.searchBuilder.depositReference,
+      "order.reference": builder.searchBuilder.orderReference,
     };
   }
 

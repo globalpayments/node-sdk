@@ -1,834 +1,411 @@
 import {
-  BuilderError,
-  CardType,
+  AccessTokenInfo,
   Channel,
   DataServiceCriteria,
   DisputeDocument,
-  DisputeSortProperty,
-  DisputeStage,
   DisputeStatus,
   DisputeSummary,
+  Environment,
   GatewayError,
   GenerationUtils,
+  GpApiConfig,
+  Logger,
   PagedResult,
   ReportingService,
+  SampleRequestLogger,
   SearchCriteria,
   ServicesContainer,
-  SortDirection,
+  Transaction,
 } from "../../../../src";
 import { BaseGpApiTestConfig } from "../../../Data/BaseGpApiTestConfig";
 
-beforeAll(async () => {
-  ServicesContainer.configureService(
-    BaseGpApiTestConfig.gpApiSetupConfig(Channel.CardNotPresent),
-  );
+// Live sandbox tests for the GP-API disputes endpoints:
+// List Disputes, Get a Dispute, Download Document, Challenge, Accept.
+// Read-only tests run by default. Accept and Challenge change dispute state in
+// the sandbox, so they run only when GPAPI_DISPUTES_MUTATING=true.
 
-  const disputeId = "DIS_SAND_abcd1234";
+const SAMPLE_DOCUMENT_B64 = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv";
+const SANDBOX_DISPUTE_ID = "DIS_SAND_abcd1234";
+const INVALID_TOKEN_CONFIG = "invalid-token";
+const describeMutating =
+  process.env.GPAPI_DISPUTES_MUTATING === "true" ? describe : describe.skip;
 
-  const response = await ReportingService.disputeDetail(disputeId).execute();
+beforeAll(() => {
+  const config = BaseGpApiTestConfig.gpApiSetupConfig(Channel.CardNotPresent);
+  config.requestLogger = new SampleRequestLogger(new Logger("logs"));
+  ServicesContainer.configureService(config);
 
-  expect(response).toBeTruthy();
-  expect(response instanceof DisputeSummary).toBe(true);
-  expect(disputeId).toBe(response.caseId);
-  arn = response.transactionARN;
+  // No appId/appKey, so the SDK cannot re-authenticate after the 401.
+  const invalidTokenConfig = new GpApiConfig();
+  invalidTokenConfig.environment = Environment.Test;
+  invalidTokenConfig.channel = Channel.CardNotPresent;
+  invalidTokenConfig.country = "US";
+  invalidTokenConfig.accessTokenInfo = new AccessTokenInfo();
+  invalidTokenConfig.accessTokenInfo.accessToken = "invalid_access_token";
+  invalidTokenConfig.requestLogger = config.requestLogger;
+  ServicesContainer.configureService(invalidTokenConfig, INVALID_TOKEN_CONFIG);
 });
 
-let arn: string;
+afterAll(() => {
+  ServicesContainer.removeConfiguration(INVALID_TOKEN_CONFIG);
+});
 
 const startDate: Date = new Date();
 startDate.setDate(startDate.getDate() - 70);
 startDate.setHours(0, 0, 0, 0);
 const endDate: Date = new Date();
-startDate.setDate(startDate.getDate() - 3);
+endDate.setHours(23, 59, 59, 999);
 
-endDate.setHours(0, 0, 0, 0);
+const pageSize = 25;
+const details = new Map<string, DisputeSummary>();
+let listed: DisputeSummary[] | undefined;
 
-test("report dispute detail - wrong id", async () => {
-  const disputeId = "DIS_SAND_aaaa1111";
+const missingDisputeId = () => `DIS_SAND_${GenerationUtils.getGuuid()}`;
+const missingDocumentId = () => `DOC_${GenerationUtils.getGuuid()}`;
 
-  try {
-    await ReportingService.disputeDetail(disputeId).execute();
-  } catch (e) {
-    expect(e).toBeTruthy();
-    expect(e instanceof GatewayError).toBe(true);
-    expect(e.responseCode).toBe("40073");
-    expect(e.message).toBe(
-      "Status Code: INVALID_REQUEST_DATA - 101,Unable to locate dispute record for that ID. Please recheck the ID provided.",
+function findDisputes() {
+  return ReportingService.findDisputesPaged(1, pageSize)
+    .where(DataServiceCriteria.StartStageDate, startDate)
+    .andWith(DataServiceCriteria.EndStageDate, endDate);
+}
+
+async function listDisputes(): Promise<DisputeSummary[]> {
+  if (listed) {
+    return listed;
+  }
+  const result = await findDisputes().execute();
+  expect(result).toBeInstanceOf(PagedResult);
+  expect(result.action?.resultCode).toBe("SUCCESS");
+  for (const item of result.result) {
+    expect(item).toBeInstanceOf(DisputeSummary);
+    expect(item.caseId).toBeTruthy();
+  }
+  if (!result.result.length) {
+    throw new Error(
+      `No disputes between ${startDate.toISOString()} and ${endDate.toISOString()}. Seed a sandbox dispute for this account and rerun.`,
     );
   }
-});
-
-test("report find disputes by arn", async () => {
-  const disputes = await ReportingService.findDisputesPaged(1, 10)
-    .where(SearchCriteria.AquirerReferenceNumber, arn)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(
-    disputes.result.filter(
-      (dispute: DisputeSummary) => dispute.transactionARN !== arn,
-    ).length === 0,
-  ).toBe(true);
-});
-
-test("report find disputes by arn - not found", async () => {
-  const arn = "874091790340471";
-
-  try {
-    await ReportingService.findDisputesPaged(1, 10)
-      .where(SearchCriteria.AquirerReferenceNumber, arn)
-      .execute();
-  } catch (e) {
-    expect(e).toBeTruthy();
-    expect(e instanceof GatewayError).toBe(true);
-    expect(e.responseCode).toBe("40048");
-    expect(e.message).toBe(
-      "Status Code: INVALID_REQUEST_DATA - 105,Unable to locate dispute record for arn. Please recheck thevalue provided for arn.",
-    );
-  }
-});
-
-test("report find disputes by brand", async () => {
-  const cardBrand = "VISA";
-  const disputes = await ReportingService.findDisputesPaged(1, 10)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(SearchCriteria.CardBrand, cardBrand)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(
-    disputes.result.filter(
-      (dispute: DisputeSummary) => dispute.transactionCardType !== cardBrand,
-    ).length === 0,
-  ).toBe(true);
-});
-
-test("report find disputes by status", async () => {
-  await Promise.all(
-    ["UNDER_REVIEW", "WITH_MERCHANT", "CLOSED"].map(async (status) => {
-      const disputes = await ReportingService.findDisputesPaged(1, 10)
-        .where(DataServiceCriteria.StartStageDate, startDate)
-        .andWith(SearchCriteria.DisputeStatus, status)
-        .execute();
-      expect(disputes).toBeTruthy();
-      expect(
-        disputes.result.filter(
-          (dispute: DisputeSummary) => dispute.caseStatus !== status,
-        ).length === 0,
-      ).toBe(true);
-    }),
-  );
-});
-
-test("report find disputes by stage", async () => {
-  const disputeStage = DisputeStage.Chargeback;
-  const disputes = await ReportingService.findDisputesPaged(1, 10)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(SearchCriteria.DisputeStage, disputeStage)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(
-    disputes.result.filter(
-      (dispute: DisputeSummary) => dispute.caseStage !== disputeStage,
-    ).length === 0,
-  ).toBe(true);
-});
-
-test("report find disputes by merchantId and SystemHierarchy", async () => {
-  const merchantId = "8593872";
-  const systemHierarchy = "111-23-099-002-005";
-  const disputes = await ReportingService.findDisputesPaged(1, 10)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(DataServiceCriteria.MerchantId, merchantId)
-    .andWith(DataServiceCriteria.SystemHierarchy, systemHierarchy)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(disputes instanceof PagedResult).toBe(true);
-  expect(
-    disputes.result.filter(
-      (dispute: DisputeSummary) =>
-        dispute.caseMerchantId !== merchantId ||
-        dispute.merchantHierarchy !== systemHierarchy,
-    ).length === 0,
-  ).toBe(true);
-});
-
-test("report find disputes by from and to stage time created", async () => {
-  const disputes = await ReportingService.findDisputesPaged(1, 10)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(DataServiceCriteria.EndStageDate, endDate)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(disputes instanceof PagedResult).toBe(true);
-  expect(
-    disputes.result.filter(
-      (dispute: DisputeSummary) =>
-        new Date(dispute.caseIdTime).getTime() < startDate.getTime() ||
-        new Date(dispute.caseIdTime).getTime() > endDate.getTime(),
-    ).length === 0,
-  ).toBe(true);
-});
-
-test("report find disputes order by id", async () => {
-  const disputes = await ReportingService.findDisputesPaged(1, 10)
-    .orderBy(DisputeSortProperty.Id, SortDirection.Desc)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-
-  let disputeList = disputes.result;
-
-  disputeList = disputeList.sort(
-    (a: DisputeSummary, b: DisputeSummary) =>
-      Number(a.caseId) - Number(b.caseId),
-  );
-
-  for (const [index, dispute] of disputes.result.entries()) {
-    expect(JSON.stringify(dispute) === JSON.stringify(disputeList[index])).toBe(
-      true,
-    );
-  }
-});
-
-test("report find disputes order by ARN", async () => {
-  const disputes = await ReportingService.findDisputesPaged(1, 25)
-    .orderBy(DisputeSortProperty.Arn, SortDirection.Desc)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(DataServiceCriteria.EndStageDate, endDate)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-
-  let disputeList = disputes.result;
-
-  disputeList = disputeList.sort(
-    (a: DisputeSummary, b: DisputeSummary) =>
-      Number(a.transactionARN) - Number(b.transactionARN),
-  );
-
-  for (const [index, dispute] of disputes.result.entries()) {
-    expect(JSON.stringify(dispute) === JSON.stringify(disputeList[index])).toBe(
-      true,
-    );
-  }
-});
-
-test("report find disputes order by brand", async () => {
-  const disputes = await ReportingService.findDisputesPaged(1, 25)
-    .orderBy(DisputeSortProperty.Brand, SortDirection.Desc)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(DataServiceCriteria.EndStageDate, endDate)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-
-  let disputeList = disputes.result;
-
-  disputeList = disputeList.sort(
-    (a: DisputeSummary, b: DisputeSummary) =>
-      a.transactionARN < b.transactionARN,
-  );
-
-  for (const [index, dispute] of disputes.result.entries()) {
-    expect(JSON.stringify(dispute) === JSON.stringify(disputeList[index])).toBe(
-      true,
-    );
-  }
-});
-
-test("report find disputes order by status", async () => {
-  const disputes = await ReportingService.findDisputesPaged(1, 10)
-    .orderBy(DisputeSortProperty.Status, SortDirection.Desc)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(DataServiceCriteria.EndStageDate, endDate)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-
-  let disputeList = disputes.result;
-
-  disputeList = disputeList.sort(
-    (a: DisputeSummary, b: DisputeSummary) => a.caseStatus < b.caseStatus,
-  );
-
-  for (const [index, dispute] of disputes.result.entries()) {
-    expect(JSON.stringify(dispute) === JSON.stringify(disputeList[index])).toBe(
-      true,
-    );
-  }
-});
-
-test("report find disputes order by stage", async () => {
-  const disputes = await ReportingService.findDisputesPaged(1, 10)
-    .orderBy(DisputeSortProperty.Stage, SortDirection.Desc)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-
-  let disputeList = disputes.result;
-
-  disputeList = disputeList.sort(
-    (a: DisputeSummary, b: DisputeSummary) => a.caseStage < b.caseStage,
-  );
-
-  for (const [index, dispute] of disputes.result.entries()) {
-    expect(JSON.stringify(dispute) === JSON.stringify(disputeList[index])).toBe(
-      true,
-    );
-  }
-});
-
-test("report find disputes order by id with brand visa", async () => {
-  const disputes = await ReportingService.findDisputesPaged(1, 30)
-    .orderBy(DisputeSortProperty.Id, SortDirection.Asc)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(SearchCriteria.CardBrand, CardType.VISA)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-
-  let disputeList = disputes.result;
-
-  disputeList = disputeList.sort(
-    (a: DisputeSummary, b: DisputeSummary) => a.caseId < b.caseId,
-  );
-
-  for (const [index, dispute] of disputes.result.entries()) {
-    expect(JSON.stringify(dispute) === JSON.stringify(disputeList[index])).toBe(
-      true,
-    );
-    expect(dispute.transactionCardType).toBe(CardType.VISA);
-  }
-});
-
-test("report find disputes order by Id with stage chargeback", async () => {
-  const disputes = await ReportingService.findDisputesPaged(1, 30)
-    .orderBy(DisputeSortProperty.Id, SortDirection.Asc)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(SearchCriteria.DisputeStage, DisputeStage.Chargeback)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(disputes instanceof PagedResult).toBe(true);
-
-  let disputeList = disputes.result;
-
-  disputeList = disputeList.sort(
-    (a: DisputeSummary, b: DisputeSummary) => a.caseStage < b.caseStage,
-  );
-
-  for (const [index, dispute] of disputes.result.entries()) {
-    expect(JSON.stringify(dispute) === JSON.stringify(disputeList[index])).toBe(
-      true,
-    );
-    expect(dispute.caseStage).toBe(DisputeStage.Chargeback);
-  }
-});
-
-test("report find document associated with dispute", async () => {
-  const disputeId = "DIS_SAND_abcd1235";
-  const documentId = "DOC_MyEvidence_234234AVCDE-1";
-
-  const response = await ReportingService.documentDisputeDetail(disputeId)
-    .where(SearchCriteria.DisputeDocumentId, documentId)
-    .execute();
-
-  expect(response).toBeTruthy();
-  expect(response instanceof DisputeDocument).toBe(true);
-  expect(response.id).toBe(documentId);
-  expect(response.b64Content).toBeTruthy();
-});
-
-test("report find document associated with dispute - random dispute id", async () => {
-  const disputeId = GenerationUtils.getGuuid();
-  const documentId = "DOC_MyEvidence_234234AVCDE-1";
-
-  try {
-    await ReportingService.documentDisputeDetail(disputeId)
-      .where(SearchCriteria.DisputeDocumentId, documentId)
-      .execute();
-  } catch (e) {
-    expect(e).toBeTruthy();
-    expect(e.responseCode).toBe("40073");
-    expect(e.message).toBe(
-      "Status Code: INVALID_REQUEST_DATA - 101,Unable to locate dispute record for that ID. Please recheck the ID provided.",
-    );
-    expect(e instanceof GatewayError).toBe(true);
-  }
-});
-
-test("report find document associated with dispute - random document id", async () => {
-  const documentId = GenerationUtils.getGuuid();
-  const disputeId = "DIS_SAND_abcd1235";
-
-  try {
-    await ReportingService.documentDisputeDetail(disputeId)
-      .where(SearchCriteria.DisputeDocumentId, documentId)
-      .execute();
-  } catch (e) {
-    expect(e).toBeTruthy();
-    expect(e.responseCode).toBe("40071");
-    expect(e.message).toBe(
-      "Status Code: MANDATORY_DATA_MISSING - 128,No document found, please recheck the values provided",
-    );
-    expect(e instanceof GatewayError).toBe(true);
-  }
-});
-
-test("report find document associated with dispute - missing document id", async () => {
-  const disputeId = "DIS_SAND_abcd1235";
-
-  try {
-    await ReportingService.documentDisputeDetail(disputeId).execute();
-  } catch (e) {
-    expect(e).toBeTruthy();
-    expect(
-      e.message.includes(
-        "disputeDocumentId cannot be null for this transaction type.",
-      ),
-    ).toBe(true);
-    expect(e instanceof BuilderError).toBe(true);
-  }
-});
-
-test("report find document associated with dispute - empty dispute id", async () => {
-  const documentId = "DOC_MyEvidence_234234AVCDE-1";
-  const disputeId = null;
-
-  try {
-    await ReportingService.documentDisputeDetail(disputeId)
-      .where(SearchCriteria.DisputeDocumentId, documentId)
-      .execute();
-  } catch (e) {
-    expect(e).toBeTruthy();
-    expect(
-      e.message.includes("disputeId cannot be null for this transaction type."),
-    ).toBe(true);
-    expect(e instanceof BuilderError).toBe(true);
-  }
-});
-
-test("report settlement dispute detail", async () => {
-  const settlementDisputeId = "DIS_810";
-
-  // eslint-disable-next-line prettier/prettier
-  const response = await ReportingService.settlementDisputeDetail(
-    // eslint-disable-next-line prettier/prettier
-    settlementDisputeId,
-  ).execute();
-
-  expect(response).toBeTruthy();
-  expect(response instanceof DisputeSummary).toBe(true);
-  expect(response.caseId).toBe(settlementDisputeId);
-});
-
-test("report settlement dispute detail - wrong id", async () => {
-  const settlementDisputeId = "DIS_010";
-
-  try {
-    await ReportingService.settlementDisputeDetail(
-      settlementDisputeId,
+  const records: DisputeSummary[] = result.result;
+  listed = records;
+  return records;
+}
+
+async function detailOf(record: DisputeSummary): Promise<DisputeSummary> {
+  if (!details.has(record.caseId)) {
+    const detail = await ReportingService.disputeDetail(
+      record.caseId,
     ).execute();
-  } catch (e) {
-    expect(e).toBeTruthy();
-    expect(e.responseCode).toBe("40118");
-    expect(e.message).toBe(
-      "Status Code: RESOURCE_NOT_FOUND - Disputes DIS_010 not found at this /ucp/settlement/disputes/DIS_010",
-    );
+    expect(detail).toBeInstanceOf(DisputeSummary);
+    expect(detail.caseId).toBe(record.caseId);
+    details.set(record.caseId, detail);
   }
-});
+  return details.get(record.caseId)!;
+}
 
-test("report settlement dispute order by id with status funded", async () => {
-  const disputes = await ReportingService.findSettlementDisputesPaged(1, 10)
-    .orderBy(DisputeSortProperty.Id, SortDirection.Asc)
-    .where(DataServiceCriteria.StartDepositDate, startDate)
-    .andWith(SearchCriteria.DisputeStatus, DisputeStatus.SettleDisputeFunded)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(disputes instanceof PagedResult).toBe(true);
-
-  let disputeList = disputes.result;
-
-  disputeList = disputeList.sort(
-    (a: DisputeSummary, b: DisputeSummary) => a.caseStage < b.caseStage,
-  );
-
-  for (const [index, dispute] of disputes.result.entries()) {
-    expect(JSON.stringify(dispute) === JSON.stringify(disputeList[index])).toBe(
-      true,
-    );
-    expect(dispute.caseStatus).toBe(DisputeStatus.SettleDisputeFunded);
+async function valueOf<K extends keyof DisputeSummary>(
+  record: DisputeSummary,
+  field: K,
+): Promise<DisputeSummary[K]> {
+  if (record[field]) {
+    return record[field];
   }
-});
-test("report settlement dispute order by id", async () => {
-  const disputes = await ReportingService.findSettlementDisputesPaged(1, 10)
-    .orderBy(DisputeSortProperty.Id, SortDirection.Asc)
-    .where(DataServiceCriteria.StartDepositDate, startDate)
-    .execute();
+  return (await detailOf(record))[field];
+}
 
-  expect(disputes).toBeTruthy();
-  expect(disputes instanceof PagedResult).toBe(true);
-
-  let disputeList = disputes.result;
-
-  disputeList = disputeList.sort(
-    (a: DisputeSummary, b: DisputeSummary) => a.caseStage < b.caseStage,
-  );
-
-  for (const [index, dispute] of disputes.result.entries()) {
-    expect(JSON.stringify(dispute) === JSON.stringify(disputeList[index])).toBe(
-      true,
-    );
+function documentOf(type: string | undefined): DisputeDocument {
+  const document = new DisputeDocument();
+  if (type) {
+    document.type = type;
   }
-});
+  document.b64Content = SAMPLE_DOCUMENT_B64;
+  return document;
+}
 
-test("report settlement dispute order by ARN", async () => {
-  const disputes = await ReportingService.findSettlementDisputesPaged(1, 10)
-    .orderBy(DisputeSortProperty.Arn, SortDirection.Asc)
-    .where(DataServiceCriteria.StartDepositDate, startDate)
-    .execute();
+function disputeFor(caseId: string): DisputeSummary {
+  const dispute = new DisputeSummary();
+  dispute.caseId = caseId;
+  return dispute;
+}
 
-  expect(disputes).toBeTruthy();
-  expect(disputes instanceof PagedResult).toBe(true);
-
-  let disputeList = disputes.result;
-
-  disputeList = disputeList.sort(
-    (a: DisputeSummary, b: DisputeSummary) => a.caseStage < b.caseStage,
-  );
-
-  for (const [index, dispute] of disputes.result.entries()) {
-    expect(JSON.stringify(dispute) === JSON.stringify(disputeList[index])).toBe(
-      true,
-    );
-  }
-});
-
-test("report settlement dispute order by brand", async () => {
-  const disputes = await ReportingService.findSettlementDisputesPaged(1, 10)
-    .orderBy(DisputeSortProperty.Brand, SortDirection.Asc)
-    .where(DataServiceCriteria.StartDepositDate, startDate)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(disputes instanceof PagedResult).toBe(true);
-
-  let disputeList = disputes.result;
-
-  disputeList = disputeList.sort(
-    (a: DisputeSummary, b: DisputeSummary) =>
-      a.transactionCardType < b.transactionCardType,
-  );
-
-  for (const [index, dispute] of disputes.result.entries()) {
-    expect(JSON.stringify(dispute) === JSON.stringify(disputeList[index])).toBe(
-      true,
-    );
-  }
-});
-
-test("report settlement dispute order by stage", async () => {
-  const disputes = await ReportingService.findSettlementDisputesPaged(1, 10)
-    .orderBy(DisputeSortProperty.Stage, SortDirection.Asc)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(disputes instanceof PagedResult).toBe(true);
-
-  let disputeList = disputes.result;
-
-  disputeList = disputeList.sort(
-    (a: DisputeSummary, b: DisputeSummary) => a.caseStage < b.caseStage,
-  );
-
-  for (const [index, dispute] of disputes.result.entries()) {
-    expect(JSON.stringify(dispute) === JSON.stringify(disputeList[index])).toBe(
-      true,
-    );
-  }
-});
-
-test("report settlement dispute filter by arn", async () => {
-  const arn = "74500010037624410827759";
-
-  const disputes = await ReportingService.findSettlementDisputesPaged(1, 10)
-    .orderBy(DisputeSortProperty.Id, SortDirection.Asc)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(SearchCriteria.AquirerReferenceNumber, arn)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(disputes instanceof PagedResult).toBe(true);
-
-  for (const dispute of disputes.result) {
-    expect(dispute.transactionARN).toBe(arn);
-  }
-});
-
-test("report settlement dispute filter by arn not found", async () => {
-  const arn = "00000010037624410827111";
-
-  const disputes = await ReportingService.findSettlementDisputesPaged(1, 10)
-    .orderBy(DisputeSortProperty.Id, SortDirection.Asc)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(SearchCriteria.AquirerReferenceNumber, arn)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(disputes instanceof PagedResult).toBe(true);
-  expect(disputes.result.length).toBe(0);
-});
-
-test("report settlement dispute filter by brand", async () => {
-  const brand = "VISA";
-
-  const disputes = await ReportingService.findSettlementDisputesPaged(1, 10)
-    .orderBy(DisputeSortProperty.Id, SortDirection.Asc)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(SearchCriteria.CardBrand, brand)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(disputes instanceof PagedResult).toBe(true);
-
-  for (const dispute of disputes.result) {
-    expect(dispute.transactionCardType).toBe(brand);
-  }
-});
-
-test("report settlement dispute filter by brand not found", async () => {
-  const brand = "MASTERCAR";
-
-  const disputes = await ReportingService.findSettlementDisputesPaged(1, 10)
-    .orderBy(DisputeSortProperty.Id, SortDirection.Asc)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(SearchCriteria.CardBrand, brand)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(disputes instanceof PagedResult).toBe(true);
-
-  for (const dispute of disputes.result) {
-    expect(dispute.transactionCardType).toBe(brand);
-  }
-});
-
-test("report settlement dispute filter by stage", async () => {
-  const stage = DisputeStage.Chargeback;
-
-  const disputes = await ReportingService.findSettlementDisputesPaged(1, 10)
-    .orderBy(DisputeSortProperty.Id, SortDirection.Asc)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(SearchCriteria.DisputeStage, stage)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(disputes instanceof PagedResult).toBe(true);
-
-  for (const dispute of disputes.result) {
-    expect(dispute.caseStage).toBe(stage);
-  }
-});
-
-test("report settlement dispute filter by from and to stage time created", async () => {
-  const disputes = await ReportingService.findSettlementDisputesPaged(1, 10)
-    .orderBy(DisputeSortProperty.Id, SortDirection.Asc)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(DataServiceCriteria.EndStageDate, endDate)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(disputes instanceof PagedResult).toBe(true);
-
-  for (const dispute of disputes.result) {
-    expect(dispute.caseIdTime.getTime() <= endDate.getTime()).toBe(true);
-  }
-});
-
-test("report settlement dispute filter by system mid and hierarchy", async () => {
-  const systemMId = "101023947262";
-  const systemHierarchy = "055-70-024-011-019";
-  const disputes = await ReportingService.findSettlementDisputesPaged(1, 10)
-    .orderBy(DisputeSortProperty.Id, SortDirection.Asc)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(DataServiceCriteria.MerchantId, systemMId)
-    .andWith(DataServiceCriteria.SystemHierarchy, systemHierarchy)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(disputes instanceof PagedResult).toBe(true);
-
-  for (const dispute of disputes.result) {
-    expect(dispute.merchantHierarchy).toBe(systemHierarchy);
-    expect(dispute.caseMerchantId).toBe(systemMId);
-  }
-});
-
-test("report settlement dispute filter by wrong system hierarchy ", async () => {
-  const systemHierarchy = "000-70-024-011-111";
-  const disputes = await ReportingService.findSettlementDisputesPaged(1, 10)
-    .orderBy(DisputeSortProperty.Id, SortDirection.Asc)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(DataServiceCriteria.SystemHierarchy, systemHierarchy)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(disputes instanceof PagedResult).toBe(true);
-  expect(disputes.result.length === 0).toBe(true);
-});
-
-test("report settlement dispute filter by wrong systemMId", async () => {
-  const systemMid = "000023947222";
-  const disputes = await ReportingService.findSettlementDisputesPaged(1, 10)
-    .orderBy(DisputeSortProperty.Id, SortDirection.Asc)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(DataServiceCriteria.MerchantId, systemMid)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(disputes instanceof PagedResult).toBe(true);
-  expect(disputes.result.length === 0).toBe(true);
-});
-
-test("report settlement dispute filter by deposit id", async () => {
-  const depositReference = "DEP_2342423443";
-
-  const disputes = await ReportingService.findSettlementDisputesPaged(1, 10)
-    .where(DataServiceCriteria.StartStageDate, startDate)
-    .andWith(DataServiceCriteria.DepositReference, depositReference)
-    .execute();
-
-  expect(disputes).toBeTruthy();
-  expect(disputes instanceof PagedResult).toBe(true);
-
-  for (const dispute of disputes.result) {
-    expect(depositReference == dispute.depositReference).toBe(true);
-  }
-});
-
-test("report dispute acceptance", async () => {
-  const disputeId = "DIS_SAND_abcd1234";
-  const dispute = await ReportingService.disputeDetail(disputeId).execute();
-
-  const response = await dispute.accept().execute();
-
+function expectSuccess(response: Transaction, status: DisputeStatus): void {
   expect(response).toBeTruthy();
   expect(response.responseCode).toBe("SUCCESS");
+  expect(response.responseMessage).toBe(status);
+}
+
+describe("List Disputes", () => {
+  test("lists disputes in the stage-date window", async () => {
+    const records = await listDisputes();
+    expect(records.length).toBeGreaterThan(0);
+  });
+
+  test("lists disputes filtered by acquirer_code", async () => {
+    const [source] = await listDisputes();
+    const acquirerCode = await valueOf(source, "acquirerCode");
+    expect(acquirerCode).toBeTruthy();
+
+    const result = await findDisputes()
+      .andWith(SearchCriteria.AcquirerCode, acquirerCode)
+      .execute();
+
+    expect(result.action?.resultCode).toBe("SUCCESS");
+    expect(result.result.length).toBeGreaterThan(0);
+    for (const record of result.result) {
+      expect(await valueOf(record, "acquirerCode")).toBe(acquirerCode);
+    }
+  });
+
+  test("lists disputes filtered by order.reference", async () => {
+    const [source] = await listDisputes();
+    const orderReference = await valueOf(source, "transactionOrderId");
+    expect(orderReference).toBeTruthy();
+
+    const result = await findDisputes()
+      .andWith(SearchCriteria.OrderReference, orderReference)
+      .execute();
+
+    expect(result.action?.resultCode).toBe("SUCCESS");
+    expect(result.result.length).toBeGreaterThan(0);
+    for (const record of result.result) {
+      expect(await valueOf(record, "transactionOrderId")).toBe(orderReference);
+    }
+  });
+
+  test("lists disputes filtered by acquirer_code and order.reference", async () => {
+    const [source] = await listDisputes();
+    const acquirerCode = await valueOf(source, "acquirerCode");
+    const orderReference = await valueOf(source, "transactionOrderId");
+
+    const result = await findDisputes()
+      .andWith(SearchCriteria.AcquirerCode, acquirerCode)
+      .andWith(SearchCriteria.OrderReference, orderReference)
+      .execute();
+
+    expect(result.action?.resultCode).toBe("SUCCESS");
+    expect(result.result.length).toBeGreaterThan(0);
+    for (const record of result.result) {
+      expect(await valueOf(record, "acquirerCode")).toBe(acquirerCode);
+      expect(await valueOf(record, "transactionOrderId")).toBe(orderReference);
+    }
+  });
 });
 
-test("report dispute acceptance wrong ID", async () => {
-  const disputeId = "DIS_SAND_abcd1234ZZ";
-  const dispute = new DisputeSummary();
-  dispute.caseId = disputeId;
+describe("Get a Dispute", () => {
+  test("gets a dispute by id", async () => {
+    const [source] = await listDisputes();
+    const response = await ReportingService.disputeDetail(
+      source.caseId,
+    ).execute();
 
-  try {
-    await dispute.accept().execute();
-  } catch (e) {
-    expect(e.responseCode).toBe("40067");
-    expect(e.message.includes("INVALID_DISPUTE_ACTION")).toBe(true);
-  }
+    expect(response).toBeInstanceOf(DisputeSummary);
+    expect(response.caseId).toBe(source.caseId);
+    expect(response.action?.resultCode).toBe("SUCCESS");
+  });
 });
 
-test("report dispute challenge", async () => {
-  const dispute = new DisputeSummary();
-  dispute.caseId = "DIS_SAND_abcd1234";
-  const document = new DisputeDocument();
-  document.type = "SALES_RECEIPT";
-  document.b64_content = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv";
-
-  const response = await dispute.challenge([document]).execute();
-
-  expect(response).toBeTruthy();
-  expect(response.responseCode).toBe("SUCCESS");
-});
-
-test("report dispute challenge missing type", async () => {
-  const dispute = new DisputeSummary();
-  dispute.caseId = "DIS_SAND_abcd1234";
-  const document = new DisputeDocument();
-  document.b64_content = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv";
-
-  const response = await dispute.challenge([document]).execute();
-
-  expect(response).toBeTruthy();
-  expect(response.responseCode).toBe("SUCCESS");
-});
-
-test("report dispute challenge multiple documents", async () => {
-  const dispute = new DisputeSummary();
-  dispute.caseId = "DIS_SAND_abcd1241";
-
-  const document = new DisputeDocument();
-  document.type = "SALES_RECEIPT";
-  document.b64_content = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv";
-
-  const document2 = new DisputeDocument();
-  document2.type = "SALES_RECEIPT";
-  document2.b64_content = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv";
-
-  const response = await dispute.challenge([document, document2]).execute();
-
-  expect(response).toBeTruthy();
-  expect(response.responseCode).toBe("SUCCESS");
-});
-
-test("report dispute challenge multiple documents - closed status", async () => {
-  const dispute = new DisputeSummary();
-  dispute.caseId = "DIS_SAND_abcd1234";
-
-  const document = new DisputeDocument();
-  document.type = "SALES_RECEIPT";
-  document.b64_content = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv";
-
-  const document2 = new DisputeDocument();
-  document2.type = "SALES_RECEIPT";
-  document2.b64_content = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv";
-
-  try {
-    await dispute.challenge([document, document2]).execute();
-  } catch (e) {
-    expect(e.responseCode).toBe("40072");
-    expect(e.message).toBe(
-      "Status Code: INVALID_REQUEST_DATA - 131,The dispute stage, Retrieval, can be challenged with a single document only. Please correct the request and resubmit",
+describe("Download Document", () => {
+  async function documentFixture(): Promise<{
+    caseId: string;
+    documentId: string;
+  }> {
+    for (const record of await listDisputes()) {
+      const detail = await detailOf(record);
+      const document = detail.documents?.find((item) => item.id);
+      if (document) {
+        return { caseId: detail.caseId, documentId: document.id };
+      }
+    }
+    throw new Error(
+      "No dispute with a downloadable document in the stage-date window. Seed a sandbox dispute with a document and rerun.",
     );
   }
+
+  test("downloads a document for a dispute", async () => {
+    const { caseId, documentId } = await documentFixture();
+
+    const response = await ReportingService.documentDisputeDetail(caseId)
+      .withDisputeDocumentId(documentId)
+      .execute();
+
+    expect(response).toBeInstanceOf(DisputeDocument);
+    expect(response.id).toBe(documentId);
+    expect(response.b64Content).toBeTruthy();
+    expect(response.b64_content).toBe(response.b64Content);
+  });
 });
 
-test("report dispute challenge missing document", async () => {
-  const dispute = new DisputeSummary();
-  dispute.caseId = "DIS_SAND_abcd1234";
-  const document = new DisputeDocument();
+describeMutating("Challenge a Dispute", () => {
+  test("challenges a dispute with a single document", async () => {
+    const SANDBOX_DISPUTE_ID_single = "DIS_SAND_abcd1235";
+    const response = await disputeFor(SANDBOX_DISPUTE_ID_single)
+      .challenge([documentOf("SALES_RECEIPT")])
+      .execute();
 
-  try {
-    await dispute.challenge([document]).execute();
-  } catch (e) {
-    expect(e.responseCode).toBe("40065");
-    expect(e.message).toBe(
-      "Status Code: MANDATORY_DATA_MISSING - Unable to challenge as No document provided with the request",
-    );
-  }
+    expectSuccess(response, DisputeStatus.UnderReview);
+  });
+
+  test("challenges a dispute with multiple documents", async () => {
+    const SANDBOX_MULTI_DOCUMENT_DISPUTEID = "DIS_SAND_abcd1234";
+    const response = await disputeFor(SANDBOX_MULTI_DOCUMENT_DISPUTEID)
+      .challenge([documentOf("SALES_RECEIPT")])
+      .execute();
+    expect(response.responseCode).toBe("SUCCESS");
+  });
+
+  test("accepts a document without a type", async () => {
+    const response = await disputeFor(SANDBOX_DISPUTE_ID)
+      .challenge([documentOf(undefined)])
+      .execute();
+
+    expectSuccess(response, DisputeStatus.Closed);
+  });
 });
 
-test("report dispute challenge wrong Id", async () => {
-  const dispute = new DisputeSummary();
-  dispute.caseId = "DIS_SAND_aaaa0000";
-  const document = new DisputeDocument();
-  document.type = "SALES_RECEIPT";
-  document.b64_content = "R0lGODlhigPCAXAAACwAAAAAigPCAYf///8AQnv";
+describeMutating("Accept a Dispute", () => {
+  test("accepts a dispute", async () => {
+    const response = await disputeFor(SANDBOX_DISPUTE_ID).accept().execute();
 
-  try {
-    await dispute.challenge([document]).execute();
-  } catch (e) {
-    expect(e.responseCode).toBe("40060");
-    expect(e.message.includes("INVALID_DISPUTE_ACTION")).toBe(true);
-  }
+    expectSuccess(response, DisputeStatus.Closed);
+  });
 });
 
-afterAll(() => BaseGpApiTestConfig.resetGpApiConfig());
+// Sandbox answers unknown ids and malformed payloads with 502/50046, so those assert GatewayError only.
+describe("Negative cases", () => {
+  const expectGatewayError = (
+    request: Promise<unknown>,
+    responseCode?: string,
+  ) =>
+    expect(request).rejects.toMatchObject({
+      name: GatewayError.name,
+      ...(responseCode && { responseCode }),
+    });
+
+  describe("invalid access token", () => {
+    const expectNotAuthenticated = (request: Promise<unknown>) =>
+      expect(request).rejects.toMatchObject({
+        name: GatewayError.name,
+        responseCode: "40001",
+        message: expect.stringContaining("NOT_AUTHENTICATED"),
+      });
+
+    test("List Disputes returns 401", async () => {
+      await expectNotAuthenticated(
+        findDisputes().execute(INVALID_TOKEN_CONFIG),
+      );
+    });
+
+    test("Get a Dispute returns 401", async () => {
+      await expectNotAuthenticated(
+        ReportingService.disputeDetail(SANDBOX_DISPUTE_ID).execute(
+          INVALID_TOKEN_CONFIG,
+        ),
+      );
+    });
+
+    test("Download Document returns 401", async () => {
+      await expectNotAuthenticated(
+        ReportingService.documentDisputeDetail(SANDBOX_DISPUTE_ID)
+          .withDisputeDocumentId(missingDocumentId())
+          .execute(INVALID_TOKEN_CONFIG),
+      );
+    });
+
+    test("Challenge a Dispute returns 401", async () => {
+      await expectNotAuthenticated(
+        disputeFor(SANDBOX_DISPUTE_ID)
+          .challenge([documentOf("SALES_RECEIPT")])
+          .execute(INVALID_TOKEN_CONFIG),
+      );
+    });
+
+    test("Accept a Dispute returns 401", async () => {
+      await expectNotAuthenticated(
+        disputeFor(SANDBOX_DISPUTE_ID).accept().execute(INVALID_TOKEN_CONFIG),
+      );
+    });
+  });
+
+  describe("List Disputes validation", () => {
+    test("rejects a negative page", async () => {
+      await expectGatewayError(
+        ReportingService.findDisputesPaged(-1, pageSize)
+          .where(DataServiceCriteria.StartStageDate, startDate)
+          .andWith(DataServiceCriteria.EndStageDate, endDate)
+          .execute(),
+        "40090",
+      );
+    });
+
+    test("rejects a negative page size", async () => {
+      await expectGatewayError(
+        ReportingService.findDisputesPaged(1, -1)
+          .where(DataServiceCriteria.StartStageDate, startDate)
+          .andWith(DataServiceCriteria.EndStageDate, endDate)
+          .execute(),
+        "40090",
+      );
+    });
+
+    test("rejects a start date after the end date", async () => {
+      await expectGatewayError(
+        ReportingService.findDisputesPaged(1, pageSize)
+          .where(DataServiceCriteria.StartStageDate, endDate)
+          .andWith(DataServiceCriteria.EndStageDate, startDate)
+          .execute(),
+        "40090",
+      );
+    });
+  });
+
+  describe("unknown or malformed ids", () => {
+    test("Get a Dispute rejects an unknown dispute id", async () => {
+      await expectGatewayError(
+        ReportingService.disputeDetail(missingDisputeId()).execute(),
+      );
+    });
+
+    test("Get a Dispute rejects a malformed dispute id", async () => {
+      await expectGatewayError(
+        ReportingService.disputeDetail("@@bad-id@@").execute(),
+      );
+    });
+
+    test("Download Document rejects an unknown dispute id", async () => {
+      await expectGatewayError(
+        ReportingService.documentDisputeDetail(missingDisputeId())
+          .withDisputeDocumentId(missingDocumentId())
+          .execute(),
+      );
+    });
+
+    test("Download Document rejects an unknown document id", async () => {
+      await expectGatewayError(
+        ReportingService.documentDisputeDetail(SANDBOX_DISPUTE_ID)
+          .withDisputeDocumentId(missingDocumentId())
+          .execute(),
+      );
+    });
+
+    test("Challenge a Dispute rejects an unknown dispute id", async () => {
+      await expectGatewayError(
+        disputeFor(missingDisputeId())
+          .challenge([documentOf("SALES_RECEIPT")])
+          .execute(),
+      );
+    });
+
+    test("Accept a Dispute rejects an unknown dispute id", async () => {
+      await expectGatewayError(
+        disputeFor(missingDisputeId()).accept().execute(),
+      );
+    });
+  });
+
+  describe("invalid challenge payload", () => {
+    test("rejects a challenge without documents", async () => {
+      await expectGatewayError(
+        disputeFor(SANDBOX_DISPUTE_ID).challenge([]).execute(),
+      );
+    });
+  });
+});

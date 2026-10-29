@@ -105,6 +105,7 @@ export class GpApiManagementRequestBuilder implements IRequestBuilder {
           builder.disputeId +
           "/acceptance";
         verb = "POST";
+        payload = undefined;
         break;
       case TransactionType.DisputeChallenge:
         endpoint =
