@@ -1,10 +1,14 @@
 # Changelog
-## Latest - v3.15.00 (10/29/26):
+## Latest - v3.16.00 (11/05/26):
 ### Enhancements:
-- [GP-API] Expanded Disputes list/detail response mappings, including action, merchant/account scope, payer and merchant amounts, card metadata, financial adjustments, provider evidence, and transaction details.
-- [GP-API] Added Disputes order reference and acquirer code filters, Mastercard pre-dispute stage, and the document ID helper. Document download exposes both `b64Content` and `b64_content`.
-- [GP-API] Accept and Challenge retain the `Transaction` response and now expose mapped `disputeSummary` and `action` details. Accept sends no request body.
-- [GP-API] Added deterministic field-level tests and expanded sandbox dispute examples.
+- [GP-API] - Added Actions reporting: ReportingService.findActionsPaged() lists actions with 11 filter options (ActionId, ActionType, Resource, ResourceStatus, ResourceId, MerchantName, AccountName, AppName, Version, ResponseCode, HttpResponseCode), date range filtering, and sorting support; ReportingService.actionDetail(id) retrieves single action details. New entities: ActionSummary, ActionPagedResult, ActionMetadata, ActionSortProperty.
+
+## v3.15.00 (10/29/26):
+### Enhancements:
+- [GP-API] - Expanded Disputes list/detail response mappings, including action, merchant/account scope, payer and merchant amounts, card metadata, financial adjustments, provider evidence, and transaction details.
+- [GP-API] - Added Disputes order reference and acquirer code filters, Mastercard pre-dispute stage, and the document ID helper. Document download exposes both `b64Content` and `b64_content`.
+- [GP-API] - Accept and Challenge retain the `Transaction` response and now expose mapped `disputeSummary` and `action` details. Accept sends no request body.
+- [GP-API] - Added deterministic field-level tests and expanded sandbox dispute examples.
 
 ## v3.14.00 (10/15/26):
 ### Enhancements:

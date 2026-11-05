@@ -768,6 +768,8 @@ export enum ReportType {
   FindSettlementDisputesPaged = 1 << 19,
   FindStoredPaymentMethodsPaged = 1 << 20,
   StoredPaymentMethodDetail = 1 << 21,
+  FindActionsPaged = 1 << 22,
+  ActionDetail = 1 << 23,
 }
 
 export enum ScheduleFrequency {

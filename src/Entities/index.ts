@@ -20,6 +20,7 @@ export * from "./EcommerceInfo";
 export * from "./EncryptionData";
 export * from "./Enums";
 export * from "./Enums/FileType";
+export * from "./Enums/ActionSortProperty";
 export * from "./Enums/DccProcessor";
 export * from "./Enums/DccRateType";
 export * from "./Enums/DepositSortProperty";

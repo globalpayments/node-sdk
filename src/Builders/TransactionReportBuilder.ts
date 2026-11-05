@@ -1,4 +1,5 @@
 import {
+  ActionSortProperty,
   DepositSortProperty,
   DisputeSortProperty,
   NotImplementedError,
@@ -16,7 +17,9 @@ export class TransactionReportBuilder<T> extends ReportBuilder<T> {
   public endDate: Date;
   public startDate: Date;
   public transactionId: string;
+  public actionId: string;
   public searchCriteria: IDictionary<string>;
+  public actionOrderBy: ActionSortProperty;
   public depositOrderBy: DepositSortProperty;
   public disputeOrderBy: DisputeSortProperty;
 
@@ -43,6 +46,13 @@ export class TransactionReportBuilder<T> extends ReportBuilder<T> {
       .of("reportType", ReportType.Activity)
       .check("transactionId")
       .isNull();
+
+    this.validations
+      .of("reportType", ReportType.ActionDetail)
+      .check("actionId")
+      .isNotNull()
+      .check("actionId")
+      .isNotEmpty();
 
     this.validations
       .of("reportType", ReportType.DocumentDisputeDetail)
@@ -93,6 +103,12 @@ export class TransactionReportBuilder<T> extends ReportBuilder<T> {
     return this;
   }
 
+  public withActionId(actionId?: string) {
+    this.actionId = actionId as string;
+    this.searchBuilder.actionId = actionId;
+    return this;
+  }
+
   public withDepositId(depositId: string) {
     this.searchBuilder.depositId = depositId;
     return this;
@@ -119,6 +135,7 @@ export class TransactionReportBuilder<T> extends ReportBuilder<T> {
 
   public orderBy(
     sortProperty:
+      | ActionSortProperty
       | StoredPaymentMethodSortProperty
       | TransactionSortProperty
       | DepositSortProperty
@@ -143,6 +160,9 @@ export class TransactionReportBuilder<T> extends ReportBuilder<T> {
       case ReportType.FindDisputesPaged:
       case ReportType.FindSettlementDisputesPaged:
         this.disputeOrderBy = sortProperty as DisputeSortProperty;
+        break;
+      case ReportType.FindActionsPaged:
+        this.actionOrderBy = sortProperty as ActionSortProperty;
         break;
       default:
         throw new NotImplementedError();

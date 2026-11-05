@@ -1,5 +1,7 @@
 /* eslint-disable indent */
 import {
+  ActionPagedResult,
+  ActionSummary,
   DisputeDocument,
   DepositSummary,
   DisputeSummary,
@@ -136,5 +138,22 @@ export class ReportingService {
     return new TransactionReportBuilder<DepositSummary>(
       ReportType.DepositDetail,
     ).withDepositId(depositId);
+  }
+
+  public static findActionsPaged(
+    page: number,
+    pageSize: number,
+  ): TransactionReportBuilder<ActionPagedResult> {
+    return new TransactionReportBuilder<ActionPagedResult>(
+      ReportType.FindActionsPaged,
+    ).withPaging(page, pageSize);
+  }
+
+  public static actionDetail(
+    actionId: string,
+  ): TransactionReportBuilder<ActionSummary> {
+    return new TransactionReportBuilder<ActionSummary>(
+      ReportType.ActionDetail,
+    ).withActionId(actionId);
   }
 }

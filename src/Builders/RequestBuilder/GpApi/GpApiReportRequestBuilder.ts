@@ -29,6 +29,20 @@ export class GpApiReportRequestBuilder implements IRequestBuilder {
         endpoint = `${GpApiRequest.TRANSACTION_ENDPOINT}/${builder.transactionId}`;
         verb = "GET";
         break;
+      case ReportType.ActionDetail:
+        endpoint = `${GpApiRequest.ACTIONS_ENDPOINT}/${encodeURIComponent(
+          builder.actionId,
+        )}`;
+        verb = "GET";
+        break;
+      case ReportType.FindActionsPaged:
+        endpoint = GpApiRequest.ACTIONS_ENDPOINT;
+        verb = "GET";
+        queryParams = {
+          ...queryParams,
+          ...this.getActionParams(builder),
+        };
+        break;
       case ReportType.FindStoredPaymentMethodsPaged:
         if (builder?.searchBuilder?.paymentMethod instanceof CreditCardData) {
           endpoint = `${GpApiRequest.PAYMENT_METHODS_ENDPOINT}/search`;
@@ -265,6 +279,31 @@ export class GpApiReportRequestBuilder implements IRequestBuilder {
       : null;
 
     return queryParams;
+  }
+
+  private getActionParams(builder: any): any {
+    const search = builder.searchBuilder;
+    return {
+      order_by: builder.actionOrderBy,
+      order: builder.order,
+      id: search.actionId,
+      type: search.actionType,
+      resource: search.resource,
+      resource_status: search.resourceStatus,
+      resource_id: search.resourceId,
+      from_time_created: search.startDate
+        ? new Date(search.startDate).toISOString().split("T")[0]
+        : undefined,
+      to_time_created: search.endDate
+        ? new Date(search.endDate).toISOString().split("T")[0]
+        : undefined,
+      merchant_name: search.merchantName,
+      account_name: search.accountName,
+      app_name: search.appName,
+      version: search.version,
+      response_code: search.responseCode,
+      http_response_code: search.httpResponseCode,
+    };
   }
 
   public buildRequestFromJson(jsonRequest: string, config: GpApiConfig) {

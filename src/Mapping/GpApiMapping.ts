@@ -1,4 +1,7 @@
 import {
+  ActionMetadata,
+  ActionPagedResult,
+  ActionSummary,
   Action,
   AlternativePaymentResponse,
   AuthenticationSource,
@@ -293,6 +296,12 @@ export class GpApiMapping {
           report.filter = response.filter;
           report.action = this.mapAction(response.action);
         }
+        break;
+      case ReportType.ActionDetail:
+        report = this.mapActionSummary(response);
+        break;
+      case ReportType.FindActionsPaged:
+        report = this.mapActionsPaged(response);
         break;
       default:
         throw new ApiError("Report type not supported!");
@@ -615,6 +624,100 @@ export class GpApiMapping {
     summary.feesTotalAmount = StringUtils.toAmount(response?.fees?.amount);
 
     return summary;
+  }
+
+  private static mapActionsPaged(response: any): ActionPagedResult {
+    const page = Object.assign(
+      new ActionPagedResult(),
+      this.setPagingInfo(response),
+    );
+    page.result = (response.actions ?? []).map((action: any) =>
+      this.mapActionSummary(action),
+    );
+    page.currentPageSize = response.current_page_size;
+    page.merchantId = response.merchant_id;
+    page.merchantName = response.merchant_name;
+    page.fromTimeCreated = response.filter?.from_time_created;
+    page.toTimeCreated = response.filter?.to_time_created;
+    page.filter = response.filter;
+    page.action = this.mapActionMetadata(response.action);
+
+    return page;
+  }
+
+  static mapActionSummary(response: any): ActionSummary {
+    const summary = new ActionSummary();
+    summary.id = response.id;
+    summary.type = response.type;
+    summary.timeCreated = this.mapActionDate(response.time_created);
+    summary.timeLastUpdated = this.mapActionDate(response.time_last_updated);
+    summary.resource = response.resource;
+    summary.resourceId = response.resource_id;
+    summary.resourceParentId = response.resource_parent_id;
+    summary.resourceStatus = response.resource_status;
+    summary.resourceRequestUrl = response.resource_request_url;
+    summary.version = response.version;
+    summary.httpResponseCode = response.http_response_code;
+    summary.httpResponseMessage = response.http_response_message;
+    summary.responseCode = response.response_code;
+    // The portal documents response_detailed_*; the gateway returns detailed_error_*.
+    summary.responseDetailedCode =
+      response.response_detailed_code ?? response.detailed_error_code;
+    summary.responseDetailedMessage =
+      response.response_detailed_message ?? response.detailed_error_description;
+    summary.appId = response.app_id;
+    summary.appName = response.app_name;
+    summary.appDeveloper = response.app_developer;
+    summary.email = response.email;
+    summary.merchantId = response.merchant_id;
+    summary.merchantName = response.merchant_name;
+    summary.accountId = response.account_id;
+    summary.accountName = response.account_name;
+    summary.sourceLocation = response.source_location;
+    summary.destinationLocation = response.destination_location;
+    summary.messageReceived = response.message_received;
+    summary.messageSent = response.message_sent;
+    summary.downstreamMessageReceived = response.downstream_message_received;
+    summary.downstreamMessageSent = response.downstream_message_sent;
+    summary.metrics = response.metrics;
+    summary.totalTimeMilliseconds = this.mapActionNumber(
+      response.total_time_milliseconds,
+    );
+    // The portal documents ..._downstream_...; the gateway returns ..._downstreams_...
+    summary.totalTimeDownstreamMilliseconds = this.mapActionNumber(
+      response.total_time_downstream_milliseconds ??
+        response.total_time_downstreams_milliseconds,
+    );
+    summary.action = this.mapActionMetadata(response.action);
+
+    return summary;
+  }
+
+  private static mapActionMetadata(action: any): ActionMetadata | null {
+    if (!action) {
+      return null;
+    }
+    const metadata = new ActionMetadata();
+    metadata.id = action.id || "";
+    metadata.type = action.type || "";
+    metadata.timeCreated = action.time_created || "";
+    metadata.resultCode = action.result_code || "";
+    metadata.appId = action.app_id || "";
+    metadata.appName = action.app_name || "";
+
+    return metadata;
+  }
+
+  private static mapActionDate(value: any): Date | undefined {
+    return value ? new Date(value) : undefined;
+  }
+
+  private static mapActionNumber(value: any): number | undefined {
+    if (value === undefined || value === null || value === "") {
+      return undefined;
+    }
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : undefined;
   }
 
   static mapDisputeSummary(response: any): DisputeSummary {
