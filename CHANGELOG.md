@@ -1,5 +1,9 @@
 # Changelog
-## Latest - v3.16.00 (11/05/26):
+## Latest - v3.17.00 (11/19/26):
+### Enhancements:
+- [GP-API] - Added Funds Management credit/debit FMA accounts, retrieve and list funds with date filtering, idempotency support, and comprehensive response metadata
+
+## v3.16.00 (11/05/26):
 ### Enhancements:
 - [GP-API] - Added Actions reporting: ReportingService.findActionsPaged() lists actions with 11 filter options (ActionId, ActionType, Resource, ResourceStatus, ResourceId, MerchantName, AccountName, AppName, Version, ResponseCode, HttpResponseCode), date range filtering, and sorting support; ReportingService.actionDetail(id) retrieves single action details. New entities: ActionSummary, ActionPagedResult, ActionMetadata, ActionSortProperty.
 

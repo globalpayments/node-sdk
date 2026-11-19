@@ -32,6 +32,7 @@ export * from "./Enums/IsoCountries";
 export * from "./Enums/MerchantCategory";
 export * from "./Errors";
 export * from "./FraudRule";
+export * from "./Fund";
 export * from "./GpApi";
 export * from "./HostedPaymentData";
 export * from "./IRequestBuilder";

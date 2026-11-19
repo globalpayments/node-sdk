@@ -253,7 +253,7 @@ export class GpApiConnector
           type: "REFUND",
           time_created: new Date().toISOString(),
           result_code: "SUCCESS",
-          app_id: "hlZAokTftDazLlWDPe8E6VAz5g9rSDPg",
+          app_id: "",
           app_name: "UCP_Test_Automation_App",
         },
       };

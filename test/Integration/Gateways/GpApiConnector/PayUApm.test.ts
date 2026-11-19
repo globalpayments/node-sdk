@@ -24,8 +24,8 @@ const CHARGE_DESCRIPTION = "New APM";
 let savedTransactionId: string;
 
 const setupPayUConfig = () => {
-  const APP_ID = "hlZAokTftDazLlWDPe8E6VAz5g9rSDPg";
-  const APP_KEY = "ThDO2fISzzWCgkCZ";
+  const APP_ID = "";
+  const APP_KEY = "";
 
   const gpApiConfig = new GpApiConfig();
   gpApiConfig.appId = APP_ID;

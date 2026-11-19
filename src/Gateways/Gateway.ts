@@ -41,6 +41,8 @@ export abstract class Gateway {
 
     if (data !== undefined && options && options.headers) {
       options.headers["Content-Length"] = data.length;
+    } else if (options.headers) {
+      delete options.headers["Content-Length"];
     }
 
     if (this.requestLogger) {
